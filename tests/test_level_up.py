@@ -1,5 +1,5 @@
 import pytest
-from src.models.player import Player
+from src.models.player import Player, max_hp, max_mp
 from src.systems import level_system
 from src.systems.level_system import LEVEL_CHOICES, apply_choice, on_level_up
 
@@ -91,18 +91,36 @@ def test_on_level_up_increments_level():
     assert p.level == 2
 
 
-def test_on_level_up_raises_hp_and_mp():
-    p = make_player(hp=40, mp=3)
+def test_on_level_up_increases_max_hp_and_mp():
+    p = make_player()
     on_level_up(p)
-    assert p.hp == 50
-    assert p.mp == 8
+    assert p.attribute_bonuses["hp"] == 5
+    assert p.attribute_bonuses["mp"] == 3
+    assert max_hp(p) == 105
+    assert max_mp(p) == 13
 
 
-def test_on_level_up_clamps_hp_and_mp_at_max():
-    p = make_player(hp=115, mp=14, base_stats={"hp": 100, "mp": 10}, attribute_bonuses={"hp": 20, "mp": 5})
+def test_on_level_up_full_heals_damaged_player():
+    p = make_player(hp=10, mp=1)
     on_level_up(p)
-    assert p.hp == 120
-    assert p.mp == 15
+    assert p.hp == max_hp(p)
+    assert p.mp == max_mp(p)
+
+
+def test_on_level_up_full_heals_when_already_at_max():
+    p = make_player()
+    on_level_up(p)
+    assert p.hp == max_hp(p)
+    assert p.mp == max_mp(p)
+
+
+def test_on_level_up_twice_accumulates_growth():
+    p = make_player()
+    on_level_up(p)
+    on_level_up(p)
+    assert p.level == 3
+    assert p.attribute_bonuses["hp"] == 10
+    assert p.attribute_bonuses["mp"] == 6
 
 
 def test_on_level_up_returns_level_choices():

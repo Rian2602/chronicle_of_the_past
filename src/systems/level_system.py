@@ -44,8 +44,8 @@ def on_level_up(player) -> list:
     from src.models.player import max_mp as _max_mp
 
     player.level += 1
-    player.hp += 10
-    player.mp += 5
-    player.hp = min(player.hp, _max_hp(player))
-    player.mp = min(player.mp, _max_mp(player))
+    player.attribute_bonuses["hp"] = player.attribute_bonuses.get("hp", 0) + 5
+    player.attribute_bonuses["mp"] = player.attribute_bonuses.get("mp", 0) + 3
+    player.hp = _max_hp(player)
+    player.mp = _max_mp(player)
     return LEVEL_CHOICES
