@@ -20,6 +20,50 @@ runtime dependencies. No API keys, no LLM, no database.
 
 ---
 
+## Design Freeze v1.0 (final decisions, 2026-08-02)
+
+Keputusan final berikut mengikat seluruh engine (Combat, Quest, Event, World,
+Story). Mereka adalah **Single Source of Truth**; bagian spec lain yang
+bertentangan ditimpa oleh section ini. Semua keputusan ini direview ulang
+terhadap konsep ChatGPT & disetujui final.
+
+- **F1 — Combat rewards data-driven.** Reward kemenangan combat berasal dari
+  JSON, bukan formula level: `enemy.reward = {"xp": int, "gold": [min, max]}`.
+  `xp` tetap; `gold` di-roll seragam `random(min, max)` inclusive. Loot item
+  tetap dari tabel loot enemy (items only — **gold tidak lagi di loot table**).
+  Alasan: boss/elite/story enemy butuh reward berbeda tanpa ubah engine.
+- **F2 — Status effect stacking.** Status dibagi dua jenis:
+  - *DoT* (poison, burn, bleed): re-apply → power tetap, duration bertambah.
+  - *Control* (blind, silence, fear, sleep): re-apply → duration di-refresh.
+  - Tidak ada tracking `source` (satu slot per status). Cap duration:
+    `config.status.max_duration` (default 10 turn), **tidak hardcoded**.
+- **F3 — Enemy AI deterministik.** Enemy JSON punya `behavior`
+  (`aggressive` / `defensive` / `mage` / `coward`); urutan array `skills` =
+  prioritas skill. Tanpa pemilihan acak. Aturan behavior tree:
+  - `aggressive`: pakai skill prioritas tertinggi yang MP-nya cukup → attack.
+  - `defensive`: HP < 30% → heal skill (jika ada) → defend → attack.
+  - `mage`: magic → skill → attack.
+  - `coward`: HP < 20% → escape → defend.
+- **F4 — Level up growth.** Setiap level: max HP +5, max MP +3 (via
+  `attribute_bonuses`), lalu **full heal** (current = max), lalu pemain memilih
+  SATU upgrade dari `LEVEL_CHOICES`. Dua lapisan pertumbuhan: otomatis
+  (HP/MP max) + pilihan pemain.
+- **F5 — Rule engine condition operators.** Kondisi mendukung operator enum:
+  `EQ`, `NE`, `GT`, `LT`, `GTE`, `LTE`, `EXISTS`, `MISSING` (nilai string di
+  JSON; divalidasi oleh validator.py terhadap `constants.CONDITION_OPERATORS`).
+  Tanpa field `operator` → default `EQ` dengan `value: true` (backward
+  compatible dengan spec lama). Contoh:
+  ```json
+  {"kind": "flag", "name": "met_king", "operator": "EQ", "value": false}
+  {"kind": "flag", "name": "met_king", "operator": "EXISTS"}
+  {"kind": "level", "operator": "GTE", "value": 3}
+  ```
+- **B6 — Status transient.** Status effect hidup di `CombatState.statuses`
+  (per-combat), BUKAN di objek Player/Enemy. Combat selesai → status hilang,
+  CombatState dibuang. Tidak ikut save. Player immutable terhadap status.
+
+---
+
 ## Global Constraints
 
 - **Language:** All game text (UI, dialog, narration, errors) is Bahasa Indonesia.
@@ -52,8 +96,9 @@ runtime dependencies. No API keys, no LLM, no database.
 - **Regions (8, canonical):** Village, Forest, Capital, Academy, Ancient Ruins,
   Dungeon, Temple, Forbidden Land. MVP ships Village (Region 1) and Forest
   (Region 2). Arcs map to regions (see Story section).
-- **Leveling:** Manual. No auto-upgrade. Player picks one of: +2 Attack,
-  +2 Defense, +2 Agility, +2 Intelligence, +15 HP, +10 MP, +1 Skill Point.
+- **Leveling:** Auto-growth on level up (F4): max HP +5, max MP +3, full
+  heal. Then player picks ONE of: +2 Attack, +2 Defense, +2 Agility,
+  +2 Intelligence, +15 HP, +10 MP, +1 Skill Point.
 - **XP curve:** `xp_to_next(level) = 50 * level` where `level` is the current
   level before the increase (level 1→2 costs 50 XP, 2→3 costs 100 XP, etc.).
 - **Random ranges:** Damage variance is `random(0, 5)` inclusive (0–5).
@@ -147,10 +192,16 @@ flags dict, quests {active, completed}, memories list, learned_skills list.
 - **Escape**: `random(0,100) < 50 + agility - enemy_agility` → success.
   On failure the enemy gets one free basic attack.
 - **Defend**: halve incoming physical damage for one round; +no attack.
-- **Status effects (MVP)**: poison (DoT per turn, stacks as duration),
-  bleeding (DoT per turn), burn (DoT per turn). Each has duration in turns;
-  effects tick at start of afflicted actor's turn.
-- Victory → XP + gold + loot roll. Defeat → game over screen.
+- **Status effects (MVP)**: poison (DoT per turn), bleeding (DoT per turn),
+  burn (DoT per turn), plus control statuses blind/silence/fear/sleep. DoT
+  keeps `power`, re-apply adds `duration` (cap = `config.status.max_duration`,
+  default 10); control statuses refresh `duration`. Effects tick at start of
+  afflicted actor's turn; damage ignores defense. No source tracking (F2).
+- **Enemy AI (F3)**: deterministic, no RNG. `behavior` in enemy JSON selects
+  behavior tree; array order of `skills` is priority. See Design Freeze F3.
+- **Victory (F1)**: `xp = enemy.reward.xp`, `gold = random(reward.gold.min,
+  reward.gold.max)`, plus item loot table roll. Applied to player. No formula
+  based on level. Defeat → game over screen.
 
 ### Skill JSON schema (data/skills/<id>.json)
 
@@ -245,16 +296,43 @@ flags dict, quests {active, completed}, memories list, learned_skills list.
 }
 ```
 
+### Enemy JSON schema (data/enemies/<id>.json)
+
+```json
+{
+  "id": "goblin",
+  "name": "Goblin",
+  "level": 2,
+  "stats": {"attack": 5, "defense": 2, "hp": 5, "mp": 0, "agility": 6, "intelligence": 3},
+  "behavior": "aggressive",
+  "reward": {"xp": 30, "gold": [6, 12]},
+  "skills": ["goblin_bite"],
+  "loot": [
+    {"item": "herb", "chance": 25, "amount": 1}
+  ],
+  "weight": 1,
+  "tags": ["beast"],
+  "lore": "Makhluk kecil yang agresif."
+}
+```
+
+- `reward.xp` fixed, `reward.gold` = inclusive range, rolled via seeded RNG (F1).
+- `skills` array order = skill priority for AI (F3).
+- `weight` = encounter sampling weight (default 1). `tags` = free-form
+  labels (beast/humanoid/boss/etc.) reserved for quests, bestiary, equipment
+  modifiers; engine stores them, no logic in MVP.
+- Loot items only; gold comes from `reward.gold`, NOT the loot table (F1).
+
 ### Loot table (in enemy JSON)
 
 ```json
 "loot": [
-  {"item": "gold", "chance": 60, "amount": {"min": 5, "max": 15}},
   {"item": "herb", "chance": 25, "amount": 1}
 ]
 ```
 
-Roll once per item, in listed order. Deterministic via seeded RNG.
+Roll once per item, in listed order. Deterministic via seeded RNG. Gold is
+never a loot item — it lives in `reward.gold` (F1).
 
 ---
 
@@ -296,6 +374,33 @@ Roll once per item, in listed order. Deterministic via seeded RNG.
   "acquired_by": {"kind": "talk", "target": "old_man", "turn_index": 1}
 }
 ```
+
+### Conditions (rule engine) — Design Freeze F5
+
+Kondisi dipakai oleh event, dialog, quest, dan encounter untuk mengevaluasi
+state. Bentuk umum:
+
+```json
+{"kind": "<kind>", "name": "<target>", "operator": "<OP>", "value": <v>}
+```
+
+Operator (enum, divalidasi terhadap `constants.CONDITION_OPERATORS`):
+`EQ`, `NE`, `GT`, `LT`, `GTE`, `LTE`, `EXISTS`, `MISSING`. Tanpa `operator`
+→ default `EQ` value `true` (backward compatible).
+
+Kind yang didukung MVP:
+
+| kind | name = | operator valid | value |
+|------|--------|----------------|-------|
+| `flag` | flag key | EQ/NE/EXISTS/MISSING | bool |
+| `map` | map id | EQ/NE | string |
+| `time` | waktu | EQ/NE | string |
+| `level` | — | EQ/NE/GT/LT/GTE/LTE | int |
+| `quest_done` | quest id | EQ/NE/EXISTS/MISSING | bool |
+
+Contoh: `{"kind":"flag","name":"met_king","operator":"EQ","value":false}`,
+`{"kind":"level","operator":"GTE","value":3}`. Engine evaluator generik;
+kind/operator diluar tabel mengembalikan `false`.
 
 ---
 
