@@ -1,1 +1,9 @@
 .worktrees/
+.venv
+
+__pycache__/
+*.pyc
+saves/*.json
+logs/*.log
+.pytest_cache/
+.venv/
