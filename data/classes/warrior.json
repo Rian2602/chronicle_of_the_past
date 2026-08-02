@@ -1,0 +1,9 @@
+{
+  "id": "warrior",
+  "name": "Warrior",
+  "description": "Spesialis garis depan.",
+  "base_stats": {"attack": 12, "defense": 14, "hp": 100, "mp": 10, "agility": 8, "intelligence": 7},
+  "xp_bonus": 1.0,
+  "starting_skills": ["slash"],
+  "stat_bars": {"attack": 4, "defense": 5, "hp": 5, "mp": 1, "agility": 2, "intelligence": 1}
+}

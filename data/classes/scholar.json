@@ -1,0 +1,9 @@
+{
+  "id": "scholar",
+  "name": "Scholar",
+  "description": "Peneliti yang mencari kebenaran kuno.",
+  "base_stats": {"attack": 8, "defense": 10, "hp": 75, "mp": 45, "agility": 10, "intelligence": 16},
+  "xp_bonus": 1.2,
+  "starting_skills": ["inspect"],
+  "stat_bars": {"attack": 2, "defense": 3, "hp": 3, "mp": 4, "agility": 3, "intelligence": 5}
+}

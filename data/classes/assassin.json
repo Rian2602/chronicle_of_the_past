@@ -1,0 +1,9 @@
+{
+  "id": "assassin",
+  "name": "Assassin",
+  "description": "Pembunuh senyap dari bayangan.",
+  "base_stats": {"attack": 15, "defense": 6, "hp": 65, "mp": 12, "agility": 15, "intelligence": 11},
+  "xp_bonus": 1.0,
+  "starting_skills": ["backstab"],
+  "stat_bars": {"attack": 5, "defense": 1, "hp": 2, "mp": 1, "agility": 5, "intelligence": 3}
+}

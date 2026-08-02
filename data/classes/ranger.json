@@ -1,0 +1,9 @@
+{
+  "id": "ranger",
+  "name": "Ranger",
+  "description": "Ahli perburuan dan panah.",
+  "base_stats": {"attack": 13, "defense": 8, "hp": 75, "mp": 20, "agility": 15, "intelligence": 11},
+  "xp_bonus": 1.0,
+  "starting_skills": ["quick_shot"],
+  "stat_bars": {"attack": 4, "defense": 2, "hp": 3, "mp": 2, "agility": 5, "intelligence": 3}
+}
