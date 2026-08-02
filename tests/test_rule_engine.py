@@ -119,6 +119,142 @@ def test_evaluate_unknown_kind():
     assert evaluate({"kind": "bogus"}, gs) is False
 
 
+def test_evaluate_flag_name_key():
+    gs = GameState()
+    gs.flags["gate_open"] = True
+    assert evaluate({"kind": "flag", "name": "gate_open", "value": True}, gs) is True
+
+
+def test_evaluate_flag_legacy_key():
+    gs = GameState()
+    gs.flags["gate_open"] = True
+    assert evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs) is True
+    gs.flags["gate_open"] = False
+    assert evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs) is False
+
+
+def test_evaluate_flag_eq_false():
+    gs = GameState()
+    gs.flags["gate_open"] = True
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EQ", "value": False}, gs) is False
+    gs.flags["gate_open"] = False
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EQ", "value": False}, gs) is True
+
+
+def test_evaluate_flag_ne():
+    gs = GameState()
+    gs.flags["gate_open"] = True
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "NE", "value": True}, gs) is False
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "NE", "value": False}, gs) is True
+
+
+def test_evaluate_flag_exists():
+    gs = GameState()
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EXISTS"}, gs) is False
+    gs.flags["gate_open"] = False
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EXISTS"}, gs) is True
+
+
+def test_evaluate_flag_missing():
+    gs = GameState()
+    gs.flags["gate_open"] = True
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "MISSING"}, gs) is False
+    gs2 = GameState()
+    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "MISSING"}, gs2) is True
+
+
+def test_evaluate_flag_default_backward_compat():
+    gs = GameState()
+    gs.flags["x"] = True
+    assert evaluate({"kind": "flag", "name": "x", "value": True}, gs) is True
+    gs.flags["x"] = "set"
+    assert evaluate({"kind": "flag", "name": "x", "value": True}, gs) is False
+    gs.flags["x"] = False
+    assert evaluate({"kind": "flag", "name": "x", "value": True}, gs) is False
+
+
+def test_evaluate_level_gt():
+    gs = GameState()
+    gs.player = make_player(level=3)
+    assert evaluate({"kind": "level", "operator": "GT", "value": 2}, gs) is True
+    assert evaluate({"kind": "level", "operator": "GT", "value": 3}, gs) is False
+
+
+def test_evaluate_level_lt():
+    gs = GameState()
+    gs.player = make_player(level=3)
+    assert evaluate({"kind": "level", "operator": "LT", "value": 4}, gs) is True
+    assert evaluate({"kind": "level", "operator": "LT", "value": 3}, gs) is False
+
+
+def test_evaluate_level_eq_ne():
+    gs = GameState()
+    gs.player = make_player(level=3)
+    assert evaluate({"kind": "level", "operator": "EQ", "value": 3}, gs) is True
+    assert evaluate({"kind": "level", "operator": "EQ", "value": 2}, gs) is False
+    assert evaluate({"kind": "level", "operator": "NE", "value": 3}, gs) is False
+    assert evaluate({"kind": "level", "operator": "NE", "value": 2}, gs) is True
+
+
+def test_evaluate_level_lte():
+    gs = GameState()
+    gs.player = make_player(level=3)
+    assert evaluate({"kind": "level", "operator": "LTE", "value": 3}, gs) is True
+    assert evaluate({"kind": "level", "operator": "LTE", "value": 2}, gs) is False
+
+
+def test_evaluate_level_no_player_with_operator():
+    gs = GameState()
+    assert evaluate({"kind": "level", "operator": "GTE", "value": 1}, gs) is False
+
+
+def test_evaluate_map_ne():
+    gs = GameState()
+    gs.current_map = "village"
+    assert evaluate({"kind": "map", "name": "village", "operator": "NE"}, gs) is False
+    assert evaluate({"kind": "map", "name": "forest", "operator": "NE"}, gs) is True
+    assert evaluate({"kind": "map", "map": "forest", "operator": "NE"}, gs) is True
+
+
+def test_evaluate_time_ne():
+    gs = GameState()
+    gs.time = "night"
+    assert evaluate({"kind": "time", "name": "night", "operator": "NE"}, gs) is False
+    assert evaluate({"kind": "time", "time": "morning", "operator": "NE"}, gs) is True
+
+
+def test_evaluate_quest_done_exists_missing():
+    gs = GameState()
+    gs.player = make_player(quests_done=["quest001"])
+    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "EXISTS"}, gs) is True
+    assert evaluate({"kind": "quest_done", "name": "quest002", "operator": "EXISTS"}, gs) is False
+    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "MISSING"}, gs) is False
+    assert evaluate({"kind": "quest_done", "name": "quest002", "operator": "MISSING"}, gs) is True
+
+
+def test_evaluate_quest_done_eq_ne():
+    gs = GameState()
+    gs.player = make_player(quests_done=["quest001"])
+    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "EQ", "value": True}, gs) is True
+    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "NE", "value": True}, gs) is False
+    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "EQ", "value": False}, gs) is False
+
+
+def test_evaluate_unknown_operator():
+    gs = GameState()
+    gs.flags["x"] = True
+    assert evaluate({"kind": "flag", "name": "x", "operator": "FOO"}, gs) is False
+    gs.player = make_player(level=3)
+    assert evaluate({"kind": "level", "operator": "FOO", "value": 3}, gs) is False
+
+
+def test_constants_condition_operators():
+    from src.core import constants
+    assert constants.CONDITION_OPERATORS == (
+        "EQ", "NE", "GT", "LT", "GTE", "LTE", "EXISTS", "MISSING",
+    )
+
+
 class ScriptedRandomizer:
     def __init__(self, rolls):
         self._rolls = list(rolls)

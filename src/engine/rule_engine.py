@@ -23,19 +23,69 @@ def derived_stats(player, randomizer=None):
 
 def evaluate(condition: dict, game_state) -> bool:
     kind = condition.get("kind")
+    operator = condition.get("operator", "EQ")
     if kind == "flag":
-        return game_state.flags.get(condition.get("flag")) is True
+        flag_name = condition.get("name", condition.get("flag"))
+        value = condition.get("value", True)
+        if operator == "EQ":
+            return game_state.flags.get(flag_name) is value
+        if operator == "NE":
+            return game_state.flags.get(flag_name) is not value
+        if operator == "EXISTS":
+            return flag_name in game_state.flags
+        if operator == "MISSING":
+            return flag_name not in game_state.flags
+        return False
     if kind == "map":
-        return game_state.current_map == condition.get("map")
+        target = condition.get("name", condition.get("map"))
+        if operator == "EQ":
+            return game_state.current_map == target
+        if operator == "NE":
+            return game_state.current_map != target
+        return False
     if kind == "time":
-        return game_state.time == condition.get("time")
+        target = condition.get("name", condition.get("time"))
+        if operator == "EQ":
+            return game_state.time == target
+        if operator == "NE":
+            return game_state.time != target
+        return False
     if kind == "level":
         if game_state.player is None:
             return False
-        return game_state.player.level >= condition.get("gte", 0)
+        if condition.get("operator") is None and "gte" in condition and "value" not in condition:
+            return game_state.player.level >= condition["gte"]
+        operator = condition.get("operator", "EQ")
+        value = condition.get("value", True)
+        player_level = game_state.player.level
+        if operator == "EQ":
+            return player_level == value
+        if operator == "NE":
+            return player_level != value
+        if operator == "GT":
+            return player_level > value
+        if operator == "LT":
+            return player_level < value
+        if operator == "GTE":
+            return player_level >= value
+        if operator == "LTE":
+            return player_level <= value
+        return False
     if kind == "quest_done":
-        player = game_state.player
-        return condition.get("quest") in (player.quests_done if player else [])
+        if game_state.player is None:
+            return False
+        quest_id = condition.get("name", condition.get("quest"))
+        value = condition.get("value", True)
+        done = quest_id in game_state.player.quests_done
+        if operator == "EQ":
+            return done is value
+        if operator == "NE":
+            return done is not value
+        if operator == "EXISTS":
+            return done
+        if operator == "MISSING":
+            return not done
+        return False
     return False
 
 

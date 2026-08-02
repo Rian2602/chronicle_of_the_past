@@ -1,5 +1,5 @@
 import pytest
-from src.utils.validator import require_keys, SchemaError
+from src.utils.validator import require_keys, validate_condition, SchemaError
 
 
 def test_require_keys_missing():
@@ -45,3 +45,17 @@ def test_constants():
     assert constants.COMBAT_ACTIONS == [
         "attack", "skill", "magic", "item", "observe", "escape", "defend",
     ]
+    assert constants.CONDITION_OPERATORS == (
+        "EQ", "NE", "GT", "LT", "GTE", "LTE", "EXISTS", "MISSING",
+    )
+
+
+def test_validate_condition_ok():
+    validate_condition({"kind": "flag", "name": "x", "operator": "EQ", "value": True}, "p")
+    validate_condition({"kind": "level", "operator": "GTE", "value": 3}, "p")
+    validate_condition({"kind": "flag", "name": "x"}, "p")
+
+
+def test_validate_condition_unknown_operator():
+    with pytest.raises(SchemaError):
+        validate_condition({"kind": "flag", "name": "x", "operator": "FOO"}, "p")
