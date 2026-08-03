@@ -185,3 +185,13 @@ def test_empty_pool_returns_none():
     gs.current_map = make_map("forest", threat=8, pool=[])
     gs.enemies = {"wolf": make_enemy("wolf")}
     assert check_encounter(gs, Randomizer(seed=1)) is None
+
+
+def test_weighted_choice_all_zero_weights_returns_none():
+    for seed in range(1, 11):
+        assert Randomizer(seed=seed).weighted_choice([("a", 0), ("b", -1)]) is None
+
+
+def test_weighted_choice_single_entry_always_selected():
+    for seed in range(1, 11):
+        assert Randomizer(seed=seed).weighted_choice([("only", 5)]) == "only"

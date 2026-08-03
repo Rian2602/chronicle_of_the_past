@@ -88,6 +88,21 @@ def test_complete_requirement_talk_marks_met_and_completes():
     assert gs.flags.get("quest001_done") is True
 
 
+def test_complete_requirement_scholar_xp_bonus_applied():
+    gs = make_game_state({
+        "quest001": quest(
+            "quest001",
+            title="Temui Kepala Desa",
+            requirements=[{"kind": "talk", "target": "village_chief"}],
+            rewards={"xp": 50},
+        ),
+    })
+    gs.player.xp_bonus = 1.2
+    start_quest(gs, "quest001")
+    complete_requirement(gs, "talk", "village_chief")
+    assert gs.player.xp == 60
+
+
 def test_complete_requirement_reputation_accumulates():
     gs = make_game_state({
         "quest001": quest(

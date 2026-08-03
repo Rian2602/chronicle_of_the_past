@@ -114,6 +114,17 @@ def test_victory_full_fight_applies_xp_and_gold_rewards():
     assert state.enemy.stats["hp"] == 0
 
 
+def test_victory_scholar_xp_bonus_applied():
+    player = make_player(attack=50, defense=20, agility=30)
+    player.xp_bonus = 1.2
+    enemy = make_enemy(hp=10, attack=1, reward=REWARD)
+    state = run_fight(player, enemy)
+    assert state.result == CombatResult.VICTORY
+    assert state.xp == 30
+    assert state.player.xp == 36
+    assert "mendapat 36 XP" in state.log[-1]
+
+
 def test_defeat_full_fight_grants_no_rewards():
     player = make_player(attack=1, defense=0, agility=1, hp=5)
     player.xp = 10

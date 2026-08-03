@@ -1,6 +1,6 @@
 from src.core.randomizer import Randomizer
 from src.models.player import Player
-from src.systems.level_system import gain_xp, xp_to_next
+from src.systems.level_system import award_xp, gain_xp, xp_to_next
 
 
 def make_player(**overrides):
@@ -55,3 +55,9 @@ def test_gain_xp_exact_threshold():
     assert gain_xp(p, 0) == [2]
     assert p.level == 2
     assert p.xp == 0
+
+
+def test_award_xp_applies_xp_bonus():
+    assert award_xp(make_player(xp_bonus=1.2), 30) == 36
+    assert award_xp(make_player(), 30) == 30
+    assert award_xp(make_player(xp_bonus=0), 30) == 0
