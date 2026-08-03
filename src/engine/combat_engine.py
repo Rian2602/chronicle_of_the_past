@@ -295,16 +295,128 @@ def player_action(state, action, choice=None) -> bool:
     return False
 
 
+def _translate_enemy_effects(skill):
+    effects = [
+        {
+            "kind": effect["status"],
+            "power": effect.get("power", 0),
+            "duration": effect.get("duration", 1),
+        }
+        for effect in skill.get("effects", [])
+    ]
+    return effects or None
+
+
+def _affordable_skills(state):
+    return [
+        state.skills[skill_id]
+        for skill_id in state.enemy.skills
+        if skill_id in state.skills
+        and state.skills[skill_id]["cost"] <= state.enemy.stats["mp"]
+    ]
+
+
+def _use_enemy_skill(state, skill):
+    state.enemy.stats["mp"] -= skill["cost"]
+    if "heal" in skill:
+        heal = skill["heal"]
+        state.enemy.stats["hp"] = min(
+            state.enemy.stats["max_hp"], state.enemy.stats["hp"] + heal
+        )
+        state.log.append(f"{state.enemy.name} memulihkan {heal} HP.")
+        return
+    effects = _translate_enemy_effects(skill)
+    if skill["type"] == "magic":
+        resolve_hit(
+            state,
+            state.enemy.stats,
+            player_stats(state),
+            "player",
+            power=skill["power"],
+            is_magic=True,
+            effects=effects,
+        )
+    else:
+        resolve_hit(
+            state,
+            state.enemy.stats,
+            player_stats(state),
+            "player",
+            effects=effects,
+        )
+
+
+def _hp_ratio(state):
+    maximum = state.enemy.stats.get("max_hp", state.enemy.stats["hp"]) or 1
+    return state.enemy.stats["hp"] / maximum
+
+
+def _aggressive_turn(state):
+    affordable = _affordable_skills(state)
+    if affordable:
+        _use_enemy_skill(state, affordable[0])
+        return
+    resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+
+
+def _defensive_turn(state):
+    if _hp_ratio(state) < 0.30:
+        heal_skill = next(
+            (skill for skill in _affordable_skills(state) if "heal" in skill),
+            None,
+        )
+        if heal_skill is not None:
+            _use_enemy_skill(state, heal_skill)
+            return
+    if state.enemy_defending:
+        state.enemy_defending = False
+        resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+        return
+    state.enemy_defending = True
+    state.log.append(f"{state.enemy.name} bertahan!")
+
+
+def _mage_turn(state):
+    affordable = _affordable_skills(state)
+    magic = next((skill for skill in affordable if skill["type"] == "magic"), None)
+    if magic is not None:
+        _use_enemy_skill(state, magic)
+        return
+    if affordable:
+        _use_enemy_skill(state, affordable[0])
+        return
+    resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+
+
+def _coward_turn(state):
+    if _hp_ratio(state) < 0.20:
+        state.log.append(f"{state.enemy.name} mencoba kabur tapi gagal!")
+        return
+    if state.enemy_defending:
+        state.enemy_defending = False
+        resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+        return
+    state.enemy_defending = True
+    state.log.append(f"{state.enemy.name} bertahan!")
+
+
 def enemy_turn(state):
     if state.over:
         return
-    state.enemy_defending = False
     messages = status_system.tick_statuses(state, state.enemy.id)
     if messages:
         state.log.extend(messages)
     if state.enemy.stats["hp"] <= 0:
         _on_victory(state)
         return
-    resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+    behavior = state.enemy.behavior
+    if behavior == "defensive":
+        _defensive_turn(state)
+    elif behavior == "mage":
+        _mage_turn(state)
+    elif behavior == "coward":
+        _coward_turn(state)
+    else:
+        _aggressive_turn(state)
     if state.player.hp <= 0:
         _on_defeat(state)
