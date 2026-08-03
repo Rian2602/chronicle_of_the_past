@@ -206,8 +206,8 @@ class Game:
             return
         self._current_dialog = dialog
         self._talk_npc_id = npc_id
-        # Perbaikan: jangan tampilkan nama NPC 2x (dialog_view sudah menampilkannya)
-        out.append(dialog_view.render(dialog, self.state))
+        # Perbaikan: tampilkan nama NPC yang benar (bukan ID)
+        out.append(dialog_view.render(dialog, self.state, npc_id=npc_id, npc_name=npc["name"]))
 
     def _cmd_look(self, out):
         m = self.state.current_map
