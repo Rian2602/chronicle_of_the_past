@@ -1,15 +1,29 @@
 from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
 from src.engine import rule_engine
 from src.models.player import max_hp, max_mp
-from src.systems import inventory_system
-from src.systems import status_system
+from src.systems import inventory_system, status_system
 
 
 def magic_damage(power, attacker_int, defender_magic_res) -> int:
+    """Calculate magic damage based on power, intelligence and magic resistance."""
     return max(1, round(power + attacker_int * 0.5 - defender_magic_res))
 
 
 def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_magic=False, effects=None) -> DamageResult:
+    """Resolve a hit between attacker and defender.
+    
+    Args:
+        state: CombatState object
+        attacker_stats: Attacker's statistics dictionary
+        defender_stats: Defender's statistics dictionary
+        defender_id: ID of the defender ("player" or enemy ID)
+        power: Base power of the attack (for magic)
+        is_magic: Whether this is a magic attack
+        effects: Status effects to apply on hit
+        
+    Returns:
+        DamageResult with damage, critical, and missed information
+    """
     if defender_id == "player":
         defender_name = state.player.name
         attacker_name = state.enemy.name
