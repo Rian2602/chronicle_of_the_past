@@ -359,6 +359,8 @@ class Game:
         if state.over:
             out.extend(self._finish_combat(state))
             self._combat = None
+            # Flush input buffer setelah combat selesai untuk mencegah input terbawa ke scene berikutnya
+            self._input_buffer = []
         else:
             out.append(combat_view.render(state))
 

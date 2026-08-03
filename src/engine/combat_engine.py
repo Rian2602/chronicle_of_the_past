@@ -387,6 +387,7 @@ def _aggressive_turn(state):
 
 
 def _defensive_turn(state):
+    # Cek apakah HP rendah dan ada skill heal yang affordable
     if _hp_ratio(state) < 0.30:
         heal_skill = next(
             (skill for skill in _affordable_skills(state) if "heal" in skill),
@@ -395,6 +396,15 @@ def _defensive_turn(state):
         if heal_skill is not None:
             _use_enemy_skill(state, heal_skill)
             return
+        # Jika tidak ada heal skill atau MP tidak cukup, fallback ke defend
+        if state.enemy_defending:
+            state.enemy_defending = False
+            resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+            return
+        state.enemy_defending = True
+        state.log.append(f"{state.enemy.name} bertahan!")
+        return
+    
     if state.enemy_defending:
         state.enemy_defending = False
         resolve_hit(state, state.enemy.stats, player_stats(state), "player")
