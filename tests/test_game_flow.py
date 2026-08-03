@@ -178,6 +178,14 @@ def test_midcombat_save_restores_statuses(tmp_path):
     assert effects[0].power == 5
 
 
+def test_restore_combat_does_not_mutate_shared_enemy(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    wolf = g.state.enemies["wild_wolf"]
+    original_hp = wolf.stats["hp"]
+    g._restore_combat({"enemy_id": "wild_wolf", "enemy_hp": 5, "statuses": {}})
+    assert wolf.stats["hp"] == original_hp
+
+
 def test_restore_combat_corrupt_result_does_not_crash(tmp_path):
     ctx, g = _mid_combat_game(tmp_path)
     g._combat = None

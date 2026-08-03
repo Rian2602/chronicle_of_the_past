@@ -1,3 +1,5 @@
+import copy
+
 from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
 from src.engine import rule_engine
 from src.core.constants import STATS
@@ -77,6 +79,8 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
 
 
 def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max_status_duration=10, items=None) -> CombatState:
+    enemy = copy.copy(enemy)
+    enemy.stats = dict(enemy.stats)
     player_initiative = rule_engine.derived_stats(player, randomizer)["initiative"]
     enemy_initiative = enemy.stats.get("agility", 0) + randomizer.roll(0, 5)
     order = sorted(

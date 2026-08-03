@@ -80,7 +80,7 @@ def test_physical_skill_costs_mp_and_deals_damage():
     )
     assert player_action(state, CombatAction.SKILL, "strike") is False
     assert player.mp == 20 - 3
-    assert 0 < enemy.stats["hp"] < 50
+    assert 0 < state.enemy.stats["hp"] < 50
     assert any("menyerang" in line or "Kritikal" in line for line in state.log)
 
 
@@ -92,7 +92,7 @@ def test_magic_skill_uses_magic_formula_and_applies_burn():
     )
     state = start_combat(player, enemy, Randomizer(seed=7), skills={"fire": skill})
     assert player_action(state, CombatAction.MAGIC, "fire") is False
-    assert enemy.stats["hp"] == 50 - 12
+    assert state.enemy.stats["hp"] == 50 - 12
     assert "Kamu melontarkan mantra ke Goblin, -12 HP." in state.log
     burn = next(status for status in state.statuses[enemy.id] if status.kind == "burn")
     assert burn.power == 2

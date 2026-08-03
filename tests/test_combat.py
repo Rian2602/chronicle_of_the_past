@@ -125,6 +125,15 @@ def test_victory_scholar_xp_bonus_applied():
     assert "mendapat 36 XP" in state.log[-1]
 
 
+def test_combat_does_not_mutate_shared_enemy():
+    player = make_player(attack=50, defense=20, agility=30)
+    enemy = make_enemy(hp=10, attack=1, reward=REWARD)
+    run_fight(player, enemy)
+    assert enemy.stats["hp"] == 10
+    state2 = start_combat(player, enemy, Randomizer(seed=7))
+    assert state2.enemy.stats["hp"] == 10
+
+
 def test_defeat_full_fight_grants_no_rewards():
     player = make_player(attack=1, defense=0, agility=1, hp=5)
     player.xp = 10
@@ -151,20 +160,20 @@ def test_burn_from_magic_skill_ticks_on_later_rounds():
     state = start_combat(player, enemy, Randomizer(seed=7), skills=skills)
 
     player_action(state, CombatAction.MAGIC, "fire")
-    assert enemy.stats["hp"] == 50
+    assert state.enemy.stats["hp"] == 50
     assert state.statuses[enemy.id][0].kind == "burn"
     assert state.statuses[enemy.id][0].duration == 3
 
     drops = []
     for _ in range(3):
-        hp_before = enemy.stats["hp"]
+        hp_before = state.enemy.stats["hp"]
         enemy_turn(state)
-        drops.append(hp_before - enemy.stats["hp"])
+        drops.append(hp_before - state.enemy.stats["hp"])
         next_turn(state)
         player_action(state, CombatAction.DEFEND)
 
     assert drops == [3, 3, 3]
-    assert enemy.stats["hp"] == 41
+    assert state.enemy.stats["hp"] == 41
     assert state.statuses[enemy.id] == []
     assert "terkena luka bakar" in " ".join(state.log)
     assert state.round_no == 2

@@ -82,7 +82,8 @@ def test_start_combat_builds_state_with_initiative_order_player_first():
     assert state.enemy_defending is False
     assert state.statuses == {}
     assert state.player is player
-    assert state.enemy is enemy
+    assert state.enemy.id == enemy.id
+    assert state.enemy is not enemy
     assert state.randomizer is rng
     assert state.skills == {}
     assert state.loot_resolver is None
@@ -113,7 +114,8 @@ def test_player_stats_include_effective_and_derived():
 def test_enemy_stats_returns_enemy_stats():
     enemy = make_enemy()
     state = start_combat(make_player(), enemy, Randomizer(seed=7))
-    assert enemy_stats(state) is enemy.stats
+    assert enemy_stats(state) is state.enemy.stats
+    assert enemy_stats(state) is not enemy.stats
 
 
 def test_basic_attack_flow_reaches_victory():

@@ -1,4 +1,5 @@
 from src.core import input_handler, save_manager
+import copy
 from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
 from src.engine import dialog_engine, event_engine, quest_engine
@@ -79,6 +80,8 @@ class Game:
         if enemy_id is None or enemy_id not in self.state.enemies:
             return  # Tidak bisa restore tanpa enemy yang valid
         enemy = self.state.enemies[enemy_id]
+        enemy = copy.copy(enemy)
+        enemy.stats = dict(enemy.stats)
         # Set HP enemy sesuai yang tersimpan
         enemy.stats["hp"] = combat_data.get("enemy_hp", enemy.stats.get("hp", 1))
         # Rekonstruksi statuses dari dict ke StatusEffect objects
