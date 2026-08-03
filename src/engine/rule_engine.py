@@ -1,10 +1,10 @@
-def derived_stats(player, randomizer=None):
-    def effective(stat):
-        return player.base_stats.get(stat, 0) + player.attribute_bonuses.get(stat, 0)
+from src.models.player import effective_stat
 
-    agility = effective("agility")
-    intelligence = effective("intelligence")
-    defense = effective("defense")
+
+def derived_stats(player, randomizer=None):
+    agility = effective_stat(player, "agility")
+    intelligence = effective_stat(player, "intelligence")
+    defense = effective_stat(player, "defense")
     level = player.level
 
     return {
