@@ -6,7 +6,7 @@
   "requirements": [
     {"kind": "talk", "target": "village_chief"}
   ],
-  "rewards": {"xp": 50, "gold": 20, "reputation": {"village": 10}},
+  "rewards": {"xp": 50, "gold": 20, "reputation": {"merchant_guild": 10}},
   "flags_on_complete": ["quest001_done"],
   "next": null
 }

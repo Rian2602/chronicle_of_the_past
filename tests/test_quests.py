@@ -210,5 +210,5 @@ def test_quest_data_files_load_via_load_json():
     assert quest001["next"] is None
     assert quest002["id"] == "quest002"
     assert quest002["title"] == "Bahaya di Hutan"
-    assert quest002["requirements"] == [{"kind": "flag", "target": "wolves_defeated"}]
+    assert quest002["requirements"] == [{"kind": "enemy", "target": "wild_wolf"}]
     assert quest002["next"] is None

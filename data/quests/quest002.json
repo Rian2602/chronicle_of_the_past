@@ -4,9 +4,9 @@
   "type": "side",
   "description": "Kalahkan serigala di tepi hutan.",
   "requirements": [
-    {"kind": "flag", "target": "wolves_defeated"}
+    {"kind": "enemy", "target": "wild_wolf"}
   ],
-  "rewards": {"xp": 40, "gold": 15, "reputation": {"village": 5}},
+  "rewards": {"xp": 40, "gold": 15, "reputation": {"merchant_guild": 5}},
   "flags_on_complete": ["quest002_done"],
   "next": null
 }

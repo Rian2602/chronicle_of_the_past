@@ -1,0 +1,11 @@
+{
+  "id": "quick_shot",
+  "name": "Quick Shot",
+  "type": "physical",
+  "cost": 0,
+  "target": "single_enemy",
+  "power": 0,
+  "effects": [],
+  "requires": {},
+  "description": "Tembakan panah cepat."
+}

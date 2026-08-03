@@ -1,0 +1,8 @@
+[
+  {
+    "id": "arc_01_the_stranger",
+    "title": "Arc 1 — The Stranger",
+    "region": "village",
+    "beats": ["boot", "wake", "meet_old_man", "quest001", "quest002", "forest", "divergence_hint"]
+  }
+]

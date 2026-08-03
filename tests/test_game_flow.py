@@ -1,5 +1,7 @@
 from src.core.game_context import GameContext
 from src.core.game import Game
+from src.engine.combat_engine import start_combat
+from src.systems import loot_system
 
 
 def test_new_game_and_status(tmp_path):
@@ -58,3 +60,41 @@ def test_rest_heals(tmp_path):
     out = g.run_turn("rest")
     assert "morning" in out
     assert g.state.player.hp >= 50
+
+
+def test_failed_escape_enemy_attacks_once(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.hp = 1000
+    g.state.player.attribute_bonuses["agility"] = -100
+    wolf = g.state.enemies["wild_wolf"]
+    wolf.behavior = "aggressive"
+    wolf.stats["hp"] = 1000
+    wolf.stats["max_hp"] = 1000
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    g.run_turn("escape")
+    assert g._combat is not None
+    attacks = sum(
+        1
+        for line in g._combat.log
+        if "menyerang" in line or "meleset" in line or "Kritikal!" in line
+    )
+    assert attacks == 1
+
+
+def test_dialog_gated_choice_maps_correct_branch(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.run_turn("talk old_man")
+    g.run_turn("2")  # "Pergi." (gated-out choice not shown, so #2 is "Pergi.")
+    assert g.state.flags.get("met_old_man") is None
+    assert g._current_dialog is None

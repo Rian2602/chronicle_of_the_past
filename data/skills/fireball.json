@@ -1,0 +1,11 @@
+{
+  "id": "fireball",
+  "name": "Fireball",
+  "type": "magic",
+  "cost": 8,
+  "target": "single_enemy",
+  "power": 12,
+  "effects": [{"status": "burn", "power": 3, "duration": 2}],
+  "requires": {},
+  "description": "Bola api yang membakar musuh."
+}

@@ -5,7 +5,7 @@
   "stats": {"attack": 5, "defense": 2, "hp": 5, "mp": 0, "agility": 6, "intelligence": 3},
   "behavior": "aggressive",
   "reward": {"xp": 30, "gold": [6, 12]},
-  "skills": [],
+  "skills": ["bite"],
   "loot": [
     {"item": "herb", "chance": 25, "amount": 1}
   ],

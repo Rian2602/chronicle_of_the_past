@@ -273,7 +273,9 @@ class Game:
         if index < 0 or index >= len(choices):
             out.append("Pilihan tidak valid.")
             return
-        next_id = dialog_engine.choose(self.state, dialog, index)
+        selected = choices[index]
+        full_index = dialog["choices"].index(selected)
+        next_id = dialog_engine.choose(self.state, dialog, full_index)
         if next_id is None:
             self._end_dialog(out)
         else:
@@ -297,8 +299,7 @@ class Game:
         state = self._combat
         choice = cmd.args[0] if cmd.args else None
         free_turn = player_action(state, cmd.action, choice=choice)
-        retaliated = bool(state.log and state.log[-1] == "Gagal melarikan diri!")
-        if not state.over and not free_turn and not retaliated:
+        if not state.over and not free_turn and cmd.action != "escape":
             enemy_turn(state)
         if state.over:
             out.extend(self._finish_combat(state))

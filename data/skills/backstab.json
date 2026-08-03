@@ -1,0 +1,11 @@
+{
+  "id": "backstab",
+  "name": "Backstab",
+  "type": "physical",
+  "cost": 0,
+  "target": "single_enemy",
+  "power": 0,
+  "effects": [],
+  "requires": {},
+  "description": "Tikaman dari belakang."
+}

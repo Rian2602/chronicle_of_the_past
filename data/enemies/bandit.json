@@ -5,7 +5,7 @@
   "stats": {"attack": 10, "defense": 5, "hp": 20, "mp": 8, "agility": 7, "intelligence": 6},
   "behavior": "aggressive",
   "reward": {"xp": 70, "gold": [15, 30]},
-  "skills": [],
+  "skills": ["backstab"],
   "loot": [
     {"item": "potion", "chance": 30, "amount": 1}
   ],
