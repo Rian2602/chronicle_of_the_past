@@ -20,7 +20,15 @@ from src.systems import (
 )
 from src.ui import ascii_loader, combat_view, dialog_view, hud, inventory_view
 
-_COMBAT_ACTIONS = {"attack", "skill", "magic", "item", "observe", "escape", "defend"}
+_COMBAT_ACTIONS = {
+    "attack",
+    "skill",
+    "magic",
+    "item",
+    "observe",
+    "escape",
+    "defend",
+}
 
 
 class Game:
@@ -85,33 +93,26 @@ class Game:
         return hud.render(self.state.player, self.state) + "\n\n" + "\n".join(out)
 
     def _dispatch(self, cmd, out):
+        """Dispatch command to appropriate handler method."""
         action = cmd.action
-        if action == "status":
-            self._cmd_status(out)
-        elif action == "help":
-            self._cmd_help(out)
-        elif action == "go":
-            self._cmd_go(cmd, out)
-        elif action == "rest":
-            self._cmd_rest(out)
-        elif action == "talk":
-            self._cmd_talk(cmd, out)
-        elif action == "look":
-            self._cmd_look(out)
-        elif action == "explore":
-            self._cmd_explore(out)
-        elif action == "inventory":
-            self._cmd_inventory(out)
-        elif action == "use":
-            self._cmd_use(cmd, out)
-        elif action == "equip":
-            self._cmd_equip(cmd, out)
-        elif action == "unequip":
-            self._cmd_unequip(cmd, out)
-        elif action == "save":
-            self._cmd_save(cmd, out)
-        elif action == "quests":
-            self._cmd_quests(out)
+        action_handlers = {
+            "status": lambda: self._cmd_status(out),
+            "help": lambda: self._cmd_help(out),
+            "go": lambda: self._cmd_go(cmd, out),
+            "rest": lambda: self._cmd_rest(out),
+            "talk": lambda: self._cmd_talk(cmd, out),
+            "look": lambda: self._cmd_look(out),
+            "explore": lambda: self._cmd_explore(out),
+            "inventory": lambda: self._cmd_inventory(out),
+            "use": lambda: self._cmd_use(cmd, out),
+            "equip": lambda: self._cmd_equip(cmd, out),
+            "unequip": lambda: self._cmd_unequip(cmd, out),
+            "save": lambda: self._cmd_save(cmd, out),
+            "quests": lambda: self._cmd_quests(out),
+        }
+
+        if action in action_handlers:
+            action_handlers[action]()
         elif action == "select":
             out.append("Tidak ada dialog aktif.")
         elif action == "":
