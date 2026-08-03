@@ -23,7 +23,14 @@ def _engine_state(game_state, combat=None):
     current_map = game_state.current_map
     combat_data = None
     if combat is not None:
-        from src.engine.combat_interfaces import CombatResult
+        from src.engine.combat_interfaces import CombatResult, StatusEffect
+        # Serialisasi statuses: konversi StatusEffect objects ke dict
+        serialized_statuses = {}
+        for target_id, effects in combat.statuses.items():
+            serialized_statuses[target_id] = [
+                {"kind": eff.kind, "duration": eff.duration, "power": eff.power}
+                for eff in effects
+            ]
         combat_data = {
             "round_no": combat.round_no,
             "turn_order": combat.turn_order,
@@ -34,7 +41,7 @@ def _engine_state(game_state, combat=None):
             "observe_used": combat.observe_used,
             "player_defending": combat.player_defending,
             "enemy_defending": combat.enemy_defending,
-            "statuses": combat.statuses,
+            "statuses": serialized_statuses,
             "xp": getattr(combat, "xp", 0),
             "gold": getattr(combat, "gold", 0),
             "loot": combat.loot or [],

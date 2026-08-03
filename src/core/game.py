@@ -83,13 +83,20 @@ class Game:
     
     def _restore_combat(self, combat_data):
         """Restore combat state dari data yang di-load."""
-        from src.engine.combat_interfaces import CombatResult, CombatState
+        from src.engine.combat_interfaces import CombatResult, CombatState, StatusEffect
         enemy_id = combat_data.get("enemy_id")
         if enemy_id is None or enemy_id not in self.state.enemies:
             return  # Tidak bisa restore tanpa enemy yang valid
         enemy = self.state.enemies[enemy_id]
         # Set HP enemy sesuai yang tersimpan
         enemy.stats["hp"] = combat_data.get("enemy_hp", enemy.stats.get("hp", 1))
+        # Rekonstruksi statuses dari dict ke StatusEffect objects
+        restored_statuses = {}
+        for target_id, effects in combat_data.get("statuses", {}).items():
+            restored_statuses[target_id] = [
+                StatusEffect(kind=eff["kind"], duration=eff["duration"], power=eff["power"])
+                for eff in effects
+            ]
         # Buat CombatState baru dengan data yang tersimpan
         self._combat = CombatState(
             round_no=combat_data.get("round_no", 1),
@@ -101,7 +108,7 @@ class Game:
             observe_used=combat_data.get("observe_used", False),
             player_defending=combat_data.get("player_defending", False),
             enemy_defending=combat_data.get("enemy_defending", False),
-            statuses=combat_data.get("statuses", {}),
+            statuses=restored_statuses,
             player=self.state.player,
             enemy=enemy,
             randomizer=self.randomizer,
@@ -375,11 +382,8 @@ class Game:
     def _apply_level_ups(self, levels):
         p = self.state.player
         for _ in levels:
-            # Tampilkan pilihan level up ke player
-            choices = level_system.LEVEL_CHOICES
-            p.attribute_bonuses["hp"] = p.attribute_bonuses.get("hp", 0) + 5
-            p.attribute_bonuses["mp"] = p.attribute_bonuses.get("mp", 0) + 3
-            p.hp = max_hp(p)
-            p.mp = max_mp(p)
-            # Auto-apply HP choice sebagai default (bisa dikembangkan dengan input user)
+            # on_level_up sudah menangani base bonus (+5 HP, +3 MP) dan mengembalikan pilihan
+            choices = level_system.on_level_up(p)
+            # Auto-apply pilihan HP sebagai default (bisa dikembangkan dengan input user nanti)
+            # Hanya apply_choice untuk menghindari double counting karena on_level_up sudah handle base stats
             level_system.apply_choice(p, "hp")
