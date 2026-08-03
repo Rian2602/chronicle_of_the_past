@@ -1,7 +1,6 @@
 from src.engine.dialog_engine import available_choices, choose, get_dialog
 from src.core.game_context import GameContext
 from src.core.game_state import GameState
-from src.models.npc import Npc
 from src.models.player import Player
 
 
@@ -53,12 +52,6 @@ def test_get_dialog_from_context():
     ctx = GameContext(data_dir="data")
     dlg = get_dialog(ctx, "dialog_old_man_main")
     assert dlg["id"] == "dialog_old_man_main"
-
-
-def test_npc_model_has_relationship():
-    npc = Npc(id="x", name="X", location="village", role="mentor",
-              faction="merchant_guild", dialogs=[])
-    assert npc.relationship == {}
 
 
 def test_factions_json_uses_frozen_ids():

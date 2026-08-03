@@ -31,11 +31,16 @@ Modul tanpa pemanggil produksi (hanya dipakai test-nya sendiri / tidak sama seka
 - `src/models/npc.py`, `skill.py`, `quest.py` — produksi memakai raw dict dari
   ctx; model hanya dipakai `tests/test_models.py` dan `test_dialog.py`.
 
-Field mati:
+Field mati **yang DIKELUARKAN dari scope**: `Item.type`, `Enemy.tags`,
+`Map.time_effects` sengaja DIPERTAHANKAN — konstruksi `Item(**data)` /
+`Enemy(**data)` / `Map(**data)` di `game.py:46-48` memerlukan field itu ada
+(diisi dari JSON), sehingga menghapusnya membutuhkan filter kwargs = lebih
+banyak kode tanpa manfaat perilaku. Sama: `inventory_system.carry_capacity`
+HIDUP (dipanggil `add_item`, yang dipakai loot pickup); yang mati justru key
+`carry_capacity` di `rule_engine.derived_stats` (dihapus di Tier 2).
 
-- `Item.type`, `Enemy.tags`, `Map.time_effects` — nol pemakaian di `src/`.
-- `inventory_system.carry_capacity` — nol pemanggil (yang hidup:
-  `rule_engine.derived_stats`).
+Konstanta mati dihapus:
+
 - `constants.CONDITION_OPERATORS` — hanya validator.py + `test_rule_engine.py`.
 - `constants.TIMES` — hanya `test_validator.py`.
 - `constants.COMBAT_ACTIONS` — nol pemakaian (game.py pakai set lokal).
@@ -49,9 +54,12 @@ di `test_rule_engine.py`.
 
 - **Aksi combat (3 sumber → 1):** enum `CombatAction` (combat_interfaces) jadi
   satu-satunya; set `_COMBAT_ACTIONS` di game.py diganti set dari enum;
-  `constants.COMBAT_ACTIONS` dihapus.
+  `constants.COMBAT_ACTIONS` dihapus (sudah di Tier 1).
 - **Stat list (2 → 1):** `constants.STATS` jadi satu-satunya; `TOTAL_STATS`
   di equipment_system dihapus.
+- **carry_capacity (2 → 1):** hapus key `carry_capacity` dari
+  `rule_engine.derived_stats` (nol pembaca); `inventory_system.carry_capacity`
+  tetap satu-satunya.
 - **Stat math (duplikat → helper bersama di rule_engine):**
   - `accuracy(agility)`, `crit_chance(agility)` dipakai oleh `derived_stats`
     dan `damage_roll`.

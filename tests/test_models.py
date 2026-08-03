@@ -2,10 +2,7 @@ from src.models.enemy import Enemy
 from src.models.event import Event
 from src.models.item import Item
 from src.models.map import Map
-from src.models.npc import Npc
 from src.models.player import Player, max_hp, max_mp
-from src.models.quest import Quest
-from src.models.skill import Skill
 
 
 def test_player_max_hp():
@@ -118,38 +115,6 @@ def test_item_modifiers_are_independent():
     assert i2.modifiers == {}
 
 
-def test_skill_from_dict():
-    data = {
-        "id": "sk_bash",
-        "name": "Bash",
-        "type": "combat",
-        "cost": 2,
-        "target": "enemy",
-        "power": 15,
-        "effects": [{"stat": "hp", "amount": -15}],
-        "requires": {"class_id": "warrior"},
-        "description": "A heavy strike.",
-    }
-    skill = Skill(**data)
-    for key, value in data.items():
-        assert getattr(skill, key) == value
-
-
-def test_skill_defaults():
-    s = Skill(id="sk_bash", name="Bash", type="combat", cost=2, target="enemy")
-    assert s.power == 0
-    assert s.effects == []
-    assert s.requires == {}
-    assert s.description == ""
-
-
-def test_skill_mutable_defaults_are_independent():
-    a = Skill(id="s1", name="X", type="combat", cost=1, target="enemy")
-    b = Skill(id="s2", name="Y", type="combat", cost=1, target="enemy")
-    a.effects.append("e")
-    assert b.effects == []
-
-
 def test_enemy_from_dict():
     data = {
         "id": "en_rat",
@@ -168,20 +133,6 @@ def test_enemy_from_dict():
 def test_enemy_default_lore():
     e = Enemy(id="en_rat", name="Giant Rat", level=1, stats={}, loot=[], skills=[])
     assert e.lore == ""
-
-
-def test_npc_from_dict():
-    data = {
-        "id": "np_blacksmith",
-        "name": "Goran",
-        "location": "iron_forge",
-        "role": "blacksmith",
-        "faction": "merchant_guild",
-        "dialogs": ["hi", "shop"],
-    }
-    npc = Npc(**data)
-    for key, value in data.items():
-        assert getattr(npc, key) == value
 
 
 def test_map_from_dict():
@@ -216,29 +167,6 @@ def test_map_time_effects_are_independent():
              description="", ascii_art="", exits=[], npcs=[], enemy_pool=[])
     m1.time_effects["night"] = {"description": "dark"}
     assert m2.time_effects == {}
-
-
-def test_quest_from_dict():
-    data = {
-        "id": "q001",
-        "title": "Rat Problem",
-        "type": "combat",
-        "description": "Clear the cellar.",
-        "requirements": [{"kill": "en_rat", "count": 3}],
-        "rewards": {"gold": 20, "xp": 30},
-        "flags_on_complete": ["q001_done"],
-        "next": "q002",
-    }
-    quest = Quest(**data)
-    for key, value in data.items():
-        assert getattr(quest, key) == value
-
-
-def test_quest_next_defaults_to_none():
-    q = Quest(id="q999", title="Last", type="final",
-              description="", requirements=[], rewards={},
-              flags_on_complete=[])
-    assert q.next is None
 
 
 def test_event_from_dict():

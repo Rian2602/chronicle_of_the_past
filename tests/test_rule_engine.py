@@ -248,13 +248,6 @@ def test_evaluate_unknown_operator():
     assert evaluate({"kind": "level", "operator": "FOO", "value": 3}, gs) is False
 
 
-def test_constants_condition_operators():
-    from src.core import constants
-    assert constants.CONDITION_OPERATORS == (
-        "EQ", "NE", "GT", "LT", "GTE", "LTE", "EXISTS", "MISSING",
-    )
-
-
 class ScriptedRandomizer:
     def __init__(self, rolls):
         self._rolls = list(rolls)
