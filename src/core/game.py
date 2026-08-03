@@ -89,12 +89,18 @@ class Game:
                 for eff in effects
             ]
         # Buat CombatState baru dengan data yang tersimpan
+        saved_result = combat_data.get("result")
+        result = (
+            CombatResult(saved_result)
+            if saved_result in {r.value for r in CombatResult}
+            else None
+        )
         self._combat = CombatState(
             round_no=combat_data.get("round_no", 1),
             turn_order=combat_data.get("turn_order", ["player", enemy_id]),
             current_index=combat_data.get("current_index", 0),
             over=combat_data.get("over", False),
-            result=CombatResult(combat_data["result"]) if combat_data.get("result") else None,
+            result=result,
             log=combat_data.get("log", []),
             observe_used=combat_data.get("observe_used", False),
             player_defending=combat_data.get("player_defending", False),

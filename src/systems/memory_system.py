@@ -1,6 +1,3 @@
-from src.models.player import Player
-
-
 def grant_memory(game_state, memory_id, memory=None) -> dict:
     if memory is None:
         memory = next(
@@ -11,9 +8,7 @@ def grant_memory(game_state, memory_id, memory=None) -> dict:
         return None
     player = game_state.player
     if player is None:
-        player = game_state.player = Player(
-            name="", class_id="", hp=0, mp=0, base_stats={}
-        )
+        return None
     if any(entry["id"] == memory_id for entry in player.memories):
         return memory
     for key in memory["flags_set"]:

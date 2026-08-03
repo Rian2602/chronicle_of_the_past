@@ -2,11 +2,13 @@ def xp_to_next(level: int) -> int:
     return 50 * level
 
 
+def award_xp(player, amount: int) -> int:
+    # Apply class XP bonus (single source of truth for the multiplier)
+    return int(amount * getattr(player, "xp_bonus", 1.0))
+
+
 def gain_xp(player, amount: int, randomizer=None) -> list:
-    # Apply class XP bonus if available
-    xp_multiplier = getattr(player, 'xp_bonus', 1.0)
-    actual_xp = int(amount * xp_multiplier)
-    player.xp += actual_xp
+    player.xp += award_xp(player, amount)
     levels = []
     while player.xp >= xp_to_next(player.level):
         player.xp -= xp_to_next(player.level)

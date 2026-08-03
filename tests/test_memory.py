@@ -28,11 +28,18 @@ def make_game_state():
 
 
 def test_grant_sets_flags():
-    gs = GameState()
+    gs = make_game_state()
     memory = {"id":"memory001","flags_set":["knows_village_burns"]}
     grant_memory(gs, "memory001", memory)
     assert has_memory(gs, "memory001")
     assert gs.flags.get("knows_village_burns") is True
+
+
+def test_grant_without_player_returns_none():
+    gs = GameState()
+    memory = {"id": "memory001", "flags_set": ["knows_village_burns"]}
+    assert grant_memory(gs, "memory001", memory) is None
+    assert gs.player is None
 
 
 def test_grant_resolves_from_registry_when_memory_omitted():

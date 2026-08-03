@@ -2,7 +2,7 @@ from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState
 from src.engine import rule_engine
 from src.core.constants import STATS
 from src.models.player import max_hp, max_mp, effective_stat
-from src.systems import inventory_system, status_system
+from src.systems import inventory_system, level_system, status_system
 
 
 def magic_damage(power, attacker_int, defender_magic_res) -> int:
@@ -138,11 +138,12 @@ def _on_victory(state):
     else:
         state.gold = 0
     state.loot = state.loot_resolver(state.enemy, state.randomizer) if state.loot_resolver is not None else []
-    state.player.xp += state.xp
+    gained_xp = level_system.award_xp(state.player, state.xp)
+    state.player.xp += gained_xp
     state.player.gold += state.gold
     for entry in state.loot:
         inventory_system.add_item(state.player, entry["id"], entry.get("qty", 1))
-    state.log.append(f"Kamu mendapat {state.xp} XP dan {state.gold} emas.")
+    state.log.append(f"Kamu mendapat {gained_xp} XP dan {state.gold} emas.")
 
 
 def use_item(state, item_id) -> str | None:

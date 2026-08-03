@@ -1,3 +1,6 @@
+from src.systems import level_system
+
+
 def start_quest(game_state, quest_id) -> str:
     quest = game_state.quests.get(quest_id)
     if quest is None:
@@ -35,7 +38,7 @@ def complete_requirement(game_state, kind, target) -> str:
 def _complete_quest(game_state, player, quest_id) -> str:
     quest = game_state.quests[quest_id]
     rewards = quest.get("rewards", {})
-    player.xp += rewards.get("xp", 0)
+    player.xp += level_system.award_xp(player, rewards.get("xp", 0))
     player.gold += rewards.get("gold", 0)
     for faction, value in rewards.get("reputation", {}).items():
         player.reputation[faction] = player.reputation.get(faction, 0) + value
