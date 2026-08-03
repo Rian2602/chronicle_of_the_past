@@ -119,6 +119,25 @@ def _on_victory(state):
     state.over = True
 
 
+def use_item(state, item_id) -> str | None:
+    inventory = state.player.inventory
+    item = next((entry for entry in inventory if entry["id"] == item_id), None)
+    if item is None:
+        raise ValueError(f"Item tidak dimiliki: {item_id}")
+    heal = item.get("heal")
+    if heal is None:
+        message = "Item ini tidak bisa dipakai di pertarungan."
+        state.log.append(message)
+        return message
+    item["qty"] -= 1
+    if item["qty"] <= 0:
+        inventory.remove(item)
+    state.player.hp = min(max_hp(state.player), state.player.hp + heal)
+    message = f"Kamu memakai {item['name']}, memulihkan {heal} HP."
+    state.log.append(message)
+    return message
+
+
 def _on_defeat(state):
     state.result = CombatResult.DEFEAT
     state.over = True
@@ -229,8 +248,49 @@ def player_action(state, action, choice=None) -> bool:
         return _observe(state)
     if parsed is CombatAction.ESCAPE:
         return _escape(state)
-    if parsed in (CombatAction.SKILL, CombatAction.MAGIC, CombatAction.ITEM):
-        raise NotImplementedError("implemented in task 7.4")
+    if parsed in (CombatAction.SKILL, CombatAction.MAGIC):
+        if choice not in state.skills:
+            state.log.append("Skill tidak dikenal.")
+            return False
+        skill = state.skills[choice]
+        if state.player.mp < skill["cost"]:
+            state.log.append("MP tidak cukup.")
+            return False
+        state.player.mp -= skill["cost"]
+        translated_effects = [
+            {
+                "kind": effect["status"],
+                "power": effect.get("power", 0),
+                "duration": effect.get("duration", 1),
+            }
+            for effect in skill.get("effects", [])
+        ]
+        if not translated_effects:
+            translated_effects = None
+        if skill["type"] == "magic":
+            resolve_hit(
+                state,
+                player_stats(state),
+                state.enemy.stats,
+                state.enemy.id,
+                power=skill["power"],
+                is_magic=True,
+                effects=translated_effects,
+            )
+        else:
+            resolve_hit(
+                state,
+                player_stats(state),
+                state.enemy.stats,
+                state.enemy.id,
+                effects=translated_effects,
+            )
+        if state.enemy.stats["hp"] <= 0:
+            _on_victory(state)
+        return False
+    if parsed is CombatAction.ITEM:
+        use_item(state, choice)
+        return False
     state.log.append("Aksi tidak dikenal.")
     return False
 

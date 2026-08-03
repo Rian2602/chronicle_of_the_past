@@ -300,11 +300,17 @@ def test_player_action_returns_false_when_over():
     assert player_action(state, CombatAction.ATTACK) is False
 
 
-@pytest.mark.parametrize("action", [CombatAction.SKILL, CombatAction.MAGIC, CombatAction.ITEM])
-def test_skill_magic_item_not_implemented(action):
+@pytest.mark.parametrize("action", [CombatAction.SKILL, CombatAction.MAGIC])
+def test_skill_magic_unknown_skill_logged_and_turn_consumed(action):
     state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
-    with pytest.raises(NotImplementedError):
-        player_action(state, action)
+    assert player_action(state, action, "nope") is False
+    assert "Skill tidak dikenal." in state.log
+
+
+def test_item_unknown_id_raises_value_error():
+    state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
+    with pytest.raises(ValueError, match="Item tidak dimiliki"):
+        player_action(state, CombatAction.ITEM, "nope")
 
 
 def test_unknown_action_logged_and_not_free():
