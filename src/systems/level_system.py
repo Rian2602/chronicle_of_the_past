@@ -3,7 +3,10 @@ def xp_to_next(level: int) -> int:
 
 
 def gain_xp(player, amount: int, randomizer=None) -> list:
-    player.xp += amount
+    # Apply class XP bonus if available
+    xp_multiplier = getattr(player, 'xp_bonus', 1.0)
+    actual_xp = int(amount * xp_multiplier)
+    player.xp += actual_xp
     levels = []
     while player.xp >= xp_to_next(player.level):
         player.xp -= xp_to_next(player.level)

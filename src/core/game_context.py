@@ -38,16 +38,21 @@ class GameContext:
         Create a new player with the specified name and class.
         
         Args:
-            name: Player's name
+            name: Player's name (must be non-empty)
             class_id: ID of the class to use
             
         Returns:
             New Player instance
             
         Raises:
-            ValueError: If class_id is not found in loaded classes
+            ValueError: If class_id is not found in loaded classes or name is empty
             KeyError: If class data is missing required fields
         """
+        # Validate name
+        if not name or not name.strip():
+            raise ValueError("Player name cannot be empty")
+        name = name.strip()
+        
         if class_id not in self.classes:
             available_classes = ", ".join(self.classes.keys()) if self.classes else "none"
             raise ValueError(
@@ -64,8 +69,9 @@ class GameContext:
         
         base_stats = dict(class_data["base_stats"])
         
-        # Validate base_stats has required fields
-        required_stats = ["hp", "mp"]
+        # Validate base_stats has all required stat fields
+        from src.core.constants import STATS
+        required_stats = list(STATS)  # ['hp', 'mp', 'attack', 'defense', 'agility', 'intelligence']
         for stat in required_stats:
             if stat not in base_stats:
                 raise KeyError(
@@ -79,6 +85,9 @@ class GameContext:
         if not isinstance(starting_skills, list):
             starting_skills = [starting_skills] if starting_skills else []
         
+        # Get xp_bonus from class data (default to 1.0)
+        xp_bonus = float(class_data.get("xp_bonus", 1.0))
+        
         return Player(
             name=name,
             class_id=class_id,
@@ -88,4 +97,5 @@ class GameContext:
             attribute_bonuses={},
             reputation=reputation,
             learned_skills=list(starting_skills),
+            xp_bonus=xp_bonus,
         )

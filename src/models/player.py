@@ -23,6 +23,7 @@ class Player:
     quests_done: list = field(default_factory=list)
     memories: list = field(default_factory=list)
     learned_skills: list = field(default_factory=list)
+    xp_bonus: float = 1.0
 
 
 def max_hp(player: Player) -> int:
