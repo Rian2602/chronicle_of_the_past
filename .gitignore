@@ -7,3 +7,4 @@ saves/*.json
 logs/*.log
 .pytest_cache/
 .venv/
+graphify-out/
