@@ -86,7 +86,7 @@ def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max
         loot_resolver=loot_resolver,
         max_status_duration=max_status_duration,
     )
-    state.enemy.stats.setdefault("max_hp", state.enemy.stats.get("hp", 1))
+    state.enemy.stats["max_hp"] = state.enemy.stats.get("hp", 1)
     return state
 
 
