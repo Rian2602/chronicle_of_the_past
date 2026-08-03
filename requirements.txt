@@ -1,1 +1,3 @@
-# stdlib only
+# Runtime: stdlib only (Python 3.12+)
+# Dev dependency:
+pytest  # testing only, not required to run the game
