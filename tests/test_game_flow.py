@@ -1,6 +1,7 @@
 from src.core.game_context import GameContext
 from src.core.game import Game
 from src.engine.combat_engine import start_combat
+from src.engine.combat_interfaces import StatusEffect
 from src.systems import loot_system
 
 
@@ -128,3 +129,212 @@ def test_victory_levels_up_exactly_once(tmp_path):
     out = g.run_turn("attack")
     assert g.state.player.level == 2
     assert "Naik level! Kamu kini level 2." in out
+
+
+def _mid_combat_game(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    wolf = g.state.enemies["wild_wolf"]
+    wolf.behavior = "defensive"
+    wolf.stats["hp"] = 7
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    return ctx, g
+
+
+def test_midcombat_save_and_continue_restores_combat(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    path = str(tmp_path / "combat.json")
+    g.run_turn(f"save {path}")
+    g2 = Game(ctx)
+    g2.continue_game(path)
+    assert g2._combat is not None
+    assert g2._combat.enemy.id == "wild_wolf"
+    assert g2._combat.enemy.stats["hp"] == 7
+    assert g2._combat.round_no == 1
+    assert g2._combat.turn_order == g._combat.turn_order
+    assert g2._combat.result is None
+    assert g2._combat.randomizer.seed == g.randomizer.seed
+
+
+def test_midcombat_save_restores_statuses(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    g._combat.statuses = {"enemy": [StatusEffect(kind="burn", duration=3, power=5)]}
+    path = str(tmp_path / "statuses.json")
+    g.run_turn(f"save {path}")
+    g2 = Game(ctx)
+    g2.continue_game(path)
+    effects = g2._combat.statuses.get("enemy", [])
+    assert len(effects) == 1
+    assert effects[0].kind == "burn"
+    assert effects[0].duration == 3
+    assert effects[0].power == 5
+
+
+def test_restore_combat_corrupt_result_does_not_crash(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    g._combat = None
+    g._restore_combat({"enemy_id": "wild_wolf", "result": "bogus", "statuses": {}})
+    assert g._combat is not None
+    assert g._combat.result is None
+
+
+def test_restore_combat_unknown_enemy_skipped(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    g._combat = None
+    g._restore_combat({"enemy_id": "ghost", "result": "victory", "statuses": {}})
+    assert g._combat is None
+
+
+def test_finish_combat_defeat_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.hp = 1
+    wolf = g.state.enemies["wild_wolf"]
+    wolf.behavior = "aggressive"
+    wolf.stats["hp"] = 999
+    wolf.stats["max_hp"] = 999
+    wolf.stats["attack"] = 99
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    out = g.run_turn("attack")
+    assert "Kamu gugur dalam pertarungan..." in out
+    assert g._combat is None
+
+
+def test_finish_combat_escape_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.attribute_bonuses["agility"] = 100
+    wolf = g.state.enemies["wild_wolf"]
+    wolf.stats["agility"] = 0
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    out = g.run_turn("escape")
+    assert "melarikan diri" in out
+    assert g._combat is None
+
+
+def _combat_log_attacks(state):
+    return sum(
+        1
+        for line in state.log
+        if "menyerang" in line or "meleset" in line or "Kritikal!" in line
+    )
+
+
+def test_observe_is_free_turn_no_enemy_action(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.attribute_bonuses["intelligence"] = 100
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    out = g.run_turn("observe")
+    assert "Kelemahan" in out
+    assert _combat_log_attacks(g._combat) == 0
+
+
+def test_item_use_is_free_turn_no_enemy_action(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.hp = 10
+    g.state.player.inventory = [{"id": "herb", "qty": 1}]
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    out = g.run_turn("item herb")
+    assert "memulihkan 20 HP" in out
+    assert _combat_log_attacks(g._combat) == 0
+    assert g.state.player.hp >= 30
+
+
+def test_unknown_command_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("bogus_command")
+    assert "Perintah tidak dikenal" in out
+
+
+def test_empty_input_shows_help_hint(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("")
+    assert "Ketik 'help' untuk daftar perintah" in out
+
+
+def test_use_unowned_item_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("use herb")
+    assert "Kamu tidak memiliki herb" in out
+
+
+def test_equip_unknown_item_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("equip bogus_item")
+    assert "Item tidak dikenal" in out
+
+
+def test_talk_unknown_npc_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("talk nobody")
+    assert "NPC tidak dikenal" in out
+
+
+def test_save_without_path_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("save")
+    assert "Gunakan: save <path>" in out
+
+
+def test_select_without_dialog_message(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("1")
+    assert "Tidak ada dialog aktif" in out
