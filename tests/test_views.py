@@ -35,8 +35,8 @@ def test_command_defaults():
 
 def test_menu_main_highlight():
     out = menu.render_main(0)
-    assert "> New Game" in out
-    assert "\n  Continue" in out
+    assert "> Permainan Baru" in out
+    assert "\n  Lanjutkan" in out
 
 
 def test_menu_arrow_wrap():

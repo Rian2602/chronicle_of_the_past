@@ -1,6 +1,6 @@
-from src.ui.renderer import ANSI, bar
+from src.ui.renderer import bar
 
-MAIN_ITEMS = ["New Game", "Continue", "Settings", "Credits", "Exit"]
+MAIN_ITEMS = ["Permainan Baru", "Lanjutkan", "Pengaturan", "Kredit", "Keluar"]
 
 
 def render_main(selection=0):

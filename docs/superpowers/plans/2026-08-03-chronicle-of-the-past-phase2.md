@@ -940,7 +940,7 @@ git commit -m "feat: UI renderer, HUD, bars, safe_box ASCII fallback"
 - Produces:
   - `models/command.Command` — `@dataclass` with `action: str`, `args: list[str] = field(default_factory=list)`, `index: int | None = None`.
   - `input_handler.parse_input(text) -> Command` — strips, lowercases; if first token is a number → `Command(action="select", index=int(token), args=rest)`; else `Command(action=first_token, args=rest_tokens)`.
-  - `menu.render_main(selection=0) -> str` — items `["New Game", "Continue", "Settings", "Credits", "Exit"]`, `"> "` prefix on the selected item.
+  - `menu.render_main(selection=0) -> str` — items `["Permainan Baru", "Lanjutkan", "Pengaturan", "Kredit", "Keluar"]`, `"> "` prefix on the selected item.
   - `menu.arrow(idx, total) -> int` — next/prev with wrap (`(idx+1)%total`, `(idx-1)%total`).
   - `menu.render_class_card(class_data) -> str` — class name + ASCII stat bars from `class_data["stat_bars"]` (value × 2 blocks of 10; MASTER_CONCEPT §3.2.1).
   - `combat_view.render(state) -> str` — enemy block (name, HP bar, observe info), player block, 7 action list (from `CombatAction`), last 5 log lines. Uses `renderer.bar` and `rule_engine` NOT needed — reads `state.player`, `state.enemy`, `state.log`.
@@ -987,8 +987,8 @@ def test_command_defaults():
 
 def test_menu_main_highlight():
     out = menu.render_main(0)
-    assert "> New Game" in out
-    assert "\n  Continue" in out
+    assert "> Permainan Baru" in out
+    assert "\n  Lanjutkan" in out
 
 
 def test_menu_arrow_wrap():
@@ -1079,9 +1079,9 @@ def parse_input(text):
 
 ```python
 # src/ui/menu.py
-from src.ui.renderer import ANSI, bar
+from src.ui.renderer import bar
 
-MAIN_ITEMS = ["New Game", "Continue", "Settings", "Credits", "Exit"]
+MAIN_ITEMS = ["Permainan Baru", "Lanjutkan", "Pengaturan", "Kredit", "Keluar"]
 
 
 def render_main(selection=0):
@@ -1581,3 +1581,5 @@ git commit -m "docs: README + final polish"
   - Task 8 Step 1b: optional regression test (100 deterministic runs, RNG whole-loop respected).
   - Task 8 Step 1c: MASTER_CONCEPT PART 11 Changelog entry (v1.1) recording the condition-schema divergence.
   - EventBus NOT in this plan (user decision; MASTER_CONCEPT §6.6 deems it overkill for CLI scale). Registry deferred to next phase (user decision).
+- **User-approved amendment (post-Task-5 review):**
+  - Main menu items translated to Bahasa Indonesia (`"Permainan Baru", "Lanjutkan", "Pengaturan", "Kredit", "Keluar"`); title stays `"CHRONICLE OF THE PAST"`. Applied to plan code, brief, `menu.py`, and `test_views.py` (test now asserts `"> Permainan Baru"`).
