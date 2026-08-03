@@ -117,6 +117,19 @@ def next_turn(state):
 def _on_victory(state):
     state.result = CombatResult.VICTORY
     state.over = True
+    reward = state.enemy.reward
+    state.xp = reward.get("xp", 0)
+    gold_range = reward.get("gold")
+    if isinstance(gold_range, (list, tuple)) and len(gold_range) >= 2:
+        state.gold = state.randomizer.roll(gold_range[0], gold_range[1])
+    else:
+        state.gold = 0
+    state.loot = state.loot_resolver(state.enemy, state.randomizer) if state.loot_resolver is not None else []
+    state.player.xp += state.xp
+    state.player.gold += state.gold
+    for item in state.loot:
+        state.player.inventory.append(item)
+    state.log.append(f"Kamu mendapat {state.xp} XP dan {state.gold} emas.")
 
 
 def use_item(state, item_id) -> str | None:
