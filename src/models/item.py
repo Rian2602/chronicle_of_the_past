@@ -11,3 +11,4 @@ class Item:
     modifiers: dict = field(default_factory=dict)
     price: int = 0
     description: str = ""
+    heal: int = 0

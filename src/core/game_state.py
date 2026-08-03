@@ -7,3 +7,4 @@ class GameState:
         self.day = 1
         self.current_map = None
         self.enemies = {}
+        self.items = {}

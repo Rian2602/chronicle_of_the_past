@@ -1,0 +1,9 @@
+{
+  "id": "wooden_helmet",
+  "name": "Wooden Helmet",
+  "type": "helmet",
+  "slot": "helmet",
+  "modifiers": {"defense": 2},
+  "price": 20,
+  "description": "Helm kayu yang menambah sedikit pertahanan."
+}

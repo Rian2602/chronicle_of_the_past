@@ -1,6 +1,7 @@
 from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
 from src.engine import rule_engine
 from src.models.player import max_hp, max_mp
+from src.systems import inventory_system
 from src.systems import status_system
 
 
@@ -60,7 +61,7 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
     return DamageResult(damage=damage, critical=critical, missed=missed)
 
 
-def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max_status_duration=10) -> CombatState:
+def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max_status_duration=10, items=None) -> CombatState:
     player_initiative = rule_engine.derived_stats(player, randomizer)["initiative"]
     enemy_initiative = enemy.stats.get("agility", 0) + randomizer.roll(0, 5)
     order = sorted(
@@ -85,6 +86,7 @@ def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max
         skills=skills or {},
         loot_resolver=loot_resolver,
         max_status_duration=max_status_duration,
+        items=items or {},
     )
     state.enemy.stats["max_hp"] = state.enemy.stats.get("hp", 1)
     return state
@@ -127,8 +129,8 @@ def _on_victory(state):
     state.loot = state.loot_resolver(state.enemy, state.randomizer) if state.loot_resolver is not None else []
     state.player.xp += state.xp
     state.player.gold += state.gold
-    for item in state.loot:
-        state.player.inventory.append(item)
+    for entry in state.loot:
+        inventory_system.add_item(state.player, entry["id"], entry.get("qty", 1))
     state.log.append(f"Kamu mendapat {state.xp} XP dan {state.gold} emas.")
 
 
@@ -137,7 +139,9 @@ def use_item(state, item_id) -> str | None:
     item = next((entry for entry in inventory if entry["id"] == item_id), None)
     if item is None:
         raise ValueError(f"Item tidak dimiliki: {item_id}")
-    heal = item.get("heal")
+    item_def = state.items.get(item_id)
+    heal = item_def.heal if item_def is not None and item_def.heal else item.get("heal")
+    name = item_def.name if item_def is not None else item.get("name", item_id)
     if heal is None:
         message = "Item ini tidak bisa dipakai di pertarungan."
         state.log.append(message)
@@ -146,7 +150,7 @@ def use_item(state, item_id) -> str | None:
     if item["qty"] <= 0:
         inventory.remove(item)
     state.player.hp = min(max_hp(state.player), state.player.hp + heal)
-    message = f"Kamu memakai {item['name']}, memulihkan {heal} HP."
+    message = f"Kamu memakai {name}, memulihkan {heal} HP."
     state.log.append(message)
     return message
 

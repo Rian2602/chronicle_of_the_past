@@ -64,3 +64,4 @@ class CombatState:
     skills: dict = field(default_factory=dict)
     loot_resolver: LootResolver | None = None
     max_status_duration: int = 10
+    items: dict = field(default_factory=dict)
