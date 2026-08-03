@@ -186,6 +186,13 @@ def test_restore_combat_does_not_mutate_shared_enemy(tmp_path):
     assert wolf.stats["hp"] == original_hp
 
 
+def test_item_command_in_combat_shows_message_not_crash(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    assert "Item tidak dimiliki" in g.run_turn("item potion")
+    assert "Item tidak dimiliki" in g.run_turn("item")
+    assert g._combat is not None
+
+
 def test_restore_combat_corrupt_result_does_not_crash(tmp_path):
     ctx, g = _mid_combat_game(tmp_path)
     g._combat = None

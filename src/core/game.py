@@ -353,7 +353,12 @@ class Game:
     def _combat_turn(self, cmd, out):
         state = self._combat
         choice = cmd.args[0] if cmd.args else None
-        free_turn = player_action(state, cmd.action, choice=choice)
+        try:
+            free_turn = player_action(state, cmd.action, choice=choice)
+        except ValueError as e:
+            out.append(str(e))
+            out.append(combat_view.render(state))
+            return
         if not state.over and not free_turn and cmd.action != "escape":
             enemy_turn(state)
         if state.over:
