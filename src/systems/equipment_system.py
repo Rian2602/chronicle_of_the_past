@@ -1,10 +1,9 @@
+from src.core.constants import STATS
 from src.models.player import effective_stat
-
-TOTAL_STATS = ("hp", "mp", "attack", "defense", "agility", "intelligence")
 
 
 def total_stats(player) -> dict:
-    return {stat: effective_stat(player, stat) for stat in TOTAL_STATS}
+    return {stat: effective_stat(player, stat) for stat in STATS}
 
 
 def unequip(player, slot, items=None) -> str:

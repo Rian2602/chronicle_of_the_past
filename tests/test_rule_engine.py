@@ -38,7 +38,6 @@ def test_derived_stats_all_values():
     assert ds["hp_regen"] == pytest.approx(4)
     assert ds["casting_speed"] == pytest.approx(3.3)
     assert ds["initiative"] == 15
-    assert ds["carry_capacity"] == 36
 
 
 def test_derived_stats_uses_attribute_bonuses():

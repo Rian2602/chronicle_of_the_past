@@ -61,12 +61,13 @@ di `test_rule_engine.py`.
   `rule_engine.derived_stats` (nol pembaca); `inventory_system.carry_capacity`
   tetap satu-satunya.
 - **Stat math (duplikat → helper bersama di rule_engine):**
-  - `accuracy(agility)`, `crit_chance(agility)` dipakai oleh `derived_stats`
-    dan `damage_roll`.
-  - `player_stats` di combat_engine dibangun via `effective_stat`, bukan
-    rebuild manual base+bonus.
-  - `magic_resistance` di `resolve_hit` via helper bersama.
-- `_hp_bar` (combat_engine) diselaraskan ke `renderer.bar`.
+  - `accuracy(agility)`, `crit_chance(agility)`, `magic_resistance(intelligence)`
+    dipakai oleh `derived_stats`, `damage_roll`, dan `resolve_hit`.
+  - `player_stats` di combat_engine dibangun via `effective_stat` + `STATS`,
+    bukan literal stat list.
+- `_hp_bar` (combat_engine) **TIDAK** diselaraskan ke `renderer.bar` — glyph
+  dan lebar berbeda (`#`/`.` 10 char vs `█`/`░` 14 char); penyelarasan mengubah
+  output visual game, melanggar batasan "tanpa perubahan perilaku".
 
 ## Tier 3 — Bug laten (perilaku berubah MINIMAL)
 

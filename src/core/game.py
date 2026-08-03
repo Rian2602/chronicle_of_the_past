@@ -3,7 +3,7 @@ from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
 from src.engine import dialog_engine, event_engine, quest_engine
 from src.engine.combat_engine import enemy_turn, player_action, start_combat
-from src.engine.combat_interfaces import CombatResult
+from src.engine.combat_interfaces import CombatAction, CombatResult
 from src.engine.time_engine import rest
 from src.models.enemy import Enemy
 from src.models.item import Item
@@ -19,15 +19,7 @@ from src.systems import (
 )
 from src.ui import ascii_loader, combat_view, dialog_view, hud, inventory_view
 
-_COMBAT_ACTIONS = {
-    "attack",
-    "skill",
-    "magic",
-    "item",
-    "observe",
-    "escape",
-    "defend",
-}
+_COMBAT_ACTIONS = {action.value for action in CombatAction}
 
 
 class Game:

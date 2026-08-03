@@ -1,6 +1,18 @@
 from src.models.player import effective_stat
 
 
+def accuracy(agility: int) -> float:
+    return 90 + agility * 0.3
+
+
+def crit_chance(agility: int) -> float:
+    return agility * 0.4
+
+
+def magic_resistance(intelligence: int) -> float:
+    return intelligence * 0.6
+
+
 def derived_stats(player, randomizer=None):
     agility = effective_stat(player, "agility")
     intelligence = effective_stat(player, "intelligence")
@@ -8,16 +20,15 @@ def derived_stats(player, randomizer=None):
     level = player.level
 
     return {
-        "critical": agility * 0.4,
+        "critical": crit_chance(agility),
         "dodge": agility * 0.3,
-        "accuracy": 90 + agility * 0.3,
-        "magic_resistance": intelligence * 0.6,
+        "accuracy": accuracy(agility),
+        "magic_resistance": magic_resistance(intelligence),
         "physical_resistance": defense * 0.4,
         "mana_regen": intelligence * 0.2,
         "hp_regen": 1 + level,
         "casting_speed": intelligence * 0.3,
         "initiative": agility + (randomizer.roll(0, 5) if randomizer else 0),
-        "carry_capacity": 30 + level * 2,
     }
 
 
@@ -99,9 +110,8 @@ def damage_roll(attacker_stats: dict, defender_stats: dict, randomizer) -> dict:
     variance = randomizer.roll(0, 5)
     total = base_damage + variance
 
-    accuracy = 90 + agility * 0.3
-    missed = randomizer.roll(0, 100) > accuracy
-    critical = randomizer.roll(0, 100) < agility * 0.4
+    missed = randomizer.roll(0, 100) > accuracy(agility)
+    critical = randomizer.roll(0, 100) < crit_chance(agility)
     if critical:
         total = round(total * 1.5)
     if missed:

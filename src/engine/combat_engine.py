@@ -1,5 +1,6 @@
 from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
 from src.engine import rule_engine
+from src.core.constants import STATS
 from src.models.player import max_hp, max_mp, effective_stat
 from src.systems import inventory_system, status_system
 
@@ -32,7 +33,7 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
         attacker_name = "Kamu"
 
     if is_magic:
-        defender_magic_res = defender_stats.get("intelligence", 0) * 0.6
+        defender_magic_res = rule_engine.magic_resistance(defender_stats.get("intelligence", 0))
         attacker_int = attacker_stats.get("intelligence", 0)
         damage = magic_damage(power, attacker_int, defender_magic_res)
         critical = False
@@ -107,10 +108,7 @@ def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max
 
 
 def player_stats(state) -> dict:
-    effective = {
-        stat: effective_stat(state.player, stat)
-        for stat in ("attack", "defense", "hp", "mp", "agility", "intelligence")
-    }
+    effective = {stat: effective_stat(state.player, stat) for stat in STATS}
     effective.update(rule_engine.derived_stats(state.player, state.randomizer))
     return effective
 
