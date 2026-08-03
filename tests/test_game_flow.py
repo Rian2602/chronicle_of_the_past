@@ -193,6 +193,26 @@ def test_item_command_in_combat_shows_message_not_crash(tmp_path):
     assert g._combat is not None
 
 
+def test_rest_blocked_during_combat(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    day = g.state.day
+    out = g.run_turn("rest")
+    assert "Tidak bisa saat bertarung" in out
+    assert g._combat is not None
+    assert g.state.day == day
+
+
+def test_save_and_help_allowed_during_combat(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    path = str(tmp_path / "combat.json")
+    out = g.run_turn(f"save {path}")
+    assert "tersimpan" in out
+    assert g._combat is not None
+    out = g.run_turn("help")
+    assert "Perintah" in out
+    assert g._combat is not None
+
+
 def test_restore_combat_corrupt_result_does_not_crash(tmp_path):
     ctx, g = _mid_combat_game(tmp_path)
     g._combat = None
