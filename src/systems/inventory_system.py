@@ -10,6 +10,10 @@ def count_items(player) -> int:
 
 
 def add_item(player, item_id, qty=1) -> bool:
+    # Validasi: qty harus positif
+    if qty <= 0:
+        return False
+    # Cek kapasitas sebelum menambahkan
     if count_items(player) + qty > carry_capacity(player):
         return False
     for entry in player.inventory:
@@ -21,6 +25,9 @@ def add_item(player, item_id, qty=1) -> bool:
 
 
 def remove_item(player, item_id, qty=1) -> None:
+    # Validasi: qty harus positif
+    if qty <= 0:
+        return
     for entry in player.inventory:
         if entry["id"] == item_id:
             if entry.get("qty", 0) < qty:

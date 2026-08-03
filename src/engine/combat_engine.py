@@ -1,6 +1,6 @@
 from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
 from src.engine import rule_engine
-from src.models.player import max_hp, max_mp
+from src.models.player import max_hp, max_mp, effective_stat
 from src.systems import inventory_system, status_system
 
 
@@ -108,8 +108,7 @@ def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max
 
 def player_stats(state) -> dict:
     effective = {
-        stat: state.player.base_stats.get(stat, 0)
-        + state.player.attribute_bonuses.get(stat, 0)
+        stat: effective_stat(state.player, stat)
         for stat in ("attack", "defense", "hp", "mp", "agility", "intelligence")
     }
     effective.update(rule_engine.derived_stats(state.player, state.randomizer))
@@ -230,13 +229,13 @@ def _observe(state) -> bool:
         state.log.append("Kamu sudah mengamati musuh ini.")
         return False
     state.observe_used = True
-    intelligence = state.player.base_stats.get("intelligence", 0) + state.player.attribute_bonuses.get("intelligence", 0)
+    intelligence = effective_stat(state.player, "intelligence")
     state.observe_info = _observe_info(state.enemy, intelligence)
     return True
 
 
 def _escape(state) -> bool:
-    player_agility = state.player.base_stats.get("agility", 0) + state.player.attribute_bonuses.get("agility", 0)
+    player_agility = effective_stat(state.player, "agility")
     enemy_agility = state.enemy.stats.get("agility", 0)
     if state.randomizer.roll(0, 100) < 50 + player_agility - enemy_agility:
         state.result = CombatResult.ESCAPED
@@ -293,16 +292,7 @@ def player_action(state, action, choice=None) -> bool:
             state.log.append("MP tidak cukup.")
             return False
         state.player.mp -= skill["cost"]
-        translated_effects = [
-            {
-                "kind": effect["status"],
-                "power": effect.get("power", 0),
-                "duration": effect.get("duration", 1),
-            }
-            for effect in skill.get("effects", [])
-        ]
-        if not translated_effects:
-            translated_effects = None
+        translated_effects = _translate_effects(skill)
         if skill["type"] == "magic":
             resolve_hit(
                 state,
@@ -331,7 +321,8 @@ def player_action(state, action, choice=None) -> bool:
     return False
 
 
-def _translate_enemy_effects(skill):
+def _translate_effects(skill):
+    """Translate skill effects into status effect format."""
     effects = [
         {
             "kind": effect["status"],
@@ -361,7 +352,7 @@ def _use_enemy_skill(state, skill):
         )
         state.log.append(f"{state.enemy.name} memulihkan {heal} HP.")
         return
-    effects = _translate_enemy_effects(skill)
+    effects = _translate_effects(skill)
     if skill["type"] == "magic":
         resolve_hit(
             state,
@@ -396,6 +387,7 @@ def _aggressive_turn(state):
 
 
 def _defensive_turn(state):
+    # Cek apakah HP rendah dan ada skill heal yang affordable
     if _hp_ratio(state) < 0.30:
         heal_skill = next(
             (skill for skill in _affordable_skills(state) if "heal" in skill),
@@ -404,6 +396,15 @@ def _defensive_turn(state):
         if heal_skill is not None:
             _use_enemy_skill(state, heal_skill)
             return
+        # Jika tidak ada heal skill atau MP tidak cukup, fallback ke defend
+        if state.enemy_defending:
+            state.enemy_defending = False
+            resolve_hit(state, state.enemy.stats, player_stats(state), "player")
+            return
+        state.enemy_defending = True
+        state.log.append(f"{state.enemy.name} bertahan!")
+        return
+    
     if state.enemy_defending:
         state.enemy_defending = False
         resolve_hit(state, state.enemy.stats, player_stats(state), "player")

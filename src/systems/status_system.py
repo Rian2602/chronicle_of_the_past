@@ -1,21 +1,9 @@
 from src.engine.combat_interfaces import StatusEffect
-
-DOT_KINDS = {"poison", "burn", "bleed"}
-CONTROL_KINDS = {"blind", "silence", "fear", "sleep"}
-
-_LABELS = {
-    "poison": "racun",
-    "burn": "luka bakar",
-    "bleed": "pendarahan",
-    "blind": "kebutaan",
-    "silence": "kebisuan",
-    "fear": "ketakutan",
-    "sleep": "tidur",
-}
+from src.core.constants import DOT_KINDS, CONTROL_KINDS, STATUS_LABELS
 
 
 def _label(kind: str) -> str:
-    return _LABELS.get(kind, kind)
+    return STATUS_LABELS.get(kind, kind)
 
 
 def _resolve_actor(state, actor_id: str):

@@ -1,10 +1,10 @@
-def derived_stats(player, randomizer=None):
-    def effective(stat):
-        return player.base_stats.get(stat, 0) + player.attribute_bonuses.get(stat, 0)
+from src.models.player import effective_stat
 
-    agility = effective("agility")
-    intelligence = effective("intelligence")
-    defense = effective("defense")
+
+def derived_stats(player, randomizer=None):
+    agility = effective_stat(player, "agility")
+    intelligence = effective_stat(player, "intelligence")
+    defense = effective_stat(player, "defense")
     level = player.level
 
     return {
@@ -94,9 +94,10 @@ def damage_roll(attacker_stats: dict, defender_stats: dict, randomizer) -> dict:
     defense = defender_stats.get("defense", 0)
     agility = attacker_stats.get("agility", 0)
 
-    base = max(1, attack - defense // 2)
+    # Mencegah damage negatif: defense hanya mengurangi maksimal 50% dari attack
+    base_damage = max(1, attack - defense // 2)
     variance = randomizer.roll(0, 5)
-    total = base + variance
+    total = base_damage + variance
 
     accuracy = 90 + agility * 0.3
     missed = randomizer.roll(0, 100) > accuracy

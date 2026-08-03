@@ -26,9 +26,14 @@ class Player:
     xp_bonus: float = 1.0
 
 
+def effective_stat(player, stat: str) -> int:
+    """Menghitung stat efektif dengan menambahkan base_stats dan attribute_bonuses."""
+    return player.base_stats.get(stat, 0) + player.attribute_bonuses.get(stat, 0)
+
+
 def max_hp(player: Player) -> int:
-    return player.base_stats.get("hp", 0) + player.attribute_bonuses.get("hp", 0)
+    return effective_stat(player, "hp")
 
 
 def max_mp(player: Player) -> int:
-    return player.base_stats.get("mp", 0) + player.attribute_bonuses.get("mp", 0)
+    return effective_stat(player, "mp")
