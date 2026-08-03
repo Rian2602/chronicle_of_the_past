@@ -1,0 +1,9 @@
+{
+  "id": "mage",
+  "name": "Mage",
+  "description": "Pengguna sihir yang mempelajari mantra.",
+  "base_stats": {"attack": 8, "defense": 6, "hp": 60, "mp": 55, "agility": 9, "intelligence": 15},
+  "xp_bonus": 1.0,
+  "starting_skills": ["fireball"],
+  "stat_bars": {"attack": 2, "defense": 1, "hp": 2, "mp": 5, "agility": 2, "intelligence": 5}
+}

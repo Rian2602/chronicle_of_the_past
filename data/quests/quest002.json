@@ -1,0 +1,12 @@
+{
+  "id": "quest002",
+  "title": "Bahaya di Hutan",
+  "type": "side",
+  "description": "Kalahkan serigala di tepi hutan.",
+  "requirements": [
+    {"kind": "enemy", "target": "wild_wolf"}
+  ],
+  "rewards": {"xp": 40, "gold": 15, "reputation": {"merchant_guild": 5}},
+  "flags_on_complete": ["quest002_done"],
+  "next": null
+}

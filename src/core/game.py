@@ -1,0 +1,341 @@
+from src.core import input_handler, save_manager
+from src.core.game_state import GameState
+from src.core.randomizer import Randomizer
+from src.engine import dialog_engine, event_engine, quest_engine
+from src.engine.combat_engine import enemy_turn, player_action, start_combat
+from src.engine.combat_interfaces import CombatResult
+from src.engine.time_engine import rest
+from src.models.enemy import Enemy
+from src.models.item import Item
+from src.models.map import Map
+from src.models.player import max_hp, max_mp
+from src.systems import (
+    equipment_system,
+    exploration_system,
+    inventory_system,
+    level_system,
+    loot_system,
+    memory_system,
+    travel_system,
+)
+from src.ui import ascii_loader, combat_view, dialog_view, hud, inventory_view
+
+_COMBAT_ACTIONS = {"attack", "skill", "magic", "item", "observe", "escape", "defend"}
+
+
+class Game:
+    def __init__(self, game_context, rng_seed=None):
+        self.ctx = game_context
+        self.state = GameState()
+        self.state.rng_seed = rng_seed if rng_seed is not None else 20260803
+        self.randomizer = Randomizer(self.state.rng_seed)
+        self._current_dialog = None
+        self._talk_npc_id = None
+        self._combat = None
+
+    def _wire(self):
+        s = self.state
+        s.world = {mid: Map(**data) for mid, data in self.ctx.maps.items()}
+        s.enemies = {eid: Enemy(**data) for eid, data in self.ctx.enemies.items()}
+        s.items = {iid: Item(**data) for iid, data in self.ctx.items.items()}
+        s.quests = dict(self.ctx.quests)
+        s.memories = list(self.ctx.memories)
+        s.events = list(self.ctx.events)
+        if s.current_map is None:
+            s.current_map = s.world.get("village")
+
+    def new_game(self, name, class_id):
+        self._wire()
+        self.state.player = self.ctx.create_player(name, class_id)
+        self._current_dialog = None
+        self._talk_npc_id = None
+        self._combat = None
+        assert self.state.player is not None
+        lines = event_engine.process_events(self.state, self.randomizer)
+        return "\n".join(lines) or "Kamu terbangun di Ashen Village."
+
+    def continue_game(self, save_path):
+        self.state = save_manager.load_game(save_path, self.ctx)
+        self._wire()
+        s = self.state
+        map_id = s.current_map.id if hasattr(s.current_map, "id") else s.current_map
+        s.current_map = s.world.get(map_id, s.world.get("village"))
+        seed = s.rng_seed if s.rng_seed is not None else 20260803
+        s.rng_seed = seed
+        self.randomizer = Randomizer(seed)
+        self._current_dialog = None
+        self._talk_npc_id = None
+        self._combat = None
+        assert self.state.player is not None
+        lines = event_engine.process_events(self.state, self.randomizer)
+        return "\n".join(lines) or "Save dimuat."
+
+    def run_turn(self, text):
+        cmd = input_handler.parse_input(text)
+        out = []
+        if self._combat is not None and cmd.action in _COMBAT_ACTIONS:
+            self._combat_turn(cmd, out)
+        elif self._current_dialog is not None and cmd.action == "select":
+            self._dialog_select(cmd, out)
+        else:
+            self._dispatch(cmd, out)
+        if self._combat is None:
+            logs = event_engine.process_events(self.state, self.randomizer)
+            out.extend(logs)
+        return hud.render(self.state.player, self.state) + "\n\n" + "\n".join(out)
+
+    def _dispatch(self, cmd, out):
+        action = cmd.action
+        if action == "status":
+            self._cmd_status(out)
+        elif action == "help":
+            self._cmd_help(out)
+        elif action == "go":
+            self._cmd_go(cmd, out)
+        elif action == "rest":
+            self._cmd_rest(out)
+        elif action == "talk":
+            self._cmd_talk(cmd, out)
+        elif action == "look":
+            self._cmd_look(out)
+        elif action == "explore":
+            self._cmd_explore(out)
+        elif action == "inventory":
+            self._cmd_inventory(out)
+        elif action == "use":
+            self._cmd_use(cmd, out)
+        elif action == "equip":
+            self._cmd_equip(cmd, out)
+        elif action == "unequip":
+            self._cmd_unequip(cmd, out)
+        elif action == "save":
+            self._cmd_save(cmd, out)
+        elif action == "quests":
+            self._cmd_quests(out)
+        elif action == "select":
+            out.append("Tidak ada dialog aktif.")
+        elif action == "":
+            out.append("Ketik 'help' untuk daftar perintah.")
+        else:
+            out.append(
+                f"Perintah tidak dikenal: {cmd.action}. Ketik 'help' untuk bantuan."
+            )
+
+    def _cmd_status(self, out):
+        m = self.state.current_map
+        if m is not None:
+            out.append(m.description)
+            if m.exits:
+                out.append("Jalan keluar: " + ", ".join(m.exits))
+            else:
+                out.append("Tidak ada jalan keluar.")
+
+    def _cmd_help(self, out):
+        out.append("Perintah: status, help, go <peta>, rest, talk <npc>, look, explore,")
+        out.append("inventory, use <item>, equip <item>, unequip <slot>, save <path>, quests")
+        out.append("Saat bertarung: attack, skill <id>, magic <id>, item <id>, observe, escape, defend")
+
+    def _cmd_go(self, cmd, out):
+        if not cmd.args:
+            out.append("Gunakan: go <nama peta>.")
+            return
+        try:
+            out.append(travel_system.travel(self.state, cmd.args[0]))
+        except ValueError as e:
+            out.append(str(e))
+
+    def _cmd_rest(self, out):
+        rest(self.state)
+        out.append(f"Kamu beristirahat hingga pagi. Kini Hari {self.state.day}.")
+
+    def _cmd_talk(self, cmd, out):
+        if not cmd.args:
+            out.append("Gunakan: talk <nama NPC>.")
+            return
+        npc_id = cmd.args[0]
+        npc = self.ctx.npc.get(npc_id)
+        if npc is None:
+            out.append(f"NPC tidak dikenal: {npc_id}.")
+            return
+        m = self.state.current_map
+        if m is None or npc.get("location") != m.id:
+            out.append(f"{npc['name']} tidak ada di sini.")
+            return
+        dialog = self.ctx.dialogues.get(npc["dialogs"][0])
+        if dialog is None:
+            out.append(f"{npc['name']} tidak punya dialog.")
+            return
+        self._current_dialog = dialog
+        self._talk_npc_id = npc_id
+        out.append(f"{npc['name']}:")
+        out.append(dialog_view.render(dialog, self.state))
+
+    def _cmd_look(self, out):
+        m = self.state.current_map
+        if m is None:
+            out.append("Kamu tidak berada di peta mana pun.")
+            return
+        try:
+            out.append(ascii_loader.load(m.ascii_art))
+        except Exception:
+            pass
+        out.append(m.description)
+        if m.exits:
+            out.append("Jalan keluar: " + ", ".join(m.exits))
+        if m.npcs:
+            names = []
+            for npc_id in m.npcs:
+                npc = self.ctx.npc.get(npc_id)
+                names.append(npc["name"] if npc else npc_id)
+            out.append("Di sini ada: " + ", ".join(names))
+
+    def _cmd_explore(self, out):
+        enemy = exploration_system.check_encounter(self.state, self.randomizer)
+        if enemy is None:
+            out.append("Kamu menjelajah, tetapi tidak ada yang mengancam.")
+            return
+        out.append(f"Kamu bertemu {enemy.name}!")
+        self._combat = start_combat(
+            self.state.player,
+            enemy,
+            self.randomizer,
+            skills=self.ctx.skills,
+            loot_resolver=loot_system.roll_loot,
+            items=self.state.items,
+        )
+        out.append(combat_view.render(self._combat))
+
+    def _cmd_inventory(self, out):
+        out.append(inventory_view.render(self.state.player, self.state.items))
+
+    def _cmd_use(self, cmd, out):
+        if not cmd.args:
+            out.append("Gunakan: use <item>.")
+            return
+        item_id = cmd.args[0]
+        entry = next(
+            (e for e in self.state.player.inventory if e["id"] == item_id), None
+        )
+        if entry is None:
+            out.append(f"Kamu tidak memiliki {item_id}.")
+            return
+        try:
+            out.append(inventory_system.use_consumable(self.state.player, entry, self.state))
+        except ValueError as e:
+            out.append(str(e))
+
+    def _cmd_equip(self, cmd, out):
+        if not cmd.args:
+            out.append("Gunakan: equip <item>.")
+            return
+        item = self.state.items.get(cmd.args[0])
+        if item is None:
+            out.append(f"Item tidak dikenal: {cmd.args[0]}.")
+            return
+        owned = item.id in self.state.player.equipped.values() or any(
+            e["id"] == item.id for e in self.state.player.inventory
+        )
+        if not owned:
+            out.append(f"Kamu tidak memiliki {item.name}.")
+            return
+        out.append(equipment_system.equip(self.state.player, item, items=self.state.items))
+
+    def _cmd_unequip(self, cmd, out):
+        if not cmd.args:
+            out.append("Gunakan: unequip <slot>.")
+            return
+        out.append(equipment_system.unequip(self.state.player, cmd.args[0], items=self.state.items))
+
+    def _cmd_save(self, cmd, out):
+        if not cmd.args:
+            out.append("Gunakan: save <path>.")
+            return
+        path = " ".join(cmd.args)
+        save_manager.save_game(self.state, path)
+        out.append(f"Permainan tersimpan di {path}.")
+
+    def _cmd_quests(self, out):
+        p = self.state.player
+        if not p.quests_active:
+            out.append("Tidak ada quest aktif.")
+            return
+        for quest_id, info in p.quests_active.items():
+            quest = self.state.quests.get(quest_id)
+            title = quest["title"] if quest else quest_id
+            total = len(quest["requirements"]) if quest else 0
+            met = len(info.get("met", []))
+            out.append(f"- {title} ({met}/{total})")
+
+    def _dialog_select(self, cmd, out):
+        dialog = self._current_dialog
+        choices = dialog_engine.available_choices(dialog, self.state)
+        index = cmd.index - 1
+        if index < 0 or index >= len(choices):
+            out.append("Pilihan tidak valid.")
+            return
+        selected = choices[index]
+        full_index = dialog["choices"].index(selected)
+        next_id = dialog_engine.choose(self.state, dialog, full_index)
+        if next_id is None:
+            self._end_dialog(out)
+        else:
+            self._current_dialog = self.ctx.dialogues.get(next_id, dialog)
+            npc = self.ctx.npc.get(self._talk_npc_id) if self._talk_npc_id else None
+            if npc is not None:
+                out.append(f"{npc['name']}:")
+            out.append(dialog_view.render(self._current_dialog, self.state))
+
+    def _end_dialog(self, out):
+        out.append("Percakapan berakhir.")
+        npc_id = self._talk_npc_id
+        self._current_dialog = None
+        self._talk_npc_id = None
+        if npc_id is not None:
+            msg = quest_engine.complete_requirement(self.state, "talk", npc_id)
+            if msg and msg != "Tidak ada syarat yang sesuai.":
+                out.append(msg)
+
+    def _combat_turn(self, cmd, out):
+        state = self._combat
+        choice = cmd.args[0] if cmd.args else None
+        free_turn = player_action(state, cmd.action, choice=choice)
+        if not state.over and not free_turn and cmd.action != "escape":
+            enemy_turn(state)
+        if state.over:
+            out.extend(self._finish_combat(state))
+            self._combat = None
+        else:
+            out.append(combat_view.render(state))
+
+    def _finish_combat(self, state):
+        out = []
+        s = self.state
+        if state.result == CombatResult.VICTORY:
+            s.flags[f"defeated_{state.enemy.id}"] = True
+            msg = quest_engine.complete_requirement(s, "enemy", state.enemy.id)
+            if msg and msg != "Tidak ada syarat yang sesuai.":
+                out.append(msg)
+            out.extend(state.log)
+            levels = level_system.gain_xp(s.player, 0)
+            if levels:
+                self._apply_level_ups(levels)
+                out.append(f"Naik level! Kamu kini level {s.player.level}.")
+            out.append("Kemenangan!")
+        elif state.result == CombatResult.DEFEAT:
+            out.extend(state.log)
+            out.append("Kamu gugur dalam pertarungan...")
+        elif state.result == CombatResult.ESCAPED:
+            out.extend(state.log)
+            out.append("Pertarungan berakhir: kamu melarikan diri.")
+        else:
+            out.append("Pertarungan berakhir.")
+        return out
+
+    def _apply_level_ups(self, levels):
+        p = self.state.player
+        for _ in levels:
+            p.attribute_bonuses["hp"] = p.attribute_bonuses.get("hp", 0) + 5
+            p.attribute_bonuses["mp"] = p.attribute_bonuses.get("mp", 0) + 3
+            p.hp = max_hp(p)
+            p.mp = max_mp(p)
+            level_system.apply_choice(p, "hp")

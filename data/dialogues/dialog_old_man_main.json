@@ -1,0 +1,11 @@
+{
+  "id": "dialog_old_man_main",
+  "lines": [
+    {"speaker": "old_man", "text": "Kau... Aku belum pernah melihatmu."}
+  ],
+  "choices": [
+    {"text": "Siapa Anda?", "require_flags": [], "set_flags": ["met_old_man"], "next": "dialog_old_man_1"},
+    {"text": "Aku tersesat.", "require_flags": ["knows_village_burns"], "set_flags": ["met_old_man"], "next": "dialog_old_man_1"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

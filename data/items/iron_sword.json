@@ -1,0 +1,9 @@
+{
+  "id": "iron_sword",
+  "name": "Iron Sword",
+  "type": "weapon",
+  "slot": "weapon",
+  "modifiers": {"attack": 8, "agility": -1},
+  "price": 60,
+  "description": "Pedang besi sederhana."
+}

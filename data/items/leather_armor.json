@@ -1,0 +1,9 @@
+{
+  "id": "leather_armor",
+  "name": "Leather Armor",
+  "type": "armor",
+  "slot": "armor",
+  "modifiers": {"defense": 4},
+  "price": 45,
+  "description": "Zirah kulit ringan yang menambah pertahanan."
+}

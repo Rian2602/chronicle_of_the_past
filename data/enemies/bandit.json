@@ -1,0 +1,15 @@
+{
+  "id": "bandit",
+  "name": "Bandit",
+  "level": 4,
+  "stats": {"attack": 10, "defense": 5, "hp": 20, "mp": 8, "agility": 7, "intelligence": 6},
+  "behavior": "aggressive",
+  "reward": {"xp": 70, "gold": [15, 30]},
+  "skills": ["backstab"],
+  "loot": [
+    {"item": "potion", "chance": 30, "amount": 1}
+  ],
+  "weight": 3,
+  "tags": ["humanoid"],
+  "lore": "Penjahat jalanan yang gemar merampok pelancong."
+}

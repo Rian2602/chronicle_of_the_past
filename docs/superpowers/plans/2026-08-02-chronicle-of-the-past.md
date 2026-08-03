@@ -17,7 +17,7 @@
 - No globals; GameState passed explicitly. UI never imports engine; engine never imports UI.
 - Engine code contains NO specific content names (no "warrior", "goblin", "quest001"). Content strings come from JSON only. Tests may use content IDs.
 - 7 combat actions: Attack, Skill, Magic, Item, Observe, Escape, Defend.
-- Leveling manual; XP curve `xp_to_next(level) = 50 * level`; damage variance `random(0,5)`; initiative variance `random(0,5)`.
+- Leveling: auto-growth on level up (F4: max HP +5, max MP +3, full heal) + one manual pick; XP curve `xp_to_next(level) = 50 * level`; damage variance `random(0,5)`; initiative variance `random(0,5)`; combat rewards data-driven from `enemy.reward` (F1).
 - Save JSON 3-layer under `saves/`; missing keys → defaults, never crash.
 - 6 factions + crime reputation; 8 canonical regions (MVP: Region 1 Village, Region 2 Forest).
 - Derived stats always computed, never stored (formulas in spec).
@@ -351,6 +351,52 @@ git commit -m "feat: rule engine (derived stats, damage, conditions) + leveling"
 
 ---
 
+### Task 4b: Rule engine condition operators (Design Freeze F5)
+
+Follow-up to Task 4: `evaluate` currently treats `flag` conditions as
+presence-only. This task adds operator support per F5.
+
+**Files:**
+- Extend: `src/engine/rule_engine.py` (`evaluate`), `src/core/constants.py`
+  (add `CONDITION_OPERATORS`), `src/utils/validator.py` (validate operator
+  membership where relevant)
+- Extend: `tests/test_rule_engine.py`
+
+**Interfaces:**
+- Produces:
+  - `constants.CONDITION_OPERATORS = ("EQ","NE","GT","LT","GTE","LTE","EXISTS","MISSING")`.
+  - `rule_engine.evaluate(condition, game_state)` supports operator semantics:
+    - no `operator` field → default `EQ` with `value` defaulting to `True`
+      (backward compatible with Task 4 behavior / old JSON).
+    - `flag` kind: EQ/NE vs `flags[name]` (bool), EXISTS (`name in flags`),
+      MISSING (`name not in flags`).
+    - `level` kind: numeric comparisons on `player.level` (GT/LT/GTE/LTE/EQ/NE).
+    - `map`/`time`: EQ/NE on `current_map` / `time`.
+    - `quest_done`: EQ/NE/EXISTS/MISSING on `quests_done`.
+    - Unknown kind or operator → `False` (documented).
+  - Flag default: `{"kind":"flag","name":"x","value":true}` (no operator)
+    must still return True only when `flags["x"] is True`.
+
+- [ ] **Step 1: Write failing tests** — operator EQ false, NE, GT on level,
+  EXISTS/MISSING on flags, default (no operator) backward compat, unknown
+  operator → False, and that old `{"kind":"flag","flag":"x"}` (legacy key
+  `flag`) still works (support both `flag` and `name` keys, `flag` deprecated).
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement** per interfaces; keep `flag` key working as alias.
+
+- [ ] **Step 4: Run tests** → PASS (full suite incl. old rule_engine tests).
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: rule engine condition operators (F5)"
+```
+
+---
+
 ### Task 5: Class loading + player creation (game_context)
 
 **Files:**
@@ -434,56 +480,85 @@ git commit -m "feat: manual level-up choices"
 
 ---
 
-### Task 7: Combat Engine — turn loop + 7 actions
+### Task 6b: Level up growth per F4
+
+Follow-up to Task 6: `on_level_up` currently does `level+1`, `hp+10`, `mp+5`
+on current values (clamped). Design Freeze F4 changes the contract.
 
 **Files:**
-- Create: `src/engine/combat_engine.py`, `src/systems/status_system.py`
-- Create: `tests/test_combat.py`, `tests/test_status.py`
+- Extend: `src/systems/level_system.py` (`on_level_up`)
+- Extend: `tests/test_level_up.py` (update old expectations)
 
 **Interfaces:**
 - Produces:
-  - `status_system.Status(duration, power, source)` and `status_system.tick_statuses(actor, randomizer) -> list[str]` (returns messages).
-  - `combat_engine.CombatState(round_no, turn_order, current_index, over, result, log: list[str], observe_used)`
-  - `combat_engine.start_combat(player, enemy, randomizer) -> CombatState`
-  - `combat_engine.player_action(state, action, choice=None)` — dispatch:
-    - attack/skill/magic → `combat_engine.resolve_hit(state, attacker_stats, defender, power, is_magic, effects)`
-    - item → `combat_engine.use_item(state, item)` — consumes, heals.
-    - observe → fills `state.observe_info` (intel-tier text), free action.
-    - escape → roll `50 + agility - enemy_agility`; fail → enemy free attack.
-    - defend → sets `state.defending=True`.
-  - `combat_engine.enemy_turn(state)` — enemy uses basic attack or skill from pool.
-  - `combat_engine.next_turn(state)` — advance, apply status ticks, check end.
-  - Victory result contains `xp`, `gold`, `loot` items list.
-  - Magic damage: `power + intelligence*0.5 - magic_resistance`; enemy magic_resistance = int*0.6.
+  - `level_system.on_level_up(player)` — per F4:
+    1. `player.level += 1`
+    2. `player.attribute_bonuses["hp"] += 5` and `["mp"] += 3` (raises MAX via
+       existing `max_hp`/`max_mp` formulas)
+    3. Full heal: `player.hp = max_hp(player)`, `player.mp = max_mp(player)`
+    4. returns `LEVEL_CHOICES` (caller presents the single manual pick).
+  - `apply_choice` unchanged. `xp_to_next`/`gain_xp` unchanged.
 
-- [ ] **Step 1: Write failing tests** (physical attack miss/crit, defend halves, escape success/fail, poison ticks, magic formula, observe tiers, victory loot).
+- [ ] **Step 1: Update failing tests** — existing tests asserting old +10/+5
+  clamped behavior are replaced: level+1; max_hp/max_mp grow by 5/3; hp/mp
+  set to max after (full heal); returns LEVEL_CHOICES; stacking across two
+  level-ups accumulates.
 
-```python
-# tests/test_combat.py
-from src.engine.combat_engine import start_combat, player_action, enemy_turn, next_turn
-from src.models.player import Player
-from src.models.enemy import Enemy
-from src.core.randomizer import Randomizer
+- [ ] **Step 2: Run to verify fail** → FAIL (old behavior fails new tests).
 
-def test_victory_gives_rewards():
-    p = Player("R", "warrior", 100, 10, {"attack":12,"defense":14,"hp":100,"mp":10,"agility":8,"intelligence":7})
-    e = Enemy("goblin", "Goblin", 2, {"attack":5,"defense":2,"hp":5,"mp":0,"agility":6,"intelligence":3},
-              loot=[], skills=[], lore="")
-    r = Randomizer(seed=3)
-    st = start_combat(p, e, r)
-    for _ in range(20):
-        if st.over: break
-        player_action(st, "attack")
-        if not st.over:
-            enemy_turn(st)
-        next_turn(st)
-    assert st.result == "victory"
-    assert st.xp > 0
+- [ ] **Step 3: Implement** the new `on_level_up`.
+
+- [ ] **Step 4: Run tests** → PASS (full suite).
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: level-up auto-growth per design freeze F4"
 ```
+
+---
+
+### Task 7.0: Combat Interfaces (Design Freeze B6 + schema extension)
+
+Contracts only — no game logic. All combat subtasks 7.1–7.7 import these
+types so no subtask redefines data structures.
+
+**Files:**
+- Create: `src/engine/combat_interfaces.py`
+- Extend: `src/models/enemy.py` (new optional fields per Design Freeze B/F1/F3)
+- Create: `tests/test_combat_interfaces.py`
+
+**Interfaces:**
+- Produces (all in `combat_interfaces`):
+  - `class CombatAction(str, Enum)`: `ATTACK, SKILL, MAGIC, ITEM, OBSERVE, ESCAPE, DEFEND`.
+  - `class CombatResult(str, Enum)`: `VICTORY, DEFEAT, ESCAPED`.
+  - `@dataclass StatusEffect: kind: str, duration: int, power: int` (F2).
+  - `@dataclass DamageResult: damage: int, critical: bool, missed: bool`.
+  - `LootResolver = Callable[[Enemy, Randomizer], list[dict]]` (F1; stub
+    returns `[]`, Task 9 provides real `loot_system.roll_loot`).
+  - `@dataclass CombatState` — the shared contract:
+    `round_no: int`, `turn_order: list`, `current_index: int`, `over: bool`,
+    `result: CombatResult | None`, `log: list[str]`,
+    `observe_used: bool`, `player_defending: bool`, `enemy_defending: bool`,
+    `statuses: dict[str, list[StatusEffect]]`, `xp: int = 0`, `gold: int = 0`,
+    `loot: list = field(default_factory=list)`,
+    `observe_info: str | None = None`, `player: Player | None = None`,
+    `enemy: Enemy | None = None`, `randomizer: Randomizer | None = None`,
+    `skills: dict = field(default_factory=dict)`,
+    `loot_resolver: LootResolver | None = None`,
+    `max_status_duration: int = 10` (from `config.status.max_duration`, F2/D).
+- Produces in `src/models/enemy.py` (backward-compatible defaults):
+  `reward: dict = field(default_factory=dict)`,
+  `behavior: str = "aggressive"`, `weight: int = 1`,
+  `tags: list = field(default_factory=list)`.
+
+- [ ] **Step 1: Write failing test** — constructs CombatState with all fields,
+  Enemy with new fields; enums have expected members.
 
 - [ ] **Step 2: Run to verify fail** → FAIL.
 
-- [ ] **Step 3: Implement** status_system + combat_engine per interfaces.
+- [ ] **Step 3: Implement** contracts + Enemy extension.
 
 - [ ] **Step 4: Run tests** → PASS.
 
@@ -491,7 +566,264 @@ def test_victory_gives_rewards():
 
 ```bash
 git add -A
-git commit -m "feat: turn-based combat engine with 7 actions and statuses"
+git commit -m "feat: combat interfaces contract + enemy schema extension"
+```
+
+---
+
+### Task 7.1: Status Effect system (F2, cap dari config)
+
+**Files:**
+- Create: `src/systems/status_system.py`
+- Create: `tests/test_status.py`
+
+**Interfaces:**
+- Produces:
+  - `apply_status(state, actor_id, kind, power, duration)` — F2 semantics:
+    - DoT kinds (`poison`, `burn`, `bleed`): existing same kind → `power`
+      unchanged, `duration = min(duration + new, state.max_status_duration)`.
+    - Control kinds (`blind`, `silence`, `fear`, `sleep`): existing → refresh
+      `duration` (cap applies).
+    - New kind → append `StatusEffect`.
+    - actor_id `"player"` or enemy id.
+  - `tick_statuses(state, actor_id) -> list[str]` — for each status on actor:
+    DoT kinds deal `power` damage to current hp (ignores defense, min 0),
+    duration `-= 1`, remove expired. Control statuses only decrement duration
+    (behavioral penalties out of MVP scope, documented). Returns Bahasa
+    Indonesia messages.
+  - No randomness, no source tracking (F2).
+
+- [ ] **Step 1: Write failing tests** — DoT reapply keeps power adds duration;
+  cap at max_status_duration (use a small cap like 3 to test); control refresh;
+  tick deals damage and removes expired; empty → no messages.
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement** status_system.
+
+- [ ] **Step 4: Run tests** → PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: status effect system per F2 (doT stacking + control refresh)"
+```
+
+---
+
+### Task 7.2: Damage Formula
+
+**Files:**
+- Create: `src/engine/combat_engine.py` (damage functions only; loop added in 7.3)
+- Create: `tests/test_damage.py`
+
+**Interfaces:**
+- Produces (importing CombatState/DamageResult from combat_interfaces):
+  - `resolve_hit(state, attacker_stats, defender, power, is_magic, effects) -> DamageResult`:
+    - physical: reuse `rule_engine.damage_roll(attacker_stats, defender, randomizer)`;
+      if defender defending → halve.
+    - magic: `damage = power + int*0.5 - magic_resistance` (int = attacker int;
+      enemy magic_res = `defender["intelligence"]*0.6`), min 1, never missed.
+    - applies `effects` (list of `{"kind","duration","power"}`) to defender
+      via `status_system.apply_status`.
+    - returns DamageResult and appends Bahasa Indonesia log line.
+- Helper `magic_damage(power, attacker_int, defender_magic_res) -> int`.
+
+- [ ] **Step 1: Write failing tests** — physical vs defend halving, crit/miss
+  passthrough, magic formula exact numbers, magic min 1, effects applied.
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement**.
+
+- [ ] **Step 4: Run tests** → PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: combat damage resolution (physical + magic)"
+```
+
+---
+
+### Task 7.3: Combat Loop
+
+**Files:**
+- Extend: `src/engine/combat_engine.py`
+- Create: `tests/test_combat_loop.py`
+
+**Interfaces:**
+- Produces:
+  - `start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max_status_duration=10) -> CombatState` — builds state per contract; turn order by initiative descending: player via `rule_engine.derived_stats` initiative, enemy `agility + roll(0,5)`.
+  - `player_action(state, action, choice=None)` — dispatch:
+    - `ATTACK`: `resolve_hit` physical (choice=None); if enemy defending → halved.
+    - `OBSERVE`: once per combat (`observe_used`); fills `observe_info` per INT tier (INT<8 name+HP bar; 8–12 +weakness; 13–15 +resistance+lore; ≥16 +exact HP+hint). **Free action** — caller skips enemy_turn.
+    - `ESCAPE`: `roll(0,100) < 50 + player_agility - enemy_agility` → `result=ESCAPED`, `over=True`; failure → enemy free basic attack.
+    - `DEFEND`: `player_defending = True`; no attack.
+    - SKILL/MAGIC/ITEM: NotImplementedError (implemented in 7.4).
+  - `enemy_turn(state)` — basic attack only (skill/AI in 7.4/7.5): `resolve_hit` physical, halved if `player_defending` (then reset).
+  - `next_turn(state)` — tick statuses for acting actor (7.1), apply hp_regen/mana_regen (derived_stats, clamped) at actor turn start, advance `current_index`/`round_no`, check death → `result` set (reward computation in 7.6).
+  - Helpers `enemy_stats(state) -> dict`, `player_stats(state) -> dict`.
+
+- [ ] **Step 1: Write failing tests** — turn order by initiative; full basic-attack combat reaches victory/defeat; defend halves then resets; escape success/failure; observe tiers + once-only; status tick at turn start.
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement**.
+
+- [ ] **Step 4: Run tests** → PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: combat turn loop, defend/observe/escape, basic attacks"
+```
+
+---
+
+### Task 7.4: Skill & Item Execution
+
+**Files:**
+- Extend: `src/engine/combat_engine.py`
+- Create: `tests/test_combat_skills.py`
+
+**Interfaces:**
+- Produces:
+  - `player_action` SKILL/MAGIC/ITEM now implemented:
+    - `SKILL` / `MAGIC`: `choice` = skill dict (id resolved via `state.skills`); costs MP (`skill["cost"]`); `skill["type"]` `"magic"` → magic path, `"physical"` → physical path; `skill["power"]`; `skill["effects"]` applied to enemy; log. Insufficient MP → log, turn consumed without action.
+    - `ITEM`: `use_item(state, item_id)` — find in `player.inventory` (dict with `id`/`qty`), decrement qty, remove at 0, `heal` → hp + heal clamped to max, log; not owned → ValueError.
+  - `use_item(state, item_id)` — as above.
+
+- [ ] **Step 1: Write failing tests** — skill costs MP and applies effects; magic skill uses magic formula; not enough MP; item heal consumes qty, clamps, removes at 0; unknown item raises.
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement**.
+
+- [ ] **Step 4: Run tests** → PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: skill/magic execution and item use in combat"
+```
+
+---
+
+### Task 7.5: Enemy AI (F3)
+
+**Files:**
+- Extend: `src/engine/combat_engine.py`
+- Extend: `tests/test_combat_loop.py` (or new `tests/test_enemy_ai.py`)
+
+**Interfaces:**
+- Produces:
+  - `enemy_turn(state)` now runs deterministic behavior tree from
+    `state.enemy.behavior` (F3), no RNG for decisions:
+    - `aggressive`: first skill in `enemy.skills` order with cost ≤ enemy mp
+      (resolved via `state.skills`) → use it; else basic attack.
+    - `defensive`: enemy hp < 30% → heal skill if present; else if
+      `enemy_defending` already → attack; else set `enemy_defending=True`.
+    - `mage`: first magic-type skill affordable → use; else first skill; else
+      attack.
+    - `coward`: enemy hp < 20% → attempt escape (fails, combat continues);
+      else defend; else attack.
+  - Enemy skills use `resolve_hit` (physical/magic per skill type) and apply
+    effects; consumes enemy mp.
+
+- [ ] **Step 1: Write failing tests** — aggressive uses highest-priority
+  affordable skill; defensive heals below 30%, defends, attacks; mage prefers
+  magic; coward tries escape then defends; deterministic across runs (same
+  seed → same outcome).
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement**.
+
+- [ ] **Step 4: Run tests** → PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: deterministic enemy AI per F3 (behavior + skill priority)"
+```
+
+---
+
+### Task 7.6: Victory & Reward (F1 + LootResolver stub)
+
+**Files:**
+- Extend: `src/engine/combat_engine.py`
+- Create: `tests/test_combat_rewards.py`
+
+**Interfaces:**
+- Produces:
+  - On victory (`result = VICTORY`): read `state.enemy.reward`
+    (`xp` int, `gold` = `[min, max]` inclusive range):
+    - `state.xp = reward["xp"]`
+    - `state.gold = randomizer.roll(reward["gold"][0], reward["gold"][1])`
+    - `state.loot = state.loot_resolver(state.enemy, state.randomizer)`
+      (stub default returns `[]`; Task 9 implements `loot_system.roll_loot`
+      and wires it — **no duplicate loot implementation**).
+    - Mutate player: `player.xp += state.xp`, `player.gold += state.gold`,
+      append loot item dicts to `player.inventory` (via inventory_system in
+      Task 9; until then simple list append).
+    - Level-up flow stays caller/UI-side (gain_xp/on_level_up unchanged here).
+  - On defeat: `result = DEFEAT`, `over = True`, no rewards.
+
+- [ ] **Step 1: Write failing tests** — victory applies xp/gold to player from
+  reward (exact numbers), gold within range (seeded), loot via resolver
+  (mock resolver returns items → appended to inventory), no reward mutation on
+  defeat.
+
+- [ ] **Step 2: Run to verify fail** → FAIL.
+
+- [ ] **Step 3: Implement**.
+
+- [ ] **Step 4: Run tests** → PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A
+git commit -m "feat: data-driven combat rewards per F1 (reward.xp/gold + loot resolver)"
+```
+
+---
+
+### Task 7.7: Combat integration tests
+
+**Files:**
+- Create: `tests/test_combat.py` (integration)
+- Extend: none (fix issues if found)
+
+**Interfaces:**
+- Verifies end-to-end combat through `start_combat` + `player_action` +
+  `enemy_turn` + `next_turn`:
+  - full fight reaches `victory` with `xp > 0` and player mutated (original
+    Task 7 brief example test, updated for F1/F3: Enemy built with
+    `reward={"xp":30,"gold":[6,12]}`).
+  - defeat path when player dies.
+  - status effect applied via skill persists across turns and resolves.
+  - All 7 actions exercised (attack/skill/magic/item/observe/escape/defend).
+- Run **full suite** → all green.
+
+- [ ] **Step 1: Write failing integration tests** → FAIL.
+
+- [ ] **Step 2: Implement** (fix integration gaps discovered).
+
+- [ ] **Step 3: Run full suite** → PASS.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add -A
+git commit -m "feat: combat integration tests (7 actions, victory, defeat)"
 ```
 
 ---
@@ -509,7 +841,7 @@ git commit -m "feat: turn-based combat engine with 7 actions and statuses"
   - `world_engine.get_map(game_state, map_id)` / `world_engine.current_map(game_state)`.
   - `travel_system.can_travel(game_state, target)` — checks exits.
   - `travel_system.travel(game_state, target)` — moves current_map, advances time 1 tick, logs arrival.
-  - `exploration_system.check_encounter(game_state, randomizer) -> Enemy | None` — formula `20 + threat*10` (+10 night in Forest).
+  - `exploration_system.check_encounter(game_state, randomizer) -> Enemy | None` — formula `20 + threat*10` (+10 night in Forest). Enemy sampled from `enemy_pool` weighted by each enemy's `weight` field (default 1, Design Freeze B); pool entries may be enemy ids or `{"id": ..., "weight": ...}`.
 
 - [ ] **Step 1: Write failing tests**
 
@@ -563,7 +895,11 @@ git commit -m "feat: time, world, travel, rule-based encounters"
   - `inventory_system.use_consumable(player, item, game_state) -> str` (potion restores hp).
   - `equipment_system.equip(player, item)` / `unequip(player, slot)` — applies modifiers into attribute_bonuses; returns log.
   - `equipment_system.total_stats(player)` — base + bonuses + equipment.
-  - `loot_system.roll_loot(enemy, randomizer, game_state) -> list[dict]` — per spec loot table; `gold` amounts via `{"min","max"}`.
+  - `loot_system.roll_loot(enemy, randomizer) -> list[dict]` — **implements the
+    `LootResolver` contract from Task 7.0** (items only, per loot table;
+    gold is NOT in loot — it comes from `enemy.reward.gold`, F1). Combat
+    wiring: Task 16 passes this as `loot_resolver` to `start_combat`; Task 7.6
+    stub default remains `[]` until then.
 
 - [ ] **Step 1: Write failing test**
 
@@ -573,18 +909,20 @@ from src.models.enemy import Enemy
 from src.systems.loot_system import roll_loot
 from src.core.randomizer import Randomizer
 
-def test_loot_gold_range():
+def test_loot_item_chance():
     e = Enemy("g", "Goblin", 2, {"attack":5,"defense":2,"hp":5,"mp":0,"agility":6,"intelligence":3},
-              loot=[{"item":"gold","chance":100,"amount":{"min":5,"max":15}}], skills=[], lore="")
+              loot=[{"item":"herb","chance":100,"amount":1}], skills=[], lore="",
+              reward={"xp":30,"gold":[6,12]})
     r = Randomizer(seed=9)
-    drops = roll_loot(e, r, None)
-    gold = next(d for d in drops if d["item"]=="gold")
-    assert 5 <= gold["amount"] <= 15
+    drops = roll_loot(e, r)
+    assert any(d["item"] == "herb" for d in drops)
 ```
 
 - [ ] **Step 2: Run to verify fail** → FAIL.
 
-- [ ] **Step 3: Write item/enemy JSON** files per spec schema.
+- [ ] **Step 3: Write item/enemy JSON** files per spec schema. Enemy JSON uses
+  the full schema (Design Freeze B): `id, name, level, stats, behavior,
+  reward{xp,gold}, skills, loot, weight, tags, lore`.
 
 - [ ] **Step 4: Implement** the three systems.
 
@@ -752,6 +1090,8 @@ git commit -m "feat: map content, ascii art, event engine"
   - `save_manager.load_game(path, game_context) -> GameState` — validates version, fills missing keys with defaults, seeds Randomizer from saved seed, returns state with `game_state.rng`.
   - `save_manager.default_player(context)` for corrupt/missing saves.
   - Corruption → `SaveError`; Game loop catches and offers new game.
+  - Note (Design Freeze B6): combat statuses are transient (live in
+    `CombatState`, never in Player) — no status serialization needed.
 
 - [ ] **Step 1: Write failing test**
 

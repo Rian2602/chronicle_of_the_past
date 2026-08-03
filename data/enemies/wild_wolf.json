@@ -1,0 +1,15 @@
+{
+  "id": "wild_wolf",
+  "name": "Wild Wolf",
+  "level": 3,
+  "stats": {"attack": 8, "defense": 3, "hp": 12, "mp": 0, "agility": 9, "intelligence": 2},
+  "behavior": "coward",
+  "reward": {"xp": 40, "gold": [8, 16]},
+  "skills": ["bite"],
+  "loot": [
+    {"item": "herb", "chance": 50, "amount": 1}
+  ],
+  "weight": 2,
+  "tags": ["beast"],
+  "lore": "Serigala liar yang menerkam saat sehat dan kabur saat terluka."
+}

@@ -1,0 +1,10 @@
+{
+  "id": "potion",
+  "name": "Potion",
+  "type": "consumable",
+  "slot": null,
+  "modifiers": {},
+  "price": 30,
+  "heal": 50,
+  "description": "Ramuan ajaib yang memulihkan 50 HP."
+}

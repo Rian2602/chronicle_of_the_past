@@ -1,0 +1,61 @@
+[
+  {
+    "id": "event_intro_wake",
+    "trigger": [{"kind": "flag", "flag": "intro_wake_done", "operator": "MISSING"}],
+    "actions": [
+      {"kind": "log", "text": "Kau membuka mata. Langit tampak asing."},
+      {"kind": "set_flag", "flag": "intro_wake_done", "value": true}
+    ]
+  },
+  {
+    "id": "event_quest001_start",
+    "trigger": [
+      {"kind": "flag", "flag": "met_old_man", "value": true},
+      {"kind": "flag", "flag": "quest001_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest001"},
+      {"kind": "set_flag", "flag": "quest001_started", "value": true},
+      {"kind": "log", "text": "Quest baru: Temui Kepala Desa."}
+    ]
+  },
+  {
+    "id": "event_first_memory",
+    "trigger": [
+      {"kind": "flag", "flag": "met_old_man", "value": true},
+      {"kind": "flag", "flag": "memory001_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "grant_memory", "id": "memory001"},
+      {"kind": "set_flag", "flag": "memory001_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_quest002_start",
+    "trigger": [
+      {"kind": "flag", "flag": "quest001_started", "value": true},
+      {"kind": "flag", "flag": "quest002_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest002"},
+      {"kind": "set_flag", "flag": "quest002_started", "value": true},
+      {"kind": "log", "text": "Quest baru: Bahaya di Hutan — kalahkan serigala liar."}
+    ]
+  },
+  {
+    "id": "event_arc1_divergence",
+    "trigger": [
+      {"kind": "flag", "flag": "quest001_done", "value": true},
+      {"kind": "flag", "flag": "quest002_done", "value": true},
+      {"kind": "flag", "flag": "arc1_divergence_shown", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "PERCABANGAN WAKTU — Kamu merasakan sesuatu bergeser."},
+      {"kind": "log", "text": "Sejarah mulai terbentuk ulang di tanganmu, Pejalan Waktu."},
+      {"kind": "log", "text": "Arc 1 selesai. Jalanmu selanjutnya menanti..."},
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "set_flag", "flag": "arc1_divergence_shown", "value": true}
+    ]
+  }
+]

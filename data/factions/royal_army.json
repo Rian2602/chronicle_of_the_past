@@ -1,0 +1,7 @@
+{
+  "id": "royal_army",
+  "name": "Royal Army",
+  "pov": "Menjaga stabilitas kerajaan dan menegakkan hukum di seluruh wilayah.",
+  "opposes": {"rebels": -0.3},
+  "aligns": {"church": 0.1}
+}

@@ -1,0 +1,11 @@
+{
+  "id": "bite",
+  "name": "Bite",
+  "type": "physical",
+  "cost": 0,
+  "target": "single_enemy",
+  "power": 0,
+  "effects": [],
+  "requires": {},
+  "description": "Gigitan tajam."
+}

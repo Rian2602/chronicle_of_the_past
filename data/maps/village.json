@@ -1,0 +1,11 @@
+{
+  "id": "village",
+  "name": "Ashen Village",
+  "region": "1",
+  "threat_level": 0,
+  "description": "Desa kecil yang hangat. Orang-orang memandangmu dengan curiga.",
+  "ascii_art": "village",
+  "exits": ["forest"],
+  "npcs": ["old_man", "village_chief"],
+  "enemy_pool": []
+}
