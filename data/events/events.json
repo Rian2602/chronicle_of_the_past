@@ -1,0 +1,18 @@
+[
+  {
+    "id": "event_intro_wake",
+    "trigger": [{"kind": "flag", "flag": "intro_wake_done", "operator": "MISSING"}],
+    "actions": [
+      {"kind": "log", "text": "Kau membuka mata. Langit tampak asing."},
+      {"kind": "set_flag", "flag": "intro_wake_done", "value": true}
+    ]
+  },
+  {
+    "id": "event_first_memory",
+    "trigger": [{"kind": "flag", "flag": "met_old_man", "value": true}],
+    "actions": [
+      {"kind": "grant_memory", "id": "memory001"},
+      {"kind": "set_flag", "flag": "memory001_granted", "value": true}
+    ]
+  }
+]

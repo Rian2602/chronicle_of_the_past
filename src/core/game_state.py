@@ -10,3 +10,4 @@ class GameState:
         self.items = {}
         self.quests = {}
         self.memories = []
+        self.events = []
