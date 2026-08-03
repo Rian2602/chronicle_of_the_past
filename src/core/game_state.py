@@ -8,3 +8,5 @@ class GameState:
         self.current_map = None
         self.enemies = {}
         self.items = {}
+        self.quests = {}
+        self.memories = []

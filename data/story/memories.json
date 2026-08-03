@@ -1,0 +1,16 @@
+[
+  {
+    "id": "memory001",
+    "title": "Desa Terbakar",
+    "text": "Aku pernah membaca... desa ini akan terbakar.",
+    "flags_set": ["knows_village_burns"],
+    "acquired_by": {"kind": "talk", "target": "old_man", "turn_index": 1}
+  },
+  {
+    "id": "memory002",
+    "title": "Sihir Terlarang",
+    "text": "Sihir yang kau pelajari... dahulu dilarang keras oleh para sage.",
+    "flags_set": ["knows_forbidden_magic"],
+    "acquired_by": {"kind": "talk", "target": "old_man", "turn_index": 3}
+  }
+]
