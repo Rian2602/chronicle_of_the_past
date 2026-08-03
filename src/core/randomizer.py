@@ -10,3 +10,16 @@ class Randomizer:
 
     def chance(self, percent: float) -> bool:
         return self._rng.random() * 100 < percent
+
+    def weighted_choice(self, entries) -> any:
+        weighted = [(item, w) for item, w in entries if w > 0]
+        if not weighted:
+            return None
+        total = sum(w for _, w in weighted)
+        pick = self._rng.uniform(0, total)
+        cumulative = 0
+        for item, w in weighted:
+            cumulative += w
+            if cumulative >= pick:
+                return item
+        return weighted[-1][0]
