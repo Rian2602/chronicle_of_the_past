@@ -12,3 +12,4 @@ class GameState:
         self.memories = []
         self.events = []
         self.rng_seed = None
+        self.combat_data = None

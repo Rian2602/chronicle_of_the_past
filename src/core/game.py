@@ -207,6 +207,9 @@ class Game:
         if m is None or npc.get("location") != m.id:
             out.append(f"{npc['name']} tidak ada di sini.")
             return
+        if not npc.get("dialogs"):
+            out.append(f"{npc['name']} tidak punya dialog.")
+            return
         dialog = self.ctx.dialogues.get(npc["dialogs"][0])
         if dialog is None:
             out.append(f"{npc['name']} tidak punya dialog.")
@@ -327,9 +330,14 @@ class Game:
         else:
             self._current_dialog = self.ctx.dialogues.get(next_id, dialog)
             npc = self.ctx.npc.get(self._talk_npc_id) if self._talk_npc_id else None
-            if npc is not None:
-                out.append(f"{npc['name']}:")
-            out.append(dialog_view.render(self._current_dialog, self.state))
+            out.append(
+                dialog_view.render(
+                    self._current_dialog,
+                    self.state,
+                    npc_id=self._talk_npc_id,
+                    npc_name=npc["name"] if npc else None,
+                )
+            )
 
     def _end_dialog(self, out):
         out.append("Percakapan berakhir.")
@@ -382,8 +390,10 @@ class Game:
     def _apply_level_ups(self, levels):
         p = self.state.player
         for _ in levels:
-            # on_level_up sudah menangani base bonus (+5 HP, +3 MP) dan mengembalikan pilihan
-            choices = level_system.on_level_up(p)
+            # gain_xp sudah menaikkan level; di sini hanya bonus base + pilihan HP
+            p.attribute_bonuses["hp"] = p.attribute_bonuses.get("hp", 0) + 5
+            p.attribute_bonuses["mp"] = p.attribute_bonuses.get("mp", 0) + 3
+            p.hp = max_hp(p)
+            p.mp = max_mp(p)
             # Auto-apply pilihan HP sebagai default (bisa dikembangkan dengan input user nanti)
-            # Hanya apply_choice untuk menghindari double counting karena on_level_up sudah handle base stats
             level_system.apply_choice(p, "hp")

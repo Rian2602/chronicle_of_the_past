@@ -98,3 +98,33 @@ def test_dialog_gated_choice_maps_correct_branch(tmp_path):
     g.run_turn("2")  # "Pergi." (gated-out choice not shown, so #2 is "Pergi.")
     assert g.state.flags.get("met_old_man") is None
     assert g._current_dialog is None
+
+
+def test_dialog_followup_shows_npc_name_not_id(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.run_turn("talk old_man")
+    out = g.run_turn("1")  # lanjut ke dialog berikutnya
+    assert "Old Man:" in out
+    assert "old_man:" not in out
+
+
+def test_victory_levels_up_exactly_once(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.xp = 30  # 30 + 40 (wolf) = 70 -> 1 level
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    g._combat.enemy.stats["hp"] = 1
+    out = g.run_turn("attack")
+    assert g.state.player.level == 2
+    assert "Naik level! Kamu kini level 2." in out
