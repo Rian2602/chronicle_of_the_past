@@ -26,7 +26,7 @@ def test_create_scholar(tmp_path):
 
 def test_create_player_unknown_class_raises(tmp_path):
     ctx = GameContext(data_dir="data")
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError):
         ctx.create_player("Rian", "tidak_ada")
 
 
