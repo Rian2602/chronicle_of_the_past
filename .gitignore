@@ -39,4 +39,7 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated graph artifacts
+graphify-out/
 ```
