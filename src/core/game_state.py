@@ -11,3 +11,4 @@ class GameState:
         self.quests = {}
         self.memories = []
         self.events = []
+        self.rng_seed = None
