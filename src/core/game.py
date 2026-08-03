@@ -73,10 +73,48 @@ class Game:
         self.randomizer = Randomizer(seed)
         self._current_dialog = None
         self._talk_npc_id = None
+        # Restore combat state jika ada
         self._combat = None
+        if hasattr(s, "combat_data") and s.combat_data is not None:
+            self._restore_combat(s.combat_data)
         assert self.state.player is not None
         lines = event_engine.process_events(self.state, self.randomizer)
         return "\n".join(lines) or "Save dimuat."
+    
+    def _restore_combat(self, combat_data):
+        """Restore combat state dari data yang di-load."""
+        from src.engine.combat_interfaces import CombatResult, CombatState
+        enemy_id = combat_data.get("enemy_id")
+        if enemy_id is None or enemy_id not in self.state.enemies:
+            return  # Tidak bisa restore tanpa enemy yang valid
+        enemy = self.state.enemies[enemy_id]
+        # Set HP enemy sesuai yang tersimpan
+        enemy.stats["hp"] = combat_data.get("enemy_hp", enemy.stats.get("hp", 1))
+        # Buat CombatState baru dengan data yang tersimpan
+        self._combat = CombatState(
+            round_no=combat_data.get("round_no", 1),
+            turn_order=combat_data.get("turn_order", ["player", enemy_id]),
+            current_index=combat_data.get("current_index", 0),
+            over=combat_data.get("over", False),
+            result=CombatResult(combat_data["result"]) if combat_data.get("result") else None,
+            log=combat_data.get("log", []),
+            observe_used=combat_data.get("observe_used", False),
+            player_defending=combat_data.get("player_defending", False),
+            enemy_defending=combat_data.get("enemy_defending", False),
+            statuses=combat_data.get("statuses", {}),
+            player=self.state.player,
+            enemy=enemy,
+            randomizer=self.randomizer,
+            skills=self.ctx.skills,
+            loot_resolver=loot_system.roll_loot,
+            max_status_duration=10,
+            items=self.state.items,
+        )
+        self._combat.xp = combat_data.get("xp", 0)
+        self._combat.gold = combat_data.get("gold", 0)
+        self._combat.loot = combat_data.get("loot", [])
+        if combat_data.get("observe_info"):
+            self._combat.observe_info = combat_data["observe_info"]
 
     def run_turn(self, text):
         cmd = input_handler.parse_input(text)
@@ -168,7 +206,7 @@ class Game:
             return
         self._current_dialog = dialog
         self._talk_npc_id = npc_id
-        out.append(f"{npc['name']}:")
+        # Perbaikan: jangan tampilkan nama NPC 2x (dialog_view sudah menampilkannya)
         out.append(dialog_view.render(dialog, self.state))
 
     def _cmd_look(self, out):
@@ -252,7 +290,7 @@ class Game:
             out.append("Gunakan: save <path>.")
             return
         path = " ".join(cmd.args)
-        save_manager.save_game(self.state, path)
+        save_manager.save_game(self.state, path, combat=self._combat)
         out.append(f"Permainan tersimpan di {path}.")
 
     def _cmd_quests(self, out):
@@ -293,6 +331,7 @@ class Game:
         self._talk_npc_id = None
         if npc_id is not None:
             msg = quest_engine.complete_requirement(self.state, "talk", npc_id)
+            # Perbaikan: hanya tampilkan pesan jika quest benar-benar ter-update
             if msg and msg != "Tidak ada syarat yang sesuai.":
                 out.append(msg)
 
@@ -314,6 +353,7 @@ class Game:
         if state.result == CombatResult.VICTORY:
             s.flags[f"defeated_{state.enemy.id}"] = True
             msg = quest_engine.complete_requirement(s, "enemy", state.enemy.id)
+            # Perbaikan: hanya tampilkan pesan jika quest benar-benar ter-update
             if msg and msg != "Tidak ada syarat yang sesuai.":
                 out.append(msg)
             out.extend(state.log)
@@ -335,8 +375,11 @@ class Game:
     def _apply_level_ups(self, levels):
         p = self.state.player
         for _ in levels:
+            # Tampilkan pilihan level up ke player
+            choices = level_system.LEVEL_CHOICES
             p.attribute_bonuses["hp"] = p.attribute_bonuses.get("hp", 0) + 5
             p.attribute_bonuses["mp"] = p.attribute_bonuses.get("mp", 0) + 3
             p.hp = max_hp(p)
             p.mp = max_mp(p)
+            # Auto-apply HP choice sebagai default (bisa dikembangkan dengan input user)
             level_system.apply_choice(p, "hp")

@@ -284,6 +284,11 @@ def player_action(state, action, choice=None) -> bool:
             state.log.append("Skill tidak dikenal.")
             return False
         skill = state.skills[choice]
+        # Validasi: player hanya bisa menggunakan skill yang sudah dipelajari (jika learned_skills ada dan tidak kosong)
+        if parsed is CombatAction.SKILL and hasattr(state.player, "learned_skills") and state.player.learned_skills:
+            if choice not in state.player.learned_skills:
+                state.log.append("Kamu belum mempelajari skill ini.")
+                return False
         if state.player.mp < skill["cost"]:
             state.log.append("MP tidak cukup.")
             return False

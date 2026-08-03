@@ -19,24 +19,46 @@ def default_player(game_context=None):
     return Player(name="Pejalan Waktu", class_id="warrior", hp=0, mp=0, base_stats={})
 
 
-def _engine_state(game_state):
+def _engine_state(game_state, combat=None):
     current_map = game_state.current_map
+    combat_data = None
+    if combat is not None:
+        from src.engine.combat_interfaces import CombatResult
+        combat_data = {
+            "round_no": combat.round_no,
+            "turn_order": combat.turn_order,
+            "current_index": combat.current_index,
+            "over": combat.over,
+            "result": combat.result.value if combat.result else None,
+            "log": combat.log,
+            "observe_used": combat.observe_used,
+            "player_defending": combat.player_defending,
+            "enemy_defending": combat.enemy_defending,
+            "statuses": combat.statuses,
+            "xp": getattr(combat, "xp", 0),
+            "gold": getattr(combat, "gold", 0),
+            "loot": combat.loot or [],
+            "observe_info": getattr(combat, "observe_info", None),
+            "enemy_id": combat.enemy.id if hasattr(combat, "enemy") and combat.enemy else None,
+            "enemy_hp": combat.enemy.stats.get("hp", 0) if hasattr(combat, "enemy") and combat.enemy else 0,
+        }
     return {
         "current_map": current_map.id if hasattr(current_map, "id") else current_map,
         "current_time": game_state.time,
         "day": game_state.day,
         "random_seed": game_state.rng_seed,
         "active_events": [],
+        "combat": combat_data,
     }
 
 
-def save_game(game_state, path, schema_version=SCHEMA_VERSION):
+def save_game(game_state, path, schema_version=SCHEMA_VERSION, combat=None):
     data = {
         "schema_version": schema_version,
         "content_version": CONTENT_VERSION,
         "player": dataclasses.asdict(game_state.player) if game_state.player else None,
         "flags": game_state.flags,
-        "engine_state": _engine_state(game_state),
+        "engine_state": _engine_state(game_state, combat),
         "saved_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
     with open(path, "w", encoding="utf-8") as f:
@@ -63,6 +85,9 @@ def load_game(path, game_context=None):
     gs.time = engine.get("current_time", "morning")
     gs.day = engine.get("day", 1)
     gs.rng_seed = engine.get("random_seed")
+    # Restore combat state jika ada
+    combat_data = engine.get("combat")
+    gs.combat_data = combat_data  # Simpan untuk direstore oleh Game class
     return gs
 
 
