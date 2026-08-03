@@ -1,3 +1,5 @@
+import pytest
+from src.core import save_manager
 from src.core.game_context import GameContext
 from src.core.game import Game
 from src.engine.combat_engine import start_combat
@@ -218,6 +220,22 @@ def test_save_bad_path_shows_message_not_crash(tmp_path):
     out = g.run_turn("save /tidak/ada/dir/save.json")
     assert "Gagal menyimpan" in out
     assert g._combat is not None
+
+
+def test_continue_with_non_save_file_raises_save_error():
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    with pytest.raises(save_manager.SaveError):
+        g.continue_game("data/events/events.json")
+
+
+def test_continue_with_missing_player_raises_save_error(tmp_path):
+    p = tmp_path / "noplayer.json"
+    p.write_text('{"schema_version": 1, "flags": {}}')
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    with pytest.raises(save_manager.SaveError):
+        g.continue_game(str(p))
 
 
 def test_restore_combat_corrupt_result_does_not_crash(tmp_path):

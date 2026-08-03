@@ -82,6 +82,8 @@ def load_game(path, game_context=None):
             data = json.load(f)
     except (OSError, json.JSONDecodeError) as e:
         raise SaveError(f"Save tidak dapat dimuat: {path}") from e
+    if not isinstance(data, dict):
+        raise SaveError(f"Bukan file save: {path}")
     schema_version = data.get("schema_version", data.get("version", 0))
     if schema_version > SCHEMA_VERSION:
         raise SaveError(f"Versi save tidak didukung: {schema_version}")

@@ -69,7 +69,8 @@ class Game:
         self._combat = None
         if hasattr(s, "combat_data") and s.combat_data is not None:
             self._restore_combat(s.combat_data)
-        assert self.state.player is not None
+        if self.state.player is None:
+            raise save_manager.SaveError("Save tidak lengkap (tanpa data pemain).")
         lines = event_engine.process_events(self.state, self.randomizer)
         return "\n".join(lines) or "Save dimuat."
     
