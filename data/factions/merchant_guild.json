@@ -1,0 +1,7 @@
+{
+  "id": "merchant_guild",
+  "name": "Merchant Guild",
+  "pov": "Mengatur perdagangan dan menjaga arus harta demi keuntungan bersama.",
+  "opposes": {},
+  "aligns": {"rebels": 0.1, "scholar_society": 0.1}
+}

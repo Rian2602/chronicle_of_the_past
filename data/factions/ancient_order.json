@@ -1,0 +1,7 @@
+{
+  "id": "ancient_order",
+  "name": "Ancient Order",
+  "pov": "Menjaga keseimbangan waktu dan menyembunyikan kebenaran dari dunia luar.",
+  "opposes": {"royal_army": -0.3, "church": -0.3, "rebels": -0.3, "merchant_guild": -0.3, "scholar_society": -0.3, "crime": -0.3},
+  "aligns": {}
+}

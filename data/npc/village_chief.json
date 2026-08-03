@@ -1,0 +1,9 @@
+{
+  "id": "village_chief",
+  "name": "Kepala Desa",
+  "location": "village",
+  "role": "leader",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_village_chief"]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "scholar_society",
+  "name": "Scholar Society",
+  "pov": "Mengumpulkan ilmu dan melestarikan pengetahuan kuno tanpa takut pada dogma.",
+  "opposes": {"church": -0.3},
+  "aligns": {"merchant_guild": 0.1}
+}

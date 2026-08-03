@@ -1,0 +1,7 @@
+{
+  "id": "rebels",
+  "name": "Rebels",
+  "pov": "Melawan ketidakadilan kerajaan demi kebebasan rakyat kecil.",
+  "opposes": {"royal_army": -0.3},
+  "aligns": {"merchant_guild": 0.1}
+}

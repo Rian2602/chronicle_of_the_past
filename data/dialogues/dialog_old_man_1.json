@@ -1,0 +1,13 @@
+{
+  "id": "dialog_old_man_1",
+  "lines": [
+    {"speaker": "old_man", "text": "Aku hanyalah penjaga perpustakaan tua di tepi desa ini."},
+    {"speaker": "old_man", "text": "Namaku Aria... meski banyak orang hanya memanggilku 'orang tua'."},
+    {"speaker": "old_man", "text": "Kau datang dari jauh, kan? Aku bisa merasakannya dari caramu berpakaian."},
+    {"speaker": "old_man", "text": "Hmm... berhati-hatilah. Aku pernah membaca... desa ini akan terbakar."}
+  ],
+  "choices": [
+    {"text": "Terima kasih atas peringatannya.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

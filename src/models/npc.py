@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -9,3 +9,4 @@ class Npc:
     role: str
     faction: str
     dialogs: list
+    relationship: dict = field(default_factory=dict)

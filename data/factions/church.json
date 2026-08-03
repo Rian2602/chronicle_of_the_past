@@ -1,0 +1,7 @@
+{
+  "id": "church",
+  "name": "Church",
+  "pov": "Membimbing moral umat dan melestarikan ajaran suci para leluhur.",
+  "opposes": {"scholar_society": -0.3},
+  "aligns": {"royal_army": 0.1}
+}
