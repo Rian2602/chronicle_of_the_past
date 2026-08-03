@@ -213,6 +213,13 @@ def test_save_and_help_allowed_during_combat(tmp_path):
     assert g._combat is not None
 
 
+def test_save_bad_path_shows_message_not_crash(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    out = g.run_turn("save /tidak/ada/dir/save.json")
+    assert "Gagal menyimpan" in out
+    assert g._combat is not None
+
+
 def test_restore_combat_corrupt_result_does_not_crash(tmp_path):
     ctx, g = _mid_combat_game(tmp_path)
     g._combat = None

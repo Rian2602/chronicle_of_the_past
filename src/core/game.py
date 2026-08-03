@@ -302,7 +302,11 @@ class Game:
             out.append("Gunakan: save <path>.")
             return
         path = " ".join(cmd.args)
-        save_manager.save_game(self.state, path, combat=self._combat)
+        try:
+            save_manager.save_game(self.state, path, combat=self._combat)
+        except save_manager.SaveError as e:
+            out.append(str(e))
+            return
         out.append(f"Permainan tersimpan di {path}.")
 
     def _cmd_quests(self, out):

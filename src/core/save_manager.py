@@ -68,8 +68,11 @@ def save_game(game_state, path, schema_version=SCHEMA_VERSION, combat=None):
         "engine_state": _engine_state(game_state, combat),
         "saved_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except OSError as e:
+        raise SaveError(f"Gagal menyimpan ke {path}: {e}") from e
     return path
 
 
