@@ -16,7 +16,9 @@ def process_events(game_state, randomizer=None, events=None):
                 game_state.flags[action["flag"]] = action.get("value", True)
             elif kind == "grant_memory":
                 if game_state.player is not None:
-                    memory_system.grant_memory(game_state, action["id"])
+                    memory = memory_system.grant_memory(game_state, action["id"])
+                    if memory is not None:
+                        log_lines.append(f"Kenangan terbuka: {memory['title']}.")
             elif kind == "start_quest":
                 if game_state.player is not None:
                     log_lines.append(quest_engine.start_quest(game_state, action["id"]))

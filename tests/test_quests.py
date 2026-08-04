@@ -79,7 +79,7 @@ def test_complete_requirement_talk_marks_met_and_completes():
     })
     start_quest(gs, "quest001")
     msg = complete_requirement(gs, "talk", "village_chief")
-    assert msg == "Quest selesai: Temui Kepala Desa."
+    assert msg == "Quest selesai: Temui Kepala Desa. Hadiah: 50 XP, 20 emas, 10 reputasi village."
     assert gs.player.quests_active == {}
     assert gs.player.quests_done == ["quest001"]
     assert gs.player.xp == 50
@@ -134,7 +134,7 @@ def test_complete_requirement_multiple_requirements_need_all_met():
     assert gs.player.quests_active == {"quest003": {"met": [0]}}
     assert gs.player.quests_done == []
     msg = complete_requirement(gs, "flag", "wolves_defeated")
-    assert msg == "Quest selesai: Quest quest003."
+    assert msg == "Quest selesai: Quest quest003. Hadiah: 100 XP."
     assert gs.player.quests_active == {}
     assert gs.player.quests_done == ["quest003"]
     assert gs.player.xp == 100
@@ -153,7 +153,7 @@ def test_complete_requirement_flag_kind():
     start_quest(gs, "quest002")
     gs.flags["wolves_defeated"] = True
     msg = complete_requirement(gs, "flag", "wolves_defeated")
-    assert msg == "Quest selesai: Bahaya di Hutan."
+    assert msg == "Quest selesai: Bahaya di Hutan. Hadiah: 40 XP, 15 emas, 5 reputasi village."
     assert gs.player.quests_done == ["quest002"]
     assert gs.player.xp == 40
     assert gs.player.gold == 15
@@ -171,7 +171,7 @@ def test_complete_requirement_map_kind():
     })
     start_quest(gs, "quest004")
     msg = complete_requirement(gs, "map", "forest")
-    assert msg == "Quest selesai: Quest quest004."
+    assert msg == "Quest selesai: Quest quest004. Hadiah: 10 XP."
     assert gs.player.quests_done == ["quest004"]
     assert gs.player.xp == 10
 

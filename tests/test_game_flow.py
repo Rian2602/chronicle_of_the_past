@@ -3,7 +3,7 @@ from src.core import save_manager
 from src.core.game_context import GameContext
 from src.core.game import Game
 from src.engine.combat_engine import start_combat
-from src.engine.combat_interfaces import StatusEffect
+from src.models.combat_interfaces import StatusEffect
 from src.systems import loot_system
 
 
@@ -50,7 +50,7 @@ def test_talk_npc_sets_dialog_flag(tmp_path):
     g = Game(ctx)
     g.new_game("Rian", "warrior")
     out = g.run_turn("talk old_man")
-    assert "Old Man" in out
+    assert "Aria" in out
     g.run_turn("1")  # pick "Siapa Anda?" -> next dialog_old_man_1
     assert g.state.flags.get("met_old_man") is True
 
@@ -109,7 +109,7 @@ def test_dialog_followup_shows_npc_name_not_id(tmp_path):
     g.new_game("Rian", "warrior")
     g.run_turn("talk old_man")
     out = g.run_turn("1")  # lanjut ke dialog berikutnya
-    assert "Old Man:" in out
+    assert "Aria:" in out
     assert "old_man:" not in out
 
 
@@ -407,3 +407,36 @@ def test_select_without_number_does_not_crash(tmp_path):
     g.run_turn("talk old_man")
     out = g.run_turn("select")
     assert "Pilihan tidak valid." in out
+
+
+def test_memories_empty_and_after_grant(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("memories")
+    assert "belum memiliki kenangan" in out
+    g.state.flags["met_old_man"] = True
+    out = g.run_turn("talk old_man")  # trigger event_first_memory
+    g.run_turn("1")
+    out = g.run_turn("memories")
+    assert "Kenangan:" in out
+    assert "Desa Terbakar" in out
+
+
+def test_victory_displays_loot(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    g._combat.enemy.stats["hp"] = 1
+    g._combat.loot_resolver = lambda enemy, rng: [{"id": "herb", "qty": 1}]
+    out = g.run_turn("attack")
+    assert "Loot: 1x Herb" in out

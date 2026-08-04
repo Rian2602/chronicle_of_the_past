@@ -4,7 +4,7 @@ from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
 from src.engine import dialog_engine, event_engine, quest_engine
 from src.engine.combat_engine import enemy_turn, player_action, start_combat
-from src.engine.combat_interfaces import CombatAction, CombatResult
+from src.models.combat_interfaces import CombatAction, CombatResult
 from src.engine.time_engine import rest
 from src.models.enemy import Enemy
 from src.models.item import Item
@@ -76,7 +76,7 @@ class Game:
     
     def _restore_combat(self, combat_data):
         """Restore combat state dari data yang di-load."""
-        from src.engine.combat_interfaces import CombatResult, CombatState, StatusEffect
+        from src.models.combat_interfaces import CombatResult, CombatState, StatusEffect
         enemy_id = combat_data.get("enemy_id")
         if enemy_id is None or enemy_id not in self.state.enemies:
             return  # Tidak bisa restore tanpa enemy yang valid
@@ -131,8 +131,9 @@ class Game:
             self._combat_turn(cmd, out)
         elif self._current_dialog is not None and cmd.action == "select":
             self._dialog_select(cmd, out)
-        elif self._combat is not None and cmd.action not in ("save", "help"):
+        elif self._combat is not None and cmd.action not in ("save", "help", "inventory"):
             out.append("Tidak bisa saat bertarung.")
+            out.append(combat_view.render(self._combat))
         else:
             self._dispatch(cmd, out)
         if self._combat is None:
@@ -152,6 +153,7 @@ class Game:
             "look": lambda: self._cmd_look(out),
             "explore": lambda: self._cmd_explore(out),
             "inventory": lambda: self._cmd_inventory(out),
+            "memories": lambda: self._cmd_memories(out),
             "use": lambda: self._cmd_use(cmd, out),
             "equip": lambda: self._cmd_equip(cmd, out),
             "unequip": lambda: self._cmd_unequip(cmd, out),
@@ -171,23 +173,52 @@ class Game:
             )
 
     def _cmd_status(self, out):
-        m = self.state.current_map
-        if m is not None:
-            out.append(m.description)
-            if m.exits:
-                out.append("Jalan keluar: " + ", ".join(m.exits))
-            else:
-                out.append("Tidak ada jalan keluar.")
+        p = self.state.player
+        class_name = (
+            self.ctx.classes[p.class_id]["name"]
+            if p.class_id in self.ctx.classes
+            else p.class_id
+        )
+        out.append(f"{p.name} — {class_name} (Level {p.level})")
+        out.append(f"HP: {p.hp}/{max_hp(p)}  MP: {p.mp}/{max_mp(p)}")
+        out.append(f"XP: {p.xp}/{level_system.xp_to_next(p.level)}")
+        out.append(f"Emas: {p.gold}")
+        if p.equipped:
+            labels = {"weapon": "Senjata", "armor": "Zirah", "helmet": "Helm"}
+            parts = []
+            for slot, item_id in p.equipped.items():
+                item = self.state.items.get(item_id)
+                parts.append(f"{labels.get(slot, slot)}: {item.name if item else item_id}")
+            out.append("Perlengkapan: " + ", ".join(parts))
+        else:
+            out.append("Perlengkapan: (kosong)")
+        if p.learned_skills:
+            out.append("Skill: " + ", ".join(p.learned_skills))
+        location = self.state.current_map.name if self.state.current_map else "-"
+        out.append(f"Lokasi: {location}")
 
     def _cmd_help(self, out):
-        out.append("Perintah: status, help, go <peta>, rest, talk <npc>, look, explore,")
-        out.append("inventory, use <item>, equip <item>, unequip <slot>, save <path>, quests")
+        out.append("Perintah: status, help, go <peta>, rest, talk <id_npc>, look, explore,")
+        out.append("inventory, memories, use <item>, equip <item>, unequip <slot>,")
+        out.append("save <path>, quests, quit")
         out.append("Saat bertarung: attack, skill <id>, magic <id>, item <id>, observe, escape, defend")
+        out.append("Saat dialog: ketik nomor pilihan (mis. 1)")
+
+    def _cmd_memories(self, out):
+        p = self.state.player
+        if not p.memories:
+            out.append("Kamu belum memiliki kenangan.")
+            return
+        out.append("Kenangan:")
+        for memory in p.memories:
+            out.append(f"- {memory['title']}: {memory['text']}")
 
     def _cmd_go(self, cmd, out):
         if not cmd.args:
             out.append("Gunakan: go <nama peta>.")
             return
+        self._current_dialog = None
+        self._talk_npc_id = None
         try:
             out.append(travel_system.travel(self.state, cmd.args[0]))
         except ValueError as e:
@@ -246,6 +277,8 @@ class Game:
         if enemy is None:
             out.append("Kamu menjelajah, tetapi tidak ada yang mengancam.")
             return
+        self._current_dialog = None
+        self._talk_npc_id = None
         out.append(f"Kamu bertemu {enemy.name}!")
         self._combat = start_combat(
             self.state.player,
@@ -374,8 +407,6 @@ class Game:
         if state.over:
             out.extend(self._finish_combat(state))
             self._combat = None
-            # Flush input buffer setelah combat selesai untuk mencegah input terbawa ke scene berikutnya
-            self._input_buffer = []
         else:
             out.append(combat_view.render(state))
 
@@ -383,7 +414,6 @@ class Game:
         out = []
         s = self.state
         if state.result == CombatResult.VICTORY:
-            s.flags[f"defeated_{state.enemy.id}"] = True
             msg = quest_engine.complete_requirement(s, "enemy", state.enemy.id)
             # Perbaikan: hanya tampilkan pesan jika quest benar-benar ter-update
             if msg and msg != "Tidak ada syarat yang sesuai.":

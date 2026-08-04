@@ -38,9 +38,12 @@ def complete_requirement(game_state, kind, target) -> str:
 def _complete_quest(game_state, player, quest_id) -> str:
     quest = game_state.quests[quest_id]
     rewards = quest.get("rewards", {})
-    player.xp += level_system.award_xp(player, rewards.get("xp", 0))
-    player.gold += rewards.get("gold", 0)
-    for faction, value in rewards.get("reputation", {}).items():
+    gained_xp = level_system.award_xp(player, rewards.get("xp", 0))
+    player.xp += gained_xp
+    gold = rewards.get("gold", 0)
+    player.gold += gold
+    reputation = rewards.get("reputation", {})
+    for faction, value in reputation.items():
         player.reputation[faction] = player.reputation.get(faction, 0) + value
     flags = quest.get("flags_on_complete")
     if isinstance(flags, str):
@@ -49,4 +52,14 @@ def _complete_quest(game_state, player, quest_id) -> str:
         game_state.flags[flag] = True
     player.quests_done.append(quest_id)
     del player.quests_active[quest_id]
-    return f"Quest selesai: {quest['title']}."
+    detail = []
+    if gained_xp:
+        detail.append(f"{gained_xp} XP")
+    if gold:
+        detail.append(f"{gold} emas")
+    for faction, value in reputation.items():
+        detail.append(f"{value} reputasi {faction}")
+    message = f"Quest selesai: {quest['title']}."
+    if detail:
+        message += f" Hadiah: {', '.join(detail)}."
+    return message

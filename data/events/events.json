@@ -15,8 +15,7 @@
     ],
     "actions": [
       {"kind": "start_quest", "id": "quest001"},
-      {"kind": "set_flag", "flag": "quest001_started", "value": true},
-      {"kind": "log", "text": "Quest baru: Temui Kepala Desa."}
+      {"kind": "set_flag", "flag": "quest001_started", "value": true}
     ]
   },
   {
@@ -38,8 +37,7 @@
     ],
     "actions": [
       {"kind": "start_quest", "id": "quest002"},
-      {"kind": "set_flag", "flag": "quest002_started", "value": true},
-      {"kind": "log", "text": "Quest baru: Bahaya di Hutan — kalahkan serigala liar."}
+      {"kind": "set_flag", "flag": "quest002_started", "value": true}
     ]
   },
   {
@@ -55,6 +53,7 @@
       {"kind": "log", "text": "Sejarah mulai terbentuk ulang di tanganmu, Pejalan Waktu."},
       {"kind": "log", "text": "Arc 1 selesai. Jalanmu selanjutnya menanti..."},
       {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "grant_memory", "id": "memory002"},
       {"kind": "set_flag", "flag": "arc1_divergence_shown", "value": true}
     ]
   }

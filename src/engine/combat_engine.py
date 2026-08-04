@@ -1,6 +1,6 @@
 import copy
 
-from src.engine.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
+from src.models.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
 from src.engine import rule_engine
 from src.core.constants import STATS
 from src.models.player import max_hp, max_mp, effective_stat
@@ -146,8 +146,19 @@ def _on_victory(state):
     state.player.xp += gained_xp
     state.player.gold += state.gold
     for entry in state.loot:
-        inventory_system.add_item(state.player, entry["id"], entry.get("qty", 1))
+        item = state.items.get(entry["id"])
+        added = inventory_system.add_item(state.player, entry["id"], entry.get("qty", 1))
+        if not added:
+            name = item.name if item is not None else entry["id"]
+            state.log.append(f"Inventaris penuh — {name} tidak tersimpan.")
     state.log.append(f"Kamu mendapat {gained_xp} XP dan {state.gold} emas.")
+    if state.loot:
+        names = []
+        for entry in state.loot:
+            item = state.items.get(entry["id"])
+            name = item.name if item is not None else entry["id"]
+            names.append(f"{entry.get('qty', 1)}x {name}")
+        state.log.append("Loot: " + ", ".join(names) + ".")
 
 
 def use_item(state, item_id) -> str | None:
