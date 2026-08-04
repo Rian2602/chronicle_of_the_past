@@ -132,7 +132,7 @@ class Game:
             self._combat_turn(cmd, out)
         elif self._current_dialog is not None and cmd.action == "select":
             self._dialog_select(cmd, out)
-        elif self._combat is not None and cmd.action not in ("save", "help", "inventory"):
+        elif self._combat is not None and cmd.action not in ("save", "help", "inventory", "look"):
             out.append("Tidak bisa saat bertarung.")
             out.append(combat_view.render(self._combat))
         else:
