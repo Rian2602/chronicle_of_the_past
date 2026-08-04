@@ -28,6 +28,16 @@ def test_menu_selection_up_wraps(monkeypatch):
     assert _menu_selection() == total - 1
 
 
+def test_menu_loop_clears_screen_for_every_redraw(monkeypatch):
+    keys = iter(["s", ""])
+    clears = []
+    monkeypatch.setattr(builtins, "input", lambda _: next(keys))
+    monkeypatch.setattr(launcher, "_clear_screen", lambda: clears.append(True))
+
+    assert launcher._menu_loop(lambda selection: f"Menu {selection}", 2, "Petunjuk") == 1
+    assert len(clears) == 2
+
+
 class FakeGame:
     def __init__(self):
         self.calls = 0

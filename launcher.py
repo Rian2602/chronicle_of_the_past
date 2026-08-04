@@ -1,5 +1,6 @@
 """Chronicle of the Past - launcher entry point."""
 
+import os
 import sys
 import termios
 import tty
@@ -11,6 +12,12 @@ from src.ui import animation, game_menu, menu, story_view
 from src.utils.json_loader import ContentError
 
 _NAV_HINT = "Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar."
+
+
+def _clear_screen():
+    """Bersihkan terminal interaktif sebelum satu layar game digambar ulang."""
+    if sys.stdout.isatty():
+        os.system("cls" if os.name == "nt" else "clear")
 
 
 def _read_key() -> str:
@@ -53,7 +60,7 @@ def _read_key() -> str:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 
-def _menu_loop(render_fn, total: int, hint: str) -> int:
+def _menu_loop(render_fn, total: int, hint: str, screen: str = "") -> int:
     """Loop navigasi menu generik dengan arrow key support.
 
     Args:
@@ -65,18 +72,12 @@ def _menu_loop(render_fn, total: int, hint: str) -> int:
         Index item yang dipilih (0-based).
     """
     selection = 0
-    first = True
     while True:
+        _clear_screen()
         rendered = render_fn(selection)
-        # Hitung jumlah baris untuk di-clear sebelum redraw
-        line_count = rendered.count("\n") + 1 + 2  # +1 baris terakhir, +2 (blank + hint)
-
-        if not first and sys.stdout.isatty():
-            # Gerakkan kursor ke atas dan hapus area menu lama
-            print(f"\033[{line_count}A\033[J", end="", flush=True)
-        first = False
-
-        print()
+        if screen:
+            print(screen)
+            print()
         print(rendered)
         print(hint, flush=True)
 
@@ -91,12 +92,13 @@ def _menu_loop(render_fn, total: int, hint: str) -> int:
             raise KeyboardInterrupt
 
 
-def _menu_selection() -> int:
+def _menu_selection(screen: str = "") -> int:
     total = len(menu.MAIN_ITEMS)
     return _menu_loop(
         render_fn=menu.render_main,
         total=total,
         hint="Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar.",
+        screen=screen,
     )
 
 
@@ -126,14 +128,15 @@ def _play_intro(ctx):
     """Putar cutscene intro (scene berawalan 'intro_') — Enter lanjut, q lewati."""
     scenes = [s for s in ctx.scenes if s.get("id", "").startswith("intro_")]
     for scene in scenes:
-        print("\n" + story_view.render_scene(scene))
+        _clear_screen()
+        print(story_view.render_scene(scene))
         key = _read_key()
         if key == "q":
             break
     print()
 
 
-def _navigate(game):
+def _navigate(game, last_output: str = ""):
     """Navigasi menu game bertingkat dengan arrow key. Return perintah atau None (keluar)."""
     stack = []  # list (items, title)
     while True:
@@ -150,7 +153,12 @@ def _navigate(game):
                 lines.append(marker + label)
             return "\n".join(lines)
 
-        idx = _menu_loop(render_fn=render, total=len(items), hint=_NAV_HINT)
+        idx = _menu_loop(
+            render_fn=render,
+            total=len(items),
+            hint=_NAV_HINT,
+            screen=last_output,
+        )
         label, target = items[idx]
         if callable(target):
             stack.append((target(), label))
@@ -181,12 +189,11 @@ def _confirm_quit() -> bool:
     return options[idx][1]
 
 
-def _game_loop(game):
-    print("\n" + "=" * 26)
-    print("Gunakan \u2191/\u2193 dan Enter untuk memilih. 'q' untuk keluar.")
+def _game_loop(game, initial_output: str = ""):
+    last_output = initial_output
     while True:
         try:
-            cmd = _navigate(game)
+            cmd = _navigate(game, last_output)
         except KeyboardInterrupt:
             if getattr(game, "_combat", None) is not None and not _confirm_quit():
                 continue
@@ -199,15 +206,13 @@ def _game_loop(game):
             game._current_dialog = None
             cmd = "look"
         try:
-            import os
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(game.run_turn(cmd))
+            last_output = game.run_turn(cmd)
         except save_manager.SaveError as e:
-            print(f"Gagal menyimpan: {e}")
+            last_output = f"Gagal menyimpan: {e}"
         except ContentError as e:
-            print(f"Konten tidak valid: {e}")
+            last_output = f"Konten tidak valid: {e}"
         except Exception as e:  # ponytail: jaring terakhir, lanjutkan sesi
-            print(f"Terjadi kesalahan: {e}")
+            last_output = f"Terjadi kesalahan: {e}"
 
 
 def _new_game(ctx):
@@ -220,12 +225,10 @@ def _new_game(ctx):
         print("Tidak ada kelas tersedia.")
         return
     game = Game(ctx)
-    has_intro = any(s.get("id", "").startswith("intro_") for s in ctx.scenes)
     out = game.new_game(name, class_id)
-    if not has_intro:
-        print("\n" + out)
     _play_intro(ctx)
-    _game_loop(game)
+    initial_output = f"{game.run_turn('look')}\n\n{out}"
+    _game_loop(game, initial_output)
 
 
 def _continue_game(ctx):
@@ -248,8 +251,9 @@ def _continue_game(ctx):
     path = paths[idx]
     game = Game(ctx)
     try:
-        print("\n" + game.continue_game(path))
-        _game_loop(game)
+        out = game.continue_game(path)
+        initial_output = f"{game.run_turn('look')}\n\n{out}"
+        _game_loop(game, initial_output)
     except save_manager.SaveError:
         if not os.path.exists(path):
             print(f"File save tidak ditemukan: {path}")
@@ -266,16 +270,18 @@ def main():
         print(f"Gagal memuat data: {e}")
         return 1
     try:
+        last_output = ""
         while True:
-            choice = _menu_selection()
+            choice = _menu_selection(last_output)
+            last_output = ""
             if choice == 0:
                 _new_game(ctx)
             elif choice == 1:
                 _continue_game(ctx)
             elif choice == 2:
-                print("Pengaturan belum tersedia.")
+                last_output = "Pengaturan belum tersedia."
             elif choice == 3:
-                print("Kredit: Chronicle of the Past - RPG CLI tentang perjalanan waktu.")
+                last_output = "Kredit: Chronicle of the Past - RPG CLI tentang perjalanan waktu."
             elif choice == 4:
                 print("Sampai jumpa!")
                 break
