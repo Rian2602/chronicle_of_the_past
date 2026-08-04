@@ -2,12 +2,13 @@
   "id": "bandit",
   "name": "Bandit",
   "level": 4,
-  "stats": {"attack": 10, "defense": 5, "hp": 20, "mp": 8, "agility": 7, "intelligence": 6},
+  "stats": {"attack": 10, "defense": 5, "hp": 28, "mp": 8, "agility": 7, "intelligence": 6},
   "behavior": "aggressive",
   "reward": {"xp": 70, "gold": [15, 30]},
-  "skills": ["backstab"],
+  "skills": [],
   "loot": [
-    {"item": "potion", "chance": 30, "amount": 1}
+    {"item": "potion", "chance": 30, "amount": 1},
+    {"item": "iron_sword", "chance": 15, "amount": 1}
   ],
   "weight": 3,
   "tags": ["humanoid"],

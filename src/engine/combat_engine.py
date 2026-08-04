@@ -43,7 +43,7 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
         log_line = f"{attacker_name} melontarkan mantra ke {defender_name}, -{damage} HP."
     else:
         roll = rule_engine.damage_roll(attacker_stats, defender_stats, state.randomizer)
-        damage = roll["damage"]
+        damage = roll["damage"] + (power if not roll["missed"] else 0)
         critical = roll["critical"]
         missed = roll["missed"]
         defending = (
@@ -283,11 +283,10 @@ def player_action(state, action, choice=None) -> bool:
         return _escape(state)
     if parsed in (CombatAction.SKILL, CombatAction.MAGIC):
         if choice not in state.skills:
-            state.log.append("Skill tidak dikenal.")
-            return False
+            raise ValueError(f"Skill tidak dikenal: {choice}")
         skill = state.skills[choice]
         # Validasi: player hanya bisa menggunakan skill yang sudah dipelajari (jika learned_skills ada dan tidak kosong)
-        if parsed is CombatAction.SKILL and hasattr(state.player, "learned_skills") and state.player.learned_skills:
+        if hasattr(state.player, "learned_skills") and state.player.learned_skills:
             if choice not in state.player.learned_skills:
                 state.log.append("Kamu belum mempelajari skill ini.")
                 return False
@@ -312,6 +311,7 @@ def player_action(state, action, choice=None) -> bool:
                 player_stats(state),
                 state.enemy.stats,
                 state.enemy.id,
+                power=skill["power"],
                 effects=translated_effects,
             )
         if state.enemy.stats["hp"] <= 0:
@@ -372,6 +372,7 @@ def _use_enemy_skill(state, skill):
             state.enemy.stats,
             player_stats(state),
             "player",
+            power=skill["power"],
             effects=effects,
         )
 

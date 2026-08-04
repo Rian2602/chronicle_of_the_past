@@ -303,10 +303,10 @@ def test_player_action_returns_false_when_over():
 
 
 @pytest.mark.parametrize("action", [CombatAction.SKILL, CombatAction.MAGIC])
-def test_skill_magic_unknown_skill_logged_and_turn_consumed(action):
+def test_skill_magic_unknown_skill_raises_value_error(action):
     state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
-    assert player_action(state, action, "nope") is False
-    assert "Skill tidak dikenal." in state.log
+    with pytest.raises(ValueError, match="Skill tidak dikenal"):
+        player_action(state, action, "nope")
 
 
 def test_item_unknown_id_raises_value_error():

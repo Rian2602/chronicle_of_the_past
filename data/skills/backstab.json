@@ -1,11 +1,1 @@
-{
-  "id": "backstab",
-  "name": "Backstab",
-  "type": "physical",
-  "cost": 0,
-  "target": "single_enemy",
-  "power": 0,
-  "effects": [],
-  "requires": {},
-  "description": "Tikaman dari belakang."
-}
+{"id": "backstab", "name": "Backstab", "type": "physical", "cost": 5, "target": "single_enemy", "power": 4, "effects": [{"status": "bleed", "power": 2, "duration": 2}], "requires": {}, "description": "Tikaman dari belakang yang membuat musuh berdarah."}

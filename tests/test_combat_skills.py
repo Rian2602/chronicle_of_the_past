@@ -58,6 +58,14 @@ def make_physical_skill(cost=3, power=8, effects=None):
     }
 
 
+class FixedRandomizer:
+    def __init__(self, rolls):
+        self._rolls = list(rolls)
+
+    def roll(self, lo, hi):
+        return self._rolls.pop(0) if self._rolls else lo
+
+
 def make_magic_skill(cost=4, power=10, effects=None):
     return {
         "id": "fire",
@@ -111,10 +119,50 @@ def test_skill_not_enough_mp_consumes_turn_without_action():
     assert "MP tidak cukup." in state.log
 
 
-def test_skill_unknown_id_logs_and_consumes_turn():
+def test_skill_unknown_id_raises_value_error():
     state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
-    assert player_action(state, CombatAction.SKILL, "nope") is False
-    assert "Skill tidak dikenal." in state.log
+    with pytest.raises(ValueError, match="Skill tidak dikenal"):
+        player_action(state, CombatAction.SKILL, "nope")
+
+
+def test_magic_unknown_id_raises_value_error():
+    state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
+    with pytest.raises(ValueError, match="Skill tidak dikenal"):
+        player_action(state, CombatAction.MAGIC, "nope")
+
+
+def test_physical_skill_power_adds_damage():
+    player = make_player(attack=10)
+    enemy = make_enemy(hp=50, defense=2)
+    rng = FixedRandomizer([0, 0, 0, 0, 0, 0, 100])
+    state = start_combat(
+        player, enemy, rng, skills={"strike": make_physical_skill(cost=3, power=6)}
+    )
+    player_action(state, CombatAction.SKILL, "strike")
+    assert state.enemy.stats["hp"] == 50 - 15  # base 9 (10 - 2//2) + power 6
+
+
+def test_physical_skill_miss_ignores_power():
+    player = make_player(attack=10)
+    enemy = make_enemy(hp=50, defense=2)
+    rng = FixedRandomizer([0, 0, 0, 0, 0, 100, 100])
+    state = start_combat(
+        player, enemy, rng, skills={"strike": make_physical_skill(cost=3, power=6)}
+    )
+    player_action(state, CombatAction.SKILL, "strike")
+    assert state.enemy.stats["hp"] == 50
+
+
+def test_unlearned_magic_is_rejected():
+    player = make_player(intelligence=10, mp=50)
+    player.learned_skills = ["strike"]
+    enemy = make_enemy(hp=50, intelligence=3)
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"fire": make_magic_skill()}
+    )
+    assert player_action(state, CombatAction.MAGIC, "fire") is False
+    assert enemy.stats["hp"] == 50
+    assert "Kamu belum mempelajari skill ini." in state.log
 
 
 def test_player_action_item_heals_and_decrements_qty():

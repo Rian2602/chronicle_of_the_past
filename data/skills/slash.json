@@ -1,11 +1,1 @@
-{
-  "id": "slash",
-  "name": "Slash",
-  "type": "physical",
-  "cost": 0,
-  "target": "single_enemy",
-  "power": 0,
-  "effects": [],
-  "requires": {},
-  "description": "Serangan pedang dasar."
-}
+{"id": "slash", "name": "Slash", "type": "physical", "cost": 4, "target": "single_enemy", "power": 6, "effects": [], "requires": {}, "description": "Serangan pedang dasar yang keras."}
