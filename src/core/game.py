@@ -83,6 +83,7 @@ class Game:
         enemy = self.state.enemies[enemy_id]
         enemy = copy.copy(enemy)
         enemy.stats = dict(enemy.stats)
+        enemy.stats.setdefault("max_hp", enemy.stats.get("hp", 1))
         # Set HP enemy sesuai yang tersimpan
         enemy.stats["hp"] = combat_data.get("enemy_hp", enemy.stats.get("hp", 1))
         # Rekonstruksi statuses dari dict ke StatusEffect objects

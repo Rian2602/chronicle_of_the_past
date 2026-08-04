@@ -180,6 +180,30 @@ def test_midcombat_save_restores_statuses(tmp_path):
     assert effects[0].power == 5
 
 
+def test_midcombat_save_restores_enemy_max_hp(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    full_hp = g._combat.enemy.stats["max_hp"]
+    assert full_hp > 5
+    g._combat.enemy.stats["hp"] = 5
+    path = str(tmp_path / "damaged.json")
+    g.run_turn(f"save {path}")
+    g2 = Game(ctx)
+    g2.continue_game(path)
+    assert g2._combat.enemy.stats["hp"] == 5
+    assert g2._combat.enemy.stats["max_hp"] == full_hp
+
+
 def test_restore_combat_does_not_mutate_shared_enemy(tmp_path):
     ctx, g = _mid_combat_game(tmp_path)
     wolf = g.state.enemies["wild_wolf"]
