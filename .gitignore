@@ -48,3 +48,5 @@ logs/
 
 # Dokumen kerja internal AI (tidak untuk publik)
 docs/superpowers/
+.worktrees/
+.superpowers/
