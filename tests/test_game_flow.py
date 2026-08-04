@@ -17,6 +17,25 @@ def test_new_game_and_status(tmp_path):
     assert "Ashen Village" in out
 
 
+def test_hud_shows_objective_when_quest_active(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.flags["met_old_man"] = True
+    g.run_turn("look")  # process_events starts quest001
+    out = g.run_turn("status")
+    assert "▶ Temui Kepala Desa" in out
+    assert "Bicaralah dengan Kepala Desa" in out
+
+
+def test_hud_no_objective_line_without_quest(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("status")
+    assert "▶" not in out
+
+
 def test_travel_to_forest(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)

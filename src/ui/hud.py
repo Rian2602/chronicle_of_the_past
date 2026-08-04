@@ -1,3 +1,4 @@
+from src.engine import quest_engine
 from src.models.player import max_hp, max_mp
 from src.ui.renderer import bar
 
@@ -13,4 +14,7 @@ def render(player, game_state):
         f"Emas: {player.gold}   XP: {player.xp}",
         f"Lokasi: {location}   Waktu: {game_state.time}",
     ]
+    objective = quest_engine.next_objective(game_state)
+    if objective:
+        lines.append(f"▶ {objective}")
     return "\n".join(lines)
