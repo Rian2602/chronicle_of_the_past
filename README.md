@@ -1,380 +1,257 @@
-# Chronicle of the Past
+<div align="center">
 
-> **"Sejarah bukan sesuatu yang sudah terjadi. Ia adalah sesuatu yang terus kamu putuskan."**
+# 🕰️ Chronicle of the Past
 
-CLI RPG berbasis teks dalam Bahasa Indonesia — perjalanan melalui waktu, pilihan yang membentuk ulang sejarah, dan kenangan yang tak pernah hilang.
+*RPG berbasis teks (CLI) tentang perjalanan waktu — di desa yang tak lama lagi akan terbakar.*
 
-- **5 kelas karakter** (Warrior, Mage, Ranger, Assassin, Scholar) dengan stat & skill awal berbeda
-- **3 musuh** berperilaku unik (aggressive, coward) di **2 peta** yang terhubung
-- **Quest, event, dan dialog bercabang** yang digerakkan data (semua konten di `data/`)
-- **Save / Continue** kapan saja — termasuk di tengah pertarungan
-- **Tanpa dependency runtime** — murni stdlib Python 3.12+
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=flat-square&logo=python&logoColor=white)
+![100% stdlib](https://img.shields.io/badge/100%25-stdlib-4EA94B?style=flat-square)
+![Bahasa](https://img.shields.io/badge/Bahasa-Indonesia-1f6feb?style=flat-square)
+[![Tests](https://img.shields.io/github/actions/workflow/status/Rian2602/chronicle_of_the_past/ci.yml?style=flat-square&label=tests)](https://github.com/Rian2602/chronicle_of_the_past/actions)
+[![License](https://img.shields.io/github/license/Rian2602/chronicle_of_the_past?style=flat-square)](LICENSE)
+
+**Tanpa instalasi tambahan. Tanpa dependensi eksternal. Hanya Python 3.12+.**
+
+</div>
 
 ---
 
-## Instalasi
+Kamu terbangun di tempat asing. Langit tak seperti yang kau kenal. Seorang tua berbisik: *desa ini akan terbakar.* Sebagai Pejalan Waktu, kau harus menulis ulang sejarah — satu pertarungan, satu percakapan, satu kenangan pada satu waktu.
 
-**Prasyarat:** Python 3.12+ (game berjalan murni stdlib, tanpa install dependency)
+---
+
+## ✨ Fitur Utama
+
+- 🏰 **Perjalanan waktu** — keputusanmu menciptakan *kenangan* dan mengubah arah cerita, hingga percabangan waktu terbuka di akhir Arc 1.
+- ⚔️ **Pertarungan berbasis giliran** — 5 kelas, skill unik, musuh dengan perilaku berbeda (pengecut, agresif, pertahanan).
+- 📜 **Cerita & quest** — dialog bernas, quest berjenjang dengan hadiah XP, emas, dan reputasi.
+- 🌲 **Eksplorasi** — Desa Ashen dan Hutan Ashen, dengan kemungkinan bertemu musuh (malam hari lebih berbahaya!).
+- ⏰ **Siklus waktu** — pagi → siang → sore → malam; bertualang atau beristirahat.
+- 💾 **Simpan kapan saja** — bahkan saat bertarung.
+
+---
+
+## 🖼️ Cuplikan Layar
+
+Menu utama:
+
+```
+CHRONICLE OF THE PAST
+==========================
+
+> Permainan Baru
+  Lanjutkan
+  Pengaturan
+  Kredit
+  Keluar
+```
+
+Pilih kelas:
+
+```
+Warrior
+Attack        ████████░░
+Defense       ██████████
+Hp            ██████████
+Mp            ██░░░░░░░░
+Agility       ████░░░░░░
+Intelligence  ██░░░░░░░░
+```
+
+Memulai perjalanan:
+
+```
+Kau membuka mata. Langit tampak asing.
+
+Rian — Warrior (Lv 1)
+HP 100/100 ██████████████
+MP 10/10 ██████████████
+Emas: 0   XP: 0
+Lokasi: Ashen Village   Waktu: morning
+```
+
+Jelajahi desa:
+
+```
+    ####
+   # @  #
+  #  /\  #
+ #__/  \__#
+ |   ##   |
+ | *    * |
+  \______/
+
+Desa kecil yang hangat. Orang-orang memandangmu dengan curiga.
+Jalan keluar: forest
+Di sini ada: Aria, Kepala Desa
+```
+
+Bertemu Aria, penjaga perpustakaan tua:
+
+```
+Aria:
++------------------------------------+
+| Kau... Aku belum pernah melihatmu. |
++------------------------------------+
+Pilihan:
+  1. Siapa Anda?
+  2. Pergi.
+```
+
+...dan jalannya sejarah mulai terbentuk:
+
+```
+Quest dimulai: Temui Kepala Desa.
+Kenangan terbuka: Desa Terbakar.
+Quest dimulai: Bahaya di Hutan.
+```
+
+Bertarung dan menangkan Arc 1:
+
+```
+Quest selesai: Bahaya di Hutan. Hadiah: 40 XP, 15 emas, 5 reputasi merchant_guild.
+Kamu menyerang Wild Wolf, -13 HP.
+Kamu mendapat 40 XP dan 13 emas.
+Kemenangan!
+═══════════════════════════════════════
+PERCABANGAN WAKTU — Kamu merasakan sesuatu bergeser.
+Sejarah mulai terbentuk ulang di tanganmu, Pejalan Waktu.
+Arc 1 selesai. Jalanmu selanjutnya menanti...
+═══════════════════════════════════════
+Kenangan terbuka: Sihir Terlarang.
+```
+
+---
+
+## 🚀 Cara Menjalankan
 
 ```bash
-# Clone atau masuk ke direktori proyek
+git clone https://github.com/Rian2602/chronicle_of_the_past.git
 cd chronicle_of_the_past
-
-# Opsional: virtual environment
-python3 -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-# .venv\Scripts\activate   # Windows
-
-# Opsional (hanya untuk pengembangan/test): pytest
-pip install pytest
+python3 launcher.py
 ```
 
----
-
-## Menjalankan Game
-
-```bash
-python3 launcher.py        # atau .venv/bin/python launcher.py
-```
-
-Menu utama punya 5 pilihan:
-
-| Pilihan | Fungsi |
-|---|---|
-| **Permainan Baru** | Mulai permainan baru (minta nama → pilih kelas) |
-| **Lanjutkan** | Muat file save (default `saves/slot1.json`) |
-| **Pengaturan** | Belum tersedia |
-| **Kredit** | Tampilkan kredit |
-| **Keluar** | Tutup game |
-
-Navigasi: `w`/`s` (atau `k`/`j`) untuk berpindah, `Enter` untuk memilih, `q` untuk keluar.
-
-Saat **Permainan Baru**, kamu diminta nama (kosongkan → "Pejalan Waktu"), lalu memilih kelas dari 5 opsi.
+- **Windows:** gunakan `py launcher.py`.
+- **Tanpa `git`?** Unduh ZIP dari halaman repo, ekstrak, lalu jalankan `python3 launcher.py` dari folder tersebut.
+- Virtual environment bersifat opsional — game ini murni pustaka standar Python.
 
 ---
 
-## Kelas
+## 🎮 Cara Bermain
 
-| Kelas | Deskripsi | Skill Awal | XP Bonus |
-|---|---|---|---|
-| **Warrior** | Spesialis garis depan. | `slash` | 1.0× |
-| **Mage** | Pengguna sihir yang mempelajari mantra. | `fireball` | 1.0× |
-| **Ranger** | Ahli perburuan dan panah. | `quick_shot` | 1.0× |
-| **Assassin** | Pembunuh senyap dari bayangan. | `backstab` | 1.0× |
-| **Scholar** | Peneliti yang mencari kebenaran kuno. | `inspect` | **1.2×** |
+Navigasi menu utama dengan `W`/`S` (atau `K`/`J`), tekan `Enter` untuk memilih, `Q` untuk keluar.
+
+Selama bermain, ketik perintah dan tekan `Enter`. Jika namamu dibiarkan kosong saat memulai, kamu akan dipanggil **Pejalan Waktu**.
+
+| Menu | Fungsi |
+|------|--------|
+| Permainan Baru | Mulai petualangan baru (tentukan nama & kelas) |
+| Lanjutkan | Muat file save (default `saves/slot1.json`) |
+| Pengaturan | Belum tersedia (datang di pembaruan berikutnya) |
+| Kredit | Info pembuatan game |
+| Keluar | Tutup game |
 
 ---
 
-## Perintah dalam Game
+## 🛡️ Kelas
 
-| Perintah | Keterangan |
-|---|---|
-| `status` | Tampilkan status karakter |
-| `look` | Lihat deskripsi lokasi saat ini |
-| `go <lokasi>` | Berpindah ke lokasi (contoh: `go forest`) |
-| `rest` | Istirahat hingga pagi, pulihkan HP/MP penuh |
-| `talk <npc>` | Bicara dengan NPC — gunakan **ID**, bukan nama (contoh: `talk old_man`) |
-| `explore` | Jelajahi area — mungkin bertemu musuh |
-| `inventory` | Tampilkan perlengkapan dan inventaris |
-| `memories` | Tampilkan kenangan yang telah terbuka |
-| `use <item>` | Gunakan item konsumabel |
-| `equip <item>` | Pasang perlengkapan |
-| `unequip <slot>` | Lepas perlengkapan dari slot |
-| `quests` | Tampilkan daftar quest aktif (progres X/Y) |
-| `save <path>` | Simpan permainan (contoh: `save saves/slot1.json`) |
-| `help` | Tampilkan daftar perintah |
-| `quit` / `keluar` | Keluar dari game |
+| Kelas | Skill Awal | MP | Gaya |
+|-------|-----------|----|------|
+| **Warrior** | `slash` (serangan fisik) | 4 | Tangguh, pertahanan tinggi |
+| **Assassin** | `backstab` (fisik + pendarahan) | 5 | Cepat, fisik & status |
+| **Mage** | `fireball` (sihir 12 dmg) | 8 | Sihir murni, MP besar |
+| **Ranger** | `quick_shot` (fisik 7 dmg) | 6 | Seimbang, serba bisa |
+| **Scholar** | `inspect` (sihir analisis) | 5 | Bonus XP 1.2× — naik level lebih cepat |
 
-**Perintah tempur** (aktif saat pertarungan berlangsung):
+Skill biasa `bite` (bawaan musuh) tidak berbiaya MP. Level-up memulihkan HP/MP penuh dan menambah stat — juga memberi kenangan baru seiring cerita.
 
-| Perintah | Keterangan |
-|---|---|
+---
+
+## ⌨️ Perintah
+
+**Perintah umum:**
+
+| Perintah | Fungsi |
+|----------|--------|
+| `status` | Lihat stat, perlengkapan, dan XP |
+| `look` | Deskripsi lokasi + ASCII art + jalan keluar |
+| `go <dest>` | Pindah lokasi (mis. `go forest`) |
+| `explore` | Jelajahi lokasi — bisa memicu pertarungan |
+| `talk <id>` | Ajak bicara NPC (mis. `talk old_man`) |
+| `memories` | Lihat kenangan yang telah terbuka |
+| `rest` | Tidur hingga pagi (Hari berikutnya, HP/MP penuh) |
+| `inv` / `inventory` | Lihat isi tas |
+| `use <item>` | Pakai item (mis. `use potion`) |
+| `equip <item>` / `unequip <item>` | Kenakan / lepas perlengkapan |
+| `save` / `load` | Simpan / muat permainan (default `saves/slot1.json`) |
+| `quit` | Keluar ke menu utama |
+
+**Saat bertarung:**
+
+| Perintah | Fungsi |
+|----------|--------|
 | `attack` | Serangan fisik dasar |
-| `skill <id>` | Gunakan skill fisik (contoh: `skill slash`) |
-| `magic <id>` | Gunakan skill sihir (contoh: `magic fireball`) |
-| `item <id>` | Gunakan item dari inventaris (tidak menghabiskan giliran) |
-| `observe` | Amati musuh — ungkap info kelemahan (gratis, 1×) |
-| `defend` | Bertahan — kurangi damage setengah ronde ini |
-| `escape` | Coba melarikan diri dari pertarungan |
-| `1` / `2` / ... | Pilih opsi dialog saat berbicara |
+| `skill` | Gunakan skill kelas |
+| `use <item>` | Gunakan item pemulih |
+| `flee` | Kabur dari pertarungan |
 
-> Saat bertarung, hanya perintah tempur + `save` + `help` + `inventory` yang aktif; perintah lain ditolak dengan pesan "Tidak bisa saat bertarung."
+**Selama dialog**, ketik angka pilihan (mis. `1`) untuk merespons. Angka di luar dialog akan membalas *"Tidak ada dialog aktif."*
 
 ---
 
-## Sinopsis Arc 1 — "The Stranger"
+## 📖 Cerita — Arc 1
 
-Kamu terbangun sebagai orang asing di **Ashen Village** tanpa ingatan. Seorang **Old Man** bernama **Aria** (penjaga perpustakaan tua) memperingatkan bahwa desa ini akan terbakar. Kepala Desa meminta bantuanmu memberantas serigala liar di tepi hutan. Semakin dalam kamu menyelidiki, semakin jelas bahwa waktu bukanlah sekadar alur lurus — dan sejarah mulai terbentuk ulang di tanganmu.
-
----
-
-## Walkthrough Arc 1 (quest001 + quest002)
-
-**Prasyarat:** Permainan Baru → nama → pilih kelas. Kamu mulai di Ashen Village, pagi Hari 1, tanpa item dan emas.
-
-1. **`talk old_man`** → dialog terbuka.
-2. Ketik **`1`** ("Siapa Anda?") → dialog berlanjut: Old Man bernama Aria, memperingatkan *"desa ini akan terbakar."* Di akhir giliran ini **dua quest langsung aktif**:
-   - **quest001 — "Temui Kepala Desa"**
-   - **quest002 — "Bahaya di Hutan"** (kalahkan serigala liar)
-3. **`talk village_chief`** → bicara dengan Kepala Desa, pilih opsi mana pun → **quest001 selesai**: +50 XP, +20 emas, +10 reputasi *merchant_guild*.
-4. **`go forest`** → tiba di Ashen Forest (waktu maju satu fase).
-5. **`explore`** berulang sampai bertemu **Wild Wolf**. Peluang encounter 40% per explore (50% saat malam), dan wolf adalah salah satu dari 3 musuh di pool hutan — bersabarlah. **Hanya Wild Wolf** yang memenuhi syarat quest002. Menang → +40 XP, 8–16 emas, 50% loot *herb* + 10% *leather_armor* → **quest002 selesai**: +40 XP, +15 emas, +5 reputasi.
-6. Di akhir giliran yang sama muncul banner **"PERCABANGAN WAKTU"** → **Arc 1 selesai**. Permainan berlanjut bebas.
-
-> 🧭 **Catatan:** quest002 tidak menunggu quest001 selesai — keduanya aktif bersamaan sejak langkah 2.
+Kau bangun di **Desa Ashen** tanpa ingatan. Di sana, **Aria** — penjaga perpustakaan tua — memperingatkanmu bahwa desa akan terbakar. **Kepala Desa** khawatir serigala liar mulai berani mendekati tepi hutan. Dua pertanyaan menggantung: siapa dirimu, dan apa yang menantimu di dalam Hutan Ashen?
 
 ---
 
-## Tips Bertarung
+## 🧭 Walkthrough Arc 1
 
-- **`observe`** gratis dan mengungkap kelemahan musuh — gunakan di awal.
-- **Wild Wolf** berperilaku *coward*: berusaha kabur saat HP-nya rendah. Jangan biarkan ia kabur — kejar dengan `attack`.
-- **`defend`** mengurangi damage separuh; berguna saat HP tipis.
-- **Menggunakan item tidak menghabiskan giliran** — heal di saat kritis tanpa risiko.
-- **Scholar** mendapat **20% XP ekstra** (1.2×) dari semua kemenangan & quest.
-- **Tidak ada game over.** Kalah → pesan "Kamu gugur dalam pertarungan...", lalu `rest` untuk pulih penuh dan coba lagi.
+> Hint: angka di dalam dialog dijawab dengan mengetik nomornya.
 
----
-
-## Sistem Inti
-
-- **Waktu:** 4 fase — pagi, siang, sore, malam → kembali pagi (bertambah hari). `go <peta>` memajukan waktu; `explore` dan dialog tidak. Malam di hutan meningkatkan peluang bertemu musuh.
-- **Level & XP:** butuh `50 × level` XP untuk naik level. Level naik saat **kemenangan combat**; tiap level memberimu +5 HP, +3 MP (otomatis).
-- **Ekonomi:** tidak ada toko. Emas & item datang dari quest dan loot musuh. *Herb* memulihkan 20 HP, *Potion* 50 HP.
+1. **`talk old_man`** → pilih **1** — kenali Aria. Lanjutkan pilihan **1** hingga ia mengingatkan soal kebakaran. → *Quest "Temui Kepala Desa" dimulai* & *Kenangan "Desa Terbakar" terbuka.*
+2. **`talk village_chief`** → pilih **1** ("Aku bisa membantu..."). → *Quest "Temui Kepala Desa" selesai*: **+50 XP, +20 emas, +10 reputasi merchant_guild** — dan level up! *Quest "Bahaya di Hutan" dimulai.*
+3. **`go forest`** — perjalanan memajukan waktu ke siang.
+4. **`explore`** — bertarunglah melawan **Wild Wolf** (Lv 3, HP 18; hadiah 40 XP & 8–16 emas; drop umum herb 50%, kadang leather_armor 10%).
+   - Lawan lain: **Goblin** (Lv 2, HP 10; 30 XP, 6–12 emas; drop herb 25%, wooden_helmet 5%) dan **Bandit** (Lv 4, HP 28; 70 XP, 15–30 emas; drop potion 30%, iron_sword 15%) — bandit agresif, jangan meremehkannya.
+5. Kalahkan serigala → *"Bahaya di Hutan" selesai*: **+40 XP, +15 emas, +5 reputasi** → banner **PERCABANGAN WAKTU** muncul, dan *Kenangan "Sihir Terlarang" terbuka.* Arc 1 tuntas.
 
 ---
 
-## Save / Continue
+## ⚔️ Tips Bertarung
 
-- **Simpan:** `save <path>` saat bermain — didukung juga **di tengah pertarungan** (state combat ikut tersimpan).
-- **Lanjutkan:** pilih "Lanjutkan" di menu utama; default path `saves/slot1.json`.
-- Format JSON 3-layer: `player` + `flags` + `engine_state`. Key yang hilang → default. File yang bukan save, atau save tanpa data pemain, ditolak dengan pesan error ramah (bukan crash).
-
----
-
-## FAQ & Troubleshooting
-
-**Kenapa `explore` sering tidak ketemu musuh?**
-Peluang encounter hanya 40% per explore (50% saat malam di hutan). Coba lagi, atau `rest` dulu sampai malam.
-
-**Kenapa quest002 tidak selesai setelah kalahkan goblin/bandit?**
-Quest002 hanya terpenuhi dengan membunuh **Wild Wolf**, musuh yang muncul di pool Ashen Forest.
-
-**Kenapa harus `talk old_man`, bukan `talk "Old Man"`?**
-Perintah `talk` memakai **ID** NPC, bukan nama tampilan (`old_man`, `village_chief`).
-
-**Saya kalah bertarung, permainan berakhir?**
-Tidak ada game over. Gunakan `rest` untuk pulih penuh, lalu ulangi.
-
-**XP quest tidak menaikkan level langsung?**
-Level naik hanya saat kemenangan combat; XP quest tetap terhitung dan akan terproses pada kemenangan berikutnya.
-
-**Error "Bukan file save: <path>"?**
-Path menunjuk ke file JSON yang bukan save buatan game. Beri path yang benar.
-
-**Apakah ada toko?**
-Tidak. Emas dan item (herb/potion) didapat dari quest dan loot musuh.
+- **Wild Wolf itu pengecut.** Saat HP-nya < 20%, ia *mencoba kabur tapi gagal* — gilirannya terbuang percuma. Manfaatkan momen itu untuk menyerang gratis.
+- **Scholar** naik level 20% lebih cepat — pilihan tepat untuk eksplorasi santai.
+- **Mage** kuat melawan musuh ber-defence rendah, tapi MP-nya habis cepat — bawa potion.
+- **Istirahat** memulihkan segalanya dan memajukan satu hari; jangan ragu `rest` sebelum menantang bandit.
+- Musuh punya **kelemahan**: pertahanan rendah → rentan fisik; kecerdasan rendah → rentan sihir. Cek dengan skill `inspect`.
 
 ---
 
-## Arsitektur
+## ⚙️ Sistem Inti
 
-```
-chronicle_of_the_past/
-├── launcher.py          # Entry point — menu utama + game loop
-├── tools/bench.py       # Benchmark performa (stdlib, report-only)
-├── data/                # Konten game (JSON, data-driven)
-│   ├── classes/         # 5 kelas karakter
-│   ├── enemies/         # goblin, wild_wolf, bandit
-│   ├── events/          # Event triggers (Arc 1)
-│   ├── factions/        # 7 faksi
-│   ├── items/           # Senjata, armor, konsumabel
-│   ├── maps/            # village, forest
-│   ├── npc/             # old_man, village_chief
-│   ├── dialogues/       # Dialog trees
-│   ├── quests/          # quest001, quest002
-│   ├── skills/          # Skill karakter & musuh
-│   └── story/           # Narasi kenangan (memories)
-├── assets/
-│   ├── ascii/           # ASCII art per lokasi
-│   └── ui/              # Palette warna + border JSON
-├── src/
-│   ├── core/            # Game, GameContext, GameState, Randomizer, save_manager, input_handler, constants
-│   ├── engine/          # combat, dialog, event, quest, rule, time, world
-│   ├── models/          # Dataclass — Player, Enemy, Item, Map, Command, CombatAction/State/Result
-│   ├── systems/         # level, inventory, equipment, loot, memory, travel, exploration, status
-│   ├── ui/              # renderer, HUD, views (combat/dialog/inventory/menu), animation, ascii_loader
-│   └── utils/           # json_loader
-└── tests/               # Suite pytest (351 tests)
-```
-
-**Arah dependensi (ketat):**
-```
-data/ → engine/systems → GameState ← ui/
-                          ↑
-                        core/
-```
-- `ui/` hanya membaca, tidak pernah mengimpor `engine/` atau `systems/`
-- Engine tidak mengandung nama konten spesifik — semua dari JSON
-- Tidak ada global state — `GameState` di-pass secara eksplisit
+- **Waktu:** pagi → siang → sore → malam, lalu berulang. `go` memajukan satu fase; `rest` melompat ke pagi hari berikutnya.
+- **Level:** butuh `50 × level` XP. Naik level = HP/MP penuh, stat naik, dan berlaku langsung — baik dari quest maupun kemenangan bertarung.
+- **Ekonomi:** kumpulkan emas dari hadiah & jarahan. Toko belum tersedia — tabung untuk pembaruan berikutnya.
+- **Item:** Herb (pulihkan 20 HP), Potion (pulihkan 50 HP), Iron Sword, Leather Armor, Wooden Helmet.
+- **Menyimpan:** `save` menulis ke `saves/slot1.json` (bisa diganti via `load`). Save saat bertarung juga didukung — keadaan pertarungan ikut dipulihkan.
 
 ---
 
-## Panduan Authoring Konten
+## ❓ FAQ
 
-### Menambah Kelas Baru
-
-Buat `data/classes/<id>.json`:
-```json
-{
-  "id": "paladin",
-  "name": "Paladin",
-  "description": "Ksatria suci yang tahan banting.",
-  "base_stats": {"attack": 10, "defense": 16, "hp": 110, "mp": 15, "agility": 6, "intelligence": 9},
-  "xp_bonus": 1.0,
-  "starting_skills": ["slash"],
-  "stat_bars": {"attack": 3, "defense": 6, "hp": 6, "mp": 2, "agility": 1, "intelligence": 2}
-}
-```
-
-### Menambah Musuh Baru
-
-Buat `data/enemies/<id>.json`:
-```json
-{
-  "id": "skeleton",
-  "name": "Skeleton",
-  "level": 3,
-  "stats": {"attack": 7, "defense": 4, "hp": 15, "mp": 0, "agility": 5, "intelligence": 1},
-  "behavior": "aggressive",
-  "reward": {"xp": 45, "gold": [5, 15]},
-  "skills": ["bite"],
-  "loot": [{"item": "herb", "chance": 30, "amount": 1}],
-  "tags": ["undead"],
-  "lore": "Tulang-belulang yang bangkit kembali."
-}
-```
-
-> Bobot kemunculan musuh ditentukan di `enemy_pool` pada `data/maps/<id>.json`, bukan di file musuh.
-
-### Menambah Skill Baru
-
-Buat `data/skills/<id>.json`:
-```json
-{
-  "id": "thunder_strike",
-  "name": "Thunder Strike",
-  "type": "magic",
-  "cost": 12,
-  "target": "single_enemy",
-  "power": 15,
-  "effects": [{"status": "blind", "power": 1, "duration": 2}],
-  "requires": {},
-  "description": "Serangan petir yang membutakan musuh."
-}
-```
-
-### Menambah Event Baru
-
-Tambah ke `data/events/events.json` (pola one-shot dengan self-guard):
-```json
-{
-  "id": "event_my_event",
-  "trigger": [
-    {"kind": "flag", "flag": "my_condition", "value": true},
-    {"kind": "flag", "flag": "my_event_done", "operator": "MISSING"}
-  ],
-  "actions": [
-    {"kind": "log", "text": "Sesuatu terjadi."},
-    {"kind": "set_flag", "flag": "my_event_done", "value": true}
-  ]
-}
-```
-
-> ⚠️ **Penting:** Jangan gunakan `"type": "location"` untuk trigger event — `rule_engine` menggunakan `"kind": "map"` dengan perbandingan string, dan `game.py` menyimpan `Map` object (bukan string). Gunakan flag triggers untuk semua event konten.
-
-### Menambah Dialog NPC
-
-Buat `data/dialogues/<id>.json`:
-```json
-{
-  "id": "dialog_my_npc_main",
-  "lines": [
-    {"speaker": "my_npc", "text": "Halo, pengembara!"}
-  ],
-  "choices": [
-    {"text": "Siapa kamu?", "require_flags": [], "set_flags": ["met_my_npc"], "next": null},
-    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
-  ]
-}
-```
-
-**Kunci choice opsional:** `require_not_flags: []`, `require_reputation: {"merchant_guild": 10}`.
-
-### Menambah Quest Baru
-
-Buat `data/quests/<id>.json`:
-```json
-{
-  "id": "quest003",
-  "title": "Judul Quest",
-  "type": "side",
-  "description": "Deskripsi quest.",
-  "requirements": [
-    {"kind": "enemy", "target": "goblin"},
-    {"kind": "talk", "target": "village_chief"}
-  ],
-  "rewards": {"xp": 60, "gold": 25, "reputation": {"merchant_guild": 5}},
-  "flags_on_complete": ["quest003_done"],
-  "next": null
-}
-```
-
-**Kind requirement valid:** `talk`, `enemy`, `flag`, `map`.
-
-**Faksi valid (frozen):** `royal_army`, `church`, `rebels`, `merchant_guild`, `scholar_society`, `ancient_order`, `crime`.
+- **Bisa kalah permanen?** Tidak ada *game over*. Jika gugur, kamu kembali ke peta dengan HP 0 — cukup `rest` untuk pulih sepenuhnya.
+- **Kenapa aku dapat kenangan?** Kenangan adalah jejak keputusanmu sebagai Pejalan Waktu. Setiap kenangan membentuk ulang jalan cerita.
+- **XP quest tidak langsung menaikkan level?** Sudah tidak berlaku — XP dari quest maupun pertarungan kini langsung memicu level-up saat itu juga.
+- **Di mana tokonya?** Belum ada di versi ini. Simpan emasmu untuk pembaruan berikutnya.
+- **Kredit?** Pilih "Kredit" di menu utama.
 
 ---
 
-## Testing & Tools
+## 🛠️ Pengembangan
 
-```bash
-# Jalankan semua test (351 test)
-.venv/bin/python -m pytest tests/ -q
+- **Persyaratan:** Python 3.12+ (pustaka standar saja).
+- **Uji:** `pytest -q` (uji dijalankan otomatis oleh CI pada setiap push/PR).
+- **Lisensi:** [MIT](LICENSE) © 2026 Rian2602.
 
-# Test spesifik
-.venv/bin/python -m pytest tests/test_arc1_content.py -v   # validasi konten
-.venv/bin/python -m pytest tests/test_game_flow.py -v       # integrasi game flow
-.venv/bin/python -m pytest tests/test_combat_loop.py -v     # loop pertarungan
-
-# Compile check
-python3 -m compileall src launcher.py tools/bench.py
-
-# Benchmark performa (startup, save/load, combat, render, memori)
-python3 tools/bench.py
-```
-
-**351 tests** covering: JSON loader, constants, models, rule engine, level system, combat (interfaces, status, damage, loop, skills, AI, rewards, integration), time/world/travel, inventory/equipment/loot, quest engine, memory system, dialog engine, event engine, ascii loader, save manager, UI renderer/HUD/views/input, launcher, game flow, dan Arc 1 content validation.
-
----
-
-## Catatan Divergensi dari MASTER_CONCEPT
-
-Proyek ini menyimpang dari MASTER_CONCEPT v1.0 dalam beberapa hal yang sudah disetujui:
-
-| Aspek | MASTER_CONCEPT | Implementasi |
-|---|---|---|
-| **Stack** | Rich, Pydantic v2, uv | stdlib only, dataclasses, requirements.txt |
-| **Faksi** | `{kingdom, church, rebels, merchant_guild, scholar_society, village, ancient_order}` | `{royal_army, church, rebels, merchant_guild, scholar_society, ancient_order, crime}` (frozen) |
-| **Region ID** | `snake_case` | Numerik string (`"1"`, `"2"`) |
-| **Event trigger lokasi** | `{"type": "location", "equals": "village"}` | `{"kind": "map", "name": ..., "operator": "EQ"}` — perbandingan string; live `Game` menyimpan Map object → konten Arc 1 menggunakan flag trigger saja |
-| **Reputation bleed-over** | Matriks oposisi aktif | Matriks disimpan sebagai data (`opposes`/`aligns`) tapi tidak dievaluasi engine |
-| **Save versioning** | — | `schema_version` + `content_version` (backward-compatible load) |
-
-## Catatan Pengembangan (Diketahui)
-
-Quirk konten yang tercatat, bukan untuk diperbaiki di sini:
-
-- **quest002 aktif bersamaan** quest001 (tidak menunggu quest001 selesai).
-- **Tanpa toko / game over**: emas tanpa sink dan HP 0 belum menampilkan layar kekalahan permanen.
-- **Inisiatif (`initiative`)** dihitung tapi tidak dipakai penuh — giliran bergantian tetap.
+*Dibuat dengan Python dan semangat bercerita. Selamat berkelana, Pejalan Waktu.* 🕰️
