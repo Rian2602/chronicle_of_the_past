@@ -36,6 +36,27 @@ def test_hud_no_objective_line_without_quest(tmp_path):
     assert "▶" not in out
 
 
+def test_unknown_command_shows_objective_hint(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.flags["met_old_man"] = True
+    g.run_turn("look")
+    out = g.run_turn("xyzzy")
+    assert "Petunjuk" in out
+    assert "Temui Kepala Desa" in out
+
+
+def test_help_shows_current_objective(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.flags["met_old_man"] = True
+    g.run_turn("look")
+    out = g.run_turn("help")
+    assert "Tujuan saat ini" in out
+
+
 def test_travel_to_forest(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)

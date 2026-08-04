@@ -169,10 +169,12 @@ class Game:
             out.append("Tidak ada dialog aktif.")
         elif action == "":
             out.append("Ketik 'help' untuk daftar perintah.")
+            self._append_quest_hint(out)
         else:
             out.append(
                 f"Perintah tidak dikenal: {cmd.action}. Ketik 'help' untuk bantuan."
             )
+            self._append_quest_hint(out)
 
     def _cmd_use_alias(self, cmd, out):
         """Alias 'item <id>' → 'use <id>' di luar combat."""
@@ -180,6 +182,11 @@ class Game:
             out.append("Gunakan: use <item>. (atau: item <id> saat bertarung)")
             return
         self._cmd_use(cmd, out)
+
+    def _append_quest_hint(self, out):
+        objective = quest_engine.next_objective(self.state)
+        if objective:
+            out.append(f"Petunjuk: {objective}")
 
     def _cmd_status(self, out):
         p = self.state.player
@@ -212,6 +219,9 @@ class Game:
         out.append("save <path>, quests, quit")
         out.append("Saat bertarung: attack, skill <id>, magic <id>, item <id>, observe, escape, defend")
         out.append("Saat dialog: ketik nomor pilihan (mis. 1)")
+        objective = quest_engine.next_objective(self.state)
+        if objective:
+            out.append(f"Tujuan saat ini: {objective}")
 
     def _cmd_memories(self, out):
         p = self.state.player

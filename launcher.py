@@ -7,7 +7,7 @@ import tty
 from src.core import save_manager
 from src.core.game import Game
 from src.core.game_context import GameContext
-from src.ui import animation, menu
+from src.ui import animation, menu, story_view
 from src.utils.json_loader import ContentError
 
 
@@ -120,6 +120,17 @@ def _class_selection(ctx):
     return class_ids[idx]
 
 
+def _play_intro(ctx):
+    """Putar cutscene intro (scene berawalan 'intro_') — Enter lanjut, q lewati."""
+    scenes = [s for s in ctx.scenes if s.get("id", "").startswith("intro_")]
+    for scene in scenes:
+        print("\n" + story_view.render_scene(scene))
+        key = _read_key()
+        if key == "q":
+            break
+    print()
+
+
 def _game_loop(game):
     print("\n" + "=" * 26)
     print("Mulai! Ketik 'help' untuk bantuan, 'quit' untuk keluar.")
@@ -160,7 +171,11 @@ def _new_game(ctx):
         print("Tidak ada kelas tersedia.")
         return
     game = Game(ctx)
-    print("\n" + game.new_game(name, class_id))
+    has_intro = any(s.get("id", "").startswith("intro_") for s in ctx.scenes)
+    out = game.new_game(name, class_id)
+    if not has_intro:
+        print("\n" + out)
+    _play_intro(ctx)
     _game_loop(game)
 
 
