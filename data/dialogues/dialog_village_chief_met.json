@@ -1,0 +1,10 @@
+{
+  "id": "dialog_village_chief_met",
+  "require_flags": ["quest002_started"],
+  "lines": [
+    {"speaker": "village_chief", "text": "Semoga kau berhasil menyingkirkan serigala-serigala itu."}
+  ],
+  "choices": [
+    {"text": "Aku akan berusaha.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

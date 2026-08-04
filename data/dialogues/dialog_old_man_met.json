@@ -1,0 +1,10 @@
+{
+  "id": "dialog_old_man_met",
+  "require_flags": ["met_old_man"],
+  "lines": [
+    {"speaker": "old_man", "text": "Ah, Pejalan Waktu. Ingatlah untuk selalu berhati-hati di luar sana."}
+  ],
+  "choices": [
+    {"text": "Terima kasih.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

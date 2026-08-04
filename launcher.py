@@ -197,8 +197,10 @@ def _game_loop(game):
             return
         if cmd == game_menu.END_DIALOG:
             game._current_dialog = None
-            continue
+            cmd = "look"
         try:
+            import os
+            os.system('cls' if os.name == 'nt' else 'clear')
             print(game.run_turn(cmd))
         except save_manager.SaveError as e:
             print(f"Gagal menyimpan: {e}")

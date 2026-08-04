@@ -5,5 +5,5 @@
   "role": "mentor",
   "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
   "faction": "ancient_order",
-  "dialogs": ["dialog_old_man_main"]
+  "dialogs": ["dialog_old_man_met", "dialog_old_man_main"]
 }

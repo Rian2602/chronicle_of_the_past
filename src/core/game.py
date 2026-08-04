@@ -291,7 +291,20 @@ class Game:
         if not npc.get("dialogs"):
             out.append(f"{npc['name']} tidak punya dialog.")
             return
-        dialog = self.ctx.dialogues.get(npc["dialogs"][0])
+        
+        dialog = None
+        for did in npc["dialogs"]:
+            d = self.ctx.dialogues.get(did)
+            if not d:
+                continue
+            reqs = d.get("require_flags", [])
+            if all(f in self.state.flags for f in reqs):
+                dialog = d
+                break
+                
+        if dialog is None:
+            dialog = self.ctx.dialogues.get(npc["dialogs"][-1])
+            
         if dialog is None:
             out.append(f"{npc['name']} tidak punya dialog.")
             return

@@ -201,11 +201,10 @@ def test_quest_reward_xp_via_dialog_triggers_level_up(tmp_path):
     g.new_game("Rian", "warrior")
     # quest001 (50 XP) = persis threshold level 2; selesaikan via dialog
     g.run_turn("talk old_man")
-    g.run_turn("1")
-    g.run_turn("talk old_man")
-    g.run_turn("3")
+    g.run_turn("1")  # Triggers quest001 and quest002, moves to dialog_old_man_1
+    g.run_turn("1")  # Ends dialog_old_man_1
     g.run_turn("talk village_chief")
-    out = g.run_turn("3")
+    out = g.run_turn("1")  # Ends dialog_village_chief_met, completing quest001
     assert g.state.player.level == 2
     assert g.state.player.hp == max_hp(g.state.player)
     assert g.state.player.mp == max_mp(g.state.player)
