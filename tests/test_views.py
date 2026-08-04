@@ -89,3 +89,37 @@ def test_dialog_view_numbers_choices():
     out = dialog_view.render(dialog, gs)
     assert "old_man" in out
     assert "1. Siapa Anda?" in out
+
+
+def test_dialog_view_labels_speaker_other_than_npc():
+    gs = GameState()
+    dialog = {"id": "d",
+              "lines": [
+                  {"speaker": "old_man", "text": "Halo, pengembara."},
+                  {"speaker": "player", "text": "Halo juga."},
+              ],
+              "choices": []}
+    out = dialog_view.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
+    assert "Orang Tua:" in out
+    assert "player:" in out
+    assert out.count("Orang Tua:") == 1
+
+
+def test_dialog_view_labels_npc_by_name():
+    gs = GameState()
+    dialog = {"id": "d", "lines": [{"speaker": "old_man", "text": "Halo."}],
+              "choices": []}
+    out = dialog_view.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
+    assert "Orang Tua:" in out
+
+
+def test_dialog_view_labels_other_speaker_by_id():
+    gs = GameState()
+    dialog = {"id": "d",
+              "lines": [{"speaker": "old_man", "text": "Halo."},
+                        {"speaker": "player", "text": "Halo juga."},
+                        {"speaker": "", "text": "lanjutan"}],
+              "choices": []}
+    out = dialog_view.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
+    assert "Orang Tua:\n┌───────┐\n│ Halo. │" in out
+    assert "player:\n┌────────────┐\n│ Halo juga. │" in out

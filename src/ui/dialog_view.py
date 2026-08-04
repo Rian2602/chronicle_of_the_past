@@ -11,11 +11,9 @@ def render(dialog, game_state, npc_id=None, npc_name=None):
         # Jika speaker adalah ID dan kita punya npc_name, gunakan nama NPC
         if speaker == npc_id and display_name:
             lines.append(f"{display_name}:")
-        elif not display_name and speaker:
-            # Fallback: tampilkan speaker apa adanya (biasanya ID)
+        elif speaker:
+            # Speaker lain (pemain/NPC lain): tampilkan ID-nya apa adanya
             lines.append(f"{speaker}:")
-        elif display_name:
-            lines.append(f"{display_name}:")
         lines.append(box(line["text"]))
     lines.append("Pilihan:")
     for idx, choice in enumerate(available_choices(dialog, game_state), start=1):
