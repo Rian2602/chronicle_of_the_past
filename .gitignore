@@ -45,3 +45,6 @@ graphify-out/
 ```
 # Game log pribadi (pemakaian lokal)
 logs/
+
+# Dokumen kerja internal AI (tidak untuk publik)
+docs/superpowers/

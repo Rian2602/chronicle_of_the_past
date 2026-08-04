@@ -205,7 +205,6 @@ chronicle_of_the_past/
 │   ├── systems/         # level, inventory, equipment, loot, memory, travel, exploration, status
 │   ├── ui/              # renderer, HUD, views (combat/dialog/inventory/menu), animation, ascii_loader
 │   └── utils/           # json_loader
-├── docs/superpowers/specs/  # Desain & spesifikasi
 └── tests/               # Suite pytest (351 tests)
 ```
 
