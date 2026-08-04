@@ -1,0 +1,21 @@
+[
+    {
+        "id": "intro_wake",
+        "lines": [
+            "Kau membuka mata. Langit di atasmu bukan langit yang kau kenal.",
+            "Bulan pucat menggantung di tempat yang salah. Bintang-bintang tersusun asing.",
+            "Sensasi dingin menjalar di dadamu: kau tidak ingat bagaimana sampai di sini.",
+            "Yang kau ingat hanya satu hal — kamu tidak berasal dari masa ini."
+        ]
+    },
+    {
+        "id": "intro_mentor",
+        "lines": [
+            "Seorang lelaki tua mendekat, matanya menatapmu dengan tajam.",
+            "\"Kau datang dari jauh, kan? Aku bisa merasakannya dari caramu berpakaian.\"",
+            "\"Ini Desa Ashen. Aku Aria, penjaga perpustakaan tua di tepi desa.\"",
+            "\"Berhati-hatilah. Aku pernah membaca... desa ini akan terbakar.\"",
+            "\"Mulailah dengan menemui Kepala Desa. Dia perlu tahu ada orang baru di sini.\""
+        ]
+    }
+]

@@ -3,7 +3,6 @@
     "id": "event_intro_wake",
     "trigger": [{"kind": "flag", "flag": "intro_wake_done", "operator": "MISSING"}],
     "actions": [
-      {"kind": "log", "text": "Kau membuka mata. Langit tampak asing."},
       {"kind": "set_flag", "flag": "intro_wake_done", "value": true}
     ]
   },

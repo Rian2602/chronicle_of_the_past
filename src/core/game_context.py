@@ -20,6 +20,7 @@ class GameContext:
         self.factions: Dict[str, Any] = self._load_dir("factions")
         self.events: List[str] = self._load_file_list("events/events.json")
         self.memories: List[str] = self._load_file_list("story/memories.json")
+        self.scenes: List[Dict[str, Any]] = self._load_file_list("story/scenes.json")
 
     def _load_dir(self, name: str) -> Dict[str, Any]:
         """Load all JSON files from a directory."""
