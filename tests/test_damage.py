@@ -137,7 +137,7 @@ def test_resolve_hit_magic_not_halved_by_defend():
 
 def test_resolve_hit_effects_applied_to_enemy_defender():
     state = make_state()
-    state.randomizer = ScriptedRandomizer([0, 100, 100])
+    state.randomizer = ScriptedRandomizer([0, 0, 100])
     resolve_hit(
         state,
         ATTACKER,
@@ -151,7 +151,7 @@ def test_resolve_hit_effects_applied_to_enemy_defender():
 
 def test_resolve_hit_effects_applied_to_player_defender():
     state = make_state()
-    state.randomizer = ScriptedRandomizer([0, 100, 100])
+    state.randomizer = ScriptedRandomizer([0, 0, 100])
     resolve_hit(
         state,
         ATTACKER,
@@ -161,6 +161,19 @@ def test_resolve_hit_effects_applied_to_player_defender():
     )
     assert state.statuses["player"] == [StatusEffect(kind="bleed", duration=2, power=4)]
     assert "goblin" not in state.statuses
+
+
+def test_resolve_hit_miss_does_not_apply_effects():
+    state = make_state()
+    state.randomizer = ScriptedRandomizer([0, 100, 100])
+    resolve_hit(
+        state,
+        ATTACKER,
+        DEFENDER,
+        "goblin",
+        effects=[{"kind": "poison", "power": 3, "duration": 2}],
+    )
+    assert state.statuses == {}
 
 
 def test_resolve_hit_effects_none_appends_no_statuses():

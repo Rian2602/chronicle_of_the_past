@@ -153,6 +153,20 @@ def test_physical_skill_miss_ignores_power():
     assert state.enemy.stats["hp"] == 50
 
 
+def test_physical_skill_miss_does_not_apply_status_effects():
+    player = make_player(attack=10)
+    enemy = make_enemy(hp=50, defense=2)
+    skill = make_physical_skill(
+        cost=3, power=6, effects=[{"status": "poison", "power": 4, "duration": 2}]
+    )
+    rng = FixedRandomizer([0, 0, 0, 0, 0, 100, 100])
+    state = start_combat(player, enemy, rng, skills={"strike": skill})
+    player_action(state, CombatAction.SKILL, "strike")
+    assert state.enemy.stats["hp"] == 50
+    assert "meleset" in state.log[-1]
+    assert state.statuses == {}
+
+
 def test_unlearned_magic_is_rejected():
     player = make_player(intelligence=10, mp=50)
     player.learned_skills = ["strike"]

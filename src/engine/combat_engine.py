@@ -64,7 +64,7 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
     else:
         state.enemy.stats["hp"] = max(0, state.enemy.stats["hp"] - damage)
 
-    if effects:
+    if effects and not missed:
         for effect in effects:
             status_system.apply_status(
                 state,
