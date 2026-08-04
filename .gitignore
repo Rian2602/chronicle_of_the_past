@@ -43,3 +43,5 @@ Thumbs.db
 # Generated graph artifacts
 graphify-out/
 ```
+# Game log pribadi (pemakaian lokal)
+logs/
