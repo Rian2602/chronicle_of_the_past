@@ -237,14 +237,43 @@ class Game:
         rest(self.state)
         out.append(f"Kamu beristirahat hingga pagi. Kini Hari {self.state.day}.")
 
+    def _find_npc(self, query: str):
+        """Cari NPC berdasarkan ID, nama display, atau prefix (case-insensitive)."""
+        # 1. Exact ID match
+        npc = self.ctx.npc.get(query)
+        if npc:
+            return query, npc
+        # Normalize query: lowercase, ganti _ dan - dengan spasi
+        q = query.lower().replace('_', ' ').replace('-', ' ')
+        # 2. Case-insensitive exact match (ID atau nama)
+        for npc_id, npc_data in self.ctx.npc.items():
+            name = npc_data.get('name', '').lower()
+            if name == q or npc_id.lower() == q or name.replace(' ', '_') == q:
+                return npc_id, npc_data
+        # 3. Prefix match
+        for npc_id, npc_data in self.ctx.npc.items():
+            name = npc_data.get('name', '').lower()
+            if name.startswith(q) or npc_id.lower().startswith(q):
+                return npc_id, npc_data
+        return None, None
+
     def _cmd_talk(self, cmd, out):
         if not cmd.args:
             out.append("Gunakan: talk <nama NPC>.")
             return
-        npc_id = cmd.args[0]
-        npc = self.ctx.npc.get(npc_id)
+        # Support multi-word names: 'talk kepala desa'
+        query = " ".join(cmd.args)
+        npc_id, npc = self._find_npc(query)
         if npc is None:
-            out.append(f"NPC tidak dikenal: {npc_id}.")
+            m = self.state.current_map
+            available = []
+            if m:
+                for nid in (m.npcs or []):
+                    nd = self.ctx.npc.get(nid)
+                    if nd:
+                        available.append(nd['name'])
+            hint = f" (tersedia: {', '.join(available)})" if available else ""
+            out.append(f"NPC tidak dikenal: {query}.{hint}")
             return
         m = self.state.current_map
         if m is None or npc.get("location") != m.id:
