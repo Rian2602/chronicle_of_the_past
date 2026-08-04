@@ -1,4 +1,5 @@
 import pytest
+
 from src.models.player import Player
 from src.systems.level_system import LEVEL_CHOICES, apply_choice
 
@@ -50,7 +51,7 @@ def test_apply_intelligence_choice():
 def test_apply_hp_choice():
     p = make_player()
     apply_choice(p, "hp")
-    assert p.attribute_bonuses["hp"] == 15
+    assert p.attribute_bonuses["hp"] == 20
 
 
 def test_apply_mp_choice():
@@ -90,7 +91,7 @@ def test_level_choices_shape():
         ("defense", 2),
         ("agility", 2),
         ("intelligence", 2),
-        ("hp", 15),
+        ("hp", 20),
         ("mp", 10),
         ("skill_point", 1),
     ]

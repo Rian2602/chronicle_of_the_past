@@ -1,9 +1,8 @@
 """Konfigurasi global untuk launcher game."""
 
-from dataclasses import dataclass
 import json
 import os
-
+from dataclasses import dataclass
 
 SETTINGS_PATH = os.path.join("saves", "settings.json")
 RENDER_MODES = ("auto", "unicode", "ascii")
@@ -20,10 +19,15 @@ class Settings:
     animation_mode: str = "normal"
 
     def __post_init__(self):
+        """Validasi nilai mode; tolak nilai yang tidak didukung."""
         if self.render_mode not in RENDER_MODES:
-            raise ValueError(f"Mode tampilan tidak didukung: {self.render_mode}")
+            raise ValueError(
+                f"Mode tampilan tidak didukung: {self.render_mode}"
+            )
         if self.animation_mode not in ANIMATION_MODES:
-            raise ValueError(f"Mode animasi tidak didukung: {self.animation_mode}")
+            raise ValueError(
+                f"Mode animasi tidak didukung: {self.animation_mode}"
+            )
 
 
 def load_settings(path=SETTINGS_PATH):
@@ -64,4 +68,5 @@ def save_settings(settings, path=SETTINGS_PATH):
 
 
 def next_choice(value, choices):
+    """Item berikutnya secara siklik dalam daftar pilihan."""
     return choices[(choices.index(value) + 1) % len(choices)]

@@ -9,9 +9,13 @@ from src.engine.combat_engine import (
     player_stats,
     start_combat,
 )
-from src.models.combat_interfaces import CombatAction, CombatResult, StatusEffect
+from src.models.combat_interfaces import (
+    CombatAction,
+    CombatResult,
+    StatusEffect,
+)
 from src.models.enemy import Enemy
-from src.models.player import Player, max_hp, max_mp
+from src.models.player import Player, max_hp
 
 
 class ScriptedRandomizer:
@@ -22,7 +26,9 @@ class ScriptedRandomizer:
         return self._rolls.pop(0)
 
 
-def make_player(agility=8, intelligence=7, attack=10, defense=5, level=1, hp=None, mp=None):
+def make_player(
+    agility=8, intelligence=7, attack=10, defense=5, level=1, hp=None, mp=None
+):
     base = {
         "attack": attack,
         "defense": defense,
@@ -41,7 +47,16 @@ def make_player(agility=8, intelligence=7, attack=10, defense=5, level=1, hp=Non
     )
 
 
-def make_enemy(hp=10, agility=6, attack=5, defense=2, intelligence=3, level=2, lore="", behavior="aggressive"):
+def make_enemy(
+    hp=10,
+    agility=6,
+    attack=5,
+    defense=2,
+    intelligence=3,
+    level=2,
+    lore="",
+    behavior="aggressive",
+):
     return Enemy(
         id="goblin",
         name="Goblin",
@@ -63,7 +78,14 @@ def make_enemy(hp=10, agility=6, attack=5, defense=2, intelligence=3, level=2, l
 
 def _observe_state(intelligence):
     player = make_player(intelligence=intelligence, agility=6)
-    enemy = make_enemy(hp=5, agility=6, defense=2, intelligence=3, lore="Makhluk kecil yang agresif.", behavior="aggressive")
+    enemy = make_enemy(
+        hp=5,
+        agility=6,
+        defense=2,
+        intelligence=3,
+        lore="Makhluk kecil yang agresif.",
+        behavior="aggressive",
+    )
     return start_combat(player, enemy, Randomizer(seed=7))
 
 
@@ -152,7 +174,13 @@ def test_basic_attack_flow_reaches_defeat():
 def test_defend_halves_enemy_damage_then_resets():
     player = make_player(attack=10, agility=8, defense=4)
     enemy = make_enemy(hp=30, attack=10)
-    state = start_combat(player, enemy, ScriptedRandomizer([0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 100, 0, 0, 0, 100]))
+    state = start_combat(
+        player,
+        enemy,
+        ScriptedRandomizer(
+            [0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 100, 0, 0, 0, 100]
+        ),
+    )
     assert player_action(state, CombatAction.DEFEND) is False
     assert state.player_defending is True
     enemy_turn(state)
@@ -177,7 +205,9 @@ def test_escape_success_high_agility():
 def test_escape_failure_gives_enemy_free_attack():
     player = make_player(agility=1, defense=4)
     enemy = make_enemy(agility=20, attack=10)
-    state = start_combat(player, enemy, ScriptedRandomizer([0, 0, 0, 50, 0, 0, 0, 100]))
+    state = start_combat(
+        player, enemy, ScriptedRandomizer([0, 0, 0, 50, 0, 0, 0, 100])
+    )
     assert player_action(state, CombatAction.ESCAPE) is False
     assert state.over is False
     assert state.result is None
@@ -188,7 +218,9 @@ def test_escape_failure_gives_enemy_free_attack():
 def test_escape_failure_kills_player_sets_defeat():
     player = make_player(agility=1, defense=0, hp=3)
     enemy = make_enemy(agility=20, attack=10)
-    state = start_combat(player, enemy, ScriptedRandomizer([0, 0, 0, 50, 0, 0, 0, 100]))
+    state = start_combat(
+        player, enemy, ScriptedRandomizer([0, 0, 0, 50, 0, 0, 0, 100])
+    )
     player_action(state, CombatAction.ESCAPE)
     assert state.result == CombatResult.DEFEAT
     assert state.over is True
@@ -257,17 +289,23 @@ def test_observe_once_only():
 def test_status_ticks_at_start_of_player_turn():
     player = make_player()
     state = start_combat(player, make_enemy(), Randomizer(seed=7))
-    state.statuses["player"] = [StatusEffect(kind="poison", duration=3, power=5)]
+    state.statuses["player"] = [
+        StatusEffect(kind="poison", duration=3, power=5)
+    ]
     player_action(state, CombatAction.DEFEND)
     assert state.player.hp == max_hp(player) - 5 + 2
     assert "terkena racun" in " ".join(state.log)
-    assert state.statuses["player"] == [StatusEffect(kind="poison", duration=2, power=5)]
+    assert state.statuses["player"] == [
+        StatusEffect(kind="poison", duration=2, power=5)
+    ]
 
 
 def test_enemy_status_tick_kills_and_sets_victory():
     enemy = make_enemy(hp=3)
     state = start_combat(make_player(), enemy, Randomizer(seed=7))
-    state.statuses[enemy.id] = [StatusEffect(kind="poison", duration=1, power=5)]
+    state.statuses[enemy.id] = [
+        StatusEffect(kind="poison", duration=1, power=5)
+    ]
     enemy_turn(state)
     assert state.result == CombatResult.VICTORY
     assert state.over is True
@@ -277,7 +315,9 @@ def test_enemy_status_tick_kills_and_sets_victory():
 def test_player_status_tick_death_sets_defeat():
     player = make_player(hp=2)
     state = start_combat(player, make_enemy(), Randomizer(seed=7))
-    state.statuses["player"] = [StatusEffect(kind="poison", duration=1, power=5)]
+    state.statuses["player"] = [
+        StatusEffect(kind="poison", duration=1, power=5)
+    ]
     player_action(state, CombatAction.ATTACK)
     assert state.result == CombatResult.DEFEAT
     assert state.over is True

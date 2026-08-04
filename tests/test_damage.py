@@ -13,9 +13,20 @@ class ScriptedRandomizer:
         return self._rolls.pop(0)
 
 
-def make_state(player_hp=100, enemy_hp=50, player_defending=False, enemy_defending=False):
-    player = Player(name="Rian", class_id="warrior", hp=player_hp, mp=10, base_stats={})
-    enemy = Enemy(id="goblin", name="Goblin", level=2, stats={"hp": enemy_hp}, loot=[], skills=[])
+def make_state(
+    player_hp=100, enemy_hp=50, player_defending=False, enemy_defending=False
+):
+    player = Player(
+        name="Rian", class_id="warrior", hp=player_hp, mp=10, base_stats={}
+    )
+    enemy = Enemy(
+        id="goblin",
+        name="Goblin",
+        level=2,
+        stats={"hp": enemy_hp},
+        loot=[],
+        skills=[],
+    )
     return CombatState(
         round_no=1,
         turn_order=["player", "goblin"],
@@ -84,7 +95,9 @@ def test_resolve_hit_halved_when_player_defending():
 def test_resolve_hit_magic_exact_damage():
     state = make_state()
     state.randomizer = ScriptedRandomizer([0, 100, 100])
-    result = resolve_hit(state, ATTACKER, DEFENDER, "goblin", power=22, is_magic=True)
+    result = resolve_hit(
+        state, ATTACKER, DEFENDER, "goblin", power=22, is_magic=True
+    )
     assert result == DamageResult(damage=28, critical=False, missed=False)
     assert state.enemy.stats["hp"] == 22
     assert state.log == ["Kamu melontarkan mantra ke Goblin, -28 HP."]
@@ -107,7 +120,9 @@ def test_resolve_hit_magic_never_missed_even_with_bad_accuracy():
 def test_resolve_hit_magic_never_critical():
     state = make_state()
     state.randomizer = ScriptedRandomizer([0, 0, 0])
-    result = resolve_hit(state, ATTACKER, DEFENDER, "goblin", power=22, is_magic=True)
+    result = resolve_hit(
+        state, ATTACKER, DEFENDER, "goblin", power=22, is_magic=True
+    )
     assert result.critical is False
     assert result.missed is False
 
@@ -130,7 +145,9 @@ def test_resolve_hit_magic_min_one_damage():
 def test_resolve_hit_magic_not_halved_by_defend():
     state = make_state(enemy_defending=True)
     state.randomizer = ScriptedRandomizer([0, 100, 100])
-    result = resolve_hit(state, ATTACKER, DEFENDER, "goblin", power=22, is_magic=True)
+    result = resolve_hit(
+        state, ATTACKER, DEFENDER, "goblin", power=22, is_magic=True
+    )
     assert result == DamageResult(damage=28, critical=False, missed=False)
     assert state.enemy.stats["hp"] == 22
 
@@ -145,7 +162,9 @@ def test_resolve_hit_effects_applied_to_enemy_defender():
         "goblin",
         effects=[{"kind": "poison", "power": 3, "duration": 2}],
     )
-    assert state.statuses["goblin"] == [StatusEffect(kind="poison", duration=2, power=3)]
+    assert state.statuses["goblin"] == [
+        StatusEffect(kind="poison", duration=2, power=3)
+    ]
     assert "player" not in state.statuses
 
 
@@ -159,7 +178,9 @@ def test_resolve_hit_effects_applied_to_player_defender():
         "player",
         effects=[{"kind": "bleed", "power": 4, "duration": 2}],
     )
-    assert state.statuses["player"] == [StatusEffect(kind="bleed", duration=2, power=4)]
+    assert state.statuses["player"] == [
+        StatusEffect(kind="bleed", duration=2, power=4)
+    ]
     assert "goblin" not in state.statuses
 
 

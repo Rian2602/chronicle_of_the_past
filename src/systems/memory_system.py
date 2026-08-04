@@ -1,7 +1,21 @@
 def grant_memory(game_state, memory_id, memory=None) -> dict:
+    """Berikan kenangan ke pemain dan set flag terkait.
+
+    Args:
+        game_state: State permainan berisi daftar kenangan & pemain.
+        memory_id: ID kenangan yang akan diberikan.
+        memory: Data kenangan (diambil dari game_state bila None).
+
+    Returns:
+        Dict kenangan bila berhasil/duplikat, None bila tidak ditemukan.
+    """
     if memory is None:
         memory = next(
-            (entry for entry in game_state.memories if entry["id"] == memory_id),
+            (
+                entry
+                for entry in game_state.memories
+                if entry["id"] == memory_id
+            ),
             None,
         )
     if memory is None:

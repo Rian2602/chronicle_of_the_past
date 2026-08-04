@@ -1,7 +1,9 @@
 import json
+
 import pytest
+
 from src.core.game_state import GameState
-from src.core.save_manager import save_game, load_game, SaveError
+from src.core.save_manager import SaveError, load_game, save_game
 from src.models.player import Player
 
 
@@ -18,10 +20,17 @@ def test_save_roundtrip(tmp_path):
 
 def test_save_player_roundtrip(tmp_path):
     gs = GameState()
-    gs.player = Player(name="Rian", class_id="warrior", hp=80, mp=10,
-                       base_stats={"hp": 100, "mp": 10}, level=2, gold=50,
-                       inventory=[{"id": "potion", "qty": 3}],
-                       reputation={"merchant_guild": 10})
+    gs.player = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=80,
+        mp=10,
+        base_stats={"hp": 100, "mp": 10},
+        level=2,
+        gold=50,
+        inventory=[{"id": "potion", "qty": 3}],
+        reputation={"merchant_guild": 10},
+    )
     p = tmp_path / "s.json"
     save_game(gs, str(p))
     gs2 = load_game(str(p), None)

@@ -2,6 +2,11 @@ from src.systems import level_system
 
 
 def start_quest(game_state, quest_id) -> str:
+    """Aktifkan quest bila belum aktif/selesai.
+
+    Returns:
+        Pesan konfirmasi dalam Bahasa Indonesia.
+    """
     quest = game_state.quests.get(quest_id)
     if quest is None:
         return f"Quest tidak dikenal: {quest_id}."
@@ -15,6 +20,16 @@ def start_quest(game_state, quest_id) -> str:
 
 
 def complete_requirement(game_state, kind, target) -> str:
+    """Tandai satu syarat quest sebagai terpenuhi dan selesaikan bila lengkap.
+
+    Args:
+        game_state: State permainan berisi quest aktif pemain.
+        kind: Jenis syarat (talk/enemy/map/flag).
+        target: Nilai target syarat (ID NPC/enemy/peta/flag).
+
+    Returns:
+        Pesan hasil, atau "Tidak ada syarat yang sesuai."
+    """
     player = game_state.player
     messages = []
     for quest_id in list(player.quests_active):
@@ -23,7 +38,10 @@ def complete_requirement(game_state, kind, target) -> str:
         for index, requirement in enumerate(quest["requirements"]):
             if index in met:
                 continue
-            if requirement.get("kind") == kind and requirement.get("target") == target:
+            if (
+                requirement.get("kind") == kind
+                and requirement.get("target") == target
+            ):
                 met.append(index)
         if all(index in met for index in range(len(quest["requirements"]))):
             messages.append(_complete_quest(game_state, player, quest_id))
@@ -36,6 +54,11 @@ def complete_requirement(game_state, kind, target) -> str:
 
 
 def _complete_quest(game_state, player, quest_id) -> str:
+    """Berikan hadiah quest, set flag, dan pindahkan ke quests_done.
+
+    Returns:
+        Pesan penyelesaian quest beserta rincian hadiah.
+    """
     quest = game_state.quests[quest_id]
     rewards = quest.get("rewards", {})
     gained_xp = level_system.award_xp(player, rewards.get("xp", 0))
@@ -66,7 +89,7 @@ def _complete_quest(game_state, player, quest_id) -> str:
 
 
 def next_objective(game_state):
-    """Tujuan pertama yang belum terpenuhi pada quest aktif pertama, atau None."""
+    """Tujuan pertama yang belum terpenuhi pada quest aktif, atau None."""
     player = game_state.player
     for quest_id in player.quests_active:
         quest = game_state.quests.get(quest_id)
@@ -74,8 +97,12 @@ def next_objective(game_state):
             continue
         met = set(player.quests_active[quest_id].get("met", []))
         objectives = quest.get("objectives") or []
-        for index, requirement in enumerate(quest["requirements"]):
+        for index, _ in enumerate(quest["requirements"]):
             if index not in met:
-                text = objectives[index] if index < len(objectives) else quest.get("description", quest_id)
+                text = (
+                    objectives[index]
+                    if index < len(objectives)
+                    else quest.get("description", quest_id)
+                )
                 return f"{quest['title']} — {text}"
     return None

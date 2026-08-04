@@ -2,11 +2,15 @@ from src.ui.renderer import bar
 
 
 def render(state):
+    """Render tampilan combat: musuh, HP bar, info Amati, dan log."""
     lines = []
     enemy = state.enemy
     max_hp = enemy.stats.get("max_hp", enemy.stats.get("hp", 1))
     lines.append(f"{enemy.name} — Lv {enemy.level}")
-    lines.append(f"HP {enemy.stats['hp']}/{max_hp} {bar(enemy.stats['hp'], max_hp, width=10)}")
+    lines.append(
+        f"HP {enemy.stats['hp']}/{max_hp} "
+        f"{bar(enemy.stats['hp'], max_hp, width=10)}"
+    )
     if state.observe_info:
         lines.append(state.observe_info)
     lines.append("")

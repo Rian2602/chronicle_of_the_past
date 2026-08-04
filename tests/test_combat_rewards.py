@@ -1,5 +1,10 @@
 from src.core.randomizer import Randomizer
-from src.engine.combat_engine import enemy_turn, next_turn, player_action, start_combat
+from src.engine.combat_engine import (
+    enemy_turn,
+    next_turn,
+    player_action,
+    start_combat,
+)
 from src.models.combat_interfaces import CombatAction, CombatResult
 from src.models.enemy import Enemy
 from src.models.player import Player
@@ -8,7 +13,9 @@ REWARD = {"xp": 30, "gold": [6, 12]}
 LOOT = [{"id": "herb", "qty": 1}]
 
 
-def make_player(attack=50, defense=5, agility=8, intelligence=7, hp=100, mp=20, level=1):
+def make_player(
+    attack=50, defense=5, agility=8, intelligence=7, hp=100, mp=20, level=1
+):
     base = {
         "attack": attack,
         "defense": defense,
@@ -27,7 +34,15 @@ def make_player(attack=50, defense=5, agility=8, intelligence=7, hp=100, mp=20, 
     )
 
 
-def make_enemy(hp=10, attack=1, defense=0, agility=1, intelligence=3, reward=None, behavior="aggressive"):
+def make_enemy(
+    hp=10,
+    attack=1,
+    defense=0,
+    agility=1,
+    intelligence=3,
+    reward=None,
+    behavior="aggressive",
+):
     return Enemy(
         id="goblin",
         name="Goblin",
@@ -50,7 +65,9 @@ def make_enemy(hp=10, attack=1, defense=0, agility=1, intelligence=3, reward=Non
 def win_fight(player=None, enemy=None, rng=None, loot_resolver=None):
     player = player or make_player()
     enemy = enemy or make_enemy()
-    state = start_combat(player, enemy, rng or Randomizer(seed=7), loot_resolver=loot_resolver)
+    state = start_combat(
+        player, enemy, rng or Randomizer(seed=7), loot_resolver=loot_resolver
+    )
     while not state.over:
         player_action(state, CombatAction.ATTACK)
         if state.over:
@@ -71,7 +88,9 @@ def test_victory_applies_exact_xp_from_reward():
 def test_victory_gold_within_inclusive_range_and_varies_across_seeds():
     golds = set()
     for seed in range(1, 9):
-        state = win_fight(enemy=make_enemy(reward=REWARD), rng=Randomizer(seed=seed))
+        state = win_fight(
+            enemy=make_enemy(reward=REWARD), rng=Randomizer(seed=seed)
+        )
         assert 6 <= state.gold <= 12
         assert state.player.gold == state.gold
         golds.add(state.gold)

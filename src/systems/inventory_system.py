@@ -2,14 +2,21 @@ from src.models.player import max_hp
 
 
 def carry_capacity(player) -> int:
+    """Kapasitas total inventaris pemain (30 + 2 per level)."""
     return 30 + player.level * 2
 
 
 def count_items(player) -> int:
+    """Jumlah total item yang dibawa pemain (termasuk stack qty)."""
     return sum(entry.get("qty", 0) for entry in player.inventory)
 
 
 def add_item(player, item_id, qty=1) -> bool:
+    """Tambahkan item ke inventaris bila kapasitas masih cukup.
+
+    Returns:
+        True bila item ditambahkan, False bila qty invalid atau penuh.
+    """
     # Validasi: qty harus positif
     if qty <= 0:
         return False
@@ -25,6 +32,11 @@ def add_item(player, item_id, qty=1) -> bool:
 
 
 def remove_item(player, item_id, qty=1) -> None:
+    """Kurangi qty item; entri dihapus saat qty mencapai nol.
+
+    Raises:
+        ValueError: Bila item tidak dimiliki atau qty melebihi stok.
+    """
     # Validasi: qty harus positif
     if qty <= 0:
         return
@@ -40,6 +52,11 @@ def remove_item(player, item_id, qty=1) -> None:
 
 
 def use_consumable(player, item_entry, game_state) -> str:
+    """Gunakan item konsumabel: pulihkan HP lalu hapus dari inventaris.
+
+    Returns:
+        Pesan hasil penggunaan dalam Bahasa Indonesia.
+    """
     item_id = item_entry["id"]
     item_def = game_state.items.get(item_id)
     if item_def is None or item_def.heal == 0:

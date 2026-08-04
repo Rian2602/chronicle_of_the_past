@@ -2,17 +2,23 @@
 
 import os
 import sys
-import termios
-import tty
-import glob
+
+if os.name == "nt":
+    import msvcrt  # Windows: baca keypress tanpa enter
+else:
+    import termios  # Unix: mode terminal raw untuk arrow key
+    import tty
 
 from src.core import save_manager, settings
-from src.core.game import Game
+from src.core.game import Game, GameQuit
 from src.core.game_context import GameContext
 from src.ui import animation, game_menu, menu, renderer, story_view
 from src.utils.json_loader import ContentError
 
-_NAV_HINT = "Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar."
+_NAV_HINT = (
+    "Navigasi: \u2191/\u2193 atau w/s untuk berpindah. "
+    "Enter untuk memilih. 'q' keluar."
+)
 
 
 def _clear_screen():
@@ -32,29 +38,61 @@ def _read_key() -> str:
     """
     if not sys.stdin.isatty():
         # Fallback untuk non-TTY (pytest, pipe, redirect)
-        line = input("> ").strip().lower()
-        if line in ("w", "k"):
-            return "UP"
-        if line in ("s", "j"):
-            return "DOWN"
-        if line == "":
-            return "ENTER"
-        return line
+        return _read_key_input_fallback()
 
+    if os.name == "nt":
+        try:
+            return _read_key_windows()
+        except OSError:
+            # Git Bash / mintty: isatty() True tapi bukan console Windows
+            # sungguhan — msvcrt gagal, jadi fallback ke input() biasa.
+            return _read_key_input_fallback()
+    return _read_key_unix()
+
+
+def _read_key_input_fallback() -> str:
+    """Baca satu baris input non-TTY dan petakan ke kunci navigasi."""
+    line = input("> ").strip().lower()
+    if line in ("w", "k"):
+        return "UP"
+    if line in ("s", "j"):
+        return "DOWN"
+    if line == "":
+        return "ENTER"
+    return line
+
+
+def _read_key_windows() -> str:
+    """Baca keypress di Windows (msvcrt); dukung arrow key & Enter."""
+    ch = msvcrt.getwch()
+    if ch in ("\xe0", "\x00"):  # prefix arrow key di Windows
+        code = msvcrt.getwch()
+        return {"H": "UP", "P": "DOWN"}.get(code, "")
+    if ch in ("\r", "\n"):
+        return "ENTER"
+    if ch == "\x03":  # Ctrl+C
+        raise KeyboardInterrupt
+    if ch == "\x1b":  # ESC tunggal
+        return ""
+    return ch.lower()
+
+
+def _read_key_unix() -> str:
+    """Baca keypress di Unix (termios); dukung arrow key & Enter."""
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
         tty.setcbreak(fd)
         ch = sys.stdin.read(1)
-        if ch == "\x1b":            # ESC byte — mulai sequence arrow key
+        if ch == "\x1b":  # ESC byte — mulai sequence arrow key
             ch2 = sys.stdin.read(1)
             if ch2 == "[":
                 ch3 = sys.stdin.read(1)
                 return {"A": "UP", "B": "DOWN"}.get(ch3, "")
-            return ""               # ESC tanpa sequence yang dikenal → abaikan
+            return ""  # ESC tanpa sequence yang dikenal → abaikan
         if ch in ("\r", "\n"):
             return "ENTER"
-        if ch == "\x03":            # Ctrl+C
+        if ch == "\x03":  # Ctrl+C
             raise KeyboardInterrupt
         return ch.lower()
     finally:
@@ -94,16 +132,18 @@ def _menu_loop(render_fn, total: int, hint: str, screen: str = "") -> int:
 
 
 def _menu_selection(screen: str = "") -> int:
+    """Loop menu utama; kembalikan indeks item yang dipilih."""
     total = len(menu.MAIN_ITEMS)
     return _menu_loop(
         render_fn=menu.render_main,
         total=total,
-        hint="Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar.",
+        hint=_NAV_HINT,
         screen=screen,
     )
 
 
 def _apply_settings(current_settings):
+    """Terapkan mode tampilan dari pengaturan ke renderer global."""
     renderer.set_render_mode(current_settings.render_mode)
 
 
@@ -126,11 +166,17 @@ def _settings_menu(current_settings, path=settings.SETTINGS_PATH):
             ("Kembali", None, None),
         ]
 
-        def render(selection):
+        # Bind eksplisit: render dibuat ulang tiap iterasi loop, jadi nilai
+        # default arg selalu yang terkini (lihat "Reset ke Default").
+        def render(selection, items=items, current_settings=current_settings):
             lines = ["Pengaturan:"]
             for index, (label, attribute, _) in enumerate(items):
                 marker = "> " if index == selection else "  "
-                value = f": {labels[getattr(current_settings, attribute)]}" if attribute else ""
+                value = (
+                    f": {labels[getattr(current_settings, attribute)]}"
+                    if attribute
+                    else ""
+                )
                 lines.append(f"{marker}{label}{value}")
             return "\n".join(lines)
 
@@ -146,7 +192,9 @@ def _settings_menu(current_settings, path=settings.SETTINGS_PATH):
             setattr(
                 current_settings,
                 attribute,
-                settings.next_choice(getattr(current_settings, attribute), choices),
+                settings.next_choice(
+                    getattr(current_settings, attribute), choices
+                ),
             )
             feedback = f"{items[choice][0]} diperbarui."
         _apply_settings(current_settings)
@@ -157,14 +205,8 @@ def _settings_menu(current_settings, path=settings.SETTINGS_PATH):
             feedback += f" Gagal disimpan: {error}"
 
 
-def _save_paths():
-    return sorted(
-        path for path in glob.glob("saves/*.json")
-        if os.path.normpath(path) != os.path.normpath(settings.SETTINGS_PATH)
-    )
-
-
 def _class_selection(ctx):
+    """Pilih kelas lewat menu navigasi; kembalikan ID kelas atau None."""
     class_ids = list(ctx.classes.keys())
     if not class_ids:
         return None
@@ -181,13 +223,16 @@ def _class_selection(ctx):
     idx = _menu_loop(
         render_fn=render,
         total=len(class_ids),
-        hint="Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih.",
+        hint=(
+            "Navigasi: \u2191/\u2193 atau w/s untuk berpindah. "
+            "Enter untuk memilih."
+        ),
     )
     return class_ids[idx]
 
 
 def _play_intro(ctx):
-    """Putar cutscene intro (scene berawalan 'intro_') — Enter lanjut, q lewati."""
+    """Putar cutscene intro; Enter lanjut, 'q' lewati."""
     scenes = [s for s in ctx.scenes if s.get("id", "").startswith("intro_")]
     for scene in scenes:
         _clear_screen()
@@ -199,7 +244,11 @@ def _play_intro(ctx):
 
 
 def _navigate(game, last_output: str = ""):
-    """Navigasi menu game bertingkat dengan arrow key. Return perintah atau None (keluar)."""
+    """Navigasi menu game bertingkat dengan arrow key.
+
+    Returns:
+        Perintah untuk run_turn, atau None untuk keluar ke menu utama.
+    """
     stack = []  # list (items, title)
     while True:
         if stack:
@@ -252,12 +301,16 @@ def _confirm_quit() -> bool:
 
 
 def _game_loop(game, initial_output: str = ""):
+    """Loop utama sesi game: navigasi menu → run_turn sampai keluar."""
     last_output = initial_output
     while True:
         try:
             cmd = _navigate(game, last_output)
         except KeyboardInterrupt:
-            if getattr(game, "_combat", None) is not None and not _confirm_quit():
+            if (
+                getattr(game, "_combat", None) is not None
+                and not _confirm_quit()
+            ):
                 continue
             print("\nSampai jumpa!")
             return
@@ -273,11 +326,15 @@ def _game_loop(game, initial_output: str = ""):
             last_output = f"Gagal menyimpan: {e}"
         except ContentError as e:
             last_output = f"Konten tidak valid: {e}"
+        except GameQuit:
+            print("\nSampai jumpa!")
+            return
         except Exception as e:  # ponytail: jaring terakhir, lanjutkan sesi
             last_output = f"Terjadi kesalahan: {e}"
 
 
 def _new_game(ctx):
+    """Alur Permainan Baru: nama → kelas → intro → sesi game."""
     print("\n=== Permainan Baru ===")
     name = input("Siapa namamu, pengembara? ").strip()
     if not name:
@@ -294,10 +351,13 @@ def _new_game(ctx):
 
 
 def _continue_game(ctx):
+    """Alur Lanjutkan: pilih slot save lalu lanjutkan sesi game."""
     print("\n=== Lanjutkan ===")
-    paths = _save_paths()
+    paths = save_manager.save_paths()
     if not paths:
-        print("Tidak ada save ditemukan. Gunakan 'Permainan Baru' untuk memulai.")
+        print(
+            "Tidak ada save ditemukan. Gunakan 'Permainan Baru' untuk memulai."
+        )
         return
 
     def render(selection):
@@ -317,23 +377,38 @@ def _continue_game(ctx):
     except save_manager.SaveError:
         if not os.path.exists(path):
             print(f"File save tidak ditemukan: {path}")
-            print("Gunakan 'Permainan Baru' untuk memulai, atau periksa lokasi file save.")
+            print(
+                "Gunakan 'Permainan Baru' untuk memulai, atau "
+                "periksa lokasi file save."
+            )
         else:
-            print(f"Save tidak dapat dimuat: {path} (file mungkin rusak atau tidak kompatibel)")
+            print(
+                f"Save tidak dapat dimuat: {path} "
+                "(file mungkin rusak atau tidak kompatibel)"
+            )
 
 
 def main():
+    """Titik masuk launcher: muat pengaturan, tampilkan menu utama.
+
+    Returns:
+        Kode keluar proses (0 sukses, 1 gagal memuat data).
+    """
     settings_message = ""
     try:
         try:
             current_settings = settings.load_settings()
         except settings.SettingsError as error:
             current_settings = settings.Settings()
-            settings_message = f"Pengaturan tidak valid; memakai default. ({error})"
+            settings_message = (
+                f"Pengaturan tidak valid; memakai default. ({error})"
+            )
         _apply_settings(current_settings)
         delay = animation.delay_for(current_settings.animation_mode)
         if delay is not None:
-            animation.animate(animation.progress("Menghubungkan..."), delay=delay)
+            animation.animate(
+                animation.progress("Menghubungkan..."), delay=delay
+            )
         ctx = GameContext(data_dir="data")
     except ContentError as e:
         print(f"Gagal memuat data: {e}")
@@ -350,7 +425,10 @@ def main():
             elif choice == 2:
                 current_settings, last_output = _settings_menu(current_settings)
             elif choice == 3:
-                last_output = "Kredit: Chronicle of the Past - RPG CLI tentang perjalanan waktu."
+                last_output = (
+                    "Kredit: Chronicle of the Past - "
+                    "RPG CLI tentang perjalanan waktu."
+                )
             elif choice == 4:
                 print("Sampai jumpa!")
                 break

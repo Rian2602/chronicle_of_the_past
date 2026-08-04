@@ -1,6 +1,7 @@
 import pytest
-from src.utils.json_loader import ContentError
+
 from src.ui.ascii_loader import load
+from src.utils.json_loader import ContentError
 
 
 def test_load_returns_file_text(tmp_path):

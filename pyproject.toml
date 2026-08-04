@@ -1,0 +1,27 @@
+# Konfigurasi proyek terpusat (ruff + pytest).
+# Runtime game tetap 100% pustaka standar; ruff & pytest hanya alat pengembangan.
+
+[project]
+name = "chronicle-of-the-past"
+version = "1.0.0"
+description = "RPG berbasis teks (CLI) tentang perjalanan waktu."
+requires-python = ">=3.12"
+
+[tool.ruff]
+# Standar Google Python Style Guide: maksimal 80 karakter per baris.
+line-length = 80
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle (errors)
+    "W",   # pycodestyle (warnings)
+    "F",   # pyflakes (unused imports, undefined names, dll.)
+    "I",   # isort (urutan import: stdlib -> third-party -> lokal)
+    "UP",   # pyupgrade (sintaks Python modern)
+    "B",    # flake8-bugbear (bug umum)
+    "RUF",  # ruff-specific (termasuk noqa tak terpakai)
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

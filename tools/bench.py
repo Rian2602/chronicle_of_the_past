@@ -18,8 +18,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.core import save_manager
 from src.core.game import Game
 from src.core.game_context import GameContext
+from src.engine.combat_engine import (
+    enemy_turn,
+    next_turn,
+    player_action,
+    start_combat,
+)
 from src.models.combat_interfaces import CombatAction
-from src.engine.combat_engine import enemy_turn, next_turn, player_action, start_combat
 from src.systems import loot_system
 from src.ui import combat_view
 
@@ -28,7 +33,9 @@ N = 50
 
 
 def _median_p95(samples_ms):
-    return statistics.median(samples_ms), statistics.quantiles(samples_ms, n=20)[18]
+    return statistics.median(samples_ms), statistics.quantiles(
+        samples_ms, n=20
+    )[18]
 
 
 def _new_game():
@@ -95,7 +102,7 @@ def bench_load_game():
 
 
 def bench_run_turn_non_combat():
-    ctx, g = _new_game()
+    _, g = _new_game()
     samples = []
     for _ in range(N):
         t0 = time.perf_counter()
@@ -159,7 +166,9 @@ def main():
         for name in over:
             print(f"  - {name}")
     else:
-        print("Semua dimensi di bawah ambang. Tidak ada optimasi yang diperlukan.")
+        print(
+            "Semua dimensi di bawah ambang. Tidak ada optimasi yang diperlukan."
+        )
     return 0
 
 

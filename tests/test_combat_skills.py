@@ -7,7 +7,9 @@ from src.models.enemy import Enemy
 from src.models.player import Player, max_hp
 
 
-def make_player(agility=8, intelligence=7, attack=10, defense=5, level=1, hp=None, mp=None):
+def make_player(
+    agility=8, intelligence=7, attack=10, defense=5, level=1, hp=None, mp=None
+):
     base = {
         "attack": attack,
         "defense": defense,
@@ -84,7 +86,10 @@ def test_physical_skill_costs_mp_and_deals_damage():
     player = make_player()
     enemy = make_enemy(hp=50)
     state = start_combat(
-        player, enemy, Randomizer(seed=7), skills={"strike": make_physical_skill()}
+        player,
+        enemy,
+        Randomizer(seed=7),
+        skills={"strike": make_physical_skill()},
     )
     assert player_action(state, CombatAction.SKILL, "strike") is False
     assert player.mp == 20 - 3
@@ -98,11 +103,15 @@ def test_magic_skill_uses_magic_formula_and_applies_burn():
     skill = make_magic_skill(
         effects=[{"status": "burn", "duration": 3, "power": 2}]
     )
-    state = start_combat(player, enemy, Randomizer(seed=7), skills={"fire": skill})
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"fire": skill}
+    )
     assert player_action(state, CombatAction.MAGIC, "fire") is False
     assert state.enemy.stats["hp"] == 50 - 12
     assert "Kamu melontarkan mantra ke Goblin, -12 HP." in state.log
-    burn = next(status for status in state.statuses[enemy.id] if status.kind == "burn")
+    burn = next(
+        status for status in state.statuses[enemy.id] if status.kind == "burn"
+    )
     assert burn.power == 2
     assert burn.duration == 3
 
@@ -111,7 +120,10 @@ def test_skill_not_enough_mp_consumes_turn_without_action():
     player = make_player(mp=5, intelligence=0)
     enemy = make_enemy(hp=50)
     state = start_combat(
-        player, enemy, Randomizer(seed=7), skills={"strike": make_physical_skill(cost=10)}
+        player,
+        enemy,
+        Randomizer(seed=7),
+        skills={"strike": make_physical_skill(cost=10)},
     )
     assert player_action(state, CombatAction.SKILL, "strike") is False
     assert player.mp == 5
@@ -136,7 +148,10 @@ def test_physical_skill_power_adds_damage():
     enemy = make_enemy(hp=50, defense=2)
     rng = FixedRandomizer([0, 0, 0, 0, 0, 0, 100])
     state = start_combat(
-        player, enemy, rng, skills={"strike": make_physical_skill(cost=3, power=6)}
+        player,
+        enemy,
+        rng,
+        skills={"strike": make_physical_skill(cost=3, power=6)},
     )
     player_action(state, CombatAction.SKILL, "strike")
     assert state.enemy.stats["hp"] == 50 - 15  # base 9 (10 - 2//2) + power 6
@@ -147,7 +162,10 @@ def test_physical_skill_miss_ignores_power():
     enemy = make_enemy(hp=50, defense=2)
     rng = FixedRandomizer([0, 0, 0, 0, 0, 100, 100])
     state = start_combat(
-        player, enemy, rng, skills={"strike": make_physical_skill(cost=3, power=6)}
+        player,
+        enemy,
+        rng,
+        skills={"strike": make_physical_skill(cost=3, power=6)},
     )
     player_action(state, CombatAction.SKILL, "strike")
     assert state.enemy.stats["hp"] == 50
@@ -157,7 +175,9 @@ def test_physical_skill_miss_does_not_apply_status_effects():
     player = make_player(attack=10)
     enemy = make_enemy(hp=50, defense=2)
     skill = make_physical_skill(
-        cost=3, power=6, effects=[{"status": "poison", "power": 4, "duration": 2}]
+        cost=3,
+        power=6,
+        effects=[{"status": "poison", "power": 4, "duration": 2}],
     )
     rng = FixedRandomizer([0, 0, 0, 0, 0, 100, 100])
     state = start_combat(player, enemy, rng, skills={"strike": skill})
@@ -181,26 +201,34 @@ def test_unlearned_magic_is_rejected():
 
 def test_player_action_item_heals_and_decrements_qty():
     player = make_player(hp=50)
-    player.inventory.append({"id": "potion", "name": "Potion", "qty": 2, "heal": 30})
+    player.inventory.append(
+        {"id": "potion", "name": "Potion", "qty": 2, "heal": 30}
+    )
     state = start_combat(player, make_enemy(), Randomizer(seed=7))
     assert player_action(state, CombatAction.ITEM, "potion") is False
     assert player.hp == 82
-    assert player.inventory == [{"id": "potion", "name": "Potion", "qty": 1, "heal": 30}]
+    assert player.inventory == [
+        {"id": "potion", "name": "Potion", "qty": 1, "heal": 30}
+    ]
     assert "Kamu memakai Potion, memulihkan 30 HP." in state.log
 
 
 def test_use_item_heal_clamped_at_max_hp():
     player = make_player(hp=95)
-    player.inventory.append({"id": "potion", "name": "Potion", "qty": 1, "heal": 30})
+    player.inventory.append(
+        {"id": "potion", "name": "Potion", "qty": 1, "heal": 30}
+    )
     state = start_combat(player, make_enemy(), Randomizer(seed=7))
-    message = use_item(state, "potion")
+    use_item(state, "potion")
     assert player.hp == max_hp(player)
     assert player.inventory == []
 
 
 def test_use_item_qty_zero_removes_from_inventory():
     player = make_player(hp=50)
-    player.inventory.append({"id": "potion", "name": "Potion", "qty": 1, "heal": 30})
+    player.inventory.append(
+        {"id": "potion", "name": "Potion", "qty": 1, "heal": 30}
+    )
     state = start_combat(player, make_enemy(), Randomizer(seed=7))
     use_item(state, "potion")
     assert player.inventory == []

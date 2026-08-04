@@ -36,7 +36,9 @@ WOODEN_HELMET = Item(
 )
 
 
-def make_player(level=1, hp=100, mp=20, attack=10, defense=5, agility=8, intelligence=7):
+def make_player(
+    level=1, hp=100, mp=20, attack=10, defense=5, agility=8, intelligence=7
+):
     base = {
         "attack": attack,
         "defense": defense,
@@ -142,7 +144,9 @@ def test_use_consumable_heals_and_removes_one():
 def test_use_consumable_clamps_at_max_hp():
     p = make_player(hp=95)
     gs = GameState()
-    gs.items = {"potion": Item("potion", "Potion", "consumable", heal=50, price=30)}
+    gs.items = {
+        "potion": Item("potion", "Potion", "consumable", heal=50, price=30)
+    }
     add_item(p, "potion", 1)
     use_consumable(p, p.inventory[0], gs)
     assert p.hp == 100
@@ -188,7 +192,9 @@ def test_equip_without_slot_rejected():
 def test_equip_replaces_existing_slot_subtracts_old_modifiers():
     p = make_player()
     equip(p, IRON_SWORD)
-    msg = equip(p, STEEL_SWORD, {"iron_sword": IRON_SWORD, "steel_sword": STEEL_SWORD})
+    msg = equip(
+        p, STEEL_SWORD, {"iron_sword": IRON_SWORD, "steel_sword": STEEL_SWORD}
+    )
     assert msg == "Steel Sword dipasang di slot weapon."
     assert p.equipped == {"weapon": "steel_sword"}
     assert p.attribute_bonuses == {"attack": 10, "agility": 2}
@@ -238,7 +244,9 @@ def test_combat_use_item_resolves_heal_via_registry():
         p,
         make_enemy(),
         Randomizer(seed=7),
-        items={"potion": Item("potion", "Potion", "consumable", heal=50, price=30)},
+        items={
+            "potion": Item("potion", "Potion", "consumable", heal=50, price=30)
+        },
     )
     msg = use_item(state, "potion")
     assert msg == "Kamu memakai Potion, memulihkan 50 HP."
@@ -255,7 +263,9 @@ def test_combat_use_item_registry_precedes_inline():
         p,
         make_enemy(),
         Randomizer(seed=7),
-        items={"potion": Item("potion", "Potion", "consumable", heal=50, price=30)},
+        items={
+            "potion": Item("potion", "Potion", "consumable", heal=50, price=30)
+        },
     )
     msg = use_item(state, "potion")
     assert msg == "Kamu memakai Potion, memulihkan 50 HP."
@@ -269,7 +279,9 @@ def test_combat_loot_routes_through_add_item_bare_entries():
     def resolver(enemy, randomizer):
         return [{"id": "herb", "qty": 2}]
 
-    state = start_combat(p, make_enemy(), Randomizer(seed=7), loot_resolver=resolver)
+    state = start_combat(
+        p, make_enemy(), Randomizer(seed=7), loot_resolver=resolver
+    )
     while not state.over:
         player_action(state, CombatAction.ATTACK)
     assert p.inventory == [{"id": "herb", "qty": 2}]
@@ -282,7 +294,9 @@ def test_combat_loot_over_capacity_skipped():
     def resolver(enemy, randomizer):
         return [{"id": "herb", "qty": 1}]
 
-    state = start_combat(p, make_enemy(), Randomizer(seed=7), loot_resolver=resolver)
+    state = start_combat(
+        p, make_enemy(), Randomizer(seed=7), loot_resolver=resolver
+    )
     while not state.over:
         player_action(state, CombatAction.ATTACK)
     assert p.inventory == [{"id": "herb", "qty": 32}]

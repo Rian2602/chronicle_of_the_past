@@ -1,4 +1,6 @@
 class GameState:
+    """Semua data permainan yang bisa disimpan/dimuat."""
+
     def __init__(self):
         self.player = None
         self.world = {}

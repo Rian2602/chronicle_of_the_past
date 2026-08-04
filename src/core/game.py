@@ -1,11 +1,12 @@
-from src.core import input_handler, save_manager
 import copy
+
+from src.core import input_handler, save_manager
 from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
 from src.engine import dialog_engine, event_engine, quest_engine
 from src.engine.combat_engine import enemy_turn, player_action, start_combat
-from src.models.combat_interfaces import CombatAction, CombatResult
 from src.engine.time_engine import rest
+from src.models.combat_interfaces import CombatAction, CombatResult
 from src.models.enemy import Enemy
 from src.models.item import Item
 from src.models.map import Map
@@ -23,7 +24,13 @@ from src.ui import ascii_loader, combat_view, dialog_view, hud, inventory_view
 _COMBAT_ACTIONS = {action.value for action in CombatAction}
 
 
+class GameQuit(Exception):
+    """Sinyal keluar ke menu utama; dilempar oleh perintah 'quit'."""
+
+
 class Game:
+    """Pengendali utama permainan: route perintah, dialog, combat, quest."""
+
     def __init__(self, game_context, rng_seed=None):
         self.ctx = game_context
         self.state = GameState()
@@ -32,11 +39,15 @@ class Game:
         self._current_dialog = None
         self._talk_npc_id = None
         self._combat = None
+        self._pending_levels = 0
 
     def _wire(self):
+        """Hubungkan data mentah GameContext ke state sebagai objek model."""
         s = self.state
         s.world = {mid: Map(**data) for mid, data in self.ctx.maps.items()}
-        s.enemies = {eid: Enemy(**data) for eid, data in self.ctx.enemies.items()}
+        s.enemies = {
+            eid: Enemy(**data) for eid, data in self.ctx.enemies.items()
+        }
         s.items = {iid: Item(**data) for iid, data in self.ctx.items.items()}
         s.quests = dict(self.ctx.quests)
         s.memories = list(self.ctx.memories)
@@ -45,38 +56,62 @@ class Game:
             s.current_map = s.world.get("village")
 
     def new_game(self, name, class_id):
+        """Mulai permainan baru dengan nama dan kelas; proses event awal.
+
+        Returns:
+            Teks pembuka (hasil event processing).
+        """
         self._wire()
         self.state.player = self.ctx.create_player(name, class_id)
         self._current_dialog = None
         self._talk_npc_id = None
         self._combat = None
+        self._pending_levels = 0
         assert self.state.player is not None
         lines = event_engine.process_events(self.state, self.randomizer)
         return "\n".join(lines) or "Kamu terbangun di Ashen Village."
 
     def continue_game(self, save_path):
+        """Muat save: wire ulang state, restore combat, proses event.
+
+        Returns:
+            Teks status setelah dimuat.
+
+        Raises:
+            SaveError: Bila save tidak valid atau tanpa data pemain.
+        """
         self.state = save_manager.load_game(save_path, self.ctx)
         self._wire()
         s = self.state
-        map_id = s.current_map.id if hasattr(s.current_map, "id") else s.current_map
+        map_id = (
+            s.current_map.id if hasattr(s.current_map, "id") else s.current_map
+        )
         s.current_map = s.world.get(map_id, s.world.get("village"))
         seed = s.rng_seed if s.rng_seed is not None else 20260803
         s.rng_seed = seed
         self.randomizer = Randomizer(seed)
         self._current_dialog = None
         self._talk_npc_id = None
+        self._pending_levels = 0
         # Restore combat state jika ada
         self._combat = None
         if hasattr(s, "combat_data") and s.combat_data is not None:
             self._restore_combat(s.combat_data)
         if self.state.player is None:
-            raise save_manager.SaveError("Save tidak lengkap (tanpa data pemain).")
+            raise save_manager.SaveError(
+                "Save tidak lengkap (tanpa data pemain)."
+            )
         lines = event_engine.process_events(self.state, self.randomizer)
         return "\n".join(lines) or "Save dimuat."
-    
+
     def _restore_combat(self, combat_data):
         """Restore combat state dari data yang di-load."""
-        from src.models.combat_interfaces import CombatResult, CombatState, StatusEffect
+        from src.models.combat_interfaces import (
+            CombatResult,
+            CombatState,
+            StatusEffect,
+        )
+
         enemy_id = combat_data.get("enemy_id")
         if enemy_id is None or enemy_id not in self.state.enemies:
             return  # Tidak bisa restore tanpa enemy yang valid
@@ -85,12 +120,18 @@ class Game:
         enemy.stats = dict(enemy.stats)
         enemy.stats.setdefault("max_hp", enemy.stats.get("hp", 1))
         # Set HP enemy sesuai yang tersimpan
-        enemy.stats["hp"] = combat_data.get("enemy_hp", enemy.stats.get("hp", 1))
+        enemy.stats["hp"] = combat_data.get(
+            "enemy_hp", enemy.stats.get("hp", 1)
+        )
         # Rekonstruksi statuses dari dict ke StatusEffect objects
         restored_statuses = {}
         for target_id, effects in combat_data.get("statuses", {}).items():
             restored_statuses[target_id] = [
-                StatusEffect(kind=eff["kind"], duration=eff["duration"], power=eff["power"])
+                StatusEffect(
+                    kind=eff["kind"],
+                    duration=eff["duration"],
+                    power=eff["power"],
+                )
                 for eff in effects
             ]
         # Buat CombatState baru dengan data yang tersimpan
@@ -126,13 +167,28 @@ class Game:
             self._combat.observe_info = combat_data["observe_info"]
 
     def run_turn(self, text):
+        """Proses satu perintah pemain dan kembalikan teks hasil giliran.
+
+        Prioritas routing: pilihan level-up pending → aksi combat →
+        pilihan dialog → perintah eksplorasi biasa.
+
+        Returns:
+            Teks lengkap (HUD + baris hasil) untuk ditampilkan.
+        """
         cmd = input_handler.parse_input(text)
         out = []
-        if self._combat is not None and cmd.action in _COMBAT_ACTIONS:
+        if self._pending_levels > 0:
+            self._level_choice_select(cmd, out)
+        elif self._combat is not None and cmd.action in _COMBAT_ACTIONS:
             self._combat_turn(cmd, out)
         elif self._current_dialog is not None and cmd.action == "select":
             self._dialog_select(cmd, out)
-        elif self._combat is not None and cmd.action not in ("save", "help", "inventory", "look"):
+        elif self._combat is not None and cmd.action not in (
+            "save",
+            "help",
+            "inventory",
+            "look",
+        ):
             out.append("Tidak bisa saat bertarung.")
             out.append(combat_view.render(self._combat))
         else:
@@ -140,7 +196,9 @@ class Game:
         if self._combat is None:
             logs = event_engine.process_events(self.state, self.randomizer)
             out.extend(logs)
-        return hud.render(self.state.player, self.state) + "\n\n" + "\n".join(out)
+        return (
+            hud.render(self.state.player, self.state) + "\n\n" + "\n".join(out)
+        )
 
     def _dispatch(self, cmd, out):
         """Dispatch command to appropriate handler method."""
@@ -154,13 +212,16 @@ class Game:
             "look": lambda: self._cmd_look(out),
             "explore": lambda: self._cmd_explore(out),
             "inventory": lambda: self._cmd_inventory(out),
+            "inv": lambda: self._cmd_inventory(out),  # alias ringkas
             "memories": lambda: self._cmd_memories(out),
             "use": lambda: self._cmd_use(cmd, out),
             "equip": lambda: self._cmd_equip(cmd, out),
             "unequip": lambda: self._cmd_unequip(cmd, out),
             "save": lambda: self._cmd_save(cmd, out),
+            "load": lambda: self._cmd_load(cmd, out),
             "quests": lambda: self._cmd_quests(out),
             "item": lambda: self._cmd_use_alias(cmd, out),
+            "quit": lambda: self._cmd_quit(),
         }
 
         if action in action_handlers:
@@ -172,7 +233,8 @@ class Game:
             self._append_quest_hint(out)
         else:
             out.append(
-                f"Perintah tidak dikenal: {cmd.action}. Ketik 'help' untuk bantuan."
+                f"Perintah tidak dikenal: {cmd.action}. "
+                "Ketik 'help' untuk bantuan."
             )
             self._append_quest_hint(out)
 
@@ -184,11 +246,13 @@ class Game:
         self._cmd_use(cmd, out)
 
     def _append_quest_hint(self, out):
+        """Tambahkan petunjuk quest aktif ke daftar baris output."""
         objective = quest_engine.next_objective(self.state)
         if objective:
             out.append(f"Petunjuk: {objective}")
 
     def _cmd_status(self, out):
+        """Handler perintah status: tampilkan stat & perlengkapan pemain."""
         p = self.state.player
         class_name = (
             self.ctx.classes[p.class_id]["name"]
@@ -204,25 +268,45 @@ class Game:
             parts = []
             for slot, item_id in p.equipped.items():
                 item = self.state.items.get(item_id)
-                parts.append(f"{labels.get(slot, slot)}: {item.name if item else item_id}")
+                parts.append(
+                    f"{labels.get(slot, slot)}: "
+                    f"{item.name if item else item_id}"
+                )
             out.append("Perlengkapan: " + ", ".join(parts))
         else:
             out.append("Perlengkapan: (kosong)")
         if p.learned_skills:
             out.append("Skill: " + ", ".join(p.learned_skills))
-        location = self.state.current_map.name if self.state.current_map else "-"
+        location = (
+            self.state.current_map.name if self.state.current_map else "-"
+        )
         out.append(f"Lokasi: {location}")
 
     def _cmd_help(self, out):
-        out.append("Navigasi: ↑/↓ atau w/s untuk berpindah, Enter untuk memilih, 'q' kembali/keluar.")
-        out.append("Menu utama: Lihat, Jelajah, Pergi, Bicara, Istirahat, Inventori, Status, Simpan, Keluar.")
-        out.append("Saat bertarung: Serang, Skill, Sihir, Item, Amati, Kabur, Bertahan, Simpan.")
-        out.append("Saat dialog: pilih dengan ↑/↓ + Enter, atau 'Akhiri Percakapan' untuk keluar.")
+        """Handler perintah help: daftar navigasi, menu, dan perintah teks."""
+        out.append(
+            "Navigasi: ↑/↓ atau w/s untuk berpindah, Enter untuk memilih, "
+            "'q' kembali/keluar."
+        )
+        out.append(
+            "Menu utama: Lihat, Jelajah, Pergi, Bicara, Istirahat, "
+            "Inventori, Status, Simpan, Keluar."
+        )
+        out.append(
+            "Saat bertarung: Serang, Skill, Sihir, Item, Amati, Kabur, "
+            "Bertahan, Simpan."
+        )
+        out.append(
+            "Saat dialog: pilih dengan ↑/↓ + Enter, atau "
+            "'Akhiri Percakapan' untuk keluar."
+        )
+        out.append("Perintah teks: save <file>, load <file>, quit.")
         objective = quest_engine.next_objective(self.state)
         if objective:
             out.append(f"Tujuan saat ini: {objective}")
 
     def _cmd_memories(self, out):
+        """Handler perintah memories: tampilkan kenangan yang telah dibuka."""
         p = self.state.player
         if not p.memories:
             out.append("Kamu belum memiliki kenangan.")
@@ -232,6 +316,7 @@ class Game:
             out.append(f"- {memory['title']}: {memory['text']}")
 
     def _cmd_go(self, cmd, out):
+        """Handler perintah go: pindah ke peta tujuan."""
         if not cmd.args:
             out.append("Gunakan: go <nama peta>.")
             return
@@ -243,30 +328,37 @@ class Game:
             out.append(str(e))
 
     def _cmd_rest(self, out):
+        """Handler perintah rest: istirahat hingga pagi."""
         rest(self.state)
-        out.append(f"Kamu beristirahat hingga pagi. Kini Hari {self.state.day}.")
+        out.append(
+            f"Kamu beristirahat hingga pagi. Kini Hari {self.state.day}."
+        )
 
     def _find_npc(self, query: str):
-        """Cari NPC berdasarkan ID, nama display, atau prefix (case-insensitive)."""
+        """Cari NPC berdasarkan ID, nama display, atau prefix.
+
+        Case-insensitive.
+        """
         # 1. Exact ID match
         npc = self.ctx.npc.get(query)
         if npc:
             return query, npc
         # Normalize query: lowercase, ganti _ dan - dengan spasi
-        q = query.lower().replace('_', ' ').replace('-', ' ')
+        q = query.lower().replace("_", " ").replace("-", " ")
         # 2. Case-insensitive exact match (ID atau nama)
         for npc_id, npc_data in self.ctx.npc.items():
-            name = npc_data.get('name', '').lower()
-            if name == q or npc_id.lower() == q or name.replace(' ', '_') == q:
+            name = npc_data.get("name", "").lower()
+            if name == q or npc_id.lower() == q or name.replace(" ", "_") == q:
                 return npc_id, npc_data
         # 3. Prefix match
         for npc_id, npc_data in self.ctx.npc.items():
-            name = npc_data.get('name', '').lower()
+            name = npc_data.get("name", "").lower()
             if name.startswith(q) or npc_id.lower().startswith(q):
                 return npc_id, npc_data
         return None, None
 
     def _cmd_talk(self, cmd, out):
+        """Handler perintah talk: mulai dialog dengan NPC di peta ini."""
         if not cmd.args:
             out.append("Gunakan: talk <nama NPC>.")
             return
@@ -277,10 +369,10 @@ class Game:
             m = self.state.current_map
             available = []
             if m:
-                for nid in (m.npcs or []):
+                for nid in m.npcs or []:
                     nd = self.ctx.npc.get(nid)
                     if nd:
-                        available.append(nd['name'])
+                        available.append(nd["name"])
             hint = f" (tersedia: {', '.join(available)})" if available else ""
             out.append(f"NPC tidak dikenal: {query}.{hint}")
             return
@@ -291,7 +383,7 @@ class Game:
         if not npc.get("dialogs"):
             out.append(f"{npc['name']} tidak punya dialog.")
             return
-        
+
         dialog = None
         for did in npc["dialogs"]:
             d = self.ctx.dialogues.get(did)
@@ -301,19 +393,24 @@ class Game:
             if all(f in self.state.flags for f in reqs):
                 dialog = d
                 break
-                
+
         if dialog is None:
             dialog = self.ctx.dialogues.get(npc["dialogs"][-1])
-            
+
         if dialog is None:
             out.append(f"{npc['name']} tidak punya dialog.")
             return
         self._current_dialog = dialog
         self._talk_npc_id = npc_id
         # Perbaikan: tampilkan nama NPC yang benar (bukan ID)
-        out.append(dialog_view.render(dialog, self.state, npc_id=npc_id, npc_name=npc["name"]))
+        out.append(
+            dialog_view.render(
+                dialog, self.state, npc_id=npc_id, npc_name=npc["name"]
+            )
+        )
 
     def _cmd_look(self, out):
+        """Handler perintah look: deskripsi peta, pintu keluar, dan NPC."""
         m = self.state.current_map
         if m is None:
             out.append("Kamu tidak berada di peta mana pun.")
@@ -333,6 +430,7 @@ class Game:
             out.append("Di sini ada: " + ", ".join(names))
 
     def _cmd_explore(self, out):
+        """Handler perintah explore: cek pertemuan dan mulai combat bila ada."""
         enemy = exploration_system.check_encounter(self.state, self.randomizer)
         if enemy is None:
             out.append("Kamu menjelajah, tetapi tidak ada yang mengancam.")
@@ -351,9 +449,11 @@ class Game:
         out.append(combat_view.render(self._combat))
 
     def _cmd_inventory(self, out):
+        """Handler perintah inventory: tampilkan perlengkapan dan barang."""
         out.append(inventory_view.render(self.state.player, self.state.items))
 
     def _cmd_use(self, cmd, out):
+        """Handler perintah use: pakai item konsumabel dari inventaris."""
         if not cmd.args:
             out.append("Gunakan: use <item>.")
             return
@@ -365,11 +465,16 @@ class Game:
             out.append(f"Kamu tidak memiliki {item_id}.")
             return
         try:
-            out.append(inventory_system.use_consumable(self.state.player, entry, self.state))
+            out.append(
+                inventory_system.use_consumable(
+                    self.state.player, entry, self.state
+                )
+            )
         except ValueError as e:
             out.append(str(e))
 
     def _cmd_equip(self, cmd, out):
+        """Handler perintah equip: pasang item yang dimiliki pemain."""
         if not cmd.args:
             out.append("Gunakan: equip <item>.")
             return
@@ -383,15 +488,25 @@ class Game:
         if not owned:
             out.append(f"Kamu tidak memiliki {item.name}.")
             return
-        out.append(equipment_system.equip(self.state.player, item, items=self.state.items))
+        out.append(
+            equipment_system.equip(
+                self.state.player, item, items=self.state.items
+            )
+        )
 
     def _cmd_unequip(self, cmd, out):
+        """Handler perintah unequip: lepas item dari satu slot."""
         if not cmd.args:
             out.append("Gunakan: unequip <slot>.")
             return
-        out.append(equipment_system.unequip(self.state.player, cmd.args[0], items=self.state.items))
+        out.append(
+            equipment_system.unequip(
+                self.state.player, cmd.args[0], items=self.state.items
+            )
+        )
 
     def _cmd_save(self, cmd, out):
+        """Handler perintah save: simpan state ke path (dengan combat)."""
         if not cmd.args:
             out.append("Gunakan: save <path>.")
             return
@@ -403,7 +518,25 @@ class Game:
             return
         out.append(f"Permainan tersimpan di {path}.")
 
+    def _cmd_load(self, cmd, out):
+        """Handler perintah load: muat save (dilarang saat bertarung)."""
+        if self._combat is not None:
+            out.append("Tidak bisa memuat saat bertarung.")
+            return
+        path = " ".join(cmd.args) if cmd.args else "saves/slot1.json"
+        try:
+            msg = self.continue_game(path)
+        except save_manager.SaveError as e:
+            out.append(str(e))
+            return
+        out.append(msg or f"Permainan dimuat dari {path}.")
+
+    def _cmd_quit(self):
+        """Handler perintah quit: lemparkan GameQuit ke menu utama."""
+        raise GameQuit()
+
     def _cmd_quests(self, out):
+        """Handler perintah quests: daftar quest aktif dan progresnya."""
         p = self.state.player
         if not p.quests_active:
             out.append("Tidak ada quest aktif.")
@@ -416,6 +549,7 @@ class Game:
             out.append(f"- {title} ({met}/{total})")
 
     def _dialog_select(self, cmd, out):
+        """Terapkan pilihan dialog dan lanjutkan ke dialog berikutnya."""
         dialog = self._current_dialog
         choices = dialog_engine.available_choices(dialog, self.state)
         if cmd.index is None:
@@ -432,7 +566,11 @@ class Game:
             self._end_dialog(out)
         else:
             self._current_dialog = self.ctx.dialogues.get(next_id, dialog)
-            npc = self.ctx.npc.get(self._talk_npc_id) if self._talk_npc_id else None
+            npc = (
+                self.ctx.npc.get(self._talk_npc_id)
+                if self._talk_npc_id
+                else None
+            )
             out.append(
                 dialog_view.render(
                     self._current_dialog,
@@ -443,6 +581,7 @@ class Game:
             )
 
     def _end_dialog(self, out):
+        """Akhiri dialog: proses syarat talk quest dan deteksi level-up."""
         out.append("Percakapan berakhir.")
         npc_id = self._talk_npc_id
         self._current_dialog = None
@@ -455,6 +594,7 @@ class Game:
             self._apply_pending_levels(out)
 
     def _combat_turn(self, cmd, out):
+        """Jalankan satu giliran combat dari perintah pemain."""
         state = self._combat
         choice = cmd.args[0] if cmd.args else None
         try:
@@ -472,6 +612,7 @@ class Game:
             out.append(combat_view.render(state))
 
     def _finish_combat(self, state):
+        """Rangkum hasil combat: quest, log, level-up, dan pesan akhir."""
         out = []
         s = self.state
         if state.result == CombatResult.VICTORY:
@@ -493,18 +634,44 @@ class Game:
         return out
 
     def _apply_pending_levels(self, out):
+        """Deteksi level-up dan tunda bonus stat sampai pemain memilih."""
         levels = level_system.gain_xp(self.state.player, 0)
         if levels:
-            self._apply_level_ups(levels)
-            out.append(f"Naik level! Kamu kini level {self.state.player.level}.")
+            self._pending_levels = len(levels)
+            out.append(
+                f"Naik level! Kamu kini level {self.state.player.level}."
+            )
+            self._append_level_choice_prompt(out)
 
-    def _apply_level_ups(self, levels):
+    def _append_level_choice_prompt(self, out):
+        """Tampilkan daftar pilihan bonus level-up ke output."""
+        out.append("Pilih bonus level-up (ketik angka):")
+        for index, (key, _) in enumerate(level_system.LEVEL_CHOICES, start=1):
+            out.append(f"  {index}. {level_system.choice_label(key)}")
+
+    def _level_choice_select(self, cmd, out):
+        """Terima pilihan bonus level-up dari pemain (angka 1..N)."""
+        choices = level_system.LEVEL_CHOICES
+        if cmd.action != "select" or cmd.index is None:
+            out.append(
+                f"Ketik angka pilihan bonus level-up (1-{len(choices)})."
+            )
+            self._append_level_choice_prompt(out)
+            return
+        index = cmd.index - 1
+        if index < 0 or index >= len(choices):
+            out.append("Pilihan tidak valid.")
+            self._append_level_choice_prompt(out)
+            return
+        key = choices[index][0]
+        level_system.apply_choice(self.state.player, key)
+        self._pending_levels -= 1
         p = self.state.player
-        for _ in levels:
-            # gain_xp sudah menaikkan level; di sini hanya bonus base + pilihan HP
-            p.attribute_bonuses["hp"] = p.attribute_bonuses.get("hp", 0) + 5
-            p.attribute_bonuses["mp"] = p.attribute_bonuses.get("mp", 0) + 3
-            # Auto-apply pilihan HP sebagai default (bisa dikembangkan dengan input user nanti)
-            level_system.apply_choice(p, "hp")
-            p.hp = max_hp(p)
-            p.mp = max_mp(p)
+        p.hp = max_hp(p)
+        p.mp = max_mp(p)
+        out.append(f"Bonus dipilih: {level_system.choice_label(key)}.")
+        if self._pending_levels > 0:
+            out.append(f"Masih ada {self._pending_levels} bonus level-up lagi.")
+            self._append_level_choice_prompt(out)
+        else:
+            out.append("HP dan MP dipulihkan penuh.")

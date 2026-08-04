@@ -142,3 +142,76 @@ def test_memories_and_quests_conditional(game):
     labels = [label for label, _ in game_menu.build(game)]
     assert "Kenangan" in labels
     assert "Quest" in labels
+
+
+def test_load_submenu_shows_save_slots(game, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "saves").mkdir()
+    (tmp_path / "saves" / "slot1.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "saves" / "slot2.json").write_text("{}", encoding="utf-8")
+
+    items = game_menu.build(game)
+    load_targets = [target for label, target in items if label == "Muat"]
+    assert len(load_targets) == 1
+    submenu = load_targets[0]()
+    labels = [label for label, _ in submenu]
+    targets = [target for _, target in submenu]
+    assert "slot1.json" in labels
+    assert "slot2.json" in labels
+    assert "load saves/slot1.json" in targets
+    assert "load saves/slot2.json" in targets
+    assert None in targets  # Kembali
+
+
+def test_load_menu_hidden_without_saves(game, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    labels = [label for label, _ in game_menu.build(game)]
+    assert "Muat" not in labels
+
+
+def test_load_submenu_excludes_settings_file(game, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "saves").mkdir()
+    (tmp_path / "saves" / "slot1.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "saves" / "settings.json").write_text("{}", encoding="utf-8")
+
+    items = game_menu.build(game)
+    load_targets = [target for label, target in items if label == "Muat"]
+    submenu = load_targets[0]()
+    labels = [label for label, _ in submenu]
+    assert "slot1.json" in labels
+    assert "settings.json" not in labels
+
+
+def test_load_menu_command_restores_state(game, monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    game.run_turn("save saves/slot1.json")
+    game.state.player.gold = 999
+
+    items = game_menu.build(game)
+    load_targets = [target for label, target in items if label == "Muat"]
+    submenu = load_targets[0]()
+    load_cmd = next(target for _, target in submenu if target is not None)
+
+    game.run_turn(load_cmd)
+    assert game.state.player.gold == 0
+
+
+def test_level_up_menu_shows_choices_when_pending(game):
+    game._pending_levels = 1
+    items = game_menu.build(game)
+    labels = [label for label, _ in items]
+    targets = [target for _, target in items]
+    assert "Serangan +2" in labels
+    assert "HP +20" in labels
+    assert "Skill Point +1" in labels
+    assert "1" in targets
+    assert "7" in targets
+    assert not any(
+        target is None for target in targets
+    )  # tanpa Kembali — wajib pilih
+
+
+def test_level_up_menu_not_shown_by_default(game):
+    labels = [label for label, _ in game_menu.build(game)]
+    assert "Serangan +2" not in labels

@@ -2,6 +2,17 @@ from src.ui.renderer import box
 
 
 def render(dialog, game_state, npc_id=None, npc_name=None):
+    """Render isi dialog: baris pembicara + teks dalam kotak.
+
+    Args:
+        dialog: Data dialog berisi lines.
+        game_state: State (tidak dipakai di render; untuk API konsisten).
+        npc_id: ID speaker yang ditampilkan sebagai nama NPC.
+        npc_name: Nama tampilan NPC (fallback ke speaker ID).
+
+    Returns:
+        Teks dialog yang siap dicetak.
+    """
     lines = []
     # Gunakan nama NPC jika tersedia, fallback ke speaker ID
     display_name = npc_name

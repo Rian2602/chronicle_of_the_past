@@ -17,7 +17,9 @@ def test_settings_roundtrip(tmp_path):
     assert settings.load_settings(path) == expected
 
 
-@pytest.mark.parametrize("contents", ["{not json", "[]", '{"render_mode": "invalid"}'])
+@pytest.mark.parametrize(
+    "contents", ["{not json", "[]", '{"render_mode": "invalid"}']
+)
 def test_invalid_settings_raise_clear_error(tmp_path, contents):
     path = tmp_path / "settings.json"
     path.write_text(contents, encoding="utf-8")

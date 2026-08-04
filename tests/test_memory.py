@@ -29,7 +29,7 @@ def make_game_state():
 
 def test_grant_sets_flags():
     gs = make_game_state()
-    memory = {"id":"memory001","flags_set":["knows_village_burns"]}
+    memory = {"id": "memory001", "flags_set": ["knows_village_burns"]}
     grant_memory(gs, "memory001", memory)
     assert any(m["id"] == "memory001" for m in gs.player.memories)
     assert gs.flags.get("knows_village_burns") is True

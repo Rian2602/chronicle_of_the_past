@@ -1,12 +1,12 @@
 from src.core.game_state import GameState
 from src.core.input_handler import parse_input
+from src.core.randomizer import Randomizer
+from src.engine.combat_engine import start_combat
 from src.models.command import Command
-from src.models.player import Player
 from src.models.enemy import Enemy
 from src.models.item import Item
-from src.ui import menu, combat_view, inventory_view, dialog_view
-from src.engine.combat_engine import start_combat
-from src.core.randomizer import Randomizer
+from src.models.player import Player
+from src.ui import combat_view, dialog_view, inventory_view, menu
 
 
 def test_parse_number_to_command():
@@ -45,21 +45,48 @@ def test_menu_arrow_wrap():
 
 
 def test_class_card_bars():
-    card = menu.render_class_card({"id": "warrior", "name": "Warrior",
-                                   "stat_bars": {"attack": 4, "defense": 5}})
+    card = menu.render_class_card(
+        {
+            "id": "warrior",
+            "name": "Warrior",
+            "stat_bars": {"attack": 4, "defense": 5},
+        }
+    )
     assert "Warrior" in card
     assert "Attack" in card
     assert "█" in card
 
 
 def test_combat_view_renders_status():
-    p = Player(name="Rian", class_id="warrior", hp=100, mp=10,
-               base_stats={"hp": 100, "mp": 10, "attack": 12, "defense": 14,
-                           "agility": 8, "intelligence": 7})
-    e = Enemy(id="goblin", name="Goblin", level=2,
-              stats={"attack": 5, "defense": 2, "hp": 5, "mp": 0,
-                     "agility": 6, "intelligence": 3},
-              loot=[], skills=[])
+    p = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=100,
+        mp=10,
+        base_stats={
+            "hp": 100,
+            "mp": 10,
+            "attack": 12,
+            "defense": 14,
+            "agility": 8,
+            "intelligence": 7,
+        },
+    )
+    e = Enemy(
+        id="goblin",
+        name="Goblin",
+        level=2,
+        stats={
+            "attack": 5,
+            "defense": 2,
+            "hp": 5,
+            "mp": 0,
+            "agility": 6,
+            "intelligence": 3,
+        },
+        loot=[],
+        skills=[],
+    )
     state = start_combat(p, e, Randomizer(seed=1))
     out = combat_view.render(state)
     assert "Goblin" in out
@@ -67,12 +94,23 @@ def test_combat_view_renders_status():
 
 
 def test_inventory_view_shows_equipment():
-    p = Player(name="Rian", class_id="warrior", hp=100, mp=10, base_stats={},
-               equipped={"weapon": "iron_sword"},
-               inventory=[{"id": "herb", "qty": 2}])
+    p = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=100,
+        mp=10,
+        base_stats={},
+        equipped={"weapon": "iron_sword"},
+        inventory=[{"id": "herb", "qty": 2}],
+    )
     items = {
-        "iron_sword": Item(id="iron_sword", name="Iron Sword", type="weapon",
-                           slot="weapon", modifiers={"attack": 8}),
+        "iron_sword": Item(
+            id="iron_sword",
+            name="Iron Sword",
+            type="weapon",
+            slot="weapon",
+            modifiers={"attack": 8},
+        ),
         "herb": Item(id="herb", name="Herb", type="consumable", heal=20),
     }
     out = inventory_view.render(p, items)
@@ -83,8 +121,18 @@ def test_inventory_view_shows_equipment():
 
 def test_dialog_view_leaves_choices_to_interactive_menu():
     gs = GameState()
-    dialog = {"id": "d", "lines": [{"speaker": "old_man", "text": "Halo."}],
-              "choices": [{"text": "Siapa Anda?", "require_flags": [], "set_flags": [], "next": None}]}
+    dialog = {
+        "id": "d",
+        "lines": [{"speaker": "old_man", "text": "Halo."}],
+        "choices": [
+            {
+                "text": "Siapa Anda?",
+                "require_flags": [],
+                "set_flags": [],
+                "next": None,
+            }
+        ],
+    }
     out = dialog_view.render(dialog, gs)
     assert "old_man" in out
     assert "Pilihan:" not in out
@@ -93,12 +141,14 @@ def test_dialog_view_leaves_choices_to_interactive_menu():
 
 def test_dialog_view_labels_speaker_other_than_npc():
     gs = GameState()
-    dialog = {"id": "d",
-              "lines": [
-                  {"speaker": "old_man", "text": "Halo, pengembara."},
-                  {"speaker": "player", "text": "Halo juga."},
-              ],
-              "choices": []}
+    dialog = {
+        "id": "d",
+        "lines": [
+            {"speaker": "old_man", "text": "Halo, pengembara."},
+            {"speaker": "player", "text": "Halo juga."},
+        ],
+        "choices": [],
+    }
     out = dialog_view.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
     assert "Orang Tua:" in out
     assert "player:" in out
@@ -107,28 +157,43 @@ def test_dialog_view_labels_speaker_other_than_npc():
 
 def test_dialog_view_labels_npc_by_name():
     gs = GameState()
-    dialog = {"id": "d", "lines": [{"speaker": "old_man", "text": "Halo."}],
-              "choices": []}
+    dialog = {
+        "id": "d",
+        "lines": [{"speaker": "old_man", "text": "Halo."}],
+        "choices": [],
+    }
     out = dialog_view.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
     assert "Orang Tua:" in out
 
 
 def test_dialog_view_labels_other_speaker_by_id(monkeypatch):
-    import os
     monkeypatch.setenv("TERM", "xterm-256color")
     # Force reload so supports_unicode() picks up the new TERM value
     import importlib
+
     import src.ui.renderer as renderer_mod
+
     importlib.reload(renderer_mod)
     import src.ui.dialog_view as dv_mod
+
     importlib.reload(dv_mod)
 
     gs = GameState()
-    dialog = {"id": "d",
-              "lines": [{"speaker": "old_man", "text": "Halo."},
-                        {"speaker": "player", "text": "Halo juga."},
-                        {"speaker": "", "text": "lanjutan"}],
-              "choices": []}
+    dialog = {
+        "id": "d",
+        "lines": [
+            {"speaker": "old_man", "text": "Halo."},
+            {"speaker": "player", "text": "Halo juga."},
+            {"speaker": "", "text": "lanjutan"},
+        ],
+        "choices": [],
+    }
     out = dv_mod.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
-    assert "Orang Tua:\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Halo. \u2502" in out
-    assert "player:\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Halo juga. \u2502" in out
+    assert (
+        "Orang Tua:\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n"
+        "\u2502 Halo. \u2502" in out
+    )
+    assert (
+        "player:\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+        "\u2500\u2500\u2510\n\u2502 Halo juga. \u2502" in out
+    )

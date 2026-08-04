@@ -1,7 +1,8 @@
 import pytest
+
 from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
-from src.engine.rule_engine import derived_stats, damage_roll, evaluate
+from src.engine.rule_engine import damage_roll, derived_stats, evaluate
 from src.models.map import Map
 from src.models.player import Player
 
@@ -27,8 +28,12 @@ def make_player(**overrides):
         "hp": 65,
         "mp": 12,
         "base_stats": {
-            "attack": 15, "defense": 6, "hp": 65, "mp": 12,
-            "agility": 15, "intelligence": 11,
+            "attack": 15,
+            "defense": 6,
+            "hp": 65,
+            "mp": 12,
+            "agility": 15,
+            "intelligence": 11,
         },
     }
     defaults.update(overrides)
@@ -56,10 +61,12 @@ def test_derived_stats_all_values():
 
 
 def test_derived_stats_uses_attribute_bonuses():
-    p = make_player(attribute_bonuses={"agility": 5, "intelligence": 4, "defense": 10})
+    p = make_player(
+        attribute_bonuses={"agility": 5, "intelligence": 4, "defense": 10}
+    )
     ds = derived_stats(p)
-    assert ds["critical"] == pytest.approx(8.0)   # (15+5)*0.4
-    assert ds["dodge"] == pytest.approx(6.0)      # (15+5)*0.3
+    assert ds["critical"] == pytest.approx(8.0)  # (15+5)*0.4
+    assert ds["dodge"] == pytest.approx(6.0)  # (15+5)*0.3
     assert ds["magic_resistance"] == pytest.approx(9.0)  # (11+4)*0.6
     assert ds["physical_resistance"] == pytest.approx(6.4)  # (6+10)*0.4
 
@@ -74,12 +81,18 @@ def test_derived_stats_initiative_with_randomizer():
 def test_evaluate_flag_true():
     gs = GameState()
     gs.flags["gate_open"] = True
-    assert evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs) is True
+    assert (
+        evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs)
+        is True
+    )
 
 
 def test_evaluate_flag_false():
     gs = GameState()
-    assert evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs) is False
+    assert (
+        evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs)
+        is False
+    )
 
 
 def test_evaluate_map():
@@ -144,45 +157,118 @@ def test_evaluate_unknown_kind():
 def test_evaluate_flag_name_key():
     gs = GameState()
     gs.flags["gate_open"] = True
-    assert evaluate({"kind": "flag", "name": "gate_open", "value": True}, gs) is True
+    assert (
+        evaluate({"kind": "flag", "name": "gate_open", "value": True}, gs)
+        is True
+    )
 
 
 def test_evaluate_flag_legacy_key():
     gs = GameState()
     gs.flags["gate_open"] = True
-    assert evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs) is True
+    assert (
+        evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs)
+        is True
+    )
     gs.flags["gate_open"] = False
-    assert evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs) is False
+    assert (
+        evaluate({"kind": "flag", "flag": "gate_open", "value": True}, gs)
+        is False
+    )
 
 
 def test_evaluate_flag_eq_false():
     gs = GameState()
     gs.flags["gate_open"] = True
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EQ", "value": False}, gs) is False
+    assert (
+        evaluate(
+            {
+                "kind": "flag",
+                "name": "gate_open",
+                "operator": "EQ",
+                "value": False,
+            },
+            gs,
+        )
+        is False
+    )
     gs.flags["gate_open"] = False
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EQ", "value": False}, gs) is True
+    assert (
+        evaluate(
+            {
+                "kind": "flag",
+                "name": "gate_open",
+                "operator": "EQ",
+                "value": False,
+            },
+            gs,
+        )
+        is True
+    )
 
 
 def test_evaluate_flag_ne():
     gs = GameState()
     gs.flags["gate_open"] = True
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "NE", "value": True}, gs) is False
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "NE", "value": False}, gs) is True
+    assert (
+        evaluate(
+            {
+                "kind": "flag",
+                "name": "gate_open",
+                "operator": "NE",
+                "value": True,
+            },
+            gs,
+        )
+        is False
+    )
+    assert (
+        evaluate(
+            {
+                "kind": "flag",
+                "name": "gate_open",
+                "operator": "NE",
+                "value": False,
+            },
+            gs,
+        )
+        is True
+    )
 
 
 def test_evaluate_flag_exists():
     gs = GameState()
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EXISTS"}, gs) is False
+    assert (
+        evaluate(
+            {"kind": "flag", "name": "gate_open", "operator": "EXISTS"}, gs
+        )
+        is False
+    )
     gs.flags["gate_open"] = False
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "EXISTS"}, gs) is True
+    assert (
+        evaluate(
+            {"kind": "flag", "name": "gate_open", "operator": "EXISTS"}, gs
+        )
+        is True
+    )
 
 
 def test_evaluate_flag_missing():
     gs = GameState()
     gs.flags["gate_open"] = True
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "MISSING"}, gs) is False
+    assert (
+        evaluate(
+            {"kind": "flag", "name": "gate_open", "operator": "MISSING"}, gs
+        )
+        is False
+    )
     gs2 = GameState()
-    assert evaluate({"kind": "flag", "name": "gate_open", "operator": "MISSING"}, gs2) is True
+    assert (
+        evaluate(
+            {"kind": "flag", "name": "gate_open", "operator": "MISSING"}, gs2
+        )
+        is True
+    )
 
 
 def test_evaluate_flag_default_backward_compat():
@@ -199,75 +285,162 @@ def test_evaluate_level_gt():
     gs = GameState()
     gs.player = make_player(level=3)
     assert evaluate({"kind": "level", "operator": "GT", "value": 2}, gs) is True
-    assert evaluate({"kind": "level", "operator": "GT", "value": 3}, gs) is False
+    assert (
+        evaluate({"kind": "level", "operator": "GT", "value": 3}, gs) is False
+    )
 
 
 def test_evaluate_level_lt():
     gs = GameState()
     gs.player = make_player(level=3)
     assert evaluate({"kind": "level", "operator": "LT", "value": 4}, gs) is True
-    assert evaluate({"kind": "level", "operator": "LT", "value": 3}, gs) is False
+    assert (
+        evaluate({"kind": "level", "operator": "LT", "value": 3}, gs) is False
+    )
 
 
 def test_evaluate_level_eq_ne():
     gs = GameState()
     gs.player = make_player(level=3)
     assert evaluate({"kind": "level", "operator": "EQ", "value": 3}, gs) is True
-    assert evaluate({"kind": "level", "operator": "EQ", "value": 2}, gs) is False
-    assert evaluate({"kind": "level", "operator": "NE", "value": 3}, gs) is False
+    assert (
+        evaluate({"kind": "level", "operator": "EQ", "value": 2}, gs) is False
+    )
+    assert (
+        evaluate({"kind": "level", "operator": "NE", "value": 3}, gs) is False
+    )
     assert evaluate({"kind": "level", "operator": "NE", "value": 2}, gs) is True
 
 
 def test_evaluate_level_lte():
     gs = GameState()
     gs.player = make_player(level=3)
-    assert evaluate({"kind": "level", "operator": "LTE", "value": 3}, gs) is True
-    assert evaluate({"kind": "level", "operator": "LTE", "value": 2}, gs) is False
+    assert (
+        evaluate({"kind": "level", "operator": "LTE", "value": 3}, gs) is True
+    )
+    assert (
+        evaluate({"kind": "level", "operator": "LTE", "value": 2}, gs) is False
+    )
 
 
 def test_evaluate_level_no_player_with_operator():
     gs = GameState()
-    assert evaluate({"kind": "level", "operator": "GTE", "value": 1}, gs) is False
+    assert (
+        evaluate({"kind": "level", "operator": "GTE", "value": 1}, gs) is False
+    )
 
 
 def test_evaluate_map_ne():
     gs = GameState()
     gs.current_map = "village"
-    assert evaluate({"kind": "map", "name": "village", "operator": "NE"}, gs) is False
-    assert evaluate({"kind": "map", "name": "forest", "operator": "NE"}, gs) is True
-    assert evaluate({"kind": "map", "map": "forest", "operator": "NE"}, gs) is True
+    assert (
+        evaluate({"kind": "map", "name": "village", "operator": "NE"}, gs)
+        is False
+    )
+    assert (
+        evaluate({"kind": "map", "name": "forest", "operator": "NE"}, gs)
+        is True
+    )
+    assert (
+        evaluate({"kind": "map", "map": "forest", "operator": "NE"}, gs) is True
+    )
 
 
 def test_evaluate_time_ne():
     gs = GameState()
     gs.time = "night"
-    assert evaluate({"kind": "time", "name": "night", "operator": "NE"}, gs) is False
-    assert evaluate({"kind": "time", "time": "morning", "operator": "NE"}, gs) is True
+    assert (
+        evaluate({"kind": "time", "name": "night", "operator": "NE"}, gs)
+        is False
+    )
+    assert (
+        evaluate({"kind": "time", "time": "morning", "operator": "NE"}, gs)
+        is True
+    )
 
 
 def test_evaluate_quest_done_exists_missing():
     gs = GameState()
     gs.player = make_player(quests_done=["quest001"])
-    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "EXISTS"}, gs) is True
-    assert evaluate({"kind": "quest_done", "name": "quest002", "operator": "EXISTS"}, gs) is False
-    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "MISSING"}, gs) is False
-    assert evaluate({"kind": "quest_done", "name": "quest002", "operator": "MISSING"}, gs) is True
+    assert (
+        evaluate(
+            {"kind": "quest_done", "name": "quest001", "operator": "EXISTS"}, gs
+        )
+        is True
+    )
+    assert (
+        evaluate(
+            {"kind": "quest_done", "name": "quest002", "operator": "EXISTS"}, gs
+        )
+        is False
+    )
+    assert (
+        evaluate(
+            {"kind": "quest_done", "name": "quest001", "operator": "MISSING"},
+            gs,
+        )
+        is False
+    )
+    assert (
+        evaluate(
+            {"kind": "quest_done", "name": "quest002", "operator": "MISSING"},
+            gs,
+        )
+        is True
+    )
 
 
 def test_evaluate_quest_done_eq_ne():
     gs = GameState()
     gs.player = make_player(quests_done=["quest001"])
-    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "EQ", "value": True}, gs) is True
-    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "NE", "value": True}, gs) is False
-    assert evaluate({"kind": "quest_done", "name": "quest001", "operator": "EQ", "value": False}, gs) is False
+    assert (
+        evaluate(
+            {
+                "kind": "quest_done",
+                "name": "quest001",
+                "operator": "EQ",
+                "value": True,
+            },
+            gs,
+        )
+        is True
+    )
+    assert (
+        evaluate(
+            {
+                "kind": "quest_done",
+                "name": "quest001",
+                "operator": "NE",
+                "value": True,
+            },
+            gs,
+        )
+        is False
+    )
+    assert (
+        evaluate(
+            {
+                "kind": "quest_done",
+                "name": "quest001",
+                "operator": "EQ",
+                "value": False,
+            },
+            gs,
+        )
+        is False
+    )
 
 
 def test_evaluate_unknown_operator():
     gs = GameState()
     gs.flags["x"] = True
-    assert evaluate({"kind": "flag", "name": "x", "operator": "FOO"}, gs) is False
+    assert (
+        evaluate({"kind": "flag", "name": "x", "operator": "FOO"}, gs) is False
+    )
     gs.player = make_player(level=3)
-    assert evaluate({"kind": "level", "operator": "FOO", "value": 3}, gs) is False
+    assert (
+        evaluate({"kind": "level", "operator": "FOO", "value": 3}, gs) is False
+    )
 
 
 class ScriptedRandomizer:
@@ -295,14 +468,17 @@ def test_damage_roll_formula():
     d = {"defense": 5, "agility": 5}
     r = ScriptedRandomizer([0, 0, 0])  # variance, miss_roll, crit_roll
     res = damage_roll(a, d, r)
-    # base = max(1, 10 - 5//2) = 8; + variance 0 = 8; crit (0 < 3.2) → round(8*1.5) = 12
+    # base = max(1, 10 - 5//2) = 8; + variance 0 = 8;
+    # crit (0 < 3.2) → round(8*1.5) = 12
     assert res == {"damage": 12, "critical": True, "missed": False}
 
 
 def test_damage_roll_miss_zeroes_damage():
     a = {"attack": 10, "defense": 5, "agility": 8, "intelligence": 7}
     d = {"defense": 5, "agility": 5}
-    r = ScriptedRandomizer([0, 100, 100])  # variance 0, miss (100 > 92.4), no crit
+    r = ScriptedRandomizer(
+        [0, 100, 100]
+    )  # variance 0, miss (100 > 92.4), no crit
     res = damage_roll(a, d, r)
     assert res["missed"] is True
     assert res["critical"] is False

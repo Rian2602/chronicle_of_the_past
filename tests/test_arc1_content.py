@@ -1,7 +1,8 @@
 import json
 import os
-from src.core.game_context import GameContext
+
 from src.core.constants import FACTIONS
+from src.core.game_context import GameContext
 
 
 def _load_all_jsons(root):
@@ -57,7 +58,9 @@ def test_quest_reputation_uses_valid_factions():
     ctx = GameContext(data_dir="data")
     for qid, quest in ctx.quests.items():
         for faction in quest.get("rewards", {}).get("reputation", {}):
-            assert faction in FACTIONS, f"{qid} bad reputation faction {faction}"
+            assert faction in FACTIONS, (
+                f"{qid} bad reputation faction {faction}"
+            )
 
 
 def test_quest_requirement_kinds():
@@ -65,7 +68,9 @@ def test_quest_requirement_kinds():
     valid_kinds = {"talk", "map", "flag", "enemy"}
     for qid, quest in ctx.quests.items():
         for req in quest.get("requirements", []):
-            assert req.get("kind") in valid_kinds, f"{qid} bad requirement kind {req.get('kind')}"
+            assert req.get("kind") in valid_kinds, (
+                f"{qid} bad requirement kind {req.get('kind')}"
+            )
 
 
 def test_enemy_skills_exist():
@@ -79,7 +84,9 @@ def test_enemy_loot_items_exist():
     ctx = GameContext(data_dir="data")
     for eid, enemy in ctx.enemies.items():
         for entry in enemy.get("loot", []):
-            assert entry.get("item") in ctx.items, f"{eid} bad loot {entry.get('item')}"
+            assert entry.get("item") in ctx.items, (
+                f"{eid} bad loot {entry.get('item')}"
+            )
 
 
 def test_event_actions_resolve():
@@ -88,9 +95,13 @@ def test_event_actions_resolve():
     for ev in ctx.events:
         for action in ev.get("actions", []):
             if action.get("kind") == "grant_memory":
-                assert action["id"] in memory_ids, f"{ev['id']} bad memory {action['id']}"
+                assert action["id"] in memory_ids, (
+                    f"{ev['id']} bad memory {action['id']}"
+                )
             if action.get("kind") == "start_quest":
-                assert action["id"] in ctx.quests, f"{ev['id']} bad quest {action['id']}"
+                assert action["id"] in ctx.quests, (
+                    f"{ev['id']} bad quest {action['id']}"
+                )
 
 
 def test_ascii_art_files_exist():

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Callable
+from enum import StrEnum
 
 from src.core.randomizer import Randomizer
 from src.models.enemy import Enemy
 from src.models.player import Player
 
 
-class CombatAction(str, Enum):
+class CombatAction(StrEnum):
     ATTACK = "attack"
     SKILL = "skill"
     MAGIC = "magic"
@@ -19,7 +19,7 @@ class CombatAction(str, Enum):
     DEFEND = "defend"
 
 
-class CombatResult(str, Enum):
+class CombatResult(StrEnum):
     VICTORY = "victory"
     DEFEAT = "defeat"
     ESCAPED = "escaped"

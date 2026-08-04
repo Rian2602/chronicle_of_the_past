@@ -160,8 +160,12 @@ def test_enemy_positional_construction_backward_compat():
 
 
 def test_enemy_new_field_defaults_are_independent():
-    e1 = Enemy(id="goblin", name="Goblin", level=2, stats={}, loot=[], skills=[])
-    e2 = Enemy(id="goblin", name="Goblin", level=2, stats={}, loot=[], skills=[])
+    e1 = Enemy(
+        id="goblin", name="Goblin", level=2, stats={}, loot=[], skills=[]
+    )
+    e2 = Enemy(
+        id="goblin", name="Goblin", level=2, stats={}, loot=[], skills=[]
+    )
     e1.reward["gold"] = 5
     e1.tags.append("humanoid")
     assert e2.reward == {}

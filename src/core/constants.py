@@ -1,5 +1,13 @@
 STATS = ["attack", "defense", "hp", "mp", "agility", "intelligence"]
-FACTIONS = ["royal_army", "church", "rebels", "merchant_guild", "scholar_society", "ancient_order", "crime"]
+FACTIONS = [
+    "royal_army",
+    "church",
+    "rebels",
+    "merchant_guild",
+    "scholar_society",
+    "ancient_order",
+    "crime",
+]
 
 # Status effect constants
 DOT_KINDS = {"poison", "burn", "bleed"}

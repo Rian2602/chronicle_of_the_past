@@ -1,6 +1,7 @@
 import pytest
-from src.core.game_context import GameContext
+
 from src.core.constants import FACTIONS
+from src.core.game_context import GameContext
 
 
 def test_create_warrior():
@@ -32,7 +33,17 @@ def test_create_player_unknown_class_raises(tmp_path):
 
 def test_game_context_empty_data_dir(tmp_path):
     ctx = GameContext(data_dir=str(tmp_path))
-    for attr in ("classes", "enemies", "items", "skills", "maps", "npc", "quests", "dialogues", "factions"):
+    for attr in (
+        "classes",
+        "enemies",
+        "items",
+        "skills",
+        "maps",
+        "npc",
+        "quests",
+        "dialogues",
+        "factions",
+    ):
         assert getattr(ctx, attr) == {}
     assert ctx.events == []
     assert ctx.memories == []

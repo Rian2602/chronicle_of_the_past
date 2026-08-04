@@ -1,5 +1,9 @@
 from src.core.game_state import GameState
-from src.engine.quest_engine import complete_requirement, next_objective, start_quest
+from src.engine.quest_engine import (
+    complete_requirement,
+    next_objective,
+    start_quest,
+)
 from src.models.player import Player
 
 
@@ -29,8 +33,14 @@ def make_game_state(quests=None):
     return gs
 
 
-def quest(quest_id, title=None, requirements=None, rewards=None,
-          flags_on_complete=None, next_=None):
+def quest(
+    quest_id,
+    title=None,
+    requirements=None,
+    rewards=None,
+    flags_on_complete=None,
+    next_=None,
+):
     return {
         "id": quest_id,
         "title": title or f"Quest {quest_id}",
@@ -44,7 +54,9 @@ def quest(quest_id, title=None, requirements=None, rewards=None,
 
 
 def test_start_quest_activates_with_empty_met():
-    gs = make_game_state({"quest001": quest("quest001", title="Temui Kepala Desa")})
+    gs = make_game_state(
+        {"quest001": quest("quest001", title="Temui Kepala Desa")}
+    )
     msg = start_quest(gs, "quest001")
     assert msg == "Quest dimulai: Temui Kepala Desa."
     assert gs.player.quests_active == {"quest001": {"met": []}}
@@ -68,18 +80,23 @@ def test_start_quest_already_done():
 
 
 def test_complete_requirement_talk_marks_met_and_completes():
-    gs = make_game_state({
-        "quest001": quest(
-            "quest001",
-            title="Temui Kepala Desa",
-            requirements=[{"kind": "talk", "target": "village_chief"}],
-            rewards={"xp": 50, "gold": 20, "reputation": {"village": 10}},
-            flags_on_complete=["quest001_done"],
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest001": quest(
+                "quest001",
+                title="Temui Kepala Desa",
+                requirements=[{"kind": "talk", "target": "village_chief"}],
+                rewards={"xp": 50, "gold": 20, "reputation": {"village": 10}},
+                flags_on_complete=["quest001_done"],
+            ),
+        }
+    )
     start_quest(gs, "quest001")
     msg = complete_requirement(gs, "talk", "village_chief")
-    assert msg == "Quest selesai: Temui Kepala Desa. Hadiah: 50 XP, 20 emas, 10 reputasi village."
+    assert msg == (
+        "Quest selesai: Temui Kepala Desa. "
+        "Hadiah: 50 XP, 20 emas, 10 reputasi village."
+    )
     assert gs.player.quests_active == {}
     assert gs.player.quests_done == ["quest001"]
     assert gs.player.xp == 50
@@ -89,14 +106,16 @@ def test_complete_requirement_talk_marks_met_and_completes():
 
 
 def test_complete_requirement_scholar_xp_bonus_applied():
-    gs = make_game_state({
-        "quest001": quest(
-            "quest001",
-            title="Temui Kepala Desa",
-            requirements=[{"kind": "talk", "target": "village_chief"}],
-            rewards={"xp": 50},
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest001": quest(
+                "quest001",
+                title="Temui Kepala Desa",
+                requirements=[{"kind": "talk", "target": "village_chief"}],
+                rewards={"xp": 50},
+            ),
+        }
+    )
     gs.player.xp_bonus = 1.2
     start_quest(gs, "quest001")
     complete_requirement(gs, "talk", "village_chief")
@@ -104,13 +123,15 @@ def test_complete_requirement_scholar_xp_bonus_applied():
 
 
 def test_complete_requirement_reputation_accumulates():
-    gs = make_game_state({
-        "quest001": quest(
-            "quest001",
-            requirements=[{"kind": "talk", "target": "village_chief"}],
-            rewards={"reputation": {"village": 5}},
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest001": quest(
+                "quest001",
+                requirements=[{"kind": "talk", "target": "village_chief"}],
+                rewards={"reputation": {"village": 5}},
+            ),
+        }
+    )
     gs.player.reputation["village"] = 7
     start_quest(gs, "quest001")
     complete_requirement(gs, "talk", "village_chief")
@@ -118,16 +139,18 @@ def test_complete_requirement_reputation_accumulates():
 
 
 def test_complete_requirement_multiple_requirements_need_all_met():
-    gs = make_game_state({
-        "quest003": quest(
-            "quest003",
-            requirements=[
-                {"kind": "talk", "target": "village_chief"},
-                {"kind": "flag", "target": "wolves_defeated"},
-            ],
-            rewards={"xp": 100},
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest003": quest(
+                "quest003",
+                requirements=[
+                    {"kind": "talk", "target": "village_chief"},
+                    {"kind": "flag", "target": "wolves_defeated"},
+                ],
+                rewards={"xp": 100},
+            ),
+        }
+    )
     start_quest(gs, "quest003")
     msg = complete_requirement(gs, "talk", "village_chief")
     assert msg == "Tidak ada syarat yang sesuai."
@@ -141,19 +164,24 @@ def test_complete_requirement_multiple_requirements_need_all_met():
 
 
 def test_complete_requirement_flag_kind():
-    gs = make_game_state({
-        "quest002": quest(
-            "quest002",
-            title="Bahaya di Hutan",
-            requirements=[{"kind": "flag", "target": "wolves_defeated"}],
-            rewards={"xp": 40, "gold": 15, "reputation": {"village": 5}},
-            flags_on_complete=["quest002_done"],
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest002": quest(
+                "quest002",
+                title="Bahaya di Hutan",
+                requirements=[{"kind": "flag", "target": "wolves_defeated"}],
+                rewards={"xp": 40, "gold": 15, "reputation": {"village": 5}},
+                flags_on_complete=["quest002_done"],
+            ),
+        }
+    )
     start_quest(gs, "quest002")
     gs.flags["wolves_defeated"] = True
     msg = complete_requirement(gs, "flag", "wolves_defeated")
-    assert msg == "Quest selesai: Bahaya di Hutan. Hadiah: 40 XP, 15 emas, 5 reputasi village."
+    assert msg == (
+        "Quest selesai: Bahaya di Hutan. "
+        "Hadiah: 40 XP, 15 emas, 5 reputasi village."
+    )
     assert gs.player.quests_done == ["quest002"]
     assert gs.player.xp == 40
     assert gs.player.gold == 15
@@ -162,13 +190,15 @@ def test_complete_requirement_flag_kind():
 
 
 def test_complete_requirement_map_kind():
-    gs = make_game_state({
-        "quest004": quest(
-            "quest004",
-            requirements=[{"kind": "map", "target": "forest"}],
-            rewards={"xp": 10},
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest004": quest(
+                "quest004",
+                requirements=[{"kind": "map", "target": "forest"}],
+                rewards={"xp": 10},
+            ),
+        }
+    )
     start_quest(gs, "quest004")
     msg = complete_requirement(gs, "map", "forest")
     assert msg == "Quest selesai: Quest quest004. Hadiah: 10 XP."
@@ -177,12 +207,14 @@ def test_complete_requirement_map_kind():
 
 
 def test_complete_requirement_no_match():
-    gs = make_game_state({
-        "quest001": quest(
-            "quest001",
-            requirements=[{"kind": "talk", "target": "village_chief"}],
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest001": quest(
+                "quest001",
+                requirements=[{"kind": "talk", "target": "village_chief"}],
+            ),
+        }
+    )
     start_quest(gs, "quest001")
     msg = complete_requirement(gs, "talk", "old_man")
     assert msg == "Tidak ada syarat yang sesuai."
@@ -208,7 +240,10 @@ def test_complete_requirement_next_triggers_start_quest():
     gs = make_game_state(quests)
     start_quest(gs, "quest001")
     msg = complete_requirement(gs, "talk", "village_chief")
-    assert msg == "Quest selesai: Temui Kepala Desa. Quest dimulai: Bahaya di Hutan."
+    assert (
+        msg
+        == "Quest selesai: Temui Kepala Desa. Quest dimulai: Bahaya di Hutan."
+    )
     assert gs.player.quests_done == ["quest001"]
     assert gs.player.quests_active == {"quest002": {"met": []}}
     assert gs.flags.get("quest001_done") is True
@@ -221,56 +256,71 @@ def test_quest_data_files_load_via_load_json():
     quest002 = load_json("data/quests/quest002.json")
     assert quest001["id"] == "quest001"
     assert quest001["title"] == "Temui Kepala Desa"
-    assert quest001["requirements"] == [{"kind": "talk", "target": "village_chief"}]
+    assert quest001["requirements"] == [
+        {"kind": "talk", "target": "village_chief"}
+    ]
     assert quest001["next"] is None
     assert quest002["id"] == "quest002"
     assert quest002["title"] == "Bahaya di Hutan"
-    assert quest002["requirements"] == [{"kind": "enemy", "target": "wild_wolf"}]
+    assert quest002["requirements"] == [
+        {"kind": "enemy", "target": "wild_wolf"}
+    ]
     assert quest002["next"] is None
 
 
 def test_next_objective_none_when_no_active_quest():
-    gs = make_game_state({"quest001": quest("quest001", title="Temui Kepala Desa")})
+    gs = make_game_state(
+        {"quest001": quest("quest001", title="Temui Kepala Desa")}
+    )
     assert next_objective(gs) is None
 
 
 def test_next_objective_returns_first_unmet():
-    gs = make_game_state({
-        "quest001": quest(
-            "quest001",
-            title="Temui Kepala Desa",
-            requirements=[{"kind": "talk", "target": "village_chief"}],
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest001": quest(
+                "quest001",
+                title="Temui Kepala Desa",
+                requirements=[{"kind": "talk", "target": "village_chief"}],
+            ),
+        }
+    )
     gs.quests["quest001"]["objectives"] = ["Bicaralah dengan Kepala Desa."]
     gs.player.quests_active["quest001"] = {"met": []}
-    assert next_objective(gs) == "Temui Kepala Desa — Bicaralah dengan Kepala Desa."
+    assert (
+        next_objective(gs)
+        == "Temui Kepala Desa — Bicaralah dengan Kepala Desa."
+    )
 
 
 def test_next_objective_skips_met_and_uses_next_index():
-    gs = make_game_state({
-        "quest003": quest(
-            "quest003",
-            title="Quest ganda",
-            requirements=[
-                {"kind": "talk", "target": "village_chief"},
-                {"kind": "flag", "target": "wolves_defeated"},
-            ],
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest003": quest(
+                "quest003",
+                title="Quest ganda",
+                requirements=[
+                    {"kind": "talk", "target": "village_chief"},
+                    {"kind": "flag", "target": "wolves_defeated"},
+                ],
+            ),
+        }
+    )
     gs.quests["quest003"]["objectives"] = ["Langkah satu.", "Langkah dua."]
     gs.player.quests_active["quest003"] = {"met": [0]}
     assert next_objective(gs) == "Quest ganda — Langkah dua."
 
 
 def test_next_objective_none_when_all_requirements_met():
-    gs = make_game_state({
-        "quest001": quest(
-            "quest001",
-            title="Temui Kepala Desa",
-            requirements=[{"kind": "talk", "target": "village_chief"}],
-        ),
-    })
+    gs = make_game_state(
+        {
+            "quest001": quest(
+                "quest001",
+                title="Temui Kepala Desa",
+                requirements=[{"kind": "talk", "target": "village_chief"}],
+            ),
+        }
+    )
     gs.quests["quest001"]["objectives"] = ["Bicaralah dengan Kepala Desa."]
     gs.player.quests_active["quest001"] = {"met": [0]}
     assert next_objective(gs) is None

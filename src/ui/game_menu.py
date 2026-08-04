@@ -3,7 +3,11 @@
 target: str = perintah run_turn | callable() = submenu | None = keluar/kembali
 """
 
+import os
+
+from src.core import save_manager
 from src.engine import dialog_engine
+from src.systems import level_system
 
 END_DIALOG = "!end_dialog"
 
@@ -12,6 +16,13 @@ _SLOT_LABELS = {"weapon": "Senjata", "armor": "Zirah", "helmet": "Helm"}
 
 
 def build(game):
+    """Bangun menu sesuai konteks game: level-up, combat, dialog, eksplorasi.
+
+    Returns:
+        List (label, target) untuk navigasi keyboard launcher.
+    """
+    if getattr(game, "_pending_levels", 0) > 0:
+        return _level_up_menu(game)
     if getattr(game, "_combat", None) is not None:
         return _combat_menu(game)
     if getattr(game, "_current_dialog", None) is not None:
@@ -19,7 +30,16 @@ def build(game):
     return _explore_menu(game)
 
 
+def _level_up_menu(game):
+    """Menu pilihan bonus level-up; pilihan → perintah angka (select)."""
+    items = []
+    for index, (key, _) in enumerate(level_system.LEVEL_CHOICES, start=1):
+        items.append((level_system.choice_label(key), str(index)))
+    return items
+
+
 def _explore_menu(game):
+    """Menu eksplorasi: Lihat, Jelajah, Pergi, Bicara, dll."""
     items = [
         ("Lihat", "look"),
         ("Jelajah", "explore"),
@@ -41,16 +61,38 @@ def _explore_menu(game):
             items.append(("Kenangan", "memories"))
         if getattr(player, "quests_active", None):
             items.append(("Quest", "quests"))
-    items.extend([
-        ("Status", "status"),
-        ("Bantuan", "help"),
-        ("Simpan", _SLOT_SAVE),
-        ("Keluar", None),
-    ])
+    items.extend(
+        [
+            ("Status", "status"),
+            ("Bantuan", "help"),
+            ("Simpan", _SLOT_SAVE),
+        ]
+    )
+    if save_manager.save_paths():
+        items.append(("Muat", _load_submenu()))
+    items.append(("Keluar", None))
     return items
 
 
+def _load_submenu():
+    """Submenu berisi slot save yang tersedia.
+
+    Pilihan → perintah 'load <path>'.
+    """
+
+    def submenu():
+        items = []
+        for path in save_manager.save_paths():
+            items.append((os.path.basename(path), f"load {path}"))
+        items.append(("Kembali", None))
+        return items
+
+    return submenu
+
+
 def _go_submenu(game, exits):
+    """Submenu peta tujuan yang tersedia dari peta saat ini."""
+
     def submenu():
         items = []
         for mid in exits:
@@ -58,10 +100,13 @@ def _go_submenu(game, exits):
             items.append((name, f"go {mid}"))
         items.append(("Kembali", None))
         return items
+
     return submenu
 
 
 def _talk_submenu(game, npcs):
+    """Submenu NPC yang ada di peta saat ini."""
+
     def submenu():
         items = []
         for nid in npcs:
@@ -69,10 +114,13 @@ def _talk_submenu(game, npcs):
             items.append((name, f"talk {nid}"))
         items.append(("Kembali", None))
         return items
+
     return submenu
 
 
 def _inventory_submenu(game, player):
+    """Submenu inventaris: pakai/pasang item dan lepas perlengkapan."""
+
     def submenu():
         items = []
         for entry in player.inventory:
@@ -86,54 +134,79 @@ def _inventory_submenu(game, player):
         for slot, item_id in player.equipped.items():
             item = game.state.items.get(item_id)
             name = item.name if item else item_id
-            items.append((f"Lepas {_SLOT_LABELS.get(slot, slot)}: {name}", f"unequip {slot}"))
+            items.append(
+                (
+                    f"Lepas {_SLOT_LABELS.get(slot, slot)}: {name}",
+                    f"unequip {slot}",
+                )
+            )
         items.append(("Kembali", None))
         return items
+
     return submenu
 
 
 def _combat_menu(game):
+    """Menu combat: Serang, Skill/Sihir, Item, Amati, Kabur, Bertahan."""
     state = game._combat
     items = [("Serang", "attack")]
     player = getattr(getattr(game, "state", None), "player", None)
     learned = getattr(player, "learned_skills", None) or []
     if learned:
-        physical = [sid for sid in learned if state.skills.get(sid, {}).get("type") != "magic"]
-        magic = [sid for sid in learned if state.skills.get(sid, {}).get("type") == "magic"]
+        physical = [
+            sid
+            for sid in learned
+            if state.skills.get(sid, {}).get("type") != "magic"
+        ]
+        magic = [
+            sid
+            for sid in learned
+            if state.skills.get(sid, {}).get("type") == "magic"
+        ]
         if physical:
             items.append(("Skill", _skill_submenu(game, physical, "skill")))
         if magic:
             items.append(("Sihir", _skill_submenu(game, magic, "magic")))
     if player is not None:
         consumables = [
-            e["id"] for e in player.inventory
+            e["id"]
+            for e in player.inventory
             if game.state.items.get(e["id"], None) is not None
             and game.state.items[e["id"]].heal
         ]
         if consumables:
             items.append(("Item", _item_submenu(game, consumables)))
-    items.extend([
-        ("Amati", "observe"),
-        ("Kabur", "escape"),
-        ("Bertahan", "defend"),
-        ("Simpan", _SLOT_SAVE),
-    ])
+    items.extend(
+        [
+            ("Amati", "observe"),
+            ("Kabur", "escape"),
+            ("Bertahan", "defend"),
+            ("Simpan", _SLOT_SAVE),
+        ]
+    )
     return items
 
 
 def _skill_submenu(game, skill_ids, verb):
+    """Submenu skill/sihir dengan biaya MP masing-masing."""
+
     def submenu():
         items = []
         for sid in skill_ids:
             skill = game.ctx.skills.get(sid, {})
             name = skill.get("name", sid)
-            items.append((f"{name} ({skill.get('cost', 0)} MP)", f"{verb} {sid}"))
+            items.append(
+                (f"{name} ({skill.get('cost', 0)} MP)", f"{verb} {sid}")
+            )
         items.append(("Kembali", None))
         return items
+
     return submenu
 
 
 def _item_submenu(game, item_ids):
+    """Submenu item pemulih yang bisa dipakai saat bertarung."""
+
     def submenu():
         items = []
         for iid in item_ids:
@@ -141,13 +214,17 @@ def _item_submenu(game, item_ids):
             items.append((item.name, f"item {iid}"))
         items.append(("Kembali", None))
         return items
+
     return submenu
 
 
 def _dialog_menu(game):
+    """Menu pilihan dialog yang tersedia + Akhiri Percakapan."""
     dialog = game._current_dialog
     items = []
-    for idx, choice in enumerate(dialog_engine.available_choices(dialog, game.state), start=1):
+    for idx, choice in enumerate(
+        dialog_engine.available_choices(dialog, game.state), start=1
+    ):
         items.append((choice.get("text", str(idx)), str(idx)))
     items.append(("Akhiri Percakapan", END_DIALOG))
     return items

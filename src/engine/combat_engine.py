@@ -1,20 +1,33 @@
 import copy
 
-from src.models.combat_interfaces import CombatAction, CombatResult, CombatState, DamageResult
-from src.engine import rule_engine
 from src.core.constants import STATS
-from src.models.player import max_hp, max_mp, effective_stat
+from src.engine import rule_engine
+from src.models.combat_interfaces import (
+    CombatAction,
+    CombatResult,
+    CombatState,
+    DamageResult,
+)
+from src.models.player import effective_stat, max_hp, max_mp
 from src.systems import inventory_system, level_system, status_system
 
 
 def magic_damage(power, attacker_int, defender_magic_res) -> int:
-    """Calculate magic damage based on power, intelligence and magic resistance."""
+    """Hitung damage sihir dari power, inteligensi, dan resistensi sihir."""
     return max(1, round(power + attacker_int * 0.5 - defender_magic_res))
 
 
-def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_magic=False, effects=None) -> DamageResult:
+def resolve_hit(
+    state,
+    attacker_stats,
+    defender_stats,
+    defender_id,
+    power=0,
+    is_magic=False,
+    effects=None,
+) -> DamageResult:
     """Resolve a hit between attacker and defender.
-    
+
     Args:
         state: CombatState object
         attacker_stats: Attacker's statistics dictionary
@@ -23,7 +36,7 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
         power: Base power of the attack (for magic)
         is_magic: Whether this is a magic attack
         effects: Status effects to apply on hit
-        
+
     Returns:
         DamageResult with damage, critical, and missed information
     """
@@ -35,29 +48,41 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
         attacker_name = "Kamu"
 
     if is_magic:
-        defender_magic_res = rule_engine.magic_resistance(defender_stats.get("intelligence", 0))
+        defender_magic_res = rule_engine.magic_resistance(
+            defender_stats.get("intelligence", 0)
+        )
         attacker_int = attacker_stats.get("intelligence", 0)
         damage = magic_damage(power, attacker_int, defender_magic_res)
         critical = False
         missed = False
-        log_line = f"{attacker_name} melontarkan mantra ke {defender_name}, -{damage} HP."
+        log_line = (
+            f"{attacker_name} melontarkan mantra ke "
+            f"{defender_name}, -{damage} HP."
+        )
     else:
-        roll = rule_engine.damage_roll(attacker_stats, defender_stats, state.randomizer)
+        roll = rule_engine.damage_roll(
+            attacker_stats, defender_stats, state.randomizer
+        )
         damage = roll["damage"] + (power if not roll["missed"] else 0)
         critical = roll["critical"]
         missed = roll["missed"]
-        defending = (
-            (defender_id == "player" and state.player_defending)
-            or (defender_id != "player" and state.enemy_defending)
+        defending = (defender_id == "player" and state.player_defending) or (
+            defender_id != "player" and state.enemy_defending
         )
         if not missed and defending:
             damage = damage // 2
         if missed:
-            log_line = "Seranganmu meleset!" if attacker_name == "Kamu" else f"Serangan {attacker_name} meleset!"
+            log_line = (
+                "Seranganmu meleset!"
+                if attacker_name == "Kamu"
+                else f"Serangan {attacker_name} meleset!"
+            )
         elif critical:
             log_line = f"Kritikal! {defender_name} terkena -{damage} HP."
         else:
-            log_line = f"{attacker_name} menyerang {defender_name}, -{damage} HP."
+            log_line = (
+                f"{attacker_name} menyerang {defender_name}, -{damage} HP."
+            )
 
     if defender_id == "player":
         state.player.hp = max(0, state.player.hp - damage)
@@ -78,10 +103,34 @@ def resolve_hit(state, attacker_stats, defender_stats, defender_id, power=0, is_
     return DamageResult(damage=damage, critical=critical, missed=missed)
 
 
-def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max_status_duration=10, items=None) -> CombatState:
+def start_combat(
+    player,
+    enemy,
+    randomizer,
+    skills=None,
+    loot_resolver=None,
+    max_status_duration=10,
+    items=None,
+) -> CombatState:
+    """Mulai pertarungan: salin musuh dan tentukan urutan giliran.
+
+    Args:
+        player: Pemain yang bertarung.
+        enemy: Definisi musuh (disalin agar tidak termutasi).
+        randomizer: Sumber acak untuk inisiatif & serangan.
+        skills: Katalog skill yang tersedia dalam combat.
+        loot_resolver: Callable(enemy, randomizer) → loot.
+        max_status_duration: Batas durasi status effect.
+        items: Katalog item yang bisa dipakai saat bertarung.
+
+    Returns:
+        CombatState yang siap dipakai oleh player_action/enemy_turn.
+    """
     enemy = copy.copy(enemy)
     enemy.stats = dict(enemy.stats)
-    player_initiative = rule_engine.derived_stats(player, randomizer)["initiative"]
+    player_initiative = rule_engine.derived_stats(player, randomizer)[
+        "initiative"
+    ]
     enemy_initiative = enemy.stats.get("agility", 0) + randomizer.roll(0, 5)
     order = sorted(
         [("player", player_initiative), (enemy.id, enemy_initiative)],
@@ -112,16 +161,19 @@ def start_combat(player, enemy, randomizer, skills=None, loot_resolver=None, max
 
 
 def player_stats(state) -> dict:
+    """Stat efektif pemain ditambah stat turunan untuk pertarungan."""
     effective = {stat: effective_stat(state.player, stat) for stat in STATS}
     effective.update(rule_engine.derived_stats(state.player, state.randomizer))
     return effective
 
 
 def enemy_stats(state) -> dict:
+    """Dict stat mentah musuh."""
     return state.enemy.stats
 
 
 def next_turn(state):
+    """Pindahkan penunjuk giliran; tambah round_no setelah dua giliran."""
     if state.over:
         return
     if state.current_index == 0:
@@ -132,6 +184,7 @@ def next_turn(state):
 
 
 def _on_victory(state):
+    """Tandai kemenangan: hitung XP/gold, lempar loot, beri hadiah."""
     state.result = CombatResult.VICTORY
     state.over = True
     reward = state.enemy.reward
@@ -141,13 +194,19 @@ def _on_victory(state):
         state.gold = state.randomizer.roll(gold_range[0], gold_range[1])
     else:
         state.gold = 0
-    state.loot = state.loot_resolver(state.enemy, state.randomizer) if state.loot_resolver is not None else []
+    state.loot = (
+        state.loot_resolver(state.enemy, state.randomizer)
+        if state.loot_resolver is not None
+        else []
+    )
     gained_xp = level_system.award_xp(state.player, state.xp)
     state.player.xp += gained_xp
     state.player.gold += state.gold
     for entry in state.loot:
         item = state.items.get(entry["id"])
-        added = inventory_system.add_item(state.player, entry["id"], entry.get("qty", 1))
+        added = inventory_system.add_item(
+            state.player, entry["id"], entry.get("qty", 1)
+        )
         if not added:
             name = item.name if item is not None else entry["id"]
             state.log.append(f"Inventaris penuh — {name} tidak tersimpan.")
@@ -162,12 +221,24 @@ def _on_victory(state):
 
 
 def use_item(state, item_id) -> str | None:
+    """Pakai item pemulih saat bertarung; kurangi qty dan pulihkan HP.
+
+    Returns:
+        Pesan hasil pemakaian (termasuk pesan item non-konsumabel).
+
+    Raises:
+        ValueError: Bila item tidak dimiliki.
+    """
     inventory = state.player.inventory
     item = next((entry for entry in inventory if entry["id"] == item_id), None)
     if item is None:
         raise ValueError(f"Item tidak dimiliki: {item_id}")
     item_def = state.items.get(item_id)
-    heal = item_def.heal if item_def is not None and item_def.heal else item.get("heal")
+    heal = (
+        item_def.heal
+        if item_def is not None and item_def.heal
+        else item.get("heal")
+    )
     name = item_def.name if item_def is not None else item.get("name", item_id)
     if heal is None:
         message = "Item ini tidak bisa dipakai di pertarungan."
@@ -183,17 +254,24 @@ def use_item(state, item_id) -> str | None:
 
 
 def _on_defeat(state):
+    """Tandai kekalahan pemain dalam pertarungan."""
     state.result = CombatResult.DEFEAT
     state.over = True
 
 
 def _apply_player_regen(state):
+    """Pulihkan HP/MP pemain sesuai regen per giliran."""
     stats = player_stats(state)
-    state.player.hp = min(max_hp(state.player), state.player.hp + int(stats["hp_regen"]))
-    state.player.mp = min(max_mp(state.player), state.player.mp + int(stats["mana_regen"]))
+    state.player.hp = min(
+        max_hp(state.player), state.player.hp + int(stats["hp_regen"])
+    )
+    state.player.mp = min(
+        max_mp(state.player), state.player.mp + int(stats["mana_regen"])
+    )
 
 
 def _hp_bar(enemy) -> str:
+    """Representasi teks bar HP musuh (10 segmen)."""
     current = enemy.stats.get("hp", 0)
     maximum = enemy.stats.get("max_hp", current or 1)
     filled = round(10 * current / maximum) if maximum else 0
@@ -201,6 +279,7 @@ def _hp_bar(enemy) -> str:
 
 
 def _weakness(stats) -> str:
+    """Deskripsi kelemahan musuh berdasarkan stat (untuk Amati)."""
     if stats.get("defense", 0) < 5:
         return "Lemah terhadap serangan fisik."
     if stats.get("intelligence", 0) < 5:
@@ -209,6 +288,7 @@ def _weakness(stats) -> str:
 
 
 def _resistance(stats) -> str:
+    """Deskripsi ketahanan musuh berdasarkan stat (untuk Amati)."""
     if stats.get("defense", 0) >= 10:
         return "Kebal terhadap serangan fisik."
     if stats.get("intelligence", 0) >= 10:
@@ -217,6 +297,7 @@ def _resistance(stats) -> str:
 
 
 def _hint(behavior) -> str:
+    """Petunjuk perilaku musuh sesuai tipe AI (untuk Amati)."""
     return {
         "aggressive": "Ia menyerang tanpa henti.",
         "defensive": "Ia cenderung bertahan.",
@@ -226,6 +307,7 @@ def _hint(behavior) -> str:
 
 
 def _observe_info(enemy, intelligence) -> str:
+    """Susun info Amati: bar HP + detail sesuai level kecerdasan."""
     lines = [f"{enemy.name} — HP {_hp_bar(enemy)}"]
     if intelligence >= 8:
         lines.append(f"Kelemahan: {_weakness(enemy.stats)}")
@@ -233,12 +315,20 @@ def _observe_info(enemy, intelligence) -> str:
         lines.append(f"Ketahanan: {_resistance(enemy.stats)}")
         lines.append(f"Lore: {enemy.lore or 'Tidak ada catatan.'}")
     if intelligence >= 16:
-        lines.append(f"HP tepat: {enemy.stats.get('hp', 0)}/{enemy.stats.get('max_hp', 1)}.")
+        lines.append(
+            "HP tepat: "
+            f"{enemy.stats.get('hp', 0)}/{enemy.stats.get('max_hp', 1)}."
+        )
         lines.append(f"Petunjuk: {_hint(enemy.behavior)}")
     return "\n".join(lines)
 
 
 def _observe(state) -> bool:
+    """Sekali pakai per pertarungan: isi observe_info untuk pemain.
+
+    Returns:
+        True bila info baru diisi (memakai giliran); False bila sudah dipakai.
+    """
     if state.observe_used:
         state.log.append("Kamu sudah mengamati musuh ini.")
         return False
@@ -249,6 +339,7 @@ def _observe(state) -> bool:
 
 
 def _escape(state) -> bool:
+    """Coba kabur; gagal berarti musuh balas menyerang."""
     player_agility = effective_stat(state.player, "agility")
     enemy_agility = state.enemy.stats.get("agility", 0)
     if state.randomizer.roll(0, 100) < 50 + player_agility - enemy_agility:
@@ -264,6 +355,20 @@ def _escape(state) -> bool:
 
 
 def player_action(state, action, choice=None) -> bool:
+    """Eksekusi satu aksi pemain di tengah pertarungan.
+
+    Args:
+        state: CombatState aktif.
+        action: Nama aksi (attack/defend/observe/escape/skill/magic/item).
+        choice: Argumen tambahan (ID skill/item) untuk aksi skill/magic/item.
+
+    Returns:
+        True bila giliran gratis (tidak ada giliran musuh menyusul),
+        False bila giliran musuh harus dijalankan.
+
+    Raises:
+        ValueError: Bila skill/item tidak dikenal atau argumen tidak lengkap.
+    """
     if state.over:
         return False
     state.player_defending = False
@@ -280,7 +385,12 @@ def player_action(state, action, choice=None) -> bool:
         state.log.append("Aksi tidak dikenal.")
         return False
     if parsed is CombatAction.ATTACK:
-        resolve_hit(state, player_stats(state), state.enemy.stats, state.enemy.id)
+        resolve_hit(
+            state,
+            player_stats(state),
+            state.enemy.stats,
+            state.enemy.id,
+        )
         if state.enemy.stats["hp"] <= 0:
             _on_victory(state)
         return False
@@ -294,14 +404,18 @@ def player_action(state, action, choice=None) -> bool:
         return _escape(state)
     if parsed in (CombatAction.SKILL, CombatAction.MAGIC):
         if choice is None:
-            learned = getattr(state.player, 'learned_skills', []) or []
-            hint = ', '.join(learned) if learned else 'tidak ada skill'
+            learned = getattr(state.player, "learned_skills", []) or []
+            hint = ", ".join(learned) if learned else "tidak ada skill"
             raise ValueError(f"Gunakan: skill <id>. Skill tersedia: {hint}")
         if choice not in state.skills:
             raise ValueError(f"Skill tidak dikenal: {choice}")
         skill = state.skills[choice]
-        # Validasi: player hanya bisa menggunakan skill yang sudah dipelajari (jika learned_skills ada dan tidak kosong)
-        if hasattr(state.player, "learned_skills") and state.player.learned_skills:
+        # Hanya skill yang sudah dipelajari yang bisa dipakai
+        # (bila daftarnya ada).
+        if (
+            hasattr(state.player, "learned_skills")
+            and state.player.learned_skills
+        ):
             if choice not in state.player.learned_skills:
                 state.log.append("Kamu belum mempelajari skill ini.")
                 return False
@@ -334,8 +448,16 @@ def player_action(state, action, choice=None) -> bool:
         return False
     if parsed is CombatAction.ITEM:
         if choice is None:
-            items_available = [e['id'] for e in state.player.inventory] if state.player.inventory else []
-            hint = ', '.join(items_available) if items_available else 'inventaris kosong'
+            items_available = (
+                [e["id"] for e in state.player.inventory]
+                if state.player.inventory
+                else []
+            )
+            hint = (
+                ", ".join(items_available)
+                if items_available
+                else "inventaris kosong"
+            )
             raise ValueError(f"Gunakan: item <id>. Item tersedia: {hint}")
         use_item(state, choice)
         return False
@@ -344,7 +466,7 @@ def player_action(state, action, choice=None) -> bool:
 
 
 def _translate_effects(skill):
-    """Translate skill effects into status effect format."""
+    """Ubah effects skill ke format status effect CombatState."""
     effects = [
         {
             "kind": effect["status"],
@@ -357,6 +479,7 @@ def _translate_effects(skill):
 
 
 def _affordable_skills(state):
+    """Skill musuh yang MP-nya cukup untuk dipakai saat ini."""
     return [
         state.skills[skill_id]
         for skill_id in state.enemy.skills
@@ -366,6 +489,7 @@ def _affordable_skills(state):
 
 
 def _use_enemy_skill(state, skill):
+    """Musuh memakai skill: heal sendiri atau serang pemain."""
     state.enemy.stats["mp"] -= skill["cost"]
     if "heal" in skill:
         heal = skill["heal"]
@@ -397,11 +521,13 @@ def _use_enemy_skill(state, skill):
 
 
 def _hp_ratio(state):
+    """Rasio HP musuh saat ini (0.0-1.0)."""
     maximum = state.enemy.stats.get("max_hp", state.enemy.stats["hp"]) or 1
     return state.enemy.stats["hp"] / maximum
 
 
 def _aggressive_turn(state):
+    """AI agresif: serang dengan skill bila bisa, kalau tidak serang biasa."""
     affordable = _affordable_skills(state)
     if affordable:
         _use_enemy_skill(state, affordable[0])
@@ -410,6 +536,7 @@ def _aggressive_turn(state):
 
 
 def _defensive_turn(state):
+    """AI defensif: heal saat terluka, kalau tidak bertahan/balas."""
     # Cek apakah HP rendah dan ada skill heal yang affordable
     if _hp_ratio(state) < 0.30:
         heal_skill = next(
@@ -427,7 +554,7 @@ def _defensive_turn(state):
         state.enemy_defending = True
         state.log.append(f"{state.enemy.name} bertahan!")
         return
-    
+
     if state.enemy_defending:
         state.enemy_defending = False
         resolve_hit(state, state.enemy.stats, player_stats(state), "player")
@@ -437,8 +564,11 @@ def _defensive_turn(state):
 
 
 def _mage_turn(state):
+    """AI penyihir: prioritaskan skill sihir, lalu skill lain, lalu serang."""
     affordable = _affordable_skills(state)
-    magic = next((skill for skill in affordable if skill["type"] == "magic"), None)
+    magic = next(
+        (skill for skill in affordable if skill["type"] == "magic"), None
+    )
     if magic is not None:
         _use_enemy_skill(state, magic)
         return
@@ -449,6 +579,7 @@ def _mage_turn(state):
 
 
 def _coward_turn(state):
+    """AI penakut: menyerah/menghindar saat HP rendah, bertahan jika tidak."""
     if _hp_ratio(state) < 0.20:
         state.log.append(f"{state.enemy.name} mencoba kabur tapi gagal!")
         return
@@ -461,6 +592,7 @@ def _coward_turn(state):
 
 
 def enemy_turn(state):
+    """Jalankan satu giliran musuh sesuai perilaku AI-nya."""
     if state.over:
         return
     messages = status_system.tick_statuses(state, state.enemy.id)

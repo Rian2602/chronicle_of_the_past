@@ -5,26 +5,48 @@ from src.models.player import Player, max_hp, max_mp
 
 
 def test_player_max_hp():
-    p = Player(name="Rian", class_id="warrior", hp=100, mp=10,
-               base_stats={"hp": 100, "mp": 10})
+    p = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=100,
+        mp=10,
+        base_stats={"hp": 100, "mp": 10},
+    )
     assert max_hp(p) == 100
 
 
 def test_player_max_mp():
-    p = Player(name="Mira", class_id="mage", hp=60, mp=45,
-               base_stats={"hp": 60, "mp": 45})
+    p = Player(
+        name="Mira",
+        class_id="mage",
+        hp=60,
+        mp=45,
+        base_stats={"hp": 60, "mp": 45},
+    )
     assert max_mp(p) == 45
 
 
 def test_max_hp_includes_attribute_bonus():
-    p = Player(name="Rian", class_id="warrior", hp=100, mp=10,
-               base_stats={"hp": 100, "mp": 10}, attribute_bonuses={"hp": 25})
+    p = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=100,
+        mp=10,
+        base_stats={"hp": 100, "mp": 10},
+        attribute_bonuses={"hp": 25},
+    )
     assert max_hp(p) == 125
 
 
 def test_max_mp_includes_attribute_bonus():
-    p = Player(name="Mira", class_id="mage", hp=60, mp=45,
-               base_stats={"hp": 60, "mp": 45}, attribute_bonuses={"mp": 10})
+    p = Player(
+        name="Mira",
+        class_id="mage",
+        hp=60,
+        mp=45,
+        base_stats={"hp": 60, "mp": 45},
+        attribute_bonuses={"mp": 10},
+    )
     assert max_mp(p) == 55
 
 
@@ -130,7 +152,9 @@ def test_enemy_from_dict():
 
 
 def test_enemy_default_lore():
-    e = Enemy(id="en_rat", name="Giant Rat", level=1, stats={}, loot=[], skills=[])
+    e = Enemy(
+        id="en_rat", name="Giant Rat", level=1, stats={}, loot=[], skills=[]
+    )
     assert e.lore == ""
 
 
@@ -153,16 +177,42 @@ def test_map_from_dict():
 
 
 def test_map_default_time_effects():
-    m = Map(id="map_town", name="Riverford", region="riverlands",
-            threat_level=1, description="", ascii_art="",
-            exits=[], npcs=[], enemy_pool=[])
+    m = Map(
+        id="map_town",
+        name="Riverford",
+        region="riverlands",
+        threat_level=1,
+        description="",
+        ascii_art="",
+        exits=[],
+        npcs=[],
+        enemy_pool=[],
+    )
     assert m.time_effects == {}
 
 
 def test_map_time_effects_are_independent():
-    m1 = Map(id="m1", name="A", region="r", threat_level=1,
-             description="", ascii_art="", exits=[], npcs=[], enemy_pool=[])
-    m2 = Map(id="m2", name="B", region="r", threat_level=1,
-             description="", ascii_art="", exits=[], npcs=[], enemy_pool=[])
+    m1 = Map(
+        id="m1",
+        name="A",
+        region="r",
+        threat_level=1,
+        description="",
+        ascii_art="",
+        exits=[],
+        npcs=[],
+        enemy_pool=[],
+    )
+    m2 = Map(
+        id="m2",
+        name="B",
+        region="r",
+        threat_level=1,
+        description="",
+        ascii_art="",
+        exits=[],
+        npcs=[],
+        enemy_pool=[],
+    )
     m1.time_effects["night"] = {"description": "dark"}
     assert m2.time_effects == {}

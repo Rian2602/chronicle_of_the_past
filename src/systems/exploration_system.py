@@ -2,6 +2,17 @@ FOREST_REGIONS = ("2", 2)
 
 
 def check_encounter(game_state, randomizer):
+    """Cek kemungkinan pertemuan musuh di peta saat ini.
+
+    Peluang naik seiring threat level dan saat malam di kawasan hutan.
+
+    Args:
+        game_state: State permainan berisi peta dan daftar musuh.
+        randomizer: Sumber acak (chance + weighted_choice).
+
+    Returns:
+        Enemy yang ditemui, atau None bila tidak ada pertemuan.
+    """
     m = game_state.current_map
     percent = 20 + m.threat_level * 10
     if game_state.time == "night" and m.region in FOREST_REGIONS:

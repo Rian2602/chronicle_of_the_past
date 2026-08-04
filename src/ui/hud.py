@@ -4,6 +4,7 @@ from src.ui.renderer import bar
 
 
 def render(player, game_state):
+    """Render HUD: nama, HP/MP bar, emas, XP, lokasi, dan tujuan quest."""
     location = game_state.current_map.name if game_state.current_map else "—"
     hp_bar = bar(player.hp, max_hp(player))
     mp_bar = bar(player.mp, max_mp(player))

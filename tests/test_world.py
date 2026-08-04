@@ -6,8 +6,7 @@ from src.engine.world_engine import get_map
 from src.models.enemy import Enemy
 from src.models.map import Map
 from src.systems.exploration_system import check_encounter
-from src.systems.travel_system import can_travel
-from src.systems.travel_system import travel
+from src.systems.travel_system import can_travel, travel
 
 
 def make_map(map_id, region="1", threat=1, exits=None, pool=None):
@@ -84,8 +83,9 @@ def test_travel_raises_value_error_on_non_exit():
 def test_no_encounter_at_low_threat():
     gs = GameState()
     gs.time = "morning"
-    gs.current_map = make_map("village", threat=0,
-                              pool=[{"id": "wolf", "weight": 1}])
+    gs.current_map = make_map(
+        "village", threat=0, pool=[{"id": "wolf", "weight": 1}]
+    )
     gs.enemies = {"wolf": make_enemy("wolf")}
     r = Randomizer(seed=2)
     assert check_encounter(gs, r) is None
@@ -94,8 +94,9 @@ def test_no_encounter_at_low_threat():
 def test_encounter_triggers_at_high_threat():
     gs = GameState()
     gs.time = "morning"
-    gs.current_map = make_map("forest", threat=5,
-                              pool=[{"id": "wolf", "weight": 1}])
+    gs.current_map = make_map(
+        "forest", threat=5, pool=[{"id": "wolf", "weight": 1}]
+    )
     gs.enemies = {"wolf": make_enemy("wolf")}
     r = Randomizer(seed=1)
     assert check_encounter(gs, r) is gs.enemies["wolf"]
@@ -112,14 +113,18 @@ def test_night_in_forest_adds_ten_percent():
     night_gs.current_map = make_map("forest", region="2", threat=0, pool=pool)
     night_gs.enemies = {"wolf": make_enemy("wolf")}
     assert check_encounter(day_gs, Randomizer(seed=3)) is None
-    assert check_encounter(night_gs, Randomizer(seed=3)) is night_gs.enemies["wolf"]
+    assert (
+        check_encounter(night_gs, Randomizer(seed=3))
+        is night_gs.enemies["wolf"]
+    )
 
 
 def test_night_bonus_accepts_integer_region():
     gs = GameState()
     gs.time = "night"
-    gs.current_map = make_map("forest", region=2, threat=0,
-                              pool=[{"id": "wolf", "weight": 1}])
+    gs.current_map = make_map(
+        "forest", region=2, threat=0, pool=[{"id": "wolf", "weight": 1}]
+    )
     gs.enemies = {"wolf": make_enemy("wolf")}
     assert check_encounter(gs, Randomizer(seed=3)) is gs.enemies["wolf"]
 
@@ -127,10 +132,14 @@ def test_night_bonus_accepts_integer_region():
 def test_weighted_pool_prefers_heavier_enemy():
     gs = GameState()
     gs.time = "morning"
-    gs.current_map = make_map("forest", threat=8, pool=[
-        {"id": "wolf", "weight": 1},
-        {"id": "goblin", "weight": 9},
-    ])
+    gs.current_map = make_map(
+        "forest",
+        threat=8,
+        pool=[
+            {"id": "wolf", "weight": 1},
+            {"id": "goblin", "weight": 9},
+        ],
+    )
     gs.enemies = {"wolf": make_enemy("wolf"), "goblin": make_enemy("goblin")}
     counts = {"wolf": 0, "goblin": 0}
     for seed in range(1, 301):
@@ -181,7 +190,9 @@ def test_empty_pool_returns_none():
 
 def test_weighted_choice_all_zero_weights_returns_none():
     for seed in range(1, 11):
-        assert Randomizer(seed=seed).weighted_choice([("a", 0), ("b", -1)]) is None
+        assert (
+            Randomizer(seed=seed).weighted_choice([("a", 0), ("b", -1)]) is None
+        )
 
 
 def test_weighted_choice_single_entry_always_selected():

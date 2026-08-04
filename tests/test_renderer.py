@@ -1,9 +1,8 @@
-from src.models.player import Player
-from src.models.map import Map
 from src.core.game_state import GameState
-from src.ui.renderer import bar, box, ANSI
-from src.ui import hud
-from src.ui import animation
+from src.models.map import Map
+from src.models.player import Player
+from src.ui import animation, hud
+from src.ui.renderer import bar, box
 
 
 def test_bar_fraction():
@@ -21,6 +20,7 @@ def test_bar_zero_total():
 
 def test_box_ascii_fallback(monkeypatch):
     from src.ui import renderer
+
     monkeypatch.setattr(renderer, "supports_unicode", lambda: False)
     out = box("hai")
     assert out.splitlines()[0] == "+-----+"
@@ -33,13 +33,27 @@ def test_box_contains_lines():
 
 
 def test_hud_shows_core_info():
-    p = Player(name="Rian", class_id="warrior", hp=80, mp=5, gold=30,
-               base_stats={"hp": 100, "mp": 10})
+    p = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=80,
+        mp=5,
+        gold=30,
+        base_stats={"hp": 100, "mp": 10},
+    )
     gs = GameState()
     gs.player = p
-    gs.current_map = Map(id="village", name="Ashen Village", region="1",
-                         threat_level=0, description="", ascii_art="",
-                         exits=[], npcs=[], enemy_pool=[])
+    gs.current_map = Map(
+        id="village",
+        name="Ashen Village",
+        region="1",
+        threat_level=0,
+        description="",
+        ascii_art="",
+        exits=[],
+        npcs=[],
+        enemy_pool=[],
+    )
     out = hud.render(p, gs)
     assert "Rian" in out
     assert "Warrior" in out
@@ -48,8 +62,13 @@ def test_hud_shows_core_info():
 
 
 def test_hud_no_map_shows_dash():
-    p = Player(name="Rian", class_id="warrior", hp=80, mp=5,
-               base_stats={"hp": 100, "mp": 10})
+    p = Player(
+        name="Rian",
+        class_id="warrior",
+        hp=80,
+        mp=5,
+        base_stats={"hp": 100, "mp": 10},
+    )
     gs = GameState()
     gs.player = p
     assert "—" in hud.render(p, gs)
@@ -62,6 +81,7 @@ def test_progress_returns_frames():
 
 def test_ascii_render_mode_changes_borders_and_bars():
     from src.ui import renderer
+
     renderer.set_render_mode("ascii")
     try:
         assert box("hai").splitlines()[0] == "+-----+"
@@ -72,6 +92,7 @@ def test_ascii_render_mode_changes_borders_and_bars():
 
 def test_unicode_render_mode_forces_unicode_characters():
     from src.ui import renderer
+
     renderer.set_render_mode("unicode")
     try:
         assert renderer.supports_unicode() is True

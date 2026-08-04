@@ -20,7 +20,9 @@ from src.models.player import Player
 REWARD = {"xp": 30, "gold": [6, 12]}
 
 
-def make_player(agility=8, intelligence=7, attack=10, defense=5, level=1, hp=None, mp=None):
+def make_player(
+    agility=8, intelligence=7, attack=10, defense=5, level=1, hp=None, mp=None
+):
     base = {
         "attack": attack,
         "defense": defense,
@@ -39,7 +41,16 @@ def make_player(agility=8, intelligence=7, attack=10, defense=5, level=1, hp=Non
     )
 
 
-def make_enemy(hp=10, agility=6, attack=5, defense=2, intelligence=3, level=2, reward=None, behavior="aggressive"):
+def make_enemy(
+    hp=10,
+    agility=6,
+    attack=5,
+    defense=2,
+    intelligence=3,
+    level=2,
+    reward=None,
+    behavior="aggressive",
+):
     return Enemy(
         id="goblin",
         name="Goblin",
@@ -87,8 +98,17 @@ def make_physical_skill(cost=3, power=8):
     }
 
 
-def run_fight(player, enemy, rng=None, skills=None, action=CombatAction.ATTACK, choice=None):
-    state = start_combat(player, enemy, rng or Randomizer(seed=7), skills=skills)
+def run_fight(
+    player,
+    enemy,
+    rng=None,
+    skills=None,
+    action=CombatAction.ATTACK,
+    choice=None,
+):
+    state = start_combat(
+        player, enemy, rng or Randomizer(seed=7), skills=skills
+    )
     while not state.over:
         player_action(state, action, choice)
         if state.over:
@@ -183,7 +203,9 @@ def test_physical_skill_in_full_fight_reaches_victory():
     player = make_player(attack=10, defense=5, agility=1, intelligence=7, mp=50)
     enemy = make_enemy(hp=30, attack=1, defense=2)
     skills = {"strike": make_physical_skill(cost=3, power=8)}
-    state = run_fight(player, enemy, skills=skills, action=CombatAction.SKILL, choice="strike")
+    state = run_fight(
+        player, enemy, skills=skills, action=CombatAction.SKILL, choice="strike"
+    )
     assert state.result == CombatResult.VICTORY
     assert state.over is True
     assert state.enemy.stats["hp"] == 0
@@ -194,7 +216,9 @@ def test_magic_in_full_fight_reaches_victory():
     player = make_player(attack=1, intelligence=8, defense=5, agility=1, mp=50)
     enemy = make_enemy(hp=40, attack=1, intelligence=3)
     skills = {"fire": make_magic_skill(cost=4, power=8)}
-    state = run_fight(player, enemy, skills=skills, action=CombatAction.MAGIC, choice="fire")
+    state = run_fight(
+        player, enemy, skills=skills, action=CombatAction.MAGIC, choice="fire"
+    )
     assert state.result == CombatResult.VICTORY
     assert state.over is True
     assert state.enemy.stats["hp"] == 0
@@ -202,12 +226,16 @@ def test_magic_in_full_fight_reaches_victory():
 
 def test_item_in_combat_heals_and_consumes_qty():
     player = make_player(hp=40)
-    player.inventory.append({"id": "potion", "name": "Potion", "qty": 2, "heal": 30})
+    player.inventory.append(
+        {"id": "potion", "name": "Potion", "qty": 2, "heal": 30}
+    )
     enemy = make_enemy(hp=1000, attack=1)
     state = start_combat(player, enemy, Randomizer(seed=7))
     player_action(state, CombatAction.ITEM, "potion")
     assert player.hp == 72
-    assert player.inventory == [{"id": "potion", "name": "Potion", "qty": 1, "heal": 30}]
+    assert player.inventory == [
+        {"id": "potion", "name": "Potion", "qty": 1, "heal": 30}
+    ]
     assert "Kamu memakai Potion, memulihkan 30 HP." in state.log
     enemy_turn(state)
     assert state.over is False

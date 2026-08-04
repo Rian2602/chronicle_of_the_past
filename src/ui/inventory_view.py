@@ -1,4 +1,5 @@
 def render(player, items=None):
+    """Render inventaris: perlengkapan terpasang dan barang bawaan."""
     items = items or {}
     lines = ["Perlengkapan:"]
     for slot, item_id in player.equipped.items():

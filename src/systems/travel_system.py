@@ -3,6 +3,7 @@ from src.engine.world_engine import get_map
 
 
 def can_travel(game_state, target):
+    """True bila target ada di daftar jalan keluar peta saat ini."""
     current = game_state.current_map
     if current is None:
         return False
@@ -10,6 +11,18 @@ def can_travel(game_state, target):
 
 
 def travel(game_state, target):
+    """Pindah ke peta target lalu majukan waktu satu langkah.
+
+    Args:
+        game_state: State permainan berisi peta saat ini.
+        target: ID peta tujuan.
+
+    Returns:
+        Pesan kedatangan dalam Bahasa Indonesia.
+
+    Raises:
+        ValueError: Bila tidak ada jalan menuju target.
+    """
     if not can_travel(game_state, target):
         raise ValueError(f"Tidak ada jalan ke {target}.")
     game_state.current_map = get_map(game_state, target)

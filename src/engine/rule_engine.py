@@ -2,18 +2,30 @@ from src.models.player import effective_stat
 
 
 def accuracy(agility: int) -> float:
+    """Persentase akurasi serangan berdasarkan kelincahan."""
     return 90 + agility * 0.3
 
 
 def crit_chance(agility: int) -> float:
+    """Persentase peluang serangan kritis berdasarkan kelincahan."""
     return agility * 0.4
 
 
 def magic_resistance(intelligence: int) -> float:
+    """Nilai resistensi sihir berdasarkan kecerdasan."""
     return intelligence * 0.6
 
 
 def derived_stats(player, randomizer=None):
+    """Hitung stat turunan (kritis, dodge, regen, inisiatif, dll).
+
+    Args:
+        player: Pemain sumber stat efektif.
+        randomizer: Sumber acak untuk inisiatif (opsional).
+
+    Returns:
+        Dict berisi semua stat turunan untuk pertarungan.
+    """
     agility = effective_stat(player, "agility")
     intelligence = effective_stat(player, "intelligence")
     defense = effective_stat(player, "defense")
@@ -33,6 +45,14 @@ def derived_stats(player, randomizer=None):
 
 
 def evaluate(condition: dict, game_state) -> bool:
+    """Evaluasi satu kondisi rule-engine terhadap state permainan.
+
+    Mendukung kind: flag, map, time, level, quest_done — dengan
+    operator EQ/NE/EXISTS/MISSING/GT/LT/GTE/LTE sesuai jenisnya.
+
+    Returns:
+        True bila kondisi terpenuhi.
+    """
     kind = condition.get("kind")
     operator = condition.get("operator", "EQ")
     if kind == "flag":
@@ -65,7 +85,11 @@ def evaluate(condition: dict, game_state) -> bool:
     if kind == "level":
         if game_state.player is None:
             return False
-        if condition.get("operator") is None and "gte" in condition and "value" not in condition:
+        if (
+            condition.get("operator") is None
+            and "gte" in condition
+            and "value" not in condition
+        ):
             return game_state.player.level >= condition["gte"]
         operator = condition.get("operator", "EQ")
         value = condition.get("value", True)
@@ -102,6 +126,16 @@ def evaluate(condition: dict, game_state) -> bool:
 
 
 def damage_roll(attacker_stats: dict, defender_stats: dict, randomizer) -> dict:
+    """Lempar damage satu serangan: base, varians, miss, dan kritis.
+
+    Args:
+        attacker_stats: Dict stat penyerang (attack, agility).
+        defender_stats: Dict stat bertahan (defense).
+        randomizer: Sumber acak untuk varians/miss/kritis.
+
+    Returns:
+        Dict {damage, critical, missed} hasil lemparan.
+    """
     attack = attacker_stats.get("attack", 0)
     defense = defender_stats.get("defense", 0)
     agility = attacker_stats.get("agility", 0)
