@@ -7,8 +7,10 @@ import tty
 from src.core import save_manager
 from src.core.game import Game
 from src.core.game_context import GameContext
-from src.ui import animation, menu, story_view
+from src.ui import animation, game_menu, menu, story_view
 from src.utils.json_loader import ContentError
+
+_NAV_HINT = "Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar."
 
 
 def _read_key() -> str:
@@ -131,28 +133,73 @@ def _play_intro(ctx):
     print()
 
 
+def _navigate(game):
+    """Navigasi menu game bertingkat dengan arrow key. Return perintah atau None (keluar)."""
+    stack = []  # list (items, title)
+    while True:
+        if stack:
+            items, title = stack[-1]
+        else:
+            items = game_menu.build(game)
+            title = "Aksi"
+
+        def render(selection, items=items, title=title):
+            lines = [f"{title}:"]
+            for idx, (label, _) in enumerate(items):
+                marker = "> " if idx == selection else "  "
+                lines.append(marker + label)
+            return "\n".join(lines)
+
+        idx = _menu_loop(render_fn=render, total=len(items), hint=_NAV_HINT)
+        label, target = items[idx]
+        if callable(target):
+            stack.append((target(), label))
+        elif target is None:
+            if stack:
+                stack.pop()
+            else:
+                return None
+        else:
+            return target
+
+
+def _confirm_quit() -> bool:
+    """Konfirmasi keluar saat bertarung. Return True jika benar-benar keluar."""
+    options = [("Ya, keluar", True), ("Tidak, lanjut bertarung", False)]
+
+    def render(selection):
+        lines = ["Kamu sedang bertarung. Keluar tanpa menyimpan?"]
+        for idx, (label, _) in enumerate(options):
+            marker = "> " if idx == selection else "  "
+            lines.append(marker + label)
+        return "\n".join(lines)
+
+    try:
+        idx = _menu_loop(render_fn=render, total=len(options), hint=_NAV_HINT)
+    except KeyboardInterrupt:
+        return False  # 'q' di konfirmasi = lanjut bertarung
+    return options[idx][1]
+
+
 def _game_loop(game):
     print("\n" + "=" * 26)
-    print("Mulai! Ketik 'help' untuk bantuan, 'quit' untuk keluar.")
+    print("Gunakan \u2191/\u2193 dan Enter untuk memilih. 'q' untuk keluar.")
     while True:
         try:
-            text = input("\n> ").strip()
-        except EOFError:
+            cmd = _navigate(game)
+        except KeyboardInterrupt:
+            if getattr(game, "_combat", None) is not None and not _confirm_quit():
+                continue
             print("\nSampai jumpa!")
             return
-        if not text:
-            continue
-        if text.lower() in ("quit", "keluar", "exit"):
-            if getattr(game, "_combat", None) is not None:
-                answer = input(
-                    "Kamu sedang bertarung. Keluar tanpa menyimpan? (y/n) "
-                ).strip().lower()
-                if answer not in ("y", "ya"):
-                    continue
-            print("Sampai jumpa!")
+        if cmd is None:
+            print("\nSampai jumpa!")
             return
+        if cmd == game_menu.END_DIALOG:
+            game._current_dialog = None
+            continue
         try:
-            print(game.run_turn(text))
+            print(game.run_turn(cmd))
         except save_manager.SaveError as e:
             print(f"Gagal menyimpan: {e}")
         except ContentError as e:
@@ -181,10 +228,22 @@ def _new_game(ctx):
 
 def _continue_game(ctx):
     import os
+    import glob
     print("\n=== Lanjutkan ===")
-    path = input("Lokasi file save (mis. saves/slot1.json): ").strip()
-    if not path:
-        path = "saves/slot1.json"
+    paths = sorted(glob.glob("saves/*.json"))
+    if not paths:
+        print("Tidak ada save ditemukan. Gunakan 'Permainan Baru' untuk memulai.")
+        return
+
+    def render(selection):
+        lines = ["Pilih slot save:"]
+        for idx, path in enumerate(paths):
+            marker = "> " if idx == selection else "  "
+            lines.append(f"{marker}{os.path.basename(path)}")
+        return "\n".join(lines)
+
+    idx = _menu_loop(render_fn=render, total=len(paths), hint=_NAV_HINT)
+    path = paths[idx]
     game = Game(ctx)
     try:
         print("\n" + game.continue_game(path))
