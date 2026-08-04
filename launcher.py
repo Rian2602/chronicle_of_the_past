@@ -94,13 +94,21 @@ def _new_game(ctx):
 
 
 def _continue_game(ctx):
+    import os
     print("\n=== Lanjutkan ===")
     path = input("Lokasi file save (mis. saves/slot1.json): ").strip()
     if not path:
         path = "saves/slot1.json"
     game = Game(ctx)
-    print("\n" + game.continue_game(path))
-    _game_loop(game)
+    try:
+        print("\n" + game.continue_game(path))
+        _game_loop(game)
+    except save_manager.SaveError:
+        if not os.path.exists(path):
+            print(f"File save tidak ditemukan: {path}")
+            print("Gunakan 'Permainan Baru' untuk memulai, atau periksa lokasi file save.")
+        else:
+            print(f"Save tidak dapat dimuat: {path} (file mungkin rusak atau tidak kompatibel)")
 
 
 def main():
