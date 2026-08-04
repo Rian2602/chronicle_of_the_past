@@ -1,5 +1,5 @@
 from src.core.game_state import GameState
-from src.engine.quest_engine import complete_requirement, start_quest
+from src.engine.quest_engine import complete_requirement, next_objective, start_quest
 from src.models.player import Player
 
 
@@ -227,3 +227,50 @@ def test_quest_data_files_load_via_load_json():
     assert quest002["title"] == "Bahaya di Hutan"
     assert quest002["requirements"] == [{"kind": "enemy", "target": "wild_wolf"}]
     assert quest002["next"] is None
+
+
+def test_next_objective_none_when_no_active_quest():
+    gs = make_game_state({"quest001": quest("quest001", title="Temui Kepala Desa")})
+    assert next_objective(gs) is None
+
+
+def test_next_objective_returns_first_unmet():
+    gs = make_game_state({
+        "quest001": quest(
+            "quest001",
+            title="Temui Kepala Desa",
+            requirements=[{"kind": "talk", "target": "village_chief"}],
+        ),
+    })
+    gs.quests["quest001"]["objectives"] = ["Bicaralah dengan Kepala Desa."]
+    gs.player.quests_active["quest001"] = {"met": []}
+    assert next_objective(gs) == "Temui Kepala Desa — Bicaralah dengan Kepala Desa."
+
+
+def test_next_objective_skips_met_and_uses_next_index():
+    gs = make_game_state({
+        "quest003": quest(
+            "quest003",
+            title="Quest ganda",
+            requirements=[
+                {"kind": "talk", "target": "village_chief"},
+                {"kind": "flag", "target": "wolves_defeated"},
+            ],
+        ),
+    })
+    gs.quests["quest003"]["objectives"] = ["Langkah satu.", "Langkah dua."]
+    gs.player.quests_active["quest003"] = {"met": [0]}
+    assert next_objective(gs) == "Quest ganda — Langkah dua."
+
+
+def test_next_objective_none_when_all_requirements_met():
+    gs = make_game_state({
+        "quest001": quest(
+            "quest001",
+            title="Temui Kepala Desa",
+            requirements=[{"kind": "talk", "target": "village_chief"}],
+        ),
+    })
+    gs.quests["quest001"]["objectives"] = ["Bicaralah dengan Kepala Desa."]
+    gs.player.quests_active["quest001"] = {"met": [0]}
+    assert next_objective(gs) is None

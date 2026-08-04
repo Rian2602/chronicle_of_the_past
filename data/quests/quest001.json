@@ -2,7 +2,8 @@
   "id": "quest001",
   "title": "Temui Kepala Desa",
   "type": "main",
-  "description": "Bicaralah dengan Kepala Desa.",
+    "description": "Bicaralah dengan Kepala Desa.",
+    "objectives": ["Bicaralah dengan Kepala Desa di Ashen Village."],
   "requirements": [
     {"kind": "talk", "target": "village_chief"}
   ],

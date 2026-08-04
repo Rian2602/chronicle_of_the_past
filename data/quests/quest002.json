@@ -2,7 +2,8 @@
   "id": "quest002",
   "title": "Bahaya di Hutan",
   "type": "main",
-  "description": "Kalahkan serigala di tepi hutan.",
+    "description": "Kalahkan serigala di tepi hutan.",
+    "objectives": ["Kalahkan serigala liar di Ashen Forest."],
   "requirements": [
     {"kind": "enemy", "target": "wild_wolf"}
   ],

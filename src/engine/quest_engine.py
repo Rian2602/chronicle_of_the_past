@@ -63,3 +63,19 @@ def _complete_quest(game_state, player, quest_id) -> str:
     if detail:
         message += f" Hadiah: {', '.join(detail)}."
     return message
+
+
+def next_objective(game_state):
+    """Tujuan pertama yang belum terpenuhi pada quest aktif pertama, atau None."""
+    player = game_state.player
+    for quest_id in player.quests_active:
+        quest = game_state.quests.get(quest_id)
+        if quest is None:
+            continue
+        met = set(player.quests_active[quest_id].get("met", []))
+        objectives = quest.get("objectives") or []
+        for index, requirement in enumerate(quest["requirements"]):
+            if index not in met:
+                text = objectives[index] if index < len(objectives) else quest.get("description", quest_id)
+                return f"{quest['title']} — {text}"
+    return None
