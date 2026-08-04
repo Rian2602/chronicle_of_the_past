@@ -12,6 +12,27 @@ Game CLI turn-based. Pengukuran awal (sesi 2026-08-04):
 Tidak ada bottleneck terukur. Rencana ini memformalkan cara membuktikan itu
 secara permanen, dan **hanya mengoptimasi dimensi yang terukur lambat**.
 
+### Catatan baseline terkini (sesi ulang, 2026-08-04)
+
+Setelah refactor + 2 bugfix masuk, `tools/bench.py` dijalankan ulang (2×, hasil
+stabil). Semua dimensi tetap di bawah ambang 50 ms; tidak ada optimasi yang
+dilakukan. Data menyusut dari 216 KB → 13 KB (commit pembersihan data mati),
+jadi startup GameContext turun ke sub-ms.
+
+| # | Dimensi | Baseline lama | Terkini (median/p95) |
+|---|---------|--------------|----------------------|
+| 1 | `GameContext()` startup | 20 ms | 0.9 / 1.3 ms |
+| 2 | `save_game` | — | 0.3 / 0.5 ms |
+| 3 | `load_game` | — | 0.03 / 0.07 ms |
+| 4 | `run_turn` (look) | — | 0.03 / 0.06 ms |
+| 5 | `run_turn` (full fight) | — | 0.03 / 0.06 ms |
+| 6 | `combat_view.render` | — | 0.00 / 0.01 ms |
+| 7 | peak memori (tracemalloc) | 13 MB (RSS) | 0.06 MB |
+
+Catatan: angka memori baseline lama (13 MB) diukur via RSS; bench.py mengukur
+tracemalloc (heap Python saja) — tidak setara langsung. Keduanya sehat dan jauh
+di bawah ambang.
+
 ## Tujuan
 
 1. Membuat `tools/bench.py` (stdlib, tanpa dependency baru) sebagai alat ukur
