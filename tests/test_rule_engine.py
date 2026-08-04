@@ -2,7 +2,22 @@ import pytest
 from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
 from src.engine.rule_engine import derived_stats, damage_roll, evaluate
+from src.models.map import Map
 from src.models.player import Player
+
+
+def make_map(map_id="village"):
+    return Map(
+        id=map_id,
+        name=map_id,
+        region="1",
+        threat_level=0,
+        description="d",
+        ascii_art="a",
+        exits=[],
+        npcs=[],
+        enemy_pool=[],
+    )
 
 
 def make_player(**overrides):
@@ -72,6 +87,14 @@ def test_evaluate_map():
     gs.current_map = "village"
     assert evaluate({"kind": "map", "map": "village"}, gs) is True
     gs.current_map = "forest"
+    assert evaluate({"kind": "map", "map": "village"}, gs) is False
+
+
+def test_evaluate_map_with_map_object():
+    gs = GameState()
+    gs.current_map = make_map("village")
+    assert evaluate({"kind": "map", "map": "village"}, gs) is True
+    gs.current_map = make_map("forest")
     assert evaluate({"kind": "map", "map": "village"}, gs) is False
 
 

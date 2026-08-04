@@ -49,10 +49,11 @@ def evaluate(condition: dict, game_state) -> bool:
         return False
     if kind == "map":
         target = condition.get("name", condition.get("map"))
+        current = getattr(game_state.current_map, "id", game_state.current_map)
         if operator == "EQ":
-            return game_state.current_map == target
+            return current == target
         if operator == "NE":
-            return game_state.current_map != target
+            return current != target
         return False
     if kind == "time":
         target = condition.get("name", condition.get("time"))
