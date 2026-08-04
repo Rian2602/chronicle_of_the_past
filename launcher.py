@@ -4,11 +4,12 @@ import os
 import sys
 import termios
 import tty
+import glob
 
-from src.core import save_manager
+from src.core import save_manager, settings
 from src.core.game import Game
 from src.core.game_context import GameContext
-from src.ui import animation, game_menu, menu, story_view
+from src.ui import animation, game_menu, menu, renderer, story_view
 from src.utils.json_loader import ContentError
 
 _NAV_HINT = "Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar."
@@ -99,6 +100,67 @@ def _menu_selection(screen: str = "") -> int:
         total=total,
         hint="Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar.",
         screen=screen,
+    )
+
+
+def _apply_settings(current_settings):
+    renderer.set_render_mode(current_settings.render_mode)
+
+
+def _settings_menu(current_settings, path=settings.SETTINGS_PATH):
+    """Tampilkan dan terapkan pengaturan global secara langsung."""
+    labels = {
+        "auto": "Auto",
+        "unicode": "Unicode",
+        "ascii": "ASCII",
+        "normal": "Normal",
+        "fast": "Cepat",
+        "off": "Mati",
+    }
+    feedback = ""
+    while True:
+        items = [
+            ("Tampilan", "render_mode", settings.RENDER_MODES),
+            ("Animasi", "animation_mode", settings.ANIMATION_MODES),
+            ("Reset ke Default", None, None),
+            ("Kembali", None, None),
+        ]
+
+        def render(selection):
+            lines = ["Pengaturan:"]
+            for index, (label, attribute, _) in enumerate(items):
+                marker = "> " if index == selection else "  "
+                value = f": {labels[getattr(current_settings, attribute)]}" if attribute else ""
+                lines.append(f"{marker}{label}{value}")
+            return "\n".join(lines)
+
+        choice = _menu_loop(render, len(items), _NAV_HINT, screen=feedback)
+        feedback = ""
+        if choice == 3:
+            return current_settings, feedback
+        if choice == 2:
+            current_settings = settings.Settings()
+            feedback = "Pengaturan dikembalikan ke default."
+        else:
+            _, attribute, choices = items[choice]
+            setattr(
+                current_settings,
+                attribute,
+                settings.next_choice(getattr(current_settings, attribute), choices),
+            )
+            feedback = f"{items[choice][0]} diperbarui."
+        _apply_settings(current_settings)
+        try:
+            settings.save_settings(current_settings, path)
+            feedback += " Tersimpan."
+        except settings.SettingsError as error:
+            feedback += f" Gagal disimpan: {error}"
+
+
+def _save_paths():
+    return sorted(
+        path for path in glob.glob("saves/*.json")
+        if os.path.normpath(path) != os.path.normpath(settings.SETTINGS_PATH)
     )
 
 
@@ -232,10 +294,8 @@ def _new_game(ctx):
 
 
 def _continue_game(ctx):
-    import os
-    import glob
     print("\n=== Lanjutkan ===")
-    paths = sorted(glob.glob("saves/*.json"))
+    paths = _save_paths()
     if not paths:
         print("Tidak ada save ditemukan. Gunakan 'Permainan Baru' untuk memulai.")
         return
@@ -263,14 +323,23 @@ def _continue_game(ctx):
 
 
 def main():
+    settings_message = ""
     try:
-        animation.animate(animation.progress("Menghubungkan..."))
+        try:
+            current_settings = settings.load_settings()
+        except settings.SettingsError as error:
+            current_settings = settings.Settings()
+            settings_message = f"Pengaturan tidak valid; memakai default. ({error})"
+        _apply_settings(current_settings)
+        delay = animation.delay_for(current_settings.animation_mode)
+        if delay is not None:
+            animation.animate(animation.progress("Menghubungkan..."), delay=delay)
         ctx = GameContext(data_dir="data")
     except ContentError as e:
         print(f"Gagal memuat data: {e}")
         return 1
     try:
-        last_output = ""
+        last_output = settings_message
         while True:
             choice = _menu_selection(last_output)
             last_output = ""
@@ -279,7 +348,7 @@ def main():
             elif choice == 1:
                 _continue_game(ctx)
             elif choice == 2:
-                last_output = "Pengaturan belum tersedia."
+                current_settings, last_output = _settings_menu(current_settings)
             elif choice == 3:
                 last_output = "Kredit: Chronicle of the Past - RPG CLI tentang perjalanan waktu."
             elif choice == 4:

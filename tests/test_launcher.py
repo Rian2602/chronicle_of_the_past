@@ -38,6 +38,36 @@ def test_menu_loop_clears_screen_for_every_redraw(monkeypatch):
     assert len(clears) == 2
 
 
+def test_settings_menu_cycles_then_resets_and_saves(monkeypatch, tmp_path):
+    selections = iter([0, 1, 2, 3])
+    monkeypatch.setattr(launcher, "_menu_loop", lambda *args, **kwargs: next(selections))
+    path = tmp_path / "settings.json"
+
+    result, _ = launcher._settings_menu(launcher.settings.Settings(), path)
+
+    assert result == launcher.settings.Settings()
+    assert launcher.settings.load_settings(path) == launcher.settings.Settings()
+
+
+def test_save_picker_excludes_global_settings(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "saves").mkdir()
+    (tmp_path / "saves" / "slot1.json").write_text("{}", encoding="utf-8")
+    (tmp_path / launcher.settings.SETTINGS_PATH).write_text("{}", encoding="utf-8")
+
+    assert launcher._save_paths() == ["saves/slot1.json"]
+
+
+def test_main_skips_startup_animation_when_disabled(monkeypatch):
+    calls = []
+    monkeypatch.setattr(launcher.settings, "load_settings", lambda: launcher.settings.Settings(animation_mode="off"))
+    monkeypatch.setattr(launcher.animation, "animate", lambda *args, **kwargs: calls.append(True))
+    monkeypatch.setattr(launcher, "_menu_selection", lambda screen: 4)
+
+    assert main() == 0
+    assert calls == []
+
+
 class FakeGame:
     def __init__(self):
         self.calls = 0

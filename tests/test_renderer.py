@@ -58,3 +58,30 @@ def test_hud_no_map_shows_dash():
 def test_progress_returns_frames():
     frames = animation.progress("Menyimpan", frames=3)
     assert frames == ["Menyimpan █░░", "Menyimpan ██░", "Menyimpan ███"]
+
+
+def test_ascii_render_mode_changes_borders_and_bars():
+    from src.ui import renderer
+    renderer.set_render_mode("ascii")
+    try:
+        assert box("hai").splitlines()[0] == "+-----+"
+        assert bar(1, 2, width=4) == "##.."
+    finally:
+        renderer.set_render_mode("auto")
+
+
+def test_unicode_render_mode_forces_unicode_characters():
+    from src.ui import renderer
+    renderer.set_render_mode("unicode")
+    try:
+        assert renderer.supports_unicode() is True
+        assert box("hai").splitlines()[0] == "┌─────┐"
+        assert bar(1, 2, width=4) == "██░░"
+    finally:
+        renderer.set_render_mode("auto")
+
+
+def test_animation_delays():
+    assert animation.delay_for("normal") == 0.05
+    assert animation.delay_for("fast") == 0.01
+    assert animation.delay_for("off") is None

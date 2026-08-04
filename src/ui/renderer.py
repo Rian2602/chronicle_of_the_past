@@ -11,9 +11,22 @@ _UNICODE_BORDER = {
     "double": ("╔", "═", "╗", "║", "╚", "╝"),
 }
 _ASCII_BORDER = ("+", "-", "+", "|", "+", "+")
+_render_mode = "auto"
+
+
+def set_render_mode(mode):
+    """Atur sumber karakter UI: deteksi otomatis, Unicode, atau ASCII."""
+    if mode not in ("auto", "unicode", "ascii"):
+        raise ValueError(f"Mode tampilan tidak didukung: {mode}")
+    global _render_mode
+    _render_mode = mode
 
 
 def supports_unicode():
+    if _render_mode == "unicode":
+        return True
+    if _render_mode == "ascii":
+        return False
     if os.name == "nt":
         return False
     term = os.environ.get("TERM", "")
@@ -38,7 +51,8 @@ def box(text, border_style="normal"):
 
 
 def bar(current, total, width=14):
+    filled_char, empty_char = ("#", ".") if _render_mode == "ascii" else ("█", "░")
     if total <= 0:
-        return "░" * width
+        return empty_char * width
     filled = round(current / total * width)
-    return "█" * filled + "░" * (width - filled)
+    return filled_char * filled + empty_char * (width - filled)

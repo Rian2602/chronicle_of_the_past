@@ -93,9 +93,10 @@ Aria:
 +------------------------------------+
 | Kau... Aku belum pernah melihatmu. |
 +------------------------------------+
-Pilihan:
-  1. Siapa Anda?
-  2. Pergi.
+
+Aksi:
+> Siapa Anda?
+  Pergi.
 ```
 
 ...dan jalannya sejarah mulai terbentuk:
@@ -147,9 +148,11 @@ Selama bermain, ketik perintah dan tekan `Enter`. Jika namamu dibiarkan kosong s
 |------|--------|
 | Permainan Baru | Mulai petualangan baru (tentukan nama & kelas) |
 | Lanjutkan | Muat file save (default `saves/slot1.json`) |
-| Pengaturan | Belum tersedia (datang di pembaruan berikutnya) |
+| Pengaturan | Atur karakter UI (Auto/Unicode/ASCII) dan animasi startup (Normal/Cepat/Mati) |
 | Kredit | Info pembuatan game |
 | Keluar | Tutup game |
+
+Pengaturan berlaku untuk semua slot dan disimpan di `saves/settings.json`. Pilih **Reset ke Default** untuk mengembalikan Tampilan ke `Auto` dan Animasi ke `Normal`.
 
 ---
 
