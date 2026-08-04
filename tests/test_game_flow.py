@@ -4,6 +4,7 @@ from src.core.game_context import GameContext
 from src.core.game import Game
 from src.engine.combat_engine import start_combat
 from src.models.combat_interfaces import StatusEffect
+from src.models.player import max_hp, max_mp
 from src.systems import loot_system
 
 
@@ -131,6 +132,27 @@ def test_victory_levels_up_exactly_once(tmp_path):
     out = g.run_turn("attack")
     assert g.state.player.level == 2
     assert "Naik level! Kamu kini level 2." in out
+
+
+def test_level_up_heals_hp_to_full(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.xp = 30  # cukup untuk naik ke level 2
+    g.state.player.hp = 1
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    g._combat.enemy.stats["hp"] = 1
+    g.run_turn("attack")
+    assert g.state.player.hp == max_hp(g.state.player)
+    assert g.state.player.mp == max_mp(g.state.player)
 
 
 def _mid_combat_game(tmp_path):

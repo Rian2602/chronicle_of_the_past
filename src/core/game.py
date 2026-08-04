@@ -441,7 +441,7 @@ class Game:
             # gain_xp sudah menaikkan level; di sini hanya bonus base + pilihan HP
             p.attribute_bonuses["hp"] = p.attribute_bonuses.get("hp", 0) + 5
             p.attribute_bonuses["mp"] = p.attribute_bonuses.get("mp", 0) + 3
-            p.hp = max_hp(p)
-            p.mp = max_mp(p)
             # Auto-apply pilihan HP sebagai default (bisa dikembangkan dengan input user nanti)
             level_system.apply_choice(p, "hp")
+            p.hp = max_hp(p)
+            p.mp = max_mp(p)
