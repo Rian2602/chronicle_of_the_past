@@ -44,3 +44,39 @@ def test_game_loop_catches_save_error(monkeypatch, capsys):
     _game_loop(game)
     assert game.calls == 1
     assert "Gagal menyimpan: disk penuh" in capsys.readouterr().out
+
+
+class BoomGame:
+    def run_turn(self, text):
+        raise RuntimeError("boom")
+
+
+def test_game_loop_catches_generic_exception(monkeypatch, capsys):
+    game = BoomGame()
+    keys = iter(["go", "quit"])
+    monkeypatch.setattr(builtins, "input", lambda _: next(keys))
+    _game_loop(game)
+    out = capsys.readouterr().out
+    assert "Terjadi kesalahan: boom" in out
+    assert "Traceback" not in out
+
+
+def test_game_loop_quit_confirms_during_combat(monkeypatch, capsys):
+    class CombatGame:
+        _combat = object()
+
+        def run_turn(self, text):
+            return "ok"
+
+    game = CombatGame()
+    keys = iter(["quit", "n", "quit", "y"])
+
+    def fake_input(prompt=""):
+        print(prompt, end="")
+        return next(keys)
+
+    monkeypatch.setattr(builtins, "input", fake_input)
+    _game_loop(game)
+    out = capsys.readouterr().out
+    assert "bertarung" in out
+    assert "Sampai jumpa!" in out

@@ -398,3 +398,12 @@ def test_select_without_dialog_message(tmp_path):
     g.new_game("Rian", "warrior")
     out = g.run_turn("1")
     assert "Tidak ada dialog aktif" in out
+
+
+def test_select_without_number_does_not_crash(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.run_turn("talk old_man")
+    out = g.run_turn("select")
+    assert "Pilihan tidak valid." in out

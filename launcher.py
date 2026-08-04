@@ -61,6 +61,12 @@ def _game_loop(game):
         if not text:
             continue
         if text.lower() in ("quit", "keluar", "exit"):
+            if getattr(game, "_combat", None) is not None:
+                answer = input(
+                    "Kamu sedang bertarung. Keluar tanpa menyimpan? (y/n) "
+                ).strip().lower()
+                if answer not in ("y", "ya"):
+                    continue
             print("Sampai jumpa!")
             return
         try:
@@ -69,6 +75,8 @@ def _game_loop(game):
             print(f"Gagal menyimpan: {e}")
         except ContentError as e:
             print(f"Konten tidak valid: {e}")
+        except Exception as e:  # ponytail: jaring terakhir, lanjutkan sesi
+            print(f"Terjadi kesalahan: {e}")
 
 
 def _new_game(ctx):
@@ -103,17 +111,19 @@ def main():
         print(f"Gagal memuat data: {e}")
         return 1
     try:
-        choice = _menu_selection()
-        if choice == 0:
-            _new_game(ctx)
-        elif choice == 1:
-            _continue_game(ctx)
-        elif choice == 2:
-            print("Pengaturan belum tersedia.")
-        elif choice == 3:
-            print("Kredit: Chronicle of the Past - RPG CLI tentang perjalanan waktu.")
-        elif choice == 4:
-            print("Sampai jumpa!")
+        while True:
+            choice = _menu_selection()
+            if choice == 0:
+                _new_game(ctx)
+            elif choice == 1:
+                _continue_game(ctx)
+            elif choice == 2:
+                print("Pengaturan belum tersedia.")
+            elif choice == 3:
+                print("Kredit: Chronicle of the Past - RPG CLI tentang perjalanan waktu.")
+            elif choice == 4:
+                print("Sampai jumpa!")
+                break
     except save_manager.SaveError as e:
         print(f"Error: {e}")
     except ContentError as e:

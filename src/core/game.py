@@ -325,6 +325,9 @@ class Game:
     def _dialog_select(self, cmd, out):
         dialog = self._current_dialog
         choices = dialog_engine.available_choices(dialog, self.state)
+        if cmd.index is None:
+            out.append("Pilihan tidak valid.")
+            return
         index = cmd.index - 1
         if index < 0 or index >= len(choices):
             out.append("Pilihan tidak valid.")
