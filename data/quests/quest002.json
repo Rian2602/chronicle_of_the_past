@@ -1,7 +1,7 @@
 {
   "id": "quest002",
   "title": "Bahaya di Hutan",
-  "type": "side",
+  "type": "main",
   "description": "Kalahkan serigala di tepi hutan.",
   "requirements": [
     {"kind": "enemy", "target": "wild_wolf"}
