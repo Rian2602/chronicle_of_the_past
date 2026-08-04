@@ -76,6 +76,7 @@ Saat **Permainan Baru**, kamu diminta nama (kosongkan → "Pejalan Waktu"), lalu
 | `talk <npc>` | Bicara dengan NPC — gunakan **ID**, bukan nama (contoh: `talk old_man`) |
 | `explore` | Jelajahi area — mungkin bertemu musuh |
 | `inventory` | Tampilkan perlengkapan dan inventaris |
+| `memories` | Tampilkan kenangan yang telah terbuka |
 | `use <item>` | Gunakan item konsumabel |
 | `equip <item>` | Pasang perlengkapan |
 | `unequip <slot>` | Lepas perlengkapan dari slot |
@@ -97,13 +98,13 @@ Saat **Permainan Baru**, kamu diminta nama (kosongkan → "Pejalan Waktu"), lalu
 | `escape` | Coba melarikan diri dari pertarungan |
 | `1` / `2` / ... | Pilih opsi dialog saat berbicara |
 
-> Saat bertarung, hanya perintah tempur + `save` + `help` yang aktif; perintah lain ditolak dengan pesan "Tidak bisa saat bertarung."
+> Saat bertarung, hanya perintah tempur + `save` + `help` + `inventory` yang aktif; perintah lain ditolak dengan pesan "Tidak bisa saat bertarung."
 
 ---
 
 ## Sinopsis Arc 1 — "The Stranger"
 
-Kamu terbangun sebagai orang asing di **Ashen Village** tanpa ingatan. Seorang **Old Man** (Aria, penjaga perpustakaan tua) memperingatkan bahwa desa ini akan terbakar. Kepala Desa meminta bantuanmu memberantas serigala liar di tepi hutan. Semakin dalam kamu menyelidiki, semakin jelas bahwa waktu bukanlah sekadar alur lurus — dan sejarah mulai terbentuk ulang di tanganmu.
+Kamu terbangun sebagai orang asing di **Ashen Village** tanpa ingatan. Seorang **Old Man** bernama **Aria** (penjaga perpustakaan tua) memperingatkan bahwa desa ini akan terbakar. Kepala Desa meminta bantuanmu memberantas serigala liar di tepi hutan. Semakin dalam kamu menyelidiki, semakin jelas bahwa waktu bukanlah sekadar alur lurus — dan sejarah mulai terbentuk ulang di tanganmu.
 
 ---
 
@@ -117,7 +118,7 @@ Kamu terbangun sebagai orang asing di **Ashen Village** tanpa ingatan. Seorang *
    - **quest002 — "Bahaya di Hutan"** (kalahkan serigala liar)
 3. **`talk village_chief`** → bicara dengan Kepala Desa, pilih opsi mana pun → **quest001 selesai**: +50 XP, +20 emas, +10 reputasi *merchant_guild*.
 4. **`go forest`** → tiba di Ashen Forest (waktu maju satu fase).
-5. **`explore`** berulang sampai bertemu **Wild Wolf**. Peluang encounter 40% per explore (50% saat malam), dan wolf adalah salah satu dari 3 musuh di pool hutan — bersabarlah. **Hanya Wild Wolf** yang memenuhi syarat quest002. Menang → +40 XP, 8–16 emas, 50% loot *herb* → **quest002 selesai**: +40 XP, +15 emas, +5 reputasi.
+5. **`explore`** berulang sampai bertemu **Wild Wolf**. Peluang encounter 40% per explore (50% saat malam), dan wolf adalah salah satu dari 3 musuh di pool hutan — bersabarlah. **Hanya Wild Wolf** yang memenuhi syarat quest002. Menang → +40 XP, 8–16 emas, 50% loot *herb* + 10% *leather_armor* → **quest002 selesai**: +40 XP, +15 emas, +5 reputasi.
 6. Di akhir giliran yang sama muncul banner **"PERCABANGAN WAKTU"** → **Arc 1 selesai**. Permainan berlanjut bebas.
 
 > 🧭 **Catatan:** quest002 tidak menunggu quest001 selesai — keduanya aktif bersamaan sejak langkah 2.
@@ -200,12 +201,12 @@ chronicle_of_the_past/
 ├── src/
 │   ├── core/            # Game, GameContext, GameState, Randomizer, save_manager, input_handler, constants
 │   ├── engine/          # combat, dialog, event, quest, rule, time, world
-│   ├── models/          # Dataclass — Player, Enemy, Item, Map, Command, Event
+│   ├── models/          # Dataclass — Player, Enemy, Item, Map, Command, CombatAction/State/Result
 │   ├── systems/         # level, inventory, equipment, loot, memory, travel, exploration, status
 │   ├── ui/              # renderer, HUD, views (combat/dialog/inventory/menu), animation, ascii_loader
 │   └── utils/           # json_loader
 ├── docs/superpowers/specs/  # Desain & spesifikasi
-└── tests/               # Suite pytest (353 tests)
+└── tests/               # Suite pytest (351 tests)
 ```
 
 **Arah dependensi (ketat):**
@@ -250,11 +251,12 @@ Buat `data/enemies/<id>.json`:
   "reward": {"xp": 45, "gold": [5, 15]},
   "skills": ["bite"],
   "loot": [{"item": "herb", "chance": 30, "amount": 1}],
-  "weight": 2,
   "tags": ["undead"],
   "lore": "Tulang-belulang yang bangkit kembali."
 }
 ```
+
+> Bobot kemunculan musuh ditentukan di `enemy_pool` pada `data/maps/<id>.json`, bukan di file musuh.
 
 ### Menambah Skill Baru
 
@@ -338,7 +340,7 @@ Buat `data/quests/<id>.json`:
 ## Testing & Tools
 
 ```bash
-# Jalankan semua test (353 test)
+# Jalankan semua test (351 test)
 .venv/bin/python -m pytest tests/ -q
 
 # Test spesifik
@@ -353,7 +355,7 @@ python3 -m compileall src launcher.py tools/bench.py
 python3 tools/bench.py
 ```
 
-**353 tests** covering: JSON loader, constants, models, rule engine, level system, combat (interfaces, status, damage, loop, skills, AI, rewards, integration), time/world/travel, inventory/equipment/loot, quest engine, memory system, dialog engine, event engine, ascii loader, save manager, UI renderer/HUD/views/input, launcher, game flow, dan Arc 1 content validation.
+**351 tests** covering: JSON loader, constants, models, rule engine, level system, combat (interfaces, status, damage, loop, skills, AI, rewards, integration), time/world/travel, inventory/equipment/loot, quest engine, memory system, dialog engine, event engine, ascii loader, save manager, UI renderer/HUD/views/input, launcher, game flow, dan Arc 1 content validation.
 
 ---
 
@@ -374,8 +376,6 @@ Proyek ini menyimpang dari MASTER_CONCEPT v1.0 dalam beberapa hal yang sudah dis
 
 Quirk konten yang tercatat, bukan untuk diperbaiki di sini:
 
-- `data/story/arc1_text.json` **tidak dimuat** engine — semua narasi hardcoded di `events.json`.
-- **memory001** ("Desa Terbakar") diberikan **senyap** — tidak ada log di layar maupun perintah untuk melihat kenangan.
 - **quest002 aktif bersamaan** quest001 (tidak menunggu quest001 selesai).
-- Field `weight` di file `enemies/*.json` **diabaikan** engine — yang dipakai bobot `enemy_pool` di peta.
-- `data/config/` dan `data/timeline/` ada tapi belum terpakai.
+- **Tanpa toko / game over**: emas tanpa sink dan HP 0 belum menampilkan layar kekalahan permanen.
+- **Inisiatif (`initiative`)** dihitung tapi tidak dipakai penuh — giliran bergantian tetap.

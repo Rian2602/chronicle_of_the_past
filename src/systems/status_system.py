@@ -1,4 +1,4 @@
-from src.engine.combat_interfaces import StatusEffect
+from src.models.combat_interfaces import StatusEffect
 from src.core.constants import DOT_KINDS, CONTROL_KINDS, STATUS_LABELS
 
 

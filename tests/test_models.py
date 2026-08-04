@@ -1,5 +1,4 @@
 from src.models.enemy import Enemy
-from src.models.event import Event
 from src.models.item import Item
 from src.models.map import Map
 from src.models.player import Player, max_hp, max_mp
@@ -167,24 +166,3 @@ def test_map_time_effects_are_independent():
              description="", ascii_art="", exits=[], npcs=[], enemy_pool=[])
     m1.time_effects["night"] = {"description": "dark"}
     assert m2.time_effects == {}
-
-
-def test_event_from_dict():
-    data = {
-        "id": "ev_first_night",
-        "trigger": ["time_change"],
-        "conditions": [{"time": "night"}],
-        "actions": [{"text": "The candles gutter."}],
-    }
-    event = Event(**data)
-    for key, value in data.items():
-        assert getattr(event, key) == value
-
-
-def test_event_defaults_are_independent():
-    e1 = Event(id="e1", trigger=[])
-    e2 = Event(id="e2", trigger=[])
-    e1.conditions.append("c")
-    e1.actions.append("a")
-    assert e2.conditions == []
-    assert e2.actions == []

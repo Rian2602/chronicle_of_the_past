@@ -18,8 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.core import save_manager
 from src.core.game import Game
 from src.core.game_context import GameContext
-from src.engine import combat_engine
-from src.engine.combat_interfaces import CombatAction
+from src.models.combat_interfaces import CombatAction
 from src.engine.combat_engine import enemy_turn, next_turn, player_action, start_combat
 from src.systems import loot_system
 from src.ui import combat_view

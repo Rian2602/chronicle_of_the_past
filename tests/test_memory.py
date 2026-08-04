@@ -1,6 +1,6 @@
 from src.core.game_state import GameState
 from src.models.player import Player
-from src.systems.memory_system import grant_memory, has_memory
+from src.systems.memory_system import grant_memory
 
 
 def make_player():
@@ -31,7 +31,7 @@ def test_grant_sets_flags():
     gs = make_game_state()
     memory = {"id":"memory001","flags_set":["knows_village_burns"]}
     grant_memory(gs, "memory001", memory)
-    assert has_memory(gs, "memory001")
+    assert any(m["id"] == "memory001" for m in gs.player.memories)
     assert gs.flags.get("knows_village_burns") is True
 
 
@@ -52,7 +52,7 @@ def test_grant_resolves_from_registry_when_memory_omitted():
     gs.memories = [memory]
     result = grant_memory(gs, "memory001")
     assert result is memory
-    assert has_memory(gs, "memory001")
+    assert any(m["id"] == "memory001" for m in gs.player.memories)
     assert gs.flags.get("knows_village_burns") is True
     assert gs.player.memories == [memory]
 
@@ -74,11 +74,11 @@ def test_grant_dedupe_keeps_single_entry():
     assert gs.flags.get("knows_village_burns") is True
 
 
-def test_has_memory_false_before_true_after():
+def test_grant_appends_memory():
     gs = make_game_state()
-    assert has_memory(gs, "memory001") is False
+    assert gs.player.memories == []
     grant_memory(gs, "memory001", {"id": "memory001", "flags_set": []})
-    assert has_memory(gs, "memory001") is True
+    assert any(m["id"] == "memory001" for m in gs.player.memories)
 
 
 def test_memories_json_loads_via_load_json():

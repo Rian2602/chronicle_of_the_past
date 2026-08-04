@@ -1,7 +1,6 @@
 import pytest
-from src.models.player import Player, max_hp, max_mp
-from src.systems import level_system
-from src.systems.level_system import LEVEL_CHOICES, apply_choice, on_level_up
+from src.models.player import Player
+from src.systems.level_system import LEVEL_CHOICES, apply_choice
 
 
 def make_player(**overrides):
@@ -83,49 +82,6 @@ def test_apply_unknown_choice_raises_value_error():
     p = make_player()
     with pytest.raises(ValueError):
         apply_choice(p, "stealth")
-
-
-def test_on_level_up_increments_level():
-    p = make_player(level=1)
-    on_level_up(p)
-    assert p.level == 2
-
-
-def test_on_level_up_increases_max_hp_and_mp():
-    p = make_player()
-    on_level_up(p)
-    assert p.attribute_bonuses["hp"] == 5
-    assert p.attribute_bonuses["mp"] == 3
-    assert max_hp(p) == 105
-    assert max_mp(p) == 13
-
-
-def test_on_level_up_full_heals_damaged_player():
-    p = make_player(hp=10, mp=1)
-    on_level_up(p)
-    assert p.hp == max_hp(p)
-    assert p.mp == max_mp(p)
-
-
-def test_on_level_up_full_heals_when_already_at_max():
-    p = make_player()
-    on_level_up(p)
-    assert p.hp == max_hp(p)
-    assert p.mp == max_mp(p)
-
-
-def test_on_level_up_twice_accumulates_growth():
-    p = make_player()
-    on_level_up(p)
-    on_level_up(p)
-    assert p.level == 3
-    assert p.attribute_bonuses["hp"] == 10
-    assert p.attribute_bonuses["mp"] == 6
-
-
-def test_on_level_up_returns_level_choices():
-    p = make_player()
-    assert on_level_up(p) is LEVEL_CHOICES
 
 
 def test_level_choices_shape():

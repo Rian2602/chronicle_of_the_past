@@ -12,5 +12,4 @@ class Enemy:
     lore: str = ""
     reward: dict = field(default_factory=dict)
     behavior: str = "aggressive"
-    weight: int = 1
     tags: list = field(default_factory=list)

@@ -2,7 +2,7 @@ import pytest
 
 from src.core.randomizer import Randomizer
 from src.engine.combat_engine import player_action, start_combat, use_item
-from src.engine.combat_interfaces import CombatAction
+from src.models.combat_interfaces import CombatAction
 from src.models.enemy import Enemy
 from src.models.player import Player, max_hp
 

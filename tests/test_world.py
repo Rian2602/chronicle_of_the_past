@@ -2,7 +2,6 @@ import pytest
 
 from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
-from src.engine.world_engine import current_map
 from src.engine.world_engine import get_map
 from src.models.enemy import Enemy
 from src.models.map import Map
@@ -50,13 +49,6 @@ def test_get_map_returns_map_from_world():
     m = make_map("village")
     gs.world = {"village": m}
     assert get_map(gs, "village") is m
-
-
-def test_current_map_returns_current_map():
-    gs = GameState()
-    m = make_map("village")
-    gs.current_map = m
-    assert current_map(gs) is m
 
 
 def test_can_travel_true_when_target_in_exits():

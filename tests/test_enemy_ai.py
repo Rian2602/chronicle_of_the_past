@@ -1,6 +1,6 @@
 from src.core.randomizer import Randomizer
 from src.engine.combat_engine import enemy_turn, start_combat
-from src.engine.combat_interfaces import CombatResult
+from src.models.combat_interfaces import CombatResult
 from src.models.enemy import Enemy
 from src.models.player import Player, max_hp
 

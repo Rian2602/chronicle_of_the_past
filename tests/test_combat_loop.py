@@ -9,7 +9,7 @@ from src.engine.combat_engine import (
     player_stats,
     start_combat,
 )
-from src.engine.combat_interfaces import CombatAction, CombatResult, StatusEffect
+from src.models.combat_interfaces import CombatAction, CombatResult, StatusEffect
 from src.models.enemy import Enemy
 from src.models.player import Player, max_hp, max_mp
 

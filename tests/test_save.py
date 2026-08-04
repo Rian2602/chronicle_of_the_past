@@ -1,7 +1,7 @@
 import json
 import pytest
 from src.core.game_state import GameState
-from src.core.save_manager import save_game, load_game, default_player, SaveError
+from src.core.save_manager import save_game, load_game, SaveError
 from src.models.player import Player
 
 
@@ -67,13 +67,3 @@ def test_load_corrupt_file_raises(tmp_path):
 def test_load_missing_file_raises(tmp_path):
     with pytest.raises(SaveError):
         load_game(str(tmp_path / "nope.json"), None)
-
-
-def test_default_player(tmp_path):
-    from src.core.game_context import GameContext
-    from src.core.constants import FACTIONS
-    ctx = GameContext(data_dir="data")
-    p = default_player(ctx)
-    assert p.name == "Pejalan Waktu"
-    assert p.class_id == "warrior"
-    assert set(p.reputation) == set(FACTIONS)

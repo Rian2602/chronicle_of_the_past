@@ -1,4 +1,4 @@
-from src.engine.combat_interfaces import CombatState, StatusEffect
+from src.models.combat_interfaces import CombatState, StatusEffect
 from src.models.enemy import Enemy
 from src.models.player import Player
 from src.systems.status_system import apply_status, tick_statuses

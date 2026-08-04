@@ -1,7 +1,6 @@
 import dataclasses
 import datetime
 import json
-import os
 
 from src.core.game_state import GameState
 from src.models.player import Player
@@ -13,17 +12,11 @@ class SaveError(Exception):
     pass
 
 
-def default_player(game_context=None):
-    if game_context is not None:
-        return game_context.create_player("Pejalan Waktu", "warrior")
-    return Player(name="Pejalan Waktu", class_id="warrior", hp=0, mp=0, base_stats={})
-
-
 def _engine_state(game_state, combat=None):
     current_map = game_state.current_map
     combat_data = None
     if combat is not None:
-        from src.engine.combat_interfaces import CombatResult, StatusEffect
+        from src.models.combat_interfaces import StatusEffect
         # Serialisasi statuses: konversi StatusEffect objects ke dict
         serialized_statuses = {}
         for target_id, effects in combat.statuses.items():

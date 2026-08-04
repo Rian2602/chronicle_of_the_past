@@ -1,7 +1,3 @@
-def get_dialog(context, dialog_id):
-    return context.dialogues[dialog_id]
-
-
 def available_choices(dialog, game_state):
     result = []
     player = game_state.player

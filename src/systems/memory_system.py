@@ -15,10 +15,3 @@ def grant_memory(game_state, memory_id, memory=None) -> dict:
         game_state.flags[key] = True
     player.memories.append(memory)
     return memory
-
-
-def has_memory(game_state, memory_id) -> bool:
-    player = game_state.player
-    if player is None:
-        return False
-    return any(entry["id"] == memory_id for entry in player.memories)

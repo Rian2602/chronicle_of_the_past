@@ -1,5 +1,5 @@
 from src.models.player import max_hp, max_mp
-from src.ui.renderer import ANSI, bar
+from src.ui.renderer import bar
 
 
 def render(player, game_state):

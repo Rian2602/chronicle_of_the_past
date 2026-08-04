@@ -1,4 +1,4 @@
-from src.engine.combat_interfaces import (
+from src.models.combat_interfaces import (
     CombatAction,
     CombatResult,
     CombatState,
@@ -142,7 +142,6 @@ def test_enemy_new_field_defaults():
     e = Enemy(id="goblin", name="Goblin", level=2, stats={}, loot=[], skills=[])
     assert e.reward == {}
     assert e.behavior == "aggressive"
-    assert e.weight == 1
     assert e.tags == []
 
 
@@ -157,7 +156,6 @@ def test_enemy_positional_construction_backward_compat():
     assert e.lore == ""
     assert e.reward == {}
     assert e.behavior == "aggressive"
-    assert e.weight == 1
     assert e.tags == []
 
 

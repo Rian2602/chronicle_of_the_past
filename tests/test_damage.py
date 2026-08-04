@@ -1,6 +1,6 @@
 from src.core.randomizer import Randomizer
 from src.engine.combat_engine import magic_damage, resolve_hit
-from src.engine.combat_interfaces import CombatState, DamageResult, StatusEffect
+from src.models.combat_interfaces import CombatState, DamageResult, StatusEffect
 from src.models.enemy import Enemy
 from src.models.player import Player
 

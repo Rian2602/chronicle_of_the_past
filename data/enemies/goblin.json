@@ -10,7 +10,6 @@
     {"item": "herb", "chance": 25, "amount": 1},
     {"item": "wooden_helmet", "chance": 5, "amount": 1}
   ],
-  "weight": 1,
   "tags": ["beast"],
   "lore": "Makhluk kecil yang agresif."
 }

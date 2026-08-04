@@ -13,7 +13,7 @@ from src.engine.combat_engine import (
     player_action,
     start_combat,
 )
-from src.engine.combat_interfaces import CombatAction, CombatResult
+from src.models.combat_interfaces import CombatAction, CombatResult
 from src.models.enemy import Enemy
 from src.models.player import Player
 

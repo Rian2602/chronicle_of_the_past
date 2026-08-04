@@ -10,7 +10,6 @@
     {"item": "herb", "chance": 50, "amount": 1},
     {"item": "leather_armor", "chance": 10, "amount": 1}
   ],
-  "weight": 2,
   "tags": ["beast"],
   "lore": "Serigala liar yang menerkam saat sehat dan kabur saat terluka."
 }
