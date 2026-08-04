@@ -81,13 +81,14 @@ def test_inventory_view_shows_equipment():
     assert "Herb" in out
 
 
-def test_dialog_view_numbers_choices():
+def test_dialog_view_leaves_choices_to_interactive_menu():
     gs = GameState()
     dialog = {"id": "d", "lines": [{"speaker": "old_man", "text": "Halo."}],
               "choices": [{"text": "Siapa Anda?", "require_flags": [], "set_flags": [], "next": None}]}
     out = dialog_view.render(dialog, gs)
     assert "old_man" in out
-    assert "1. Siapa Anda?" in out
+    assert "Pilihan:" not in out
+    assert "Siapa Anda?" not in out
 
 
 def test_dialog_view_labels_speaker_other_than_npc():
