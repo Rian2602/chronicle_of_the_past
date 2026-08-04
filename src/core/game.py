@@ -160,6 +160,7 @@ class Game:
             "unequip": lambda: self._cmd_unequip(cmd, out),
             "save": lambda: self._cmd_save(cmd, out),
             "quests": lambda: self._cmd_quests(out),
+            "item": lambda: self._cmd_use_alias(cmd, out),
         }
 
         if action in action_handlers:
@@ -172,6 +173,13 @@ class Game:
             out.append(
                 f"Perintah tidak dikenal: {cmd.action}. Ketik 'help' untuk bantuan."
             )
+
+    def _cmd_use_alias(self, cmd, out):
+        """Alias 'item <id>' → 'use <id>' di luar combat."""
+        if not cmd.args:
+            out.append("Gunakan: use <item>. (atau: item <id> saat bertarung)")
+            return
+        self._cmd_use(cmd, out)
 
     def _cmd_status(self, out):
         p = self.state.player

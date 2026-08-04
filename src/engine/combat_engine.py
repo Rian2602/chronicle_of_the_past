@@ -293,6 +293,10 @@ def player_action(state, action, choice=None) -> bool:
     if parsed is CombatAction.ESCAPE:
         return _escape(state)
     if parsed in (CombatAction.SKILL, CombatAction.MAGIC):
+        if choice is None:
+            learned = getattr(state.player, 'learned_skills', []) or []
+            hint = ', '.join(learned) if learned else 'tidak ada skill'
+            raise ValueError(f"Gunakan: skill <id>. Skill tersedia: {hint}")
         if choice not in state.skills:
             raise ValueError(f"Skill tidak dikenal: {choice}")
         skill = state.skills[choice]
@@ -329,6 +333,10 @@ def player_action(state, action, choice=None) -> bool:
             _on_victory(state)
         return False
     if parsed is CombatAction.ITEM:
+        if choice is None:
+            items_available = [e['id'] for e in state.player.inventory] if state.player.inventory else []
+            hint = ', '.join(items_available) if items_available else 'inventaris kosong'
+            raise ValueError(f"Gunakan: item <id>. Item tersedia: {hint}")
         use_item(state, choice)
         return False
     state.log.append("Aksi tidak dikenal.")
