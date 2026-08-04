@@ -315,7 +315,7 @@ def test_save_and_help_allowed_during_combat(tmp_path):
     assert "tersimpan" in out
     assert g._combat is not None
     out = g.run_turn("help")
-    assert "Perintah" in out
+    assert "Navigasi" in out
     assert g._combat is not None
 
 

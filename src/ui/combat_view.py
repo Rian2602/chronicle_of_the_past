@@ -1,4 +1,3 @@
-from src.models.combat_interfaces import CombatAction
 from src.ui.renderer import bar
 
 
@@ -13,10 +12,6 @@ def render(state):
     lines.append("")
     p = state.player
     lines.append(f"{p.name} — HP {p.hp}  MP {p.mp}")
-    lines.append("")
-    lines.append("Aksi:")
-    for action in CombatAction:
-        lines.append(f"  {action.value.title()}")
     lines.append("")
     lines.extend(state.log[-5:])
     return "\n".join(lines)

@@ -6,8 +6,8 @@
     {"speaker": "village_chief", "text": "Akhir-akhir ini serigala liar semakin berani mendekati tepi hutan. Banyak warga yang takut keluar rumah."}
   ],
   "choices": [
-    {"text": "Aku bisa membantu mengusir serigala-serigala itu.", "require_flags": [], "set_flags": [], "next": null},
-    {"text": "Katanya desa ini akan terbakar...", "require_flags": ["knows_village_burns"], "set_flags": [], "next": null},
+    {"text": "Aku bisa membantu mengusir serigala-serigala itu.", "require_flags": [], "set_flags": [], "next": "dialog_village_chief_accept"},
+    {"text": "Katanya desa ini akan terbakar...", "require_flags": ["knows_village_burns"], "set_flags": [], "next": "dialog_village_chief_fire"},
     {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
   ]
 }

@@ -67,3 +67,11 @@ def test_load_corrupt_file_raises(tmp_path):
 def test_load_missing_file_raises(tmp_path):
     with pytest.raises(SaveError):
         load_game(str(tmp_path / "nope.json"), None)
+
+
+def test_save_creates_missing_directory(tmp_path):
+    gs = GameState()
+    path = str(tmp_path / "new_dir" / "slot1.json")
+    save_game(gs, path)
+    gs2 = load_game(path, None)
+    assert gs2.day == 1

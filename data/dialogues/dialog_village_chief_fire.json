@@ -1,0 +1,21 @@
+{
+  "id": "dialog_village_chief_fire",
+  "lines": [
+    {
+      "speaker": "village_chief",
+      "text": "Apa?! Terbakar?! Siapa yang bilang padamu?"
+    },
+    {
+      "speaker": "village_chief",
+      "text": "...Berhati-hatilah. Jangan biarkan rumor ini menyebar ke warga."
+    }
+  ],
+  "choices": [
+    {
+      "text": "Aku mengerti.",
+      "require_flags": [],
+      "set_flags": [],
+      "next": null
+    }
+  ]
+}

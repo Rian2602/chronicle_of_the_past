@@ -2,14 +2,14 @@
   "id": "forest",
   "name": "Ashen Forest",
   "region": "2",
-  "threat_level": 2,
+  "threat_level": 3,
   "description": "Hutan kelabu yang sunyi. Pepohonan seakan memperhatikan setiap langkahmu.",
   "ascii_art": "forest",
   "exits": ["village"],
   "npcs": [],
   "enemy_pool": [
     {"id": "goblin", "weight": 2},
-    {"id": "wild_wolf", "weight": 2},
+    {"id": "wild_wolf", "weight": 3},
     {"id": "bandit", "weight": 1}
   ]
 }

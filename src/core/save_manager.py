@@ -1,6 +1,7 @@
 import dataclasses
 import datetime
 import json
+import os
 
 from src.core.game_state import GameState
 from src.models.player import Player
@@ -62,6 +63,9 @@ def save_game(game_state, path, schema_version=SCHEMA_VERSION, combat=None):
         "saved_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
     try:
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
     except OSError as e:

@@ -52,7 +52,7 @@ def test_class_card_bars():
     assert "█" in card
 
 
-def test_combat_view_contains_actions():
+def test_combat_view_renders_status():
     p = Player(name="Rian", class_id="warrior", hp=100, mp=10,
                base_stats={"hp": 100, "mp": 10, "attack": 12, "defense": 14,
                            "agility": 8, "intelligence": 7})
@@ -63,8 +63,7 @@ def test_combat_view_contains_actions():
     state = start_combat(p, e, Randomizer(seed=1))
     out = combat_view.render(state)
     assert "Goblin" in out
-    assert "Attack" in out
-    assert "Escape" in out
+    assert "HP 100" in out
 
 
 def test_inventory_view_shows_equipment():

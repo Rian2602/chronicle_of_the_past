@@ -214,11 +214,10 @@ class Game:
         out.append(f"Lokasi: {location}")
 
     def _cmd_help(self, out):
-        out.append("Perintah: status, help, go <peta>, rest, talk <id_npc>, look, explore,")
-        out.append("inventory, memories, use <item>, equip <item>, unequip <slot>,")
-        out.append("save <path>, quests, quit")
-        out.append("Saat bertarung: attack, skill <id>, magic <id>, item <id>, observe, escape, defend")
-        out.append("Saat dialog: ketik nomor pilihan (mis. 1)")
+        out.append("Navigasi: ↑/↓ atau w/s untuk berpindah, Enter untuk memilih, 'q' kembali/keluar.")
+        out.append("Menu utama: Lihat, Jelajah, Pergi, Bicara, Istirahat, Inventori, Status, Simpan, Keluar.")
+        out.append("Saat bertarung: Serang, Skill, Sihir, Item, Amati, Kabur, Bertahan, Simpan.")
+        out.append("Saat dialog: pilih dengan ↑/↓ + Enter, atau 'Akhiri Percakapan' untuk keluar.")
         objective = quest_engine.next_objective(self.state)
         if objective:
             out.append(f"Tujuan saat ini: {objective}")

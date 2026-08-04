@@ -1,0 +1,21 @@
+{
+  "id": "dialog_village_chief_accept",
+  "lines": [
+    {
+      "speaker": "village_chief",
+      "text": "Sungguh? Kau bersedia membantu kami?"
+    },
+    {
+      "speaker": "village_chief",
+      "text": "Pergilah ke Ashen Forest dan singkirkan serigala-serigala itu. Kami semua bergantung padamu."
+    }
+  ],
+  "choices": [
+    {
+      "text": "Baik, aku akan pergi sekarang.",
+      "require_flags": [],
+      "set_flags": [],
+      "next": null
+    }
+  ]
+}
