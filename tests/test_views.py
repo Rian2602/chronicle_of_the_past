@@ -113,13 +113,22 @@ def test_dialog_view_labels_npc_by_name():
     assert "Orang Tua:" in out
 
 
-def test_dialog_view_labels_other_speaker_by_id():
+def test_dialog_view_labels_other_speaker_by_id(monkeypatch):
+    import os
+    monkeypatch.setenv("TERM", "xterm-256color")
+    # Force reload so supports_unicode() picks up the new TERM value
+    import importlib
+    import src.ui.renderer as renderer_mod
+    importlib.reload(renderer_mod)
+    import src.ui.dialog_view as dv_mod
+    importlib.reload(dv_mod)
+
     gs = GameState()
     dialog = {"id": "d",
               "lines": [{"speaker": "old_man", "text": "Halo."},
                         {"speaker": "player", "text": "Halo juga."},
                         {"speaker": "", "text": "lanjutan"}],
               "choices": []}
-    out = dialog_view.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
-    assert "Orang Tua:\n┌───────┐\n│ Halo. │" in out
-    assert "player:\n┌────────────┐\n│ Halo juga. │" in out
+    out = dv_mod.render(dialog, gs, npc_id="old_man", npc_name="Orang Tua")
+    assert "Orang Tua:\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Halo. \u2502" in out
+    assert "player:\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Halo juga. \u2502" in out

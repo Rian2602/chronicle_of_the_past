@@ -1,10 +1,28 @@
 """Chronicle of the Past - launcher entry point."""
 
+import re
+
 from src.core import save_manager
 from src.core.game import Game
 from src.core.game_context import GameContext
 from src.ui import animation, menu
 from src.utils.json_loader import ContentError
+
+
+def _strip_escape(text: str) -> str:
+    """Hapus escape sequence ANSI dan map arrow keys ke w/s.
+
+    Terminal mengirim \x1b[A (up) dan \x1b[B (down) untuk arrow keys.
+    Saat di-copy-paste ke terminal, sequence ini terlihat sebagai ^[[A/^[[B.
+    """
+    # Handle printable caret form (^[[A) — dari copy-paste terminal output
+    text = text.replace('^[[A', 'w').replace('^[[B', 's')
+    # Handle actual ANSI escape byte (ESC[A, ESC[B)
+    text = text.replace('\x1b[A', 'w').replace('\x1b[B', 's')
+    # Hapus sisa escape sequences lain
+    text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+    text = re.sub(r'\^\[\[[0-9;]*[a-zA-Z]', '', text)
+    return text.strip().lower()
 
 
 def _menu_selection():
@@ -14,7 +32,7 @@ def _menu_selection():
         print()
         print(menu.render_main(selection))
         print("Navigasi: 'w'/'s' untuk berpindah. Enter untuk memilih. 'q' keluar.")
-        key = input("> ").strip().lower()
+        key = _strip_escape(input("> "))
         if key in ("w", "k"):
             selection = (selection - 1) % total if total > 0 else 0
         elif key in ("s", "j"):
@@ -40,7 +58,7 @@ def _class_selection(ctx):
         print(menu.render_class_card(ctx.classes[class_ids[selection]]))
         print()
         print("Navigasi: 'w'/'s' untuk berpindah. Enter untuk memilih.")
-        key = input("> ").strip().lower()
+        key = _strip_escape(input("> "))
         if key in ("w", "k"):
             selection = (selection - 1) % len(class_ids)
         elif key in ("s", "j"):
@@ -94,13 +112,21 @@ def _new_game(ctx):
 
 
 def _continue_game(ctx):
+    import os
     print("\n=== Lanjutkan ===")
     path = input("Lokasi file save (mis. saves/slot1.json): ").strip()
     if not path:
         path = "saves/slot1.json"
     game = Game(ctx)
-    print("\n" + game.continue_game(path))
-    _game_loop(game)
+    try:
+        print("\n" + game.continue_game(path))
+        _game_loop(game)
+    except save_manager.SaveError:
+        if not os.path.exists(path):
+            print(f"File save tidak ditemukan: {path}")
+            print("Gunakan 'Permainan Baru' untuk memulai, atau periksa lokasi file save.")
+        else:
+            print(f"Save tidak dapat dimuat: {path} (file mungkin rusak atau tidak kompatibel)")
 
 
 def main():

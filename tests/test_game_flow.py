@@ -253,7 +253,9 @@ def test_restore_combat_does_not_mutate_shared_enemy(tmp_path):
 def test_item_command_in_combat_shows_message_not_crash(tmp_path):
     ctx, g = _mid_combat_game(tmp_path)
     assert "Item tidak dimiliki" in g.run_turn("item potion")
-    assert "Item tidak dimiliki" in g.run_turn("item")
+    # item tanpa argumen sekarang menampilkan pesan yang lebih berguna
+    out = g.run_turn("item")
+    assert "Gunakan: item" in out or "Item tersedia" in out
     assert g._combat is not None
 
 

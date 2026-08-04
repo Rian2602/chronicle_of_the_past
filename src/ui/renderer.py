@@ -14,10 +14,10 @@ _ASCII_BORDER = ("+", "-", "+", "|", "+", "+")
 
 
 def supports_unicode():
-    term = os.environ.get("TERM", "")
-    if not term or term == "dumb":
+    if os.name == "nt":
         return False
-    return os.name != "nt"
+    term = os.environ.get("TERM", "")
+    return term != "dumb"
 
 
 def _border(border_style):

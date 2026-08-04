@@ -132,7 +132,7 @@ class Game:
             self._combat_turn(cmd, out)
         elif self._current_dialog is not None and cmd.action == "select":
             self._dialog_select(cmd, out)
-        elif self._combat is not None and cmd.action not in ("save", "help", "inventory"):
+        elif self._combat is not None and cmd.action not in ("save", "help", "inventory", "look"):
             out.append("Tidak bisa saat bertarung.")
             out.append(combat_view.render(self._combat))
         else:
@@ -160,6 +160,7 @@ class Game:
             "unequip": lambda: self._cmd_unequip(cmd, out),
             "save": lambda: self._cmd_save(cmd, out),
             "quests": lambda: self._cmd_quests(out),
+            "item": lambda: self._cmd_use_alias(cmd, out),
         }
 
         if action in action_handlers:
@@ -172,6 +173,13 @@ class Game:
             out.append(
                 f"Perintah tidak dikenal: {cmd.action}. Ketik 'help' untuk bantuan."
             )
+
+    def _cmd_use_alias(self, cmd, out):
+        """Alias 'item <id>' → 'use <id>' di luar combat."""
+        if not cmd.args:
+            out.append("Gunakan: use <item>. (atau: item <id> saat bertarung)")
+            return
+        self._cmd_use(cmd, out)
 
     def _cmd_status(self, out):
         p = self.state.player
@@ -229,14 +237,43 @@ class Game:
         rest(self.state)
         out.append(f"Kamu beristirahat hingga pagi. Kini Hari {self.state.day}.")
 
+    def _find_npc(self, query: str):
+        """Cari NPC berdasarkan ID, nama display, atau prefix (case-insensitive)."""
+        # 1. Exact ID match
+        npc = self.ctx.npc.get(query)
+        if npc:
+            return query, npc
+        # Normalize query: lowercase, ganti _ dan - dengan spasi
+        q = query.lower().replace('_', ' ').replace('-', ' ')
+        # 2. Case-insensitive exact match (ID atau nama)
+        for npc_id, npc_data in self.ctx.npc.items():
+            name = npc_data.get('name', '').lower()
+            if name == q or npc_id.lower() == q or name.replace(' ', '_') == q:
+                return npc_id, npc_data
+        # 3. Prefix match
+        for npc_id, npc_data in self.ctx.npc.items():
+            name = npc_data.get('name', '').lower()
+            if name.startswith(q) or npc_id.lower().startswith(q):
+                return npc_id, npc_data
+        return None, None
+
     def _cmd_talk(self, cmd, out):
         if not cmd.args:
             out.append("Gunakan: talk <nama NPC>.")
             return
-        npc_id = cmd.args[0]
-        npc = self.ctx.npc.get(npc_id)
+        # Support multi-word names: 'talk kepala desa'
+        query = " ".join(cmd.args)
+        npc_id, npc = self._find_npc(query)
         if npc is None:
-            out.append(f"NPC tidak dikenal: {npc_id}.")
+            m = self.state.current_map
+            available = []
+            if m:
+                for nid in (m.npcs or []):
+                    nd = self.ctx.npc.get(nid)
+                    if nd:
+                        available.append(nd['name'])
+            hint = f" (tersedia: {', '.join(available)})" if available else ""
+            out.append(f"NPC tidak dikenal: {query}.{hint}")
             return
         m = self.state.current_map
         if m is None or npc.get("location") != m.id:
