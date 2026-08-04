@@ -155,6 +155,22 @@ def test_level_up_heals_hp_to_full(tmp_path):
     assert g.state.player.mp == max_mp(g.state.player)
 
 
+def test_quest_reward_xp_via_dialog_triggers_level_up(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    # quest001 (50 XP) = persis threshold level 2; selesaikan via dialog
+    g.run_turn("talk old_man")
+    g.run_turn("1")
+    g.run_turn("talk old_man")
+    g.run_turn("3")
+    g.run_turn("talk village_chief")
+    out = g.run_turn("3")
+    assert g.state.player.level == 2
+    assert g.state.player.hp == max_hp(g.state.player)
+    assert g.state.player.mp == max_mp(g.state.player)
+
+
 def _mid_combat_game(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)

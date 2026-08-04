@@ -393,6 +393,7 @@ class Game:
             # Perbaikan: hanya tampilkan pesan jika quest benar-benar ter-update
             if msg and msg != "Tidak ada syarat yang sesuai.":
                 out.append(msg)
+            self._apply_pending_levels(out)
 
     def _combat_turn(self, cmd, out):
         state = self._combat
@@ -420,10 +421,7 @@ class Game:
             if msg and msg != "Tidak ada syarat yang sesuai.":
                 out.append(msg)
             out.extend(state.log)
-            levels = level_system.gain_xp(s.player, 0)
-            if levels:
-                self._apply_level_ups(levels)
-                out.append(f"Naik level! Kamu kini level {s.player.level}.")
+            self._apply_pending_levels(out)
             out.append("Kemenangan!")
         elif state.result == CombatResult.DEFEAT:
             out.extend(state.log)
@@ -434,6 +432,12 @@ class Game:
         else:
             out.append("Pertarungan berakhir.")
         return out
+
+    def _apply_pending_levels(self, out):
+        levels = level_system.gain_xp(self.state.player, 0)
+        if levels:
+            self._apply_level_ups(levels)
+            out.append(f"Naik level! Kamu kini level {self.state.player.level}.")
 
     def _apply_level_ups(self, levels):
         p = self.state.player
