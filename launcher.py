@@ -1,6 +1,8 @@
 """Chronicle of the Past - launcher entry point."""
 
-import re
+import sys
+import termios
+import tty
 
 from src.core import save_manager
 from src.core.game import Game
@@ -9,62 +11,113 @@ from src.ui import animation, menu
 from src.utils.json_loader import ContentError
 
 
-def _strip_escape(text: str) -> str:
-    """Hapus escape sequence ANSI dan map arrow keys ke w/s.
+def _read_key() -> str:
+    """Baca satu keypress dari stdin.
 
-    Terminal mengirim \x1b[A (up) dan \x1b[B (down) untuk arrow keys.
-    Saat di-copy-paste ke terminal, sequence ini terlihat sebagai ^[[A/^[[B.
+    Di TTY nyata (terminal interaktif): gunakan raw mode untuk baca
+    karakter langsung tanpa buffering — arrow key bekerja real-time.
+    Di non-TTY (pipe/redirect/pytest): fallback ke input() satu baris.
+
+    Mengembalikan: 'UP', 'DOWN', 'ENTER', 'q', atau karakter tunggal.
     """
-    # Handle printable caret form (^[[A) — dari copy-paste terminal output
-    text = text.replace('^[[A', 'w').replace('^[[B', 's')
-    # Handle actual ANSI escape byte (ESC[A, ESC[B)
-    text = text.replace('\x1b[A', 'w').replace('\x1b[B', 's')
-    # Hapus sisa escape sequences lain
-    text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
-    text = re.sub(r'\^\[\[[0-9;]*[a-zA-Z]', '', text)
-    return text.strip().lower()
+    if not sys.stdin.isatty():
+        # Fallback untuk non-TTY (pytest, pipe, redirect)
+        line = input("> ").strip().lower()
+        if line in ("w", "k"):
+            return "UP"
+        if line in ("s", "j"):
+            return "DOWN"
+        if line == "":
+            return "ENTER"
+        return line
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setcbreak(fd)
+        ch = sys.stdin.read(1)
+        if ch == "\x1b":            # ESC byte — mulai sequence arrow key
+            ch2 = sys.stdin.read(1)
+            if ch2 == "[":
+                ch3 = sys.stdin.read(1)
+                return {"A": "UP", "B": "DOWN"}.get(ch3, "")
+            return ""               # ESC tanpa sequence yang dikenal → abaikan
+        if ch in ("\r", "\n"):
+            return "ENTER"
+        if ch == "\x03":            # Ctrl+C
+            raise KeyboardInterrupt
+        return ch.lower()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 
-def _menu_selection():
+def _menu_loop(render_fn, total: int, hint: str) -> int:
+    """Loop navigasi menu generik dengan arrow key support.
+
+    Args:
+        render_fn: callable(selection) → str teks menu untuk dicetak.
+        total: jumlah item dalam menu.
+        hint: teks petunjuk navigasi yang ditampilkan di bawah menu.
+
+    Returns:
+        Index item yang dipilih (0-based).
+    """
     selection = 0
-    total = len(menu.MAIN_ITEMS)
+    first = True
     while True:
+        rendered = render_fn(selection)
+        # Hitung jumlah baris untuk di-clear sebelum redraw
+        line_count = rendered.count("\n") + 1 + 2  # +1 baris terakhir, +2 (blank + hint)
+
+        if not first and sys.stdout.isatty():
+            # Gerakkan kursor ke atas dan hapus area menu lama
+            print(f"\033[{line_count}A\033[J", end="", flush=True)
+        first = False
+
         print()
-        print(menu.render_main(selection))
-        print("Navigasi: 'w'/'s' untuk berpindah. Enter untuk memilih. 'q' keluar.")
-        key = _strip_escape(input("> "))
-        if key in ("w", "k"):
+        print(rendered)
+        print(hint, flush=True)
+
+        key = _read_key()
+        if key in ("UP", "w", "k"):
             selection = (selection - 1) % total if total > 0 else 0
-        elif key in ("s", "j"):
-            selection = menu.arrow(selection, total)
+        elif key in ("DOWN", "s", "j"):
+            selection = (selection + 1) % total if total > 0 else 0
+        elif key in ("ENTER", ""):
+            return selection
         elif key == "q":
             raise KeyboardInterrupt
-        elif key == "":
-            return selection
+
+
+def _menu_selection() -> int:
+    total = len(menu.MAIN_ITEMS)
+    return _menu_loop(
+        render_fn=menu.render_main,
+        total=total,
+        hint="Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih. 'q' keluar.",
+    )
 
 
 def _class_selection(ctx):
     class_ids = list(ctx.classes.keys())
     if not class_ids:
         return None
-    selection = 0
-    while True:
-        print()
-        print("Pilih Kelas:")
+
+    def render(selection):
+        lines = ["Pilih Kelas:"]
         for idx, class_id in enumerate(class_ids):
             marker = "> " if idx == selection else "  "
-            print(f"{marker}{ctx.classes[class_id]['name']}")
-        print()
-        print(menu.render_class_card(ctx.classes[class_ids[selection]]))
-        print()
-        print("Navigasi: 'w'/'s' untuk berpindah. Enter untuk memilih.")
-        key = _strip_escape(input("> "))
-        if key in ("w", "k"):
-            selection = (selection - 1) % len(class_ids)
-        elif key in ("s", "j"):
-            selection = menu.arrow(selection, len(class_ids))
-        elif key == "":
-            return class_ids[selection]
+            lines.append(f"{marker}{ctx.classes[class_id]['name']}")
+        lines.append("")
+        lines.append(menu.render_class_card(ctx.classes[class_ids[selection]]))
+        return "\n".join(lines)
+
+    idx = _menu_loop(
+        render_fn=render,
+        total=len(class_ids),
+        hint="Navigasi: \u2191/\u2193 atau w/s untuk berpindah. Enter untuk memilih.",
+    )
+    return class_ids[idx]
 
 
 def _game_loop(game):
