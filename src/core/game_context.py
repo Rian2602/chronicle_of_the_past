@@ -3,7 +3,7 @@ from typing import Any
 
 from src.core.constants import FACTIONS
 from src.models.player import Player
-from src.utils.json_loader import load_dir, load_json
+from src.utils.json_loader import ContentError, load_dir, load_json
 
 
 class GameContext:
@@ -36,7 +36,9 @@ class GameContext:
         if not os.path.isfile(path):
             return []
         data = load_json(path)
-        return list(data) if isinstance(data, list) else []
+        if not isinstance(data, list):
+            raise ContentError(f"File {path} harus berupa daftar JSON")
+        return list(data)
 
     def create_player(self, name: str, class_id: str) -> Player:
         """

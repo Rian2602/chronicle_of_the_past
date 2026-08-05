@@ -15,7 +15,7 @@ def load_json(path):
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    except (OSError, json.JSONDecodeError) as e:
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
         raise ContentError(f"Gagal memuat {path}: {e}") from e
 
 
@@ -30,6 +30,11 @@ def load_dir(dirpath):
         return result
     for name in sorted(os.listdir(dirpath)):
         if name.endswith(".json"):
-            data = load_json(os.path.join(dirpath, name))
+            path = os.path.join(dirpath, name)
+            data = load_json(path)
+            if not isinstance(data, dict) or "id" not in data:
+                raise ContentError(
+                    f"File {path} harus objek JSON dengan field 'id'"
+                )
             result[data["id"]] = data
     return result
