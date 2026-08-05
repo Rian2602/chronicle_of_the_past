@@ -1,0 +1,14 @@
+{
+  "id": "dialog_corvin_help",
+  "require_flags": ["corvin_help_offer"],
+  "require_not_flags": ["corvin_help_done"],
+  "lines": [
+    {"speaker": "general_corvin", "text": "Melihat raja? Mungkin. Yang Mulia masih raja — meski sebagian orang di istana ini tampaknya lupa akan hal itu."},
+    {"speaker": "general_corvin", "text": "Aku bisa membawamu masuk tanpa banyak pertanyaan. Tapi ingat — di istana ini, setiap kebaikan punya harga."},
+    {"speaker": "general_corvin", "text": "Kalau kau membawa sesuatu yang bisa membuka mata raja... aku akan berdiri di sisimu. Aku sudah muak dengan bayangan di balik takhta."}
+  ],
+  "choices": [
+    {"text": "Aku akan membawakan kebenaran untuk raja.", "require_flags": [], "set_flags": ["corvin_help_done", "corvin_ally"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["corvin_help_done"], "next": null}
+  ]
+}

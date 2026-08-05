@@ -1,0 +1,13 @@
+{
+  "id": "dialog_marcus_quest",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["marcus_quest_done"],
+  "lines": [
+    {"speaker": "marcus", "text": "Hei, Pejalan Waktu. Ada desas-desus — tentara bayaran membayar mahal untuk info tentang desa ini."},
+    {"speaker": "marcus", "text": "Bila kau butuh barang atau kabar, aku orangnya. Gilda dagang selalu punya telinga di mana-mana."}
+  ],
+  "choices": [
+    {"text": "Jualan dulu, kabar nanti.", "require_flags": [], "set_flags": ["marcus_quest_done", "met_marcus"], "next": "dialog_marcus_main"},
+    {"text": "Terima kasih.", "require_flags": [], "set_flags": ["marcus_quest_done", "met_marcus"], "next": null}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "rune_crown",
+  "name": "Rune Crown",
+  "type": "helmet",
+  "slot": "helmet",
+  "modifiers": {"defense": 6, "intelligence": 2},
+  "price": 260,
+  "description": "Mahkota kecil berukir simbol Kaum Arah."
+}

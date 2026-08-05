@@ -1,0 +1,15 @@
+{
+  "id": "dialog_reed_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_reed"],
+  "lines": [
+    {"speaker": "scout_reed", "text": "...Kau memperhatikanku sebelum aku memperhatikanmu. Itu jarang terjadi. Aku Reed."},
+    {"speaker": "scout_reed", "text": "Aku mata-mata pemberontak — dan sebelum kau bertanya: ya, kami ada di hutan-hutan ini. Tanah ini milik rakyat, bukan mahkota."},
+    {"speaker": "scout_reed", "text": "Sera bilang kau tidak berbahaya. Tapi aku menilai sendiri. Katakan sesuatu yang membuatku tidak perlu menusukmu."}
+  ],
+  "choices": [
+    {"text": "Aku datang membawa kabar dari desa.", "require_flags": [], "set_flags": ["met_reed"], "next": "dialog_reed_main"},
+    {"text": "Aku bukan musuhmu.", "require_flags": [], "set_flags": ["met_reed"], "next": "dialog_reed_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

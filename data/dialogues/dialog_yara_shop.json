@@ -1,0 +1,12 @@
+{
+  "id": "dialog_yara_shop",
+  "require_flags": ["met_yara"],
+  "lines": [
+    {"speaker": "alchemist_yara", "text": "Elixir yang memulihkan nyawa, ramuan waktu untuk memulihkan pikiran, dan bom asap untuk saat kau salah melangkah."},
+    {"speaker": "alchemist_yara", "text": "(Etalase toko lengkap menyusul di Phase 0. Untuk sekarang, sebutkan saja yang kau butuhkan.)"}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Yara.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

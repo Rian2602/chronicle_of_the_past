@@ -1,0 +1,15 @@
+{
+  "id": "sera",
+  "name": "Sera",
+  "location": "rebel_camp",
+  "role": "leader",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "rebels",
+  "dialogs": [
+    "dialog_sera_intro",
+    "dialog_sera_offer",
+    "dialog_sera_followup",
+    "dialog_sera_cause",
+    "dialog_sera_generic"
+  ]
+}

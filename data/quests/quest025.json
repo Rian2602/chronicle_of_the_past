@@ -1,0 +1,22 @@
+{
+  "id": "quest025",
+  "title": "Segel Waktu",
+  "type": "main",
+  "description": "Segel ketiga adalah ujian waktu: selaraskan memori.",
+  "objectives": [
+    "Selaraskan memori dengan Jangkar."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "seal_of_time_ok"
+    }
+  ],
+  "rewards": {
+    "xp": 120
+  },
+  "flags_on_complete": [
+    "map_anchor_chamber_unlocked"
+  ],
+  "next": "quest026"
+}

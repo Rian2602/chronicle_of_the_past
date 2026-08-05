@@ -1,0 +1,17 @@
+{
+  "id": "dialog_avatar_ending",
+  "require_flags": ["ending_choice_pending"],
+  "require_not_flags": ["ending_chosen"],
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "Jangkar berdetak seperti jantung dunia. Semua jalan yang kau tempuh berhenti di sini, Pejalan Waktu."},
+    {"speaker": "anchor_avatar", "text": "Takdir ini bukan milikku — dan bukan milik para faksi. Takdir ini milikmu. Pilihlah, dan dunia akan menulis ulang dirinya sesuai pilihanmu."}
+  ],
+  "choices": [
+    {"text": "Segel Jangkar bersama Ancient Order. (Ending A: Penjaga Baru)", "require_reputation": {"ancient_order": 25}, "set_flags": ["ending_a", "ending_chosen"], "next": null},
+    {"text": "Serahkan ke Pemberontak. (Ending B: Fajar Merah)", "require_reputation": {"rebels": 25}, "set_flags": ["ending_b", "ending_chosen"], "next": null},
+    {"text": "Serahkan ke Raja yang bersih. (Ending C: Mahkota Utuh)", "require_reputation": {"royal_army": 20}, "require_flags": ["king_informed"], "set_flags": ["ending_c", "ending_chosen"], "next": null},
+    {"text": "Serahkan ke Akademi. (Ending D: Menara Ilmu)", "require_reputation": {"scholar_society": 25}, "set_flags": ["ending_d", "ending_chosen"], "next": null},
+    {"text": "Hancurkan Jangkar. (Ending E: Abu yang Tersisa)", "require_flags": [], "set_flags": ["ending_e", "ending_chosen"], "next": null},
+    {"text": "Tulis ulang masa lalu. (Ending F: Paradoks — rahasia)", "require_flags": ["rewrite_key"], "set_flags": ["ending_f", "ending_chosen"], "next": null}
+  ]
+}

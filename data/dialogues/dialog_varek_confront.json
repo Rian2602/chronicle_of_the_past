@@ -1,0 +1,15 @@
+{
+  "id": "dialog_varek_confront",
+  "require_flags": ["conspiracy_proven"],
+  "require_not_flags": ["varek_unmasked"],
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "...Jadi kau sudah tahu. Surat-surat itu, para tentara bayaran, inkuisisi, api — semua dari satu tangan. Tanganku."},
+    {"speaker": "chancellor_varek", "text": "Dan kau tahu mengapa, Pejalan Waktu? Karena di bawah desa kecilmu ada sesuatu yang bisa menulis ulang takdir. Dan takdir ini — takdir kerajaan ini — sedang sekarat."},
+    {"speaker": "chancellor_varek", "text": "Aku akan memiliki Jangkar itu. Dengan atau tanpa izinmu. Dengan atau tanpa mahkota yang kusetir seperti boneka."}
+  ],
+  "choices": [
+    {"text": "Aku akan menghentikanmu, Varek.", "require_flags": [], "set_flags": ["varek_unmasked", "varek_confronted"], "next": "dialog_varek_defiance"},
+    {"text": "Kau gila, Varek.", "require_flags": [], "set_flags": ["varek_unmasked", "varek_confronted"], "next": "dialog_varek_defiance"},
+    {"text": "(Diam.)", "require_flags": [], "set_flags": ["varek_unmasked", "varek_confronted"], "next": "dialog_varek_defiance"}
+  ]
+}

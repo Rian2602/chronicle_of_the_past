@@ -1,0 +1,14 @@
+{
+  "id": "city_guard",
+  "name": "Penjaga Kota",
+  "level": 9,
+  "stats": {"attack": 13, "defense": 11, "hp": 50, "mp": 0, "agility": 8, "intelligence": 5},
+  "behavior": "defensive",
+  "reward": {"xp": 100, "gold": [15, 24]},
+  "skills": ["slash"],
+  "loot": [
+    {"item": "potion", "chance": 20, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Penjaga gerbang ibukota, patuh pada perintah siapa pun yang memegang stempel."
+}

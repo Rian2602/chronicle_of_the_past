@@ -1,0 +1,12 @@
+{
+  "id": "dialog_ben_shop",
+  "require_flags": ["met_ben"],
+  "lines": [
+    {"speaker": "ben", "text": "Pedang besi buatan desa, baja tempaan terbaik dari logam bekas reruntuhan, dan zirah yang bisa menahan gigitan serigala."},
+    {"speaker": "ben", "text": "(Etalase toko lengkap menyusul di Phase 0. Untuk sekarang, sebutkan saja yang kau perlukan.)"}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Ben.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

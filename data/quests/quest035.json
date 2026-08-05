@@ -1,0 +1,26 @@
+{
+  "id": "quest035",
+  "title": "Menembus Cincin Api",
+  "type": "main",
+  "description": "Blokade api menghalangi jalan ke ibukota. Terobos.",
+  "objectives": [
+    "Kunjungi benteng kerajaan (capital_keep).",
+    "Kalahkan 2 ksatria kerajaan (royal_knight)."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "capital_keep"
+    },
+    {
+      "kind": "flag",
+      "target": "killed_royal_knight_2"
+    }
+  ],
+  "rewards": {
+    "xp": 190,
+    "gold": 60
+  },
+  "flags_on_complete": [],
+  "next": "quest036"
+}

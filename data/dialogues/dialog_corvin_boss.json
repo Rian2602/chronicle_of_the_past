@@ -1,0 +1,14 @@
+{
+  "id": "dialog_corvin_boss",
+  "require_flags": ["corvin_boss_pending"],
+  "require_not_flags": ["boss_arc5_defeated"],
+  "lines": [
+    {"speaker": "general_corvin", "text": "Jadi ini akhirnya. Aku tahu kau memilih jalan yang berbeda — dan jalan itu melewati pasukanku."},
+    {"speaker": "general_corvin", "text": "Aku tidak membenci pilihanmu, Pejalan Waktu. Tapi aku bersumpah pada mahkota — dan sumpah tidak mengenal keraguan."},
+    {"speaker": "general_corvin", "text": "Tunjukkan padaku apakah kebenaranmu cukup tajam untuk menembus baja sumpahku. Ayo."}
+  ],
+  "choices": [
+    {"text": "Aku menghormatimu, Panglima.", "require_flags": [], "set_flags": ["corvin_boss_fought"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

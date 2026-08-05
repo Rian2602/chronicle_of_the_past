@@ -1,0 +1,13 @@
+{
+  "id": "dialog_ben_news",
+  "require_flags": ["met_ben"],
+  "require_not_flags": ["ben_news_told"],
+  "lines": [
+    {"speaker": "ben", "text": "Kabar dari bengkel? Beberapa hari lalu, seorang pemburu datang meminta mata tombak — katanya untuk menjaga dari 'sesuatu yang besar' di hutan."},
+    {"speaker": "ben", "text": "Lalu tadi pagi, ada orang asing berpakaian rapi menawar batu aneh yang kukira hanya kerikil. Kubilang tidak. Batu itu membuatku tidak tenang."}
+  ],
+  "choices": [
+    {"text": "Batu seperti apa?", "require_flags": [], "set_flags": ["ben_news_told", "ben_saw_stranger"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["ben_news_told"], "next": null}
+  ]
+}

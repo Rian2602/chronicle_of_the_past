@@ -1,0 +1,15 @@
+{
+  "id": "elite_guard",
+  "name": "Pengawal Elit",
+  "level": 18,
+  "stats": {"attack": 20, "defense": 16, "hp": 95, "mp": 16, "agility": 9, "intelligence": 8},
+  "behavior": "defensive",
+  "reward": {"xp": 240, "gold": [36, 52]},
+  "skills": ["shield_bash"],
+  "loot": [
+    {"item": "elixir", "chance": 15, "amount": 1},
+    {"item": "rune_plate", "chance": 8, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Pengawal pribadi kanselir, berzirah penuh dan tanpa ragu."
+}

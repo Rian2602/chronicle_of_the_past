@@ -1,0 +1,14 @@
+{
+  "id": "dialog_aldric_varek",
+  "require_flags": ["king_informed"],
+  "require_not_flags": ["aldric_varek_done"],
+  "lines": [
+    {"speaker": "king_aldric", "text": "...Surat ini. Materai elang emas. Aku tidak pernah menandatangani perintah pembakaran ini."},
+    {"speaker": "king_aldric", "text": "Varek. Selama bertahun-tahun dia berdiri di belakangku, membisikkan nama-nama yang harus kuasingkan, perang yang harus kumanjakan."},
+    {"speaker": "king_aldric", "text": "Aku sudah tua, Pejalan Waktu. Tapi tidak terlalu tua untuk merasa dikhianati. Pergilah ke benteng, kumpulkan bukti-buktinya — dan bawa pulang kebenaran."}
+  ],
+  "choices": [
+    {"text": "Aku akan membawa kebenaran itu, Baginda.", "require_flags": [], "set_flags": ["aldric_varek_done", "king_ally"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["aldric_varek_done"], "next": null}
+  ]
+}

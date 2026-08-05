@@ -1,0 +1,13 @@
+{
+  "id": "dialog_tom_evac_go",
+  "require_flags": ["escort_tom_arc5"],
+  "require_not_flags": ["tom_evac_done"],
+  "lines": [
+    {"speaker": "tom", "text": "Baik. Kukumpulkan warga di gerbang timur — anak-anak, orang tua, dan Marta yang akhirnya kutemukan bersembunyi di gudang."},
+    {"speaker": "tom", "text": "Kamp pemberontak di hutan dalam, katamu? Aku percaya padamu, Pejalan Waktu. Lagipula, apa lagi yang bisa kita percaya selain satu sama lain?"}
+  ],
+  "choices": [
+    {"text": "Kita bergerak sekarang.", "require_flags": [], "set_flags": ["tom_evac_done", "village_evacuated"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["tom_evac_done"], "next": null}
+  ]
+}

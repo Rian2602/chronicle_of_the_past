@@ -1,0 +1,14 @@
+{
+  "id": "thug",
+  "name": "Preman",
+  "level": 7,
+  "stats": {"attack": 12, "defense": 6, "hp": 36, "mp": 0, "agility": 9, "intelligence": 3},
+  "behavior": "aggressive",
+  "reward": {"xp": 80, "gold": [12, 20]},
+  "skills": [],
+  "loot": [
+    {"item": "herb", "chance": 30, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Tangan besi Serigala Malam di lorong-lorong gelap."
+}

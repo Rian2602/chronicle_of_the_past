@@ -1,0 +1,16 @@
+{
+  "id": "dialog_marcus_betrayal",
+  "require_flags": ["arc3_started"],
+  "require_not_flags": ["marcus_betrayal_found"],
+  "lines": [
+    {"speaker": "marcus", "text": "Pejalan Waktu. Aku... ada yang harus kuakui."},
+    {"speaker": "marcus", "text": "Agen kerajaan menemuiku semalam. Mereka menawarkan uang — banyak sekali — untuk tahu di mana letak batu di bawah desa ini."},
+    {"speaker": "marcus", "text": "Aku menolak. Tapi mereka tidak pergi dengan tangan kosong — pengawal gilda yang kini berputar di luar itu bukan milik gilda. Mereka dikirim untuk memaksaku."},
+    {"speaker": "marcus", "text": "Bantu aku mengusir mereka, dan aku bersumpah tidak akan menjual satu huruf pun tentang desamu."}
+  ],
+  "choices": [
+    {"text": "Kita hadapi mereka bersama.", "require_flags": [], "set_flags": ["marcus_betrayal_found", "marcus_helped"], "next": null},
+    {"text": "Aku yang urus ini. Tetaplah di sini.", "require_flags": [], "set_flags": ["marcus_betrayal_found"], "next": null},
+    {"text": "Kau harusnya lebih berhati-hati, Marcus.", "require_flags": [], "set_flags": ["marcus_betrayal_found"], "next": null}
+  ]
+}

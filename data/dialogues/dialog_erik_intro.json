@@ -1,0 +1,13 @@
+{
+  "id": "dialog_erik_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["erik_story_done"],
+  "lines": [
+    {"speaker": "guard_erik", "text": "Pejalan Waktu. Ada hal yang harus kau tahu."},
+    {"speaker": "guard_erik", "text": "Tadi pagi aku menemukan jejak darah di jalan setapak menuju hutan dalam. Bukan jejak hewan."}
+  ],
+  "choices": [
+    {"text": "Ceritakan lebih lanjut.", "require_flags": [], "set_flags": ["erik_story_done"], "next": "dialog_erik_forest"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

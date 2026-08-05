@@ -1,0 +1,15 @@
+{
+  "id": "dialog_mira_intro",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["met_mira"],
+  "lines": [
+    {"speaker": "innkeeper_mira", "text": "Selamat datang di Penginapan Mahkota Perak — satu-satunya tempat di Ashenfeld di mana dompetmu tidak akan lari duluan."},
+    {"speaker": "innkeeper_mira", "text": "Aku Mira. Tiga puluh tahun melayani pengembara, ksatria, dan pencuri yang mengaku bukan pencuri."},
+    {"speaker": "innkeeper_mira", "text": "Kamar, makanan, atau kabar? Di ibukota, ketiganya sama-sama mahal."}
+  ],
+  "choices": [
+    {"text": "Ada kabar apa di ibukota?", "require_flags": [], "set_flags": ["met_mira"], "next": "dialog_mira_news"},
+    {"text": "Aku butuh ramuan.", "require_flags": [], "set_flags": ["met_mira"], "next": "dialog_mira_shop"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

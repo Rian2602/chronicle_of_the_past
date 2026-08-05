@@ -1,0 +1,28 @@
+{
+  "id": "quest013",
+  "title": "Gereja yang Menghakimi",
+  "type": "main",
+  "description": "Sister Iris memberi ultimatum 5 hari. Pilih sikapmu.",
+  "objectives": [
+    "Bicaralah dengan Sister Iris.",
+    "Terima ultimatum gereja."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "sister_iris"
+    },
+    {
+      "kind": "flag",
+      "target": "ultimatum_received"
+    }
+  ],
+  "rewards": {
+    "xp": 80
+  },
+  "flags_on_complete": [
+    "ultimatum_5_days",
+    "map_crime_den_unlocked"
+  ],
+  "next": "quest014"
+}

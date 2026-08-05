@@ -1,0 +1,20 @@
+{
+  "id": "quest036",
+  "title": "Pilihan Terakhir",
+  "type": "main",
+  "description": "Kau memegang takdir Jangkar. Keputusan ini menentukan akhir cerita.",
+  "objectives": [
+    "Buat keputusan tentang nasib Jangkar."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "ending_choice_pending"
+    }
+  ],
+  "rewards": {
+    "xp": 200
+  },
+  "flags_on_complete": [],
+  "next": null
+}

@@ -1,0 +1,28 @@
+{
+  "id": "quest020",
+  "title": "Api Hakim",
+  "type": "main",
+  "description": "Duel puncak dengan Sister Iris. Dia hanya alat - Varek yang memerintahkan.",
+  "objectives": [
+    "Kalahkan Sister Iris (sister_iris)."
+  ],
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "sister_iris"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 70,
+    "reputation": {
+      "ancient_order": 10
+    }
+  },
+  "flags_on_complete": [
+    "boss_arc3_defeated",
+    "iris_revealed",
+    "map_ruins_depth_unlocked"
+  ],
+  "next": "quest021"
+}

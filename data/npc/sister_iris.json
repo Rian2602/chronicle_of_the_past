@@ -1,0 +1,9 @@
+{
+  "id": "sister_iris",
+  "name": "Sister Iris",
+  "location": "village",
+  "role": "inquisitor",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "church",
+  "dialogs": ["dialog_iris_defeated", "dialog_iris_intro", "dialog_iris_main", "dialog_iris_generic"]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "dialog_tom_generic",
+  "lines": [
+    {"speaker": "tom", "text": "Tanah di sini masih menyimpan hangatnya. Hangat yang tidak pernah kuminta. Tapi ladang baru akan tumbuh, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

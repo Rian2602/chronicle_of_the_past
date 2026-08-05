@@ -1,0 +1,13 @@
+{
+  "id": "anchor_vault",
+  "name": "Ruang Bawah Perpustakaan",
+  "region": "1",
+  "threat_level": 3,
+  "description": "Ruang rahasia di bawah perpustakaan. Simbol Kaum Arah terukir di lantai, dan di tengahnya dinding batu yang berdenyut seperti jantung.",
+  "ascii_art": "anchor_vault",
+  "exits": ["village"],
+  "npcs": ["lyra"],
+  "enemy_pool": [
+    {"id": "royal_scout", "weight": 1}
+  ]
+}

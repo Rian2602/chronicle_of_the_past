@@ -1,0 +1,13 @@
+{
+  "id": "ruins_entrance",
+  "name": "Pintu Reruntuhan",
+  "region": "2",
+  "threat_level": 5,
+  "description": "Gerbang batu setengah terkubur tanah. Ukiran kuno menyala samar saat kau mendekat.",
+  "ascii_art": "ruins_entrance",
+  "exits": ["village", "ancient_ruins"],
+  "npcs": [],
+  "enemy_pool": [
+    {"id": "ruins_scavenger", "weight": 3}
+  ]
+}

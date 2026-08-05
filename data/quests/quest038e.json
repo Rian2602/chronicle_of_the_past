@@ -1,0 +1,23 @@
+{
+  "id": "quest038e",
+  "title": "Pagi Tanpa Batu",
+  "type": "main",
+  "description": "Jangkar hancur. Ancaman hilang, tapi waktu mulai tak menentu.",
+  "objectives": [
+    "Selesaikan penghancuran Jangkar."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "anchor_destroyed"
+    }
+  ],
+  "rewards": {
+    "xp": 250
+  },
+  "flags_on_complete": [
+    "season1_path_done",
+    "ending_e_done"
+  ],
+  "next": "quest039"
+}

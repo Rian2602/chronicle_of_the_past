@@ -136,8 +136,8 @@ def test_player_stats_include_effective_and_derived():
 def test_enemy_stats_returns_enemy_stats():
     enemy = make_enemy()
     state = start_combat(make_player(), enemy, Randomizer(seed=7))
-    assert enemy_stats(state) is state.enemy.stats
-    assert enemy_stats(state) is not enemy.stats
+    assert enemy_stats(state) == state.enemy.stats
+    assert enemy_stats(state) is not state.enemy.stats
 
 
 def test_basic_attack_flow_reaches_victory():

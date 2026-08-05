@@ -1,0 +1,14 @@
+{
+  "id": "dialog_iris_main_who",
+  "require_flags": ["iris_asked_who"],
+  "require_not_flags": ["iris_who_told"],
+  "lines": [
+    {"speaker": "sister_iris", "text": "...Kau berani bertanya."},
+    {"speaker": "sister_iris", "text": "Aku diutus atas nama gereja. Tapi surat perintah yang kuterima... bukan dari paus. Surat itu bermaterai elang emas, cap istana."},
+    {"speaker": "sister_iris", "text": "Jangan kau tarik kesimpulan terlalu cepat. Aku hanya menjalankan perintah — apa pun bentuknya."}
+  ],
+  "choices": [
+    {"text": "Cap istana... Kanselir Varek.", "require_flags": [], "set_flags": ["iris_who_told", "varek_first_suspect"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["iris_who_told"], "next": null}
+  ]
+}

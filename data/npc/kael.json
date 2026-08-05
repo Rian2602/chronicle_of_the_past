@@ -1,0 +1,16 @@
+{
+  "id": "kael",
+  "name": "Prof. Kael",
+  "location": "village",
+  "role": "scholar",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "scholar_society",
+  "dialogs": ["dialog_kael_intro", "dialog_kael_script", "dialog_kael_main", "dialog_kael_generic"],
+  "shop": {
+    "buy": [
+      {"item": "old_scroll", "price": 30},
+      {"item": "time_tincture", "price": 60}
+    ],
+    "sell_multiplier": 0.6
+  }
+}

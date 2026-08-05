@@ -1,0 +1,28 @@
+{
+  "id": "quest026",
+  "title": "Koridor yang Berdenyut",
+  "type": "main",
+  "description": "Jalan menuju ruang Jangkar dipenuhi hantu waktu.",
+  "objectives": [
+    "Kunjungi ruang Jangkar (anchor_chamber).",
+    "Kalahkan 2 hantu waktu (time_wraith)."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "anchor_chamber"
+    },
+    {
+      "kind": "flag",
+      "target": "killed_time_wraith_2"
+    }
+  ],
+  "rewards": {
+    "xp": 130,
+    "gold": 30
+  },
+  "flags_on_complete": [
+    "map_capital_unlocked"
+  ],
+  "next": "quest027"
+}

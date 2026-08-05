@@ -122,14 +122,16 @@ def test_evaluate_time():
 def test_evaluate_level_gte():
     gs = GameState()
     gs.player = make_player(level=3)
-    assert evaluate({"kind": "level", "gte": 3}, gs) is True
+    cond = {"kind": "level", "operator": "GTE", "value": 3}
+    assert evaluate(cond, gs) is True
     gs.player = make_player(level=2)
-    assert evaluate({"kind": "level", "gte": 3}, gs) is False
+    assert evaluate(cond, gs) is False
 
 
 def test_evaluate_level_no_player():
     gs = GameState()
-    assert evaluate({"kind": "level", "gte": 3}, gs) is False
+    cond = {"kind": "level", "operator": "GTE", "value": 3}
+    assert evaluate(cond, gs) is False
 
 
 def test_evaluate_quest_done():

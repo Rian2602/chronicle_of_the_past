@@ -1,0 +1,15 @@
+{
+  "id": "dialog_tom_arc5",
+  "require_flags": ["arc5_started"],
+  "require_not_flags": ["tom_evacuated"],
+  "lines": [
+    {"speaker": "tom", "text": "Pejalan Waktu... kau kembali. Desa ini kini lebih panas dari tungkuku dulu."},
+    {"speaker": "tom", "text": "Inkuisisi mengepung dari segala arah. Warga berlindung di penginapan Helen, tapi api tidak peduli pada dinding."},
+    {"speaker": "tom", "text": "Aku sudah kehilangan rumah sekali. Aku tidak akan kehilangan desa ini dua kali. Bawa kami ke kamp pemberontak — kalau kau mau."}
+  ],
+  "choices": [
+    {"text": "Aku akan mengawal kalian ke kamp pemberontak.", "require_flags": [], "set_flags": ["tom_evacuated", "escort_tom_arc5"], "next": "dialog_tom_evac_go"},
+    {"text": "Tunggu sampai aman.", "require_flags": [], "set_flags": ["tom_waiting"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

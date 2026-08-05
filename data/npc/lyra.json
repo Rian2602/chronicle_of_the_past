@@ -1,0 +1,15 @@
+{
+  "id": "lyra",
+  "name": "Lyra",
+  "location": "village",
+  "role": "historian",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "ancient_order",
+  "dialogs": [
+    "dialog_lyra_main",
+    "dialog_lyra_anchor",
+    "dialog_lyra_ruins",
+    "dialog_lyra_quest015",
+    "dialog_lyra_generic"
+  ]
+}

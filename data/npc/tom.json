@@ -1,0 +1,9 @@
+{
+  "id": "tom",
+  "name": "Tom",
+  "location": "village",
+  "role": "farmer",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_tom_arc5", "dialog_tom_intro", "dialog_tom_fire", "dialog_tom_escort", "dialog_tom_generic"]
+}

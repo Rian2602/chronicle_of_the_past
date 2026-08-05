@@ -20,6 +20,7 @@ class Player:
     flags: dict = field(default_factory=dict)
     quests_active: dict = field(default_factory=dict)
     quests_done: list = field(default_factory=list)
+    quests_failed: list = field(default_factory=list)
     memories: list = field(default_factory=list)
     learned_skills: list = field(default_factory=list)
     xp_bonus: float = 1.0

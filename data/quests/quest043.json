@@ -1,0 +1,20 @@
+{
+  "id": "quest043",
+  "title": "Catatan Seorang Pejalan Waktu",
+  "type": "main",
+  "description": "Tuliskan catatan perjalananmu ke dalam buku perpustakaan.",
+  "objectives": [
+    "Siapkan catatan perjalanan (recap_prepared)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "recap_prepared"
+    }
+  ],
+  "rewards": {
+    "xp": 100
+  },
+  "flags_on_complete": [],
+  "next": "quest044"
+}

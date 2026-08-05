@@ -1,0 +1,10 @@
+{
+  "id": "rune_key",
+  "name": "Kunci Batu Berukir",
+  "type": "quest",
+  "slot": null,
+  "modifiers": {},
+  "price": 0,
+  "quest_flag": "have_rune_key",
+  "description": "Kunci batu dengan ukiran yang cocok dengan gerbang reruntuhan."
+}

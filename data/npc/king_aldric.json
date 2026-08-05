@@ -1,0 +1,9 @@
+{
+  "id": "king_aldric",
+  "name": "Raja Aldric",
+  "location": "capital_keep",
+  "role": "monarch",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "royal_army",
+  "dialogs": ["dialog_aldric_intro", "dialog_aldric_arc5", "dialog_aldric_varek", "dialog_aldric_main", "dialog_aldric_generic"]
+}

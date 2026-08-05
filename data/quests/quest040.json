@@ -1,0 +1,25 @@
+{
+  "id": "quest040",
+  "title": "Perpisahan Sekutu",
+  "type": "main",
+  "description": "Ucapkan selamat tinggal pada sekutu yang bertahan.",
+  "objectives": [
+    "Bicaralah dengan Lyra.",
+    "Bicaralah dengan Sera."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "lyra"
+    },
+    {
+      "kind": "talk",
+      "target": "sera"
+    }
+  ],
+  "rewards": {
+    "xp": 100
+  },
+  "flags_on_complete": [],
+  "next": "quest041"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "quest017",
+  "title": "Sketsa dari Akademi",
+  "type": "main",
+  "description": "Kumpulkan gulungan kuno dan bantu Prof. Kael mengartikan ukiran.",
+  "objectives": [
+    "Kumpulkan 2 gulungan kuno (old_scroll).",
+    "Bicaralah dengan Prof. Kael."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "have_old_scrolls"
+    },
+    {
+      "kind": "talk",
+      "target": "kael"
+    }
+  ],
+  "rewards": {
+    "xp": 100,
+    "gold": 20,
+    "reputation": {
+      "scholar_society": 10
+    }
+  },
+  "flags_on_complete": [
+    "ancient_script_decoded"
+  ],
+  "next": "quest018"
+}

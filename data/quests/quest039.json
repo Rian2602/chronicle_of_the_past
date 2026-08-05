@@ -1,0 +1,20 @@
+{
+  "id": "quest039",
+  "title": "Perubahan Akhir",
+  "type": "main",
+  "description": "Dunia berubah sesuai keputusanmu. Selesaikan urusan terakhir.",
+  "objectives": [
+    "Selesaikan urusan akhir sesuai jalan cerita."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "season1_path_done"
+    }
+  ],
+  "rewards": {
+    "xp": 150
+  },
+  "flags_on_complete": [],
+  "next": "quest040"
+}

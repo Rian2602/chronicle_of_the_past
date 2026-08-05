@@ -1,0 +1,16 @@
+{
+  "id": "finn",
+  "name": "Finn",
+  "location": "village",
+  "role": "spy",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "royal_army",
+  "dialogs": [
+    "dialog_finn_intro",
+    "dialog_finn_main",
+    "dialog_finn_caught",
+    "dialog_finn_arrested",
+    "dialog_finn_freed",
+    "dialog_finn_generic"
+  ]
+}

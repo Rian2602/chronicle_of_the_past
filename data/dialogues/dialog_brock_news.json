@@ -1,0 +1,14 @@
+{
+  "id": "dialog_brock_news",
+  "require_flags": ["met_brock"],
+  "require_not_flags": ["brock_news_told"],
+  "lines": [
+    {"speaker": "smith_brock", "text": "Aneh? Semua di istana ini aneh belakangan. Kanselir memesan dua ratus bilah pedang — tapi bukan untuk tentara kerajaan."},
+    {"speaker": "smith_brock", "text": "Bilah itu dikirim ke gudang rahasia, dikawal orang-orang berjubah. Aku tidak menanyakan tujuannya. Aku hanya menempa."},
+    {"speaker": "smith_brock", "text": "Tapi kau... kau mungkin sebaiknya tahu. Kalau ada perang datang, perang itu tidak akan dimulai dari perbatasan. Dimulai dari dalam istana."}
+  ],
+  "choices": [
+    {"text": "Dua ratus bilah... untuk apa?", "require_flags": [], "set_flags": ["brock_news_told", "brock_blades_hint"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["brock_news_told"], "next": null}
+  ]
+}

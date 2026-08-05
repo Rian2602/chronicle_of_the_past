@@ -1,0 +1,13 @@
+{
+  "id": "dialog_nil_hope",
+  "require_flags": ["met_nil"],
+  "require_not_flags": ["nil_hope_told"],
+  "lines": [
+    {"speaker": "nil", "text": "Hehe. Terima kasih! Ibu Maria bilang, harapan itu seperti bibit — harus disiram setiap hari, walau kecil."},
+    {"speaker": "nil", "text": "Jadi setiap pagi aku menyirami gambaranku dengan senyum. Dan desa ini akan tumbuh jadi tempat yang indah. Kau lihat saja nanti!"}
+  ],
+  "choices": [
+    {"text": "Aku akan menjaga tempat ini tetap indah untukmu.", "require_flags": [], "set_flags": ["nil_hope_told", "nil_promised"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["nil_hope_told"], "next": null}
+  ]
+}

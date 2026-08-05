@@ -1,0 +1,15 @@
+{
+  "id": "dialog_ben_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_ben"],
+  "lines": [
+    {"speaker": "ben", "text": "Besi panas, palu, dan sedikit keberuntungan. Selamat datang di bengkelku. Aku Ben."},
+    {"speaker": "ben", "text": "Kau orang baru. Aku bisa menciumnya dari bau logam di bajumu — atau justru ketiadaan bau itu."},
+    {"speaker": "ben", "text": "Kalau kau butuh senjata yang tidak akan patah di tengah pertarungan, kau datang ke tempat yang tepat."}
+  ],
+  "choices": [
+    {"text": "Aku butuh senjata.", "require_flags": [], "set_flags": ["met_ben"], "next": "dialog_ben_shop"},
+    {"text": "Ada kabar apa di bengkel?", "require_flags": [], "set_flags": ["met_ben"], "next": "dialog_ben_news"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

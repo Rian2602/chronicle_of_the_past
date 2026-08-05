@@ -1,0 +1,14 @@
+{
+  "id": "ruins_depth",
+  "name": "Kedalaman Reruntuhan",
+  "region": "2",
+  "threat_level": 10,
+  "description": "Lantai kedua reruntuhan. Udara dingin menusuk; lampu-lampu biru mengambang di kegelapan.",
+  "ascii_art": "ruins_depth",
+  "exits": ["ancient_ruins", "anchor_chamber"],
+  "npcs": [],
+  "enemy_pool": [
+    {"id": "time_wraith", "weight": 2},
+    {"id": "ruin_warden", "weight": 2}
+  ]
+}

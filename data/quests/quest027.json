@@ -1,0 +1,26 @@
+{
+  "id": "quest027",
+  "title": "Raja yang Terlupakan",
+  "type": "main",
+  "description": "Perjalanan ke ibukota. Hadap raja Aldric dan pilih sikapmu.",
+  "objectives": [
+    "Kunjungi ibukota (capital).",
+    "Bicaralah dengan Raja Aldric."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "capital"
+    },
+    {
+      "kind": "talk",
+      "target": "king_aldric"
+    }
+  ],
+  "rewards": {
+    "xp": 140,
+    "gold": 40
+  },
+  "flags_on_complete": [],
+  "next": "quest028"
+}

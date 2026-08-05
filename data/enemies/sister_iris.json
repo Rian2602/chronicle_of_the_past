@@ -1,0 +1,16 @@
+{
+  "id": "sister_iris",
+  "name": "Sister Iris",
+  "level": 15,
+  "stats": {"attack": 16, "defense": 12, "hp": 160, "mp": 60, "agility": 11, "intelligence": 18},
+  "behavior": "mage",
+  "reward": {"xp": 200, "gold": [60, 80]},
+  "skills": ["fireball", "frost_bolt", "lore_strike"],
+  "loot": [
+    {"item": "rune_blade", "chance": 50, "amount": 1},
+    {"item": "rune_plate", "chance": 50, "amount": 1},
+    {"item": "elixir", "chance": 50, "amount": 1}
+  ],
+  "tags": ["boss", "humanoid"],
+  "lore": "Inkuisitor Api Suci yang yakin membasmi kejahatan — sampai ia tahu siapa dalang sebenarnya."
+}

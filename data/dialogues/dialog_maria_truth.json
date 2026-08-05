@@ -1,0 +1,14 @@
+{
+  "id": "dialog_maria_truth",
+  "require_flags": ["met_maria"],
+  "require_not_flags": ["maria_truth_told"],
+  "lines": [
+    {"speaker": "mother_maria", "text": "Inkuisisi bukanlah gereja, anakku. Mereka adalah tangan yang memakai nama suci untuk melakukan hal-hal yang tidak suci."},
+    {"speaker": "mother_maria", "text": "Sister Iris datang dengan surat bermaterai — bukan dari paus, tapi dari istana. Aku kenal meterai itu. Elang emas selalu punya dua wajah."},
+    {"speaker": "mother_maria", "text": "Desa ini berada di antara dua rahang, Pejalan Waktu. Berhati-hatilah agar tidak menjadi gigitan terakhir mereka."}
+  ],
+  "choices": [
+    {"text": "Aku akan menjaga desa ini.", "require_flags": [], "set_flags": ["maria_truth_told", "maria_aligned"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["maria_truth_told"], "next": null}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "quest031",
+  "title": "Persiapan Badai",
+  "type": "main",
+  "description": "Kumpulkan sekutu untuk menghadapi pengepungan.",
+  "objectives": [
+    "Bicaralah dengan 2 sekutu (Lyra dan Sera)."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "lyra"
+    },
+    {
+      "kind": "talk",
+      "target": "sera"
+    }
+  ],
+  "rewards": {
+    "xp": 150
+  },
+  "flags_on_complete": [],
+  "next": "quest032"
+}

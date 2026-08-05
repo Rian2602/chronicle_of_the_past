@@ -1,0 +1,10 @@
+{
+  "id": "old_scroll",
+  "name": "Gulungan Kuno",
+  "type": "quest",
+  "slot": null,
+  "modifiers": {},
+  "price": 0,
+  "quest_flag": "have_old_scrolls",
+  "description": "Gulungan berisi tulisan Kaum Arah yang belum terbaca."
+}

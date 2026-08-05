@@ -1,5 +1,5 @@
 from src.core.constants import STATS
-from src.models.player import effective_stat
+from src.models.player import effective_stat, max_hp, max_mp
 
 
 def total_stats(player) -> dict:
@@ -34,6 +34,8 @@ def unequip(player, slot, items=None) -> str:
         )
         if player.attribute_bonuses[stat] == 0:
             del player.attribute_bonuses[stat]
+    player.hp = min(player.hp, max_hp(player))
+    player.mp = min(player.mp, max_mp(player))
     del player.equipped[slot]
     return f"{item_def.name} dilepas dari slot {slot}."
 

@@ -1,0 +1,11 @@
+{
+  "id": "poison_blade",
+  "name": "Poison Blade",
+  "type": "physical",
+  "cost": 6,
+  "target": "single_enemy",
+  "power": 8,
+  "effects": [{"status": "poison", "power": 3, "duration": 3}],
+  "requires": {},
+  "description": "Bilah beracun yang meracuni musuh."
+}

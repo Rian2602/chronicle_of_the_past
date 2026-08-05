@@ -1,0 +1,26 @@
+{
+  "id": "quest028",
+  "title": "Pendengaran Rahasia",
+  "type": "main",
+  "description": "Kumpulkan bukti terakhir bahwa Varek memerintahkan pembakaran.",
+  "objectives": [
+    "Pegang surat bukti (evidence_letter).",
+    "Buktikan konspirasi Varek."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "have_evidence_letter"
+    },
+    {
+      "kind": "flag",
+      "target": "conspiracy_proven"
+    }
+  ],
+  "rewards": {
+    "xp": 140,
+    "gold": 20
+  },
+  "flags_on_complete": [],
+  "next": "quest029"
+}

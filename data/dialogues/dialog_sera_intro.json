@@ -1,0 +1,14 @@
+{
+  "id": "dialog_sera_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_sera"],
+  "lines": [
+    {"speaker": "sera", "text": "Berhenti. Siapa yang mengirimmu — mahkota, atau gereja?"},
+    {"speaker": "sera", "text": "Tidak? Bagus. Kebanyakan orang yang tersesat sampai ke sini adalah mata-mata."},
+    {"speaker": "sera", "text": "Aku Sera. Dan kamp ini adalah rumah bagi orang-orang yang mahkota sebut pemberontak."}
+  ],
+  "choices": [
+    {"text": "Aku di sini demi desa.", "require_flags": [], "set_flags": ["met_sera"], "next": "dialog_sera_offer"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

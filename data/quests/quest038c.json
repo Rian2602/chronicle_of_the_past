@@ -1,0 +1,23 @@
+{
+  "id": "quest038c",
+  "title": "Tahta yang Jujur",
+  "type": "main",
+  "description": "Raja Aldric menyegel Jangkar di bawah istana. Varek dihukum.",
+  "objectives": [
+    "Selesaikan penyegelan Jangkar di istana."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "throne_sealed"
+    }
+  ],
+  "rewards": {
+    "xp": 250
+  },
+  "flags_on_complete": [
+    "season1_path_done",
+    "ending_c_done"
+  ],
+  "next": "quest039"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "rebel_elite",
+  "name": "Elit Pemberontak",
+  "level": 15,
+  "stats": {"attack": 19, "defense": 12, "hp": 75, "mp": 10, "agility": 12, "intelligence": 6},
+  "behavior": "aggressive",
+  "reward": {"xp": 190, "gold": [28, 42]},
+  "skills": ["slash", "quick_shot"],
+  "loot": [
+    {"item": "potion", "chance": 25, "amount": 1},
+    {"item": "chain_armor", "chance": 10, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Garda terbaik Sera, dilatih di hutan selama bertahun-tahun."
+}

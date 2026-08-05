@@ -1,0 +1,11 @@
+{
+  "id": "snare",
+  "name": "Snare",
+  "type": "physical",
+  "cost": 6,
+  "target": "single_enemy",
+  "power": 5,
+  "effects": [{"status": "sleep", "power": 0, "duration": 1}],
+  "requires": {},
+  "description": "Jerat yang membuat musuh tertidur sesaat."
+}

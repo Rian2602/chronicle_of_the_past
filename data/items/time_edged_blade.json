@@ -1,0 +1,9 @@
+{
+  "id": "time_edged_blade",
+  "name": "Time-Edged Blade",
+  "type": "weapon",
+  "slot": "weapon",
+  "modifiers": {"attack": 25, "agility": 2},
+  "price": 700,
+  "description": "Pedang dengan tepi yang berkilau seperti waktu yang mengalir."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "dialog_brock_intro",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["met_brock"],
+  "lines": [
+    {"speaker": "smith_brock", "text": "Brock. Pandai besi istana. Aku menempa pedang untuk para ksatria, dan parang untuk para algojo."},
+    {"speaker": "smith_brock", "text": "Kau dari desa, ya? Bajumu bau tanah dan asap kebakaran. Ke sini untuk membeli senjata, atau untuk alasan lain?"},
+    {"speaker": "smith_brock", "text": "Di ibukota ini, aku sudah menempa terlalu banyak pedang untuk perang yang tidak pernah dijelaskan kepada rakyat."}
+  ],
+  "choices": [
+    {"text": "Aku butuh senjata terbaikmu.", "require_flags": [], "set_flags": ["met_brock"], "next": "dialog_brock_shop"},
+    {"text": "Ada yang aneh dengan pesanan akhir-akhir ini?", "require_flags": [], "set_flags": ["met_brock"], "next": "dialog_brock_news"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

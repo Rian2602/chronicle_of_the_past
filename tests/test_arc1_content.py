@@ -65,7 +65,8 @@ def test_quest_reputation_uses_valid_factions():
 
 def test_quest_requirement_kinds():
     ctx = GameContext(data_dir="data")
-    valid_kinds = {"talk", "map", "flag", "enemy"}
+    valid_kinds = {"talk", "map", "flag", "enemy", "collect", "kill_count",
+                    "escort"}
     for qid, quest in ctx.quests.items():
         for req in quest.get("requirements", []):
             assert req.get("kind") in valid_kinds, (
@@ -105,9 +106,23 @@ def test_event_actions_resolve():
 
 
 def test_ascii_art_files_exist():
+    """Setiap map yang terdaftar di GameContext punya file ASCII art."""
     for map_id in GameContext(data_dir="data").maps.keys():
         path = os.path.join("assets", "ascii", f"{map_id}.txt")
         assert os.path.isfile(path), f"missing ascii art {path}"
+
+
+def test_no_orphan_ascii_files():
+    """Setiap file ASCII art di assets/ascii/ direferens oleh map yang ada."""
+    map_ids = set(GameContext(data_dir="data").maps.keys())
+    ascii_dir = os.path.join("assets", "ascii")
+    for filename in os.listdir(ascii_dir):
+        if not filename.endswith(".txt"):
+            continue
+        map_id = filename[:-4]
+        assert map_id in map_ids, (
+            f"assets/ascii/{filename} tidak direferens oleh map mana pun"
+        )
 
 
 def test_all_json_files_parse():

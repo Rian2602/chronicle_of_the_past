@@ -1,0 +1,15 @@
+{
+  "id": "dialog_corvin_main",
+  "require_flags": ["met_corvin"],
+  "require_not_flags": ["varek_unmasked"],
+  "lines": [
+    {"speaker": "general_corvin", "text": "Desa Ashen... Ya, aku kenal namanya di peta. Kecil, jauh, dan penuh masalah sejak batu-batu itu ditemukan di bawahnya."},
+    {"speaker": "general_corvin", "text": "Kanselir Varek yang menangani urusan itu. Dia pria yang pandai bicara — dan pria yang pandai bicara selalu membuatku curiga."},
+    {"speaker": "general_corvin", "text": "Aku tentara, bukan politikus. Aku patuh pada raja dan pedangku. Dan saat ini, keduanya tampak tidak sejalan."}
+  ],
+  "choices": [
+    {"text": "Bisakah kau membantuku melihat raja?", "require_flags": [], "set_flags": ["corvin_help_offer"], "next": "dialog_corvin_help"},
+    {"text": "Apa yang kau lihat dari istana ini?", "require_flags": [], "set_flags": ["corvin_asked_keep"], "next": "dialog_corvin_keep"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "multishot",
+  "name": "Multishot",
+  "type": "physical",
+  "cost": 8,
+  "target": "single_enemy",
+  "power": 12,
+  "effects": [],
+  "requires": {},
+  "description": "Dua anak panah yang ditembakkan nyaris bersamaan."
+}

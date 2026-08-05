@@ -33,6 +33,21 @@ class StatusEffect:
 
 
 @dataclass
+class BuffEffect:
+    """Buff sementara pada stat aktor (self-buff skill, §9.4/§19).
+
+    Attributes:
+        stat: Stat yang dinaikkan (attack/defense/agility/xp_bonus).
+        power: Besar kenaikan (bisa float untuk xp_bonus).
+        duration: Sisa giliran buff aktif.
+    """
+
+    stat: str
+    power: float
+    duration: int
+
+
+@dataclass
 class DamageResult:
     damage: int
     critical: bool
@@ -54,6 +69,7 @@ class CombatState:
     player_defending: bool
     enemy_defending: bool
     statuses: dict[str, list[StatusEffect]]
+    buffs: dict[str, list[BuffEffect]] = field(default_factory=dict)
     xp: int = 0
     gold: int = 0
     loot: list = field(default_factory=list)

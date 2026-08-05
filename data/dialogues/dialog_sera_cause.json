@@ -1,0 +1,14 @@
+{
+  "id": "dialog_sera_cause",
+  "require_flags": ["aligned_rebels"],
+  "require_not_flags": ["sera_cause_told"],
+  "lines": [
+    {"speaker": "sera", "text": "Mahkota menaikkan pajak, membiarkan panen membusuk, dan membakar rumah yang berani mengeluh."},
+    {"speaker": "sera", "text": "Mereka membakar rumah rakyat demi batu. Kalau batu itu bisa menulis ulang sejarah... biarkan rakyat yang memegang pena."},
+    {"speaker": "sera", "text": "Itulah sebabnya aku berjuang. Bukan demi mahkota, bukan demi tuhan — demi orang-orang yang tak punya suara."}
+  ],
+  "choices": [
+    {"text": "Aku akan mengingat kata-katamu.", "require_flags": [], "set_flags": ["sera_cause_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["sera_cause_told"], "next": null}
+  ]
+}

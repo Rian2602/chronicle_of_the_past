@@ -1,0 +1,23 @@
+{
+  "id": "quest037f",
+  "title": "Malam Kedua",
+  "type": "main",
+  "description": "Gunakan semua echo untuk kembali ke hari pembuatan Jangkar.",
+  "objectives": [
+    "Kalahkan tiran kuno (ancient_tyrant)."
+  ],
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "ancient_tyrant"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest037f_done"
+  ],
+  "next": "quest038f"
+}

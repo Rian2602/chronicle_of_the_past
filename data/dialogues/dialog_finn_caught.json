@@ -1,0 +1,15 @@
+{
+  "id": "dialog_finn_caught",
+  "require_flags": ["finn_caught"],
+  "require_not_flags": ["finn_arrested", "finn_freed"],
+  "lines": [
+    {"speaker": "finn", "text": "...Kau melihatnya."},
+    {"speaker": "finn", "text": "Baik. Aku akui — aku bukan pedagang. Aku utusan mahkota, dikirim untuk memetakan 'benda tua' di bawah desa ini."},
+    {"speaker": "finn", "text": "Putuskan sekarang: kau mau menganggapku musuh... atau teman?"}
+  ],
+  "choices": [
+    {"text": "Tangkap dia.", "require_flags": [], "set_flags": ["finn_arrested"], "next": null},
+    {"text": "Lepaskan dia.", "require_flags": [], "set_flags": ["finn_freed"], "next": "dialog_finn_freed"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

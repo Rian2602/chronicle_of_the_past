@@ -1,0 +1,28 @@
+{
+  "id": "quest033",
+  "title": "Kanselir Varek",
+  "type": "main",
+  "description": "Kebenaran penuh: Varek merekayasa segalanya. Konfrontasi dia.",
+  "objectives": [
+    "Buktikan konspirasi Varek.",
+    "Bicaralah dengan Raja Aldric."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "conspiracy_proven"
+    },
+    {
+      "kind": "talk",
+      "target": "king_aldric"
+    }
+  ],
+  "rewards": {
+    "xp": 170,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "varek_unmasked"
+  ],
+  "next": "quest034"
+}

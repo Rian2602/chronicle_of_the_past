@@ -12,5 +12,82 @@
     "text": "Sihir yang kau pelajari... dahulu dilarang keras oleh para sage.",
     "flags_set": ["knows_forbidden_magic"],
     "acquired_by": {"kind": "talk", "target": "old_man", "turn_index": 3}
+  },
+  {
+    "id": "memory003",
+    "title": "Asal Jangkar",
+    "text": "Lima penjaga bersumpah di depan batu yang berdenyut... dan salah satu dari mereka mengenal wajahmu. Jangkar Waktu tidak diciptakan untuk dikuasai — ia diciptakan untuk memperbaiki apa yang perang hancurkan.",
+    "flags_set": ["echo_1_collected"],
+    "acquired_by": {"kind": "event", "event": "event_echo_1"}
+  },
+  {
+    "id": "memory004",
+    "title": "Nama Varek",
+    "text": "Sebelum kapten bayaran itu menghembuskan napas terakhir, ia menggumam satu nama: 'Kanselir... Varek.' Nama itu terukir di ingatanmu seperti bekas luka.",
+    "flags_set": ["varek_first_suspect", "reiner_info"],
+    "acquired_by": {"kind": "event", "event": "event_arc2_complete"}
+  },
+  {
+    "id": "memory005",
+    "title": "Kanselir",
+    "text": "Sebelum api memadamkan cahaya di matanya, Iris berbisik: 'Varek. Dia yang menyalakan api ini. Waspadalah terhadap mahkota.' Nama itu kini terpatri di dadamu.",
+    "flags_set": ["iris_revealed"],
+    "acquired_by": {"kind": "event", "event": "event_arc3_complete"}
+  },
+  {
+    "id": "memory006",
+    "title": "Hari Pembuat",
+    "text": "Kau melihat hari Jangkar ditempa. Kaum Arah menciptakan mesin itu untuk memperbaiki sejarah yang hancur oleh perang — bukan untuk menguasai. Dan di tengah kerumunan pembuat... kau melihat dirimu sendiri.",
+    "flags_set": ["echo_2_collected"],
+    "acquired_by": {"kind": "event", "event": "event_echo_2"}
+  },
+  {
+    "id": "memory007",
+    "title": "Suara Jangkar",
+    "text": "Setelah Penjaga Waktu jatuh, ruangan itu berbicara. 'Aku telah menunggumu selama berabad-abad, Pejalan Waktu.' Suara itu tidak datang dari batu. Ia datang dari dalam dirimu.",
+    "flags_set": ["met_anchor_avatar"],
+    "acquired_by": {"kind": "event", "event": "event_arc4_complete"}
+  },
+  {
+    "id": "memory008",
+    "title": "Identitas",
+    "text": "Avatar Jangkar membuka kebenaran: darah Kaum Arah mengalir di nadimu. Kau terseret ke masa ini bukan karena kebetulan — Jangkar memanggil darahnya sendiri. Takdir, bukan kebetulan.",
+    "flags_set": ["avatar_truth_told"],
+    "acquired_by": {"kind": "event", "event": "event_memory008"}
+  },
+  {
+    "id": "memory009",
+    "title": "Desa Terbakar",
+    "text": "Kali ini bukan ramalan. Asap membumbung dari atap-atap yang kau kenal. Kau menggenggam tangan Tom, dan di belakangmu desa Ashen — rumah pertama dan terakhirmu di masa ini — mulai runtuh menjadi abu.",
+    "flags_set": ["village_evacuated"],
+    "acquired_by": {"kind": "event", "event": "event_memory009"}
+  },
+  {
+    "id": "memory010",
+    "title": "Takdir Jangkar",
+    "text": "Keputusan telah dibuat. Jangkar Waktu menemukan jalan akhirnya — dan setiap jalan, seberapa pun mulianya, meninggalkan bekas di dunia dan di hatimu. Inilah bab yang kau tulis sendiri.",
+    "flags_set": ["season1_path_done"],
+    "acquired_by": {"kind": "event", "event": "event_memory010"}
+  },
+  {
+    "id": "memory011",
+    "title": "Arti Waktu",
+    "text": "Lyra menatapmu lama sebelum berkata: 'Pejalan Waktu bukan orang yang melompat antar waktu, kau tahu. Pejalan Waktu adalah orang yang berani bertanggung jawab atas semua yang ia tinggalkan.'",
+    "flags_set": ["all_echoes_hinted"],
+    "acquired_by": {"kind": "event", "event": "event_memory011"}
+  },
+  {
+    "id": "memory012",
+    "title": "Pagi di Ashen",
+    "text": "Matahari terbit di atas Ashen. Desa yang sama, hari yang berbeda — atau dunia yang sama sekali baru. Apa pun yang terjadi, pagi ini adalah milikmu, dan kau memilih untuk menjalaninya.",
+    "flags_set": ["season1_ended"],
+    "acquired_by": {"kind": "event", "event": "event_memory012"}
+  },
+  {
+    "id": "memory013",
+    "title": "Tanda dari Masa Depan",
+    "text": "Di langit yang tenang, sesuatu bergeser — seperti bayangan awan yang tidak seharusnya ada. Surat tanpa pengirim menyebut namamu. Musim kedua menunggu, Pejalan Waktu.",
+    "flags_set": ["season2_hint"],
+    "acquired_by": {"kind": "event", "event": "event_memory013"}
   }
 ]

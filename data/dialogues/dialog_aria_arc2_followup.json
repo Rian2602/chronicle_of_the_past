@@ -1,0 +1,10 @@
+{
+  "id": "dialog_aria_arc2_followup",
+  "require_flags": ["arc2_started"],
+  "lines": [
+    {"speaker": "old_man", "text": "Bicaralah dengan Lyra di perpustakaan. Ia menjaga catatan tentang Jangkar dan Reruntuhan Kuno."}
+  ],
+  "choices": [
+    {"text": "Baik.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "dialog_nil_arc3",
+  "require_flags": ["first_fire"],
+  "require_not_flags": ["nil_arc3_done"],
+  "lines": [
+    {"speaker": "nil", "text": "...Pejalan Waktu. Aku melihat asap dari rumah Tom. Apakah Marta baik-baik saja?"},
+    {"speaker": "nil", "text": "Aku menggambar lagi malam ini. Kali ini aku menggambar desa yang aman. Kalau aku menggambarnya cukup besar, mungkin api tidak akan berani datang."}
+  ],
+  "choices": [
+    {"text": "Aku akan memastikan desa ini aman, Nil.", "require_flags": [], "set_flags": ["nil_arc3_done", "nil_promised"], "next": null},
+    {"text": "Jangan takut, Nil.", "require_flags": [], "set_flags": ["nil_arc3_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["nil_arc3_done"], "next": null}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "quest038b",
+  "title": "Pena Rakyat",
+  "type": "main",
+  "description": "Sera memakai Jangkar untuk menulis ulang dekrit penindasan.",
+  "objectives": [
+    "Selesaikan penulisan ulang dekrit."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "decree_written"
+    }
+  ],
+  "rewards": {
+    "xp": 250
+  },
+  "flags_on_complete": [
+    "season1_path_done",
+    "ending_b_done"
+  ],
+  "next": "quest039"
+}

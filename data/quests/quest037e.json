@@ -1,0 +1,23 @@
+{
+  "id": "quest037e",
+  "title": "Memutus Jangkar",
+  "type": "main",
+  "description": "Ritual penghancuran. Lawan jelmaan marah Jangkar.",
+  "objectives": [
+    "Kalahkan bayangan Jangkar (anchor_shade)."
+  ],
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "anchor_shade"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest037e_done"
+  ],
+  "next": "quest038e"
+}

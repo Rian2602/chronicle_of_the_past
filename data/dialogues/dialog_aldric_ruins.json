@@ -1,0 +1,14 @@
+{
+  "id": "dialog_aldric_ruins",
+  "require_flags": ["aldric_asked_ruins"],
+  "require_not_flags": ["aldric_ruins_told"],
+  "lines": [
+    {"speaker": "king_aldric", "text": "Reruntuhan... Ah. Ada sebuah catatan tua di perpustakaan istana. Tentang sesuatu yang disebut 'Jangkar Waktu'."},
+    {"speaker": "king_aldric", "text": "Kakekku menulis di pinggirnya: 'Jangan biarkan siapapun menyentuhnya. Termasuk kita sendiri.'"},
+    {"speaker": "king_aldric", "text": "Aku selalu mengira itu dongeng untuk menakut-nakuti anak-anak yang ingin tahu. Mungkin aku yang salah."}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Baginda. Aku akan menjaga kata-kata itu.", "require_flags": [], "set_flags": ["aldric_ruins_told", "royal_ruins_knowledge"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["aldric_ruins_told"], "next": null}
+  ]
+}

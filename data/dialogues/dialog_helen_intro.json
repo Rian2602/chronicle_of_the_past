@@ -1,0 +1,15 @@
+{
+  "id": "dialog_helen_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_helen"],
+  "lines": [
+    {"speaker": "helen", "text": "Penginapan Ashen, tempat yang selalu punya ruang untuk satu gelas hangat. Aku Helen, pemiliknya."},
+    {"speaker": "helen", "text": "Kau pengembara baru, ya? Wajahmu tidak seperti orang desa — tapi juga tidak seperti orang kota. Menarik."},
+    {"speaker": "helen", "text": "Duduklah. Ramuan, roti, dan kabar terbaru — semuanya bisa kubagi. Dengan harga yang wajar, tentu saja."}
+  ],
+  "choices": [
+    {"text": "Ada kabar apa belakangan ini?", "require_flags": [], "set_flags": ["met_helen"], "next": "dialog_helen_news"},
+    {"text": "Aku butuh ramuan.", "require_flags": [], "set_flags": ["met_helen"], "next": "dialog_helen_shop"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "dialog_mira_shop",
+  "require_flags": ["met_mira"],
+  "lines": [
+    {"speaker": "innkeeper_mira", "text": "Ramuan penyembuh dan elixir langka dari apotek istana — jangan tanya bagaimana aku mendapatkannya."},
+    {"speaker": "innkeeper_mira", "text": "(Etalase toko lengkap menyusul di Phase 0. Untuk sekarang, sebutkan saja kebutuhanmu.)"}
+  ],
+  "choices": [
+    {"text": "Sampai nanti, Mira.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

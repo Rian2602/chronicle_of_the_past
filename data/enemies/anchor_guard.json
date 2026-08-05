@@ -1,0 +1,15 @@
+{
+  "id": "anchor_guard",
+  "name": "Pengawal Jangkar",
+  "level": 14,
+  "stats": {"attack": 16, "defense": 14, "hp": 70, "mp": 12, "agility": 6, "intelligence": 8},
+  "behavior": "defensive",
+  "reward": {"xp": 180, "gold": [26, 40]},
+  "skills": ["shield_bash"],
+  "loot": [
+    {"item": "chain_armor", "chance": 15, "amount": 1},
+    {"item": "rune_crown", "chance": 5, "amount": 1}
+  ],
+  "tags": ["construct"],
+  "lore": "Golem penjaga ruang Jangkar, setia pada sumpah kuno."
+}

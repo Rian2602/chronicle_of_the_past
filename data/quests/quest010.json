@@ -1,0 +1,36 @@
+{
+  "id": "quest010",
+  "title": "Reruntuhan Berbisik",
+  "type": "main",
+  "description": "Roh Penjaga memainkan echo pertama. Kalahkan pemulung yang menyerbu.",
+  "objectives": [
+    "Kunjungi reruntuhan kuno (ancient_ruins).",
+    "Kalahkan 3 pemulung reruntuhan (ruins_scavenger).",
+    "Bicaralah dengan Roh Penjaga."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "ancient_ruins"
+    },
+    {
+      "kind": "flag",
+      "target": "killed_ruins_scavenger_3"
+    },
+    {
+      "kind": "talk",
+      "target": "ancient_spirit"
+    }
+  ],
+  "rewards": {
+    "xp": 90,
+    "gold": 25,
+    "reputation": {
+      "ancient_order": 5
+    }
+  },
+  "flags_on_complete": [
+    "echo_1_collected"
+  ],
+  "next": "quest011"
+}

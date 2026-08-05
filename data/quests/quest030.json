@@ -1,0 +1,20 @@
+{
+  "id": "quest030",
+  "title": "Suara Jangkar",
+  "type": "main",
+  "description": "Avatar Jangkar menjelaskan kebenaran: darahmu terhubung dengan Kaum Arah.",
+  "objectives": [
+    "Bicaralah dengan Suara Jangkar (anchor_avatar)."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "anchor_avatar"
+    }
+  ],
+  "rewards": {
+    "xp": 130
+  },
+  "flags_on_complete": [],
+  "next": "quest031"
+}

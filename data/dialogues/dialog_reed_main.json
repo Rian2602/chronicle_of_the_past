@@ -1,0 +1,15 @@
+{
+  "id": "dialog_reed_main",
+  "require_flags": ["met_reed"],
+  "require_not_flags": ["reed_info_told"],
+  "lines": [
+    {"speaker": "scout_reed", "text": "Baik. Aku percaya Sera. Dan untuk membuktikan niat baik: aku melihat sesuatu yang aneh di hutan dalam beberapa hari terakhir."},
+    {"speaker": "scout_reed", "text": "Tentara bayaran — bukan dari desa, bukan dari pemberontak. Mereka membawa panji elang emas dan membayar dengan emas kerajaan."},
+    {"speaker": "scout_reed", "text": "Elang emas itu lambang istana, Pejalan Waktu. Kalau mahkota mengirim tentara ke desamu... kalian punya masalah yang lebih besar daripada serigala."}
+  ],
+  "choices": [
+    {"text": "Bagaimana kau tahu itu emas kerajaan?", "require_flags": [], "set_flags": ["reed_info_told"], "next": "dialog_reed_gold"},
+    {"text": "Terima kasih, Reed.", "require_flags": [], "set_flags": ["reed_info_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["reed_info_told"], "next": null}
+  ]
+}

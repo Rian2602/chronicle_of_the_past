@@ -1,0 +1,27 @@
+{
+  "id": "quest029",
+  "title": "Penjaga Waktu",
+  "type": "main",
+  "description": "Konstruk Penjaga Waktu menyerang di ruang Jangkar. Kalahkan dia.",
+  "objectives": [
+    "Kalahkan Penjaga Waktu (time_guardian)."
+  ],
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "time_guardian"
+    }
+  ],
+  "rewards": {
+    "xp": 280,
+    "gold": 90,
+    "reputation": {
+      "ancient_order": 10
+    }
+  },
+  "flags_on_complete": [
+    "boss_arc4_defeated",
+    "met_anchor_avatar"
+  ],
+  "next": "quest030"
+}

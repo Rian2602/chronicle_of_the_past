@@ -1,0 +1,9 @@
+{
+  "id": "rune_plate",
+  "name": "Rune Plate",
+  "type": "armor",
+  "slot": "armor",
+  "modifiers": {"defense": 11, "intelligence": 1},
+  "price": 380,
+  "description": "Pelat baja berukir rune dari reruntuhan kuno."
+}

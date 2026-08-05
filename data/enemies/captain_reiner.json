@@ -1,0 +1,16 @@
+{
+  "id": "captain_reiner",
+  "name": "Kapten Reiner",
+  "level": 10,
+  "stats": {"attack": 18, "defense": 12, "hp": 90, "mp": 16, "agility": 10, "intelligence": 8},
+  "behavior": "aggressive",
+  "reward": {"xp": 150, "gold": [50, 70]},
+  "skills": ["slash", "shield_bash"],
+  "loot": [
+    {"item": "steel_sword", "chance": 100, "amount": 1},
+    {"item": "chain_armor", "chance": 100, "amount": 1},
+    {"item": "elixir", "chance": 30, "amount": 1}
+  ],
+  "tags": ["boss", "humanoid"],
+  "lore": "Kapten tentara bayaran yang dikirim kerajaan. Percaya desa ini menyembunyikan harta."
+}

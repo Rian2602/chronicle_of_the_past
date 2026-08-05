@@ -1,0 +1,15 @@
+{
+  "id": "dialog_avatar_truth",
+  "require_flags": ["met_anchor_avatar"],
+  "require_not_flags": ["avatar_truth_told"],
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "Aku diciptakan untuk satu tujuan: memperbaiki sejarah. Peradaban Kaum Arah runtuh karena perang yang tak berujung, dan Jangkar ini lahir dari kehancuran itu."},
+    {"speaker": "anchor_avatar", "text": "Tapi mesin tanpa tangan hanyalah batu. Aku mencari darah yang sejalan dengan penciptaku — darah Kaum Arah — untuk menggenggamku."},
+    {"speaker": "anchor_avatar", "text": "Dan darah itu ada di dalam dirimu, Pejalan Waktu. Itulah sebabnya kau terseret ke masa ini. Bukan kebetulan. Takdir."}
+  ],
+  "choices": [
+    {"text": "Aku percaya padamu.", "require_flags": [], "set_flags": ["avatar_truth_told", "avatar_trusted"], "next": "dialog_avatar_main"},
+    {"text": "Aku masih ragu.", "require_flags": [], "set_flags": ["avatar_truth_told", "avatar_doubted"], "next": "dialog_avatar_main"},
+    {"text": "Aku tidak meminta takdir ini.", "require_flags": [], "set_flags": ["avatar_truth_told", "avatar_angry"], "next": "dialog_avatar_main"}
+  ]
+}

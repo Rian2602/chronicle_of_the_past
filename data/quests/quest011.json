@@ -1,0 +1,27 @@
+{
+  "id": "quest011",
+  "title": "Kapten Bayaran",
+  "type": "main",
+  "description": "Kapten Reiner memimpin pasukan bayaran mengepung tepi hutan. Hadapi dia.",
+  "objectives": [
+    "Kalahkan Kapten Reiner (captain_reiner)."
+  ],
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "captain_reiner"
+    }
+  ],
+  "rewards": {
+    "xp": 150,
+    "gold": 60,
+    "reputation": {
+      "ancient_order": 10
+    }
+  },
+  "flags_on_complete": [
+    "boss_arc2_defeated",
+    "reiner_info"
+  ],
+  "next": "quest012"
+}

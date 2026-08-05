@@ -1,0 +1,12 @@
+{
+  "id": "dialog_spirit_hint",
+  "require_flags": ["spirit_asked"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Lihatlah ke dalam memorimu, Pejalan Waktu."},
+    {"speaker": "ancient_spirit", "text": "Kau bukan orang asing bagi batu ini. Yang kau lupakan... itulah jawabannya."}
+  ],
+  "choices": [
+    {"text": "Aku akan mencoba lagi.", "require_flags": [], "set_flags": [], "next": "dialog_spirit_test"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

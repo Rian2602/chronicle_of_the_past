@@ -1,0 +1,15 @@
+{
+  "id": "guild_guard",
+  "name": "Pengawal Gilda",
+  "level": 10,
+  "stats": {"attack": 14, "defense": 10, "hp": 55, "mp": 6, "agility": 8, "intelligence": 5},
+  "behavior": "defensive",
+  "reward": {"xp": 120, "gold": [18, 28]},
+  "skills": ["slash"],
+  "loot": [
+    {"item": "potion", "chance": 30, "amount": 1},
+    {"item": "steel_sword", "chance": 8, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Tukang pukul bergaji tetap yang menjaga kepentingan gilda dagang."
+}

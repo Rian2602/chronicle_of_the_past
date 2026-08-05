@@ -1,0 +1,19 @@
+{
+  "id": "ben",
+  "name": "Ben",
+  "location": "village",
+  "role": "blacksmith",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_ben_intro", "dialog_ben_news", "dialog_ben_shop", "dialog_ben_generic"],
+  "shop": {
+    "buy": [
+      {"item": "iron_sword", "price": 60},
+      {"item": "steel_sword", "price": 120},
+      {"item": "leather_armor", "price": 45},
+      {"item": "chain_armor", "price": 150},
+      {"item": "iron_helmet", "price": 70}
+    ],
+    "sell_multiplier": 0.5
+  }
+}

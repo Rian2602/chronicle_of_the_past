@@ -1,0 +1,9 @@
+{
+  "id": "dialog_sera_generic",
+  "lines": [
+    {"speaker": "sera", "text": "Kamp pemberontak. Jangan bawa tamu yang tak diundang."}
+  ],
+  "choices": [
+    {"text": "Baik.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

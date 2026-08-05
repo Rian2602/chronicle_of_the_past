@@ -1,0 +1,15 @@
+{
+  "id": "dialog_avatar_intro",
+  "require_flags": ["boss_arc4_defeated", "arc4_started"],
+  "require_not_flags": ["met_anchor_avatar"],
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "...Ia datang. Penjaga Waktu telah jatuh, dan pintu terakhir terbuka."},
+    {"speaker": "anchor_avatar", "text": "Aku tidak punya nama, tidak punya tubuh. Aku adalah kesadaran Jangkar Waktu — suara yang kau dengar sekarang, di ruangan yang tak terlihat waktu."},
+    {"speaker": "anchor_avatar", "text": "Aku telah menunggumu, Pejalan Waktu. Bukan selama berhari-hari. Selama berabad-abad."}
+  ],
+  "choices": [
+    {"text": "Kau mengenalku?", "require_flags": [], "set_flags": ["met_anchor_avatar"], "next": "dialog_avatar_truth"},
+    {"text": "Apa kau yang menyeretku ke masa ini?", "require_flags": [], "set_flags": ["met_anchor_avatar"], "next": "dialog_avatar_truth"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

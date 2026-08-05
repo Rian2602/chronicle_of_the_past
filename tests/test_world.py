@@ -2,7 +2,6 @@ import pytest
 
 from src.core.game_state import GameState
 from src.core.randomizer import Randomizer
-from src.engine.world_engine import get_map
 from src.models.enemy import Enemy
 from src.models.map import Map
 from src.systems.exploration_system import check_encounter
@@ -43,11 +42,11 @@ def gs_with_world():
     return gs
 
 
-def test_get_map_returns_map_from_world():
+def test_world_dict_returns_correct_map():
     gs = GameState()
     m = make_map("village")
     gs.world = {"village": m}
-    assert get_map(gs, "village") is m
+    assert gs.world["village"] is m
 
 
 def test_can_travel_true_when_target_in_exits():

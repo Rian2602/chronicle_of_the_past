@@ -1,0 +1,16 @@
+{
+  "id": "dialog_lyra_quest015",
+  "require_flags": ["arc3_started"],
+  "require_not_flags": ["quest015_resolved"],
+  "lines": [
+    {"speaker": "lyra", "text": "Pejalan Waktu. Ada yang harus kau putuskan — dan aku tidak bisa memutuskan untukmu."},
+    {"speaker": "lyra", "text": "Beberapa faksi kini tahu kau berhubungan dengan Jangkar. Mereka akan bertanya di mana lokasi pastinya."},
+    {"speaker": "lyra", "text": "Kau boleh memberi tahu sekutu yang kau percaya. Kau boleh menyimpannya sendiri. Atau kau boleh menjualnya kepada yang membayar tertinggi."}
+  ],
+  "choices": [
+    {"text": "Bocorkan ke faksi yang kupercaya.", "require_flags": [], "set_flags": ["quest015_resolved", "quest015_leaked"], "next": null},
+    {"text": "Rahasiakan. Aku tidak akan memberi tahu siapa pun.", "require_flags": [], "set_flags": ["quest015_resolved", "quest015_secret"], "next": null},
+    {"text": "Jual informasi ke gilda dagang.", "require_reputation": {"merchant_guild": 20}, "set_flags": ["quest015_resolved", "quest015_sold"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

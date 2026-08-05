@@ -1,0 +1,15 @@
+{
+  "id": "dialog_tom_intro",
+  "require_flags": ["arc3_started"],
+  "require_not_flags": ["met_tom"],
+  "lines": [
+    {"speaker": "tom", "text": "...Aku Tom. Petani di tepi hutan. Atau lebih tepatnya, bekas petani."},
+    {"speaker": "tom", "text": "Tadi malam rumahku terbakar. Aku selamat karena terjaga mendengar kuda — tapi isteriku, Marta, tidak kutemukan di antara reruntuhan."},
+    {"speaker": "tom", "text": "Bau minyak itu... bau aneh, seperti minyak suci. Bukan minyak lampu. Aku tahu bedanya. Aku petani, bukan anak kota."}
+  ],
+  "choices": [
+    {"text": "Ceritakan apa yang kau lihat tadi malam.", "require_flags": [], "set_flags": ["met_tom", "first_fire", "villager_missing"], "next": "dialog_tom_fire"},
+    {"text": "Aku akan mencarimu.", "require_flags": [], "set_flags": ["met_tom"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

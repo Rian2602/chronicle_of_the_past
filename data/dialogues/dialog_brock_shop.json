@@ -1,0 +1,12 @@
+{
+  "id": "dialog_brock_shop",
+  "require_flags": ["met_brock"],
+  "lines": [
+    {"speaker": "smith_brock", "text": "Baja tempaan istana, pisau berukir rune dari reruntuhan, dan zirah yang pernah menyelamatkan nyawa dua ksatria — hidup dan mati."},
+    {"speaker": "smith_brock", "text": "(Etalase toko lengkap menyusul di Phase 0. Untuk sekarang, sebutkan saja yang kau perlukan.)"}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Brock.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -6,7 +6,7 @@ from src.engine.combat_engine import player_action, start_combat, use_item
 from src.models.combat_interfaces import CombatAction
 from src.models.enemy import Enemy
 from src.models.item import Item
-from src.models.player import Player
+from src.models.player import Player, max_hp, max_mp
 from src.systems.equipment_system import equip, total_stats, unequip
 from src.systems.inventory_system import add_item, remove_item, use_consumable
 
@@ -214,6 +214,23 @@ def test_unequip_empty_slot_noop():
     msg = unequip(p, "weapon", {})
     assert msg == "Tidak ada item di slot weapon."
     assert p.equipped == {}
+
+
+def test_unequip_clamps_hp_and_mp_to_max():
+    p = make_player()
+    ring = Item(
+        id="vital_ring",
+        name="Vital Ring",
+        type="helmet",
+        slot="helmet",
+        modifiers={"hp": 20, "mp": 10},
+    )
+    equip(p, ring)
+    p.hp = max_hp(p)
+    p.mp = max_mp(p)
+    unequip(p, "helmet", {"vital_ring": ring})
+    assert p.hp <= max_hp(p)
+    assert p.mp <= max_mp(p)
 
 
 def test_total_stats_base_plus_attribute_bonuses():

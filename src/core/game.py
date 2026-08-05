@@ -17,9 +17,18 @@ from src.systems import (
     inventory_system,
     level_system,
     loot_system,
+    shop_system,
     travel_system,
 )
-from src.ui import ascii_loader, combat_view, dialog_view, hud, inventory_view
+from src.ui import (
+    ascii_loader,
+    combat_view,
+    dialog_view,
+    hud,
+    inventory_view,
+    shop_view,
+)
+from src.utils.json_loader import ContentError
 
 _COMBAT_ACTIONS = {action.value for action in CombatAction}
 
@@ -38,6 +47,7 @@ class Game:
         self.randomizer = Randomizer(self.state.rng_seed)
         self._current_dialog = None
         self._talk_npc_id = None
+        self._shop_npc_id = None
         self._combat = None
         self._pending_levels = 0
 
@@ -52,6 +62,7 @@ class Game:
         s.quests = dict(self.ctx.quests)
         s.memories = list(self.ctx.memories)
         s.events = list(self.ctx.events)
+        s.scenes = list(self.ctx.scenes)
         if s.current_map is None:
             s.current_map = s.world.get("village")
 
@@ -65,6 +76,7 @@ class Game:
         self.state.player = self.ctx.create_player(name, class_id)
         self._current_dialog = None
         self._talk_npc_id = None
+        self._shop_npc_id = None
         self._combat = None
         self._pending_levels = 0
         assert self.state.player is not None
@@ -80,7 +92,12 @@ class Game:
         Raises:
             SaveError: Bila save tidak valid atau tanpa data pemain.
         """
-        self.state = save_manager.load_game(save_path, self.ctx)
+        loaded = save_manager.load_game(save_path, self.ctx)
+        if loaded.player is None:
+            raise save_manager.SaveError(
+                "Save tidak lengkap (tanpa data pemain)."
+            )
+        self.state = loaded
         self._wire()
         s = self.state
         map_id = (
@@ -92,21 +109,19 @@ class Game:
         self.randomizer = Randomizer(seed)
         self._current_dialog = None
         self._talk_npc_id = None
+        self._shop_npc_id = None
         self._pending_levels = 0
         # Restore combat state jika ada
         self._combat = None
         if hasattr(s, "combat_data") and s.combat_data is not None:
             self._restore_combat(s.combat_data)
-        if self.state.player is None:
-            raise save_manager.SaveError(
-                "Save tidak lengkap (tanpa data pemain)."
-            )
         lines = event_engine.process_events(self.state, self.randomizer)
         return "\n".join(lines) or "Save dimuat."
 
     def _restore_combat(self, combat_data):
         """Restore combat state dari data yang di-load."""
         from src.models.combat_interfaces import (
+            BuffEffect,
             CombatResult,
             CombatState,
             StatusEffect,
@@ -134,6 +149,17 @@ class Game:
                 )
                 for eff in effects
             ]
+        # Rekonstruksi buffs dari dict ke BuffEffect objects
+        restored_buffs = {}
+        for target_id, effects in combat_data.get("buffs", {}).items():
+            restored_buffs[target_id] = [
+                BuffEffect(
+                    stat=eff["stat"],
+                    duration=eff["duration"],
+                    power=eff["power"],
+                )
+                for eff in effects
+            ]
         # Buat CombatState baru dengan data yang tersimpan
         saved_result = combat_data.get("result")
         result = (
@@ -152,6 +178,7 @@ class Game:
             player_defending=combat_data.get("player_defending", False),
             enemy_defending=combat_data.get("enemy_defending", False),
             statuses=restored_statuses,
+            buffs=restored_buffs,
             player=self.state.player,
             enemy=enemy,
             randomizer=self.randomizer,
@@ -196,8 +223,16 @@ class Game:
         if self._combat is None:
             logs = event_engine.process_events(self.state, self.randomizer)
             out.extend(logs)
+        if (
+            self._combat is None
+            and self._current_dialog is None
+            and self._pending_levels == 0
+        ):
+            self._apply_pending_levels(out)
         return (
-            hud.render(self.state.player, self.state) + "\n\n" + "\n".join(out)
+            hud.render(self.state.player, self.state, self.ctx.npc)
+            + "\n\n"
+            + "\n".join(out)
         )
 
     def _dispatch(self, cmd, out):
@@ -209,6 +244,9 @@ class Game:
             "go": lambda: self._cmd_go(cmd, out),
             "rest": lambda: self._cmd_rest(out),
             "talk": lambda: self._cmd_talk(cmd, out),
+            "shop": lambda: self._cmd_shop(cmd, out),
+            "buy": lambda: self._cmd_buy(cmd, out),
+            "sell": lambda: self._cmd_sell(cmd, out),
             "look": lambda: self._cmd_look(out),
             "explore": lambda: self._cmd_explore(out),
             "inventory": lambda: self._cmd_inventory(out),
@@ -217,6 +255,7 @@ class Game:
             "use": lambda: self._cmd_use(cmd, out),
             "equip": lambda: self._cmd_equip(cmd, out),
             "unequip": lambda: self._cmd_unequip(cmd, out),
+            "learn": lambda: self._cmd_learn(cmd, out),
             "save": lambda: self._cmd_save(cmd, out),
             "load": lambda: self._cmd_load(cmd, out),
             "quests": lambda: self._cmd_quests(out),
@@ -293,6 +332,10 @@ class Game:
             "Inventori, Status, Simpan, Keluar."
         )
         out.append(
+            "Saat bicara dengan pedagang: shop (buka toko), "
+            "buy <item> [jumlah], sell <item> [jumlah]."
+        )
+        out.append(
             "Saat bertarung: Serang, Skill, Sihir, Item, Amati, Kabur, "
             "Bertahan, Simpan."
         )
@@ -322,10 +365,26 @@ class Game:
             return
         self._current_dialog = None
         self._talk_npc_id = None
+        self._shop_npc_id = None
+        origin = self.state.current_map.id if self.state.current_map else None
         try:
             out.append(travel_system.travel(self.state, cmd.args[0]))
         except ValueError as e:
             out.append(str(e))
+            return
+        msg = quest_engine.complete_requirement(self.state, "map", cmd.args[0])
+        if msg and msg != "Tidak ada syarat yang sesuai.":
+            out.append(msg)
+        # Syarat quest kind escort: dicek saat tiba di map tujuan (§12.1).
+        escort_msg = quest_engine.progress_requirement(
+            self.state,
+            "escort",
+            None,
+            to_map=cmd.args[0],
+            from_map=origin,
+        )
+        if escort_msg and escort_msg != "Tidak ada syarat yang sesuai.":
+            out.append(escort_msg)
 
     def _cmd_rest(self, out):
         """Handler perintah rest: istirahat hingga pagi."""
@@ -333,6 +392,7 @@ class Game:
         out.append(
             f"Kamu beristirahat hingga pagi. Kini Hari {self.state.day}."
         )
+        out.extend(event_engine.process_day_tick(self.state))
 
     def _find_npc(self, query: str):
         """Cari NPC berdasarkan ID, nama display, atau prefix.
@@ -390,9 +450,13 @@ class Game:
             if not d:
                 continue
             reqs = d.get("require_flags", [])
-            if all(f in self.state.flags for f in reqs):
-                dialog = d
-                break
+            if not all(f in self.state.flags for f in reqs):
+                continue
+            not_reqs = d.get("require_not_flags", [])
+            if any(f in self.state.flags for f in not_reqs):
+                continue
+            dialog = d
+            break
 
         if dialog is None:
             dialog = self.ctx.dialogues.get(npc["dialogs"][-1])
@@ -402,12 +466,88 @@ class Game:
             return
         self._current_dialog = dialog
         self._talk_npc_id = npc_id
+        self._shop_npc_id = None
         # Perbaikan: tampilkan nama NPC yang benar (bukan ID)
         out.append(
             dialog_view.render(
-                dialog, self.state, npc_id=npc_id, npc_name=npc["name"]
+                dialog,
+                self.state,
+                npc_id=npc_id,
+                npc_name=npc["name"],
+                has_shop=shop_system.has_shop(npc),
             )
         )
+
+    def _cmd_shop(self, cmd, out):
+        """Handler perintah shop: buka toko NPC (butuh field 'shop').
+
+        Tanpa argumen, memakai NPC yang sedang diajak bicara
+        (`talk <npc>` terakhir). Dengan argumen, mencari NPC seperti
+        `talk` dan langsung membuka tokonya bila tersedia di peta ini.
+        """
+        if cmd.args:
+            query = " ".join(cmd.args)
+            npc_id, npc = self._find_npc(query)
+        else:
+            npc_id = self._talk_npc_id
+            npc = self.ctx.npc.get(npc_id) if npc_id else None
+        if npc is None:
+            out.append(
+                "Tidak sedang bicara dengan siapa pun. "
+                "Gunakan: shop <nama pedagang>."
+            )
+            return
+        m = self.state.current_map
+        if m is None or npc.get("location") != m.id:
+            out.append(f"{npc['name']} tidak ada di sini.")
+            return
+        if not shop_system.has_shop(npc):
+            out.append(f"{npc['name']} tidak berjualan.")
+            return
+        self._shop_npc_id = npc_id
+        out.append(shop_view.render(self.state, npc))
+
+    def _cmd_buy(self, cmd, out):
+        """Handler perintah buy: beli item dari toko yang sedang dibuka."""
+        if self._shop_npc_id is None:
+            out.append(
+                "Tidak sedang berbelanja. Ketik 'shop' saat bicara "
+                "dengan pedagang."
+            )
+            return
+        if not cmd.args:
+            out.append("Gunakan: buy <item> [jumlah].")
+            return
+        qty = 1
+        if len(cmd.args) > 1:
+            try:
+                qty = int(cmd.args[1])
+            except ValueError:
+                out.append("Jumlah tidak valid.")
+                return
+        npc = self.ctx.npc.get(self._shop_npc_id)
+        out.append(shop_system.buy(self.state, npc, cmd.args[0], qty))
+
+    def _cmd_sell(self, cmd, out):
+        """Handler perintah sell: jual item ke toko yang sedang dibuka."""
+        if self._shop_npc_id is None:
+            out.append(
+                "Tidak sedang berbelanja. Ketik 'shop' saat bicara "
+                "dengan pedagang."
+            )
+            return
+        if not cmd.args:
+            out.append("Gunakan: sell <item> [jumlah].")
+            return
+        qty = 1
+        if len(cmd.args) > 1:
+            try:
+                qty = int(cmd.args[1])
+            except ValueError:
+                out.append("Jumlah tidak valid.")
+                return
+        npc = self.ctx.npc.get(self._shop_npc_id)
+        out.append(shop_system.sell(self.state, npc, cmd.args[0], qty))
 
     def _cmd_look(self, out):
         """Handler perintah look: deskripsi peta, pintu keluar, dan NPC."""
@@ -417,8 +557,8 @@ class Game:
             return
         try:
             out.append(ascii_loader.load(m.ascii_art))
-        except Exception:
-            pass
+        except ContentError:
+            pass  # ASCII art opsional; tampilan tetap lanjut tanpa gambar.
         out.append(m.description)
         if m.exits:
             out.append("Jalan keluar: " + ", ".join(m.exits))
@@ -437,6 +577,7 @@ class Game:
             return
         self._current_dialog = None
         self._talk_npc_id = None
+        self._shop_npc_id = None
         out.append(f"Kamu bertemu {enemy.name}!")
         self._combat = start_combat(
             self.state.player,
@@ -505,6 +646,27 @@ class Game:
             )
         )
 
+    def _cmd_learn(self, cmd, out):
+        """Handler perintah learn: belajar skill baru dengan Skill Point."""
+        if not cmd.args:
+            out.append("Gunakan: learn <skill>.")
+            return
+        skill_id = cmd.args[0]
+        if skill_id not in self.ctx.skills:
+            out.append(f"Skill tidak dikenal: {skill_id}.")
+            return
+        player = self.state.player
+        class_id = player.class_id
+        learnable = self.ctx.classes.get(class_id, {}).get(
+            "learnable_skills", []
+        )
+        error = level_system.learn_skill(player, class_id, skill_id, learnable)
+        if error:
+            out.append(error)
+        else:
+            name = self.ctx.skills.get(skill_id, {}).get("name", skill_id)
+            out.append(f"Kamu mempelajari skill {name}!")
+
     def _cmd_save(self, cmd, out):
         """Handler perintah save: simpan state ke path (dengan combat)."""
         if not cmd.args:
@@ -535,6 +697,68 @@ class Game:
         """Handler perintah quit: lemparkan GameQuit ke menu utama."""
         raise GameQuit()
 
+    def _track_kills(self, state, out):
+        """Catat jumlah kill musuh dan set flag killed_<id>_<n> untuk quest.
+
+        Jumlah kill dihitung ulang dari flag `killed_<id>_<N>` yang sudah
+        ada (bukan dari dict in-memory) agar tetap benar setelah save/load,
+        karena hanya flag yang ikut disimpan.
+        """
+        s = self.state
+        eid = state.enemy.id
+        count = 1
+        while f"killed_{eid}_{count}" in s.flags:
+            count += 1
+        s.kill_counts[eid] = count
+        flag = f"killed_{eid}_{count}"
+        s.flags[flag] = True
+        msg = quest_engine.complete_requirement(s, "flag", flag)
+        if msg and msg != "Tidak ada syarat yang sesuai.":
+            out.append(msg)
+        # Syarat quest kind kill_count native (§12.1 story-season1-spec).
+        kc_msg = quest_engine.progress_requirement(
+            s, "kill_count", eid, amount=1
+        )
+        if kc_msg and kc_msg != "Tidak ada syarat yang sesuai.":
+            out.append(kc_msg)
+
+    def _track_loot_flags(self, state, out):
+        """Set quest_flag item saat item kunci quest didapat dari loot.
+
+        Flag dibaca dari field `quest_flag` katalog item (data-driven),
+        bukan dari dict hardcoded.
+        """
+        s = self.state
+        owned = {e["id"] for e in s.player.inventory}
+        for item_id in owned:
+            item_def = s.items.get(item_id)
+            if item_def is None:
+                continue
+            flag = getattr(item_def, "quest_flag", None)
+            if flag and flag not in s.flags:
+                s.flags[flag] = True
+                msg = quest_engine.complete_requirement(s, "flag", flag)
+                if msg and msg != "Tidak ada syarat yang sesuai.":
+                    out.append(msg)
+
+    def _track_collect_from_loot(self, state, out):
+        """Perbarui syarat quest kind collect untuk item hasil loot."""
+        s = self.state
+        for entry in state.loot or []:
+            owned = next(
+                (
+                    e["qty"]
+                    for e in s.player.inventory
+                    if e["id"] == entry["id"]
+                ),
+                0,
+            )
+            msg = quest_engine.progress_requirement(
+                s, "collect", entry["id"], amount=owned
+            )
+            if msg and msg != "Tidak ada syarat yang sesuai.":
+                out.append(msg)
+
     def _cmd_quests(self, out):
         """Handler perintah quests: daftar quest aktif dan progresnya."""
         p = self.state.player
@@ -562,6 +786,11 @@ class Game:
         selected = choices[index]
         full_index = dialog["choices"].index(selected)
         next_id = dialog_engine.choose(self.state, dialog, full_index)
+        # Syarat quest kind flag: tandai tiap flag yang diset dialog.
+        for flag in selected.get("set_flags", []):
+            msg = quest_engine.complete_requirement(self.state, "flag", flag)
+            if msg and msg != "Tidak ada syarat yang sesuai.":
+                out.append(msg)
         if next_id is None:
             self._end_dialog(out)
         else:
@@ -577,6 +806,7 @@ class Game:
                     self.state,
                     npc_id=self._talk_npc_id,
                     npc_name=npc["name"] if npc else None,
+                    has_shop=shop_system.has_shop(npc) if npc else False,
                 )
             )
 
@@ -620,6 +850,9 @@ class Game:
             # Perbaikan: hanya tampilkan pesan jika quest benar-benar ter-update
             if msg and msg != "Tidak ada syarat yang sesuai.":
                 out.append(msg)
+            self._track_kills(state, out)
+            self._track_loot_flags(state, out)
+            self._track_collect_from_loot(state, out)
             out.extend(state.log)
             self._apply_pending_levels(out)
             out.append("Kemenangan!")
@@ -633,9 +866,23 @@ class Game:
             out.append("Pertarungan berakhir.")
         return out
 
+    def _check_level_up(self) -> list:
+        """Cek apakah XP yang tersimpan sudah cukup untuk naik level.
+
+        Berbeda dengan gain_xp, fungsi ini tidak menambah XP baru —
+        hanya mengolah XP yang sudah ada di player.xp.
+        """
+        p = self.state.player
+        levels = []
+        while p.xp >= level_system.xp_to_next(p.level):
+            p.xp -= level_system.xp_to_next(p.level)
+            p.level += 1
+            levels.append(p.level)
+        return levels
+
     def _apply_pending_levels(self, out):
         """Deteksi level-up dan tunda bonus stat sampai pemain memilih."""
-        levels = level_system.gain_xp(self.state.player, 0)
+        levels = self._check_level_up()
         if levels:
             self._pending_levels = len(levels)
             out.append(

@@ -1,0 +1,23 @@
+{
+  "id": "quest038f",
+  "title": "Sejarah yang Tidak Pernah Ada",
+  "type": "main",
+  "description": "Konflik tak pernah terjadi. Desa tak terbakar. Kau kehilangan sebagian ingatan.",
+  "objectives": [
+    "Selesaikan penulisan ulang masa lalu."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "rewrite_done"
+    }
+  ],
+  "rewards": {
+    "xp": 250
+  },
+  "flags_on_complete": [
+    "season1_path_done",
+    "ending_f_done"
+  ],
+  "next": "quest039"
+}

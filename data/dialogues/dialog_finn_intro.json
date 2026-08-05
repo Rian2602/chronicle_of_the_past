@@ -1,0 +1,13 @@
+{
+  "id": "dialog_finn_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_finn", "finn_caught"],
+  "lines": [
+    {"speaker": "finn", "text": "Oh, pendatang baru? Aku Finn, pedagang keliling. Senang bertemu."},
+    {"speaker": "finn", "text": "Desa kecil yang tenang... tenang sekali, bahkan. Aku suka tempat seperti ini."}
+  ],
+  "choices": [
+    {"text": "Siapa kau sebenarnya?", "require_flags": [], "set_flags": ["met_finn"], "next": "dialog_finn_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

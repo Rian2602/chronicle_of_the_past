@@ -1,0 +1,14 @@
+{
+  "id": "forest_spider",
+  "name": "Laba-laba Hutan",
+  "level": 5,
+  "stats": {"attack": 9, "defense": 7, "hp": 24, "mp": 6, "agility": 8, "intelligence": 4},
+  "behavior": "defensive",
+  "reward": {"xp": 50, "gold": [8, 14]},
+  "skills": ["poison_blade"],
+  "loot": [
+    {"item": "herb", "chance": 35, "amount": 1}
+  ],
+  "tags": ["beast"],
+  "lore": "Menenun jaring di antara pepohonan; racunnya melumpuhkan mangsa."
+}

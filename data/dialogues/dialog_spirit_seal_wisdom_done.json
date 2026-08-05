@@ -1,0 +1,12 @@
+{
+  "id": "dialog_spirit_seal_wisdom_done",
+  "require_flags": ["seal_of_wisdom_ok"],
+  "require_not_flags": ["spirit_seal_wisdom_done"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Benar. Segel Kebijaksanaan menyala — bukan karena jawabanmu, melainkan karena kau memahami mengapa jawaban itu ada."}
+  ],
+  "choices": [
+    {"text": "Lanjutkan.", "require_flags": [], "set_flags": ["spirit_seal_wisdom_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["spirit_seal_wisdom_done"], "next": null}
+  ]
+}

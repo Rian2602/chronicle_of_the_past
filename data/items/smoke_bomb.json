@@ -1,0 +1,12 @@
+{
+  "id": "smoke_bomb",
+  "name": "Bom Asap",
+  "type": "consumable",
+  "slot": null,
+  "modifiers": {},
+  "price": 40,
+  "heal": 0,
+  "heal_mp": 0,
+  "escape": true,
+  "description": "Melarikan diri dari pertarungan pasti berhasil, sekali pakai."
+}

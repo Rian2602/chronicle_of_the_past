@@ -1,0 +1,12 @@
+{
+  "id": "dialog_finn_arrested",
+  "require_flags": ["finn_arrested"],
+  "lines": [
+    {"speaker": "finn", "text": "Mengurungku tidak akan menghentikan mahkota, Pejalan Waktu."},
+    {"speaker": "finn", "text": "Bila kanselir tahu desa ini lambat... ia akan mengirim lebih dari sekadar mata-mata."}
+  ],
+  "choices": [
+    {"text": "Kami akan siap.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

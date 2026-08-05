@@ -1,0 +1,14 @@
+{
+  "id": "dialog_iris_duel",
+  "require_flags": ["iris_duel_ready"],
+  "require_not_flags": ["boss_arc3_defeated"],
+  "lines": [
+    {"speaker": "sister_iris", "text": "...Kau pilih jalan ini."},
+    {"speaker": "sister_iris", "text": "Baik. Aku akan menunjukkan padamu mengapa gereja tidak pernah takut pada batu, tombak, atau hati manusia."},
+    {"speaker": "sister_iris", "text": "Semoga api suci mengampuni jiwamu, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Ayo. Perlihatkan api suci itu.", "require_flags": [], "set_flags": ["iris_duel_started"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

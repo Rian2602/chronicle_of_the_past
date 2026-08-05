@@ -1,0 +1,16 @@
+{
+  "id": "time_study",
+  "name": "Time Study",
+  "type": "magic",
+  "cost": 4,
+  "target": "self",
+  "power": 0,
+  "effects": [],
+  "buff": {
+    "stat": "xp_bonus",
+    "power": 0.2,
+    "duration": 3
+  },
+  "requires": {},
+  "description": "Mempelajari arus waktu untuk menambah XP."
+}

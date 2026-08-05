@@ -1,0 +1,14 @@
+{
+  "id": "dialog_spirit_echo",
+  "require_flags": ["spirit_passed"],
+  "require_not_flags": ["spirit_echo_told"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Benar. Jangkar diciptakan untuk memperbaiki apa yang perang hancurkan — bukan untuk dikagumi, bukan untuk dikuasai."},
+    {"speaker": "ancient_spirit", "text": "Ketika Jangkar pertama ditempa, lima penjaga bersumpah di depannya. Mereka berjanji menjaga rahasia ini sampai akhir zaman."},
+    {"speaker": "ancient_spirit", "text": "...Dan salah satu dari lima itu mengenali wajahmu, Pejalan Waktu. Aku tidak tahu artinya. Mungkin kau yang harus mencarinya."}
+  ],
+  "choices": [
+    {"text": "Lanjutkan.", "require_flags": [], "set_flags": ["spirit_echo_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["spirit_echo_told"], "next": null}
+  ]
+}

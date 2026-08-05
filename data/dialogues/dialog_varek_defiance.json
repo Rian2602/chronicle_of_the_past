@@ -1,0 +1,14 @@
+{
+  "id": "dialog_varek_defiance",
+  "require_flags": ["varek_unmasked"],
+  "require_not_flags": ["varek_defiance_done"],
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "Gila? Tidak. Aku satu-satunya yang waras di kerajaan yang membusuk ini. Lihat sekelilingmu — raja yang lupa segalanya, gereja yang membakar desa sendiri."},
+    {"speaker": "chancellor_varek", "text": "Jangkar akan membersihkan semuanya. Sejarah baru, tanpa kebodohan. Dan kau, Pejalan Waktu, akan menjadi bagian dari sejarah yang kuhapus."},
+    {"speaker": "chancellor_varek", "text": "Sampai jumpa di benteng, Pejalan Waktu. Di sana, hanya satu dari kita yang akan menulis bab terakhir."}
+  ],
+  "choices": [
+    {"text": "Aku akan menunggumu, Varek.", "require_flags": [], "set_flags": ["varek_defiance_done", "varek_final_pending"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["varek_defiance_done", "varek_final_pending"], "next": null}
+  ]
+}

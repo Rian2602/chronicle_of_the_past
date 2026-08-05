@@ -1,0 +1,9 @@
+{
+  "id": "dialog_kael_generic",
+  "lines": [
+    {"speaker": "kael", "text": "Pengetahuan menunggu, Pejalan Waktu. Dan reruntuhan tidak akan mengartikan dirinya sendiri."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

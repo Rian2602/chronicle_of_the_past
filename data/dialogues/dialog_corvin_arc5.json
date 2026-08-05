@@ -1,0 +1,14 @@
+{
+  "id": "dialog_corvin_arc5",
+  "require_flags": ["varek_unmasked"],
+  "require_not_flags": ["corvin_arc5_done"],
+  "lines": [
+    {"speaker": "general_corvin", "text": "Jadi begitulah. Kanselir yang selama ini kubuntuti bayang-bayangnya ternyata dalang segalanya."},
+    {"speaker": "general_corvin", "text": "Aku bersumpah setia pada mahkota, Pejalan Waktu. Dan mahkota sejati tidak pernah memerintahkan membakar desa sendiri."},
+    {"speaker": "general_corvin", "text": "Apa pun yang kau rencanakan, ketahuilah ini: pasukan yang kuperintahkan berdiri di belakangmu. Selama kau berdiri di sisi kebenaran."}
+  ],
+  "choices": [
+    {"text": "Berdirilah di sampingku, Panglima.", "require_flags": [], "set_flags": ["corvin_arc5_done", "corvin_stands_with_player"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["corvin_arc5_done"], "next": null}
+  ]
+}

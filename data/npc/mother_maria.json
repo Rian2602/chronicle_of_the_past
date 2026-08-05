@@ -1,0 +1,9 @@
+{
+  "id": "mother_maria",
+  "name": "Ibu Maria",
+  "location": "village",
+  "role": "healer",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "church",
+  "dialogs": ["dialog_maria_siege", "dialog_maria_intro", "dialog_maria_truth", "dialog_maria_help", "dialog_maria_generic"]
+}

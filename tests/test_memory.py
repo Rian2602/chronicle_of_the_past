@@ -86,6 +86,7 @@ def test_memories_json_loads_via_load_json():
 
     memories = load_json("data/story/memories.json")
     assert isinstance(memories, list)
-    assert len(memories) == 2
+    assert len(memories) == 13
     assert memories[0]["id"] == "memory001"
     assert memories[1]["id"] == "memory002"
+    assert memories[-1]["id"] == "memory013"

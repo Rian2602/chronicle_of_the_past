@@ -1,0 +1,13 @@
+{
+  "id": "dialog_kael_scrolls",
+  "require_flags": ["kael_asked_scrolls"],
+  "require_not_flags": ["kael_scrolls_told"],
+  "lines": [
+    {"speaker": "kael", "text": "Gulungan berhalaman kuning, disegel lilin biru. Pemulung reruntuhan sering menemukannya — dan hantu waktu menyimpan beberapa di dalam genggaman mereka."},
+    {"speaker": "kael", "text": "Bawakan dua, dan kaulihat sendiri apa yang tertulis di balik pintu itu. Aku yakin kau akan menyukainya — atau menyesalinya."}
+  ],
+  "choices": [
+    {"text": "Baik, aku mencarinya sekarang.", "require_flags": [], "set_flags": ["kael_scrolls_told", "kael_quest_offered"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["kael_scrolls_told"], "next": null}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "shadow_stalker",
+  "name": "Penghisap Bayangan",
+  "level": 13,
+  "stats": {"attack": 16, "defense": 9, "hp": 48, "mp": 0, "agility": 15, "intelligence": 6},
+  "behavior": "coward",
+  "reward": {"xp": 150, "gold": [22, 34]},
+  "skills": [],
+  "loot": [
+    {"item": "herb", "chance": 30, "amount": 1}
+  ],
+  "tags": ["undead"],
+  "lore": "Pembunuh yang menghilang ke bayangan sebelum mangsa sempat berteriak."
+}

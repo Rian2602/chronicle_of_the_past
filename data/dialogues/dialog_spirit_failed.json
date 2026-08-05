@@ -1,0 +1,14 @@
+{
+  "id": "dialog_spirit_failed",
+  "require_flags": ["spirit_failed"],
+  "require_not_flags": ["spirit_failure_resolved"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Salah. Mereka yang melihat kekuasaan di balik Jangkar... melihat cermin dirinya sendiri."},
+    {"speaker": "ancient_spirit", "text": "Reruntuhan ini akan menunjukkan jalannya — lewat darah."}
+  ],
+  "choices": [
+    {"text": "Biarkan aku mencoba lagi.", "require_flags": [], "set_flags": ["spirit_failure_resolved"], "next": "dialog_spirit_test"},
+    {"text": "Aku siap menghadapinya.", "require_flags": [], "set_flags": ["spirit_failure_resolved"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["spirit_failure_resolved"], "next": null}
+  ]
+}

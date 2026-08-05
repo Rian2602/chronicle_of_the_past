@@ -1,0 +1,15 @@
+{
+  "id": "time_lord_wraith",
+  "name": "Tuan Hantu Waktu",
+  "level": 29,
+  "stats": {"attack": 26, "defense": 18, "hp": 460, "mp": 110, "agility": 16, "intelligence": 26},
+  "behavior": "mage",
+  "reward": {"xp": 380, "gold": [140, 180]},
+  "skills": ["frost_bolt", "fireball", "lore_strike"],
+  "loot": [
+    {"item": "time_edged_blade", "chance": 100, "amount": 1},
+    {"item": "anchor_crown", "chance": 60, "amount": 1}
+  ],
+  "tags": ["boss", "undead"],
+  "lore": "Waktu yang dilepaskan dari penjara akademi — keserakahan pengetahuan yang jadi monster."
+}

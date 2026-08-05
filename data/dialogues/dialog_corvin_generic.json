@@ -1,0 +1,9 @@
+{
+  "id": "dialog_corvin_generic",
+  "lines": [
+    {"speaker": "general_corvin", "text": "Di medan perang, Pejalan Waktu, kau hanya punya satu hal yang bisa kau pegang: janji. Jangan pernah menyia-nyiakannya."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

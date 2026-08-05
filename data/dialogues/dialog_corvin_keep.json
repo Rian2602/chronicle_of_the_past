@@ -1,0 +1,14 @@
+{
+  "id": "dialog_corvin_keep",
+  "require_flags": ["corvin_asked_keep"],
+  "require_not_flags": ["corvin_keep_told"],
+  "lines": [
+    {"speaker": "general_corvin", "text": "Aku melihat pasukan yang setia disingkirkan satu per satu, digantikan orang-orang baru dengan mata yang tidak pernah berkedip."},
+    {"speaker": "general_corvin", "text": "Aku melihat perintah perang yang ditandatangani tanpa raja benar-benar membacanya. Dan aku melihat emas berpindah tangan di lorong-lorong gelap."},
+    {"speaker": "general_corvin", "text": "Kanselir Varek pandai menyembunyikan jejak. Tapi jejak emas selalu meninggalkan bau yang bisa diikuti."}
+  ],
+  "choices": [
+    {"text": "Ikuti jejak itu untukku.", "require_flags": [], "set_flags": ["corvin_keep_told", "corvin_hint"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["corvin_keep_told"], "next": null}
+  ]
+}

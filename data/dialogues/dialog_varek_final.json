@@ -1,0 +1,14 @@
+{
+  "id": "dialog_varek_final",
+  "require_flags": ["varek_final_pending"],
+  "require_not_flags": ["boss_final_defeated"],
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "Kau datang. Aku hampir mengira kau akan lari kembali ke desamu yang terbakar."},
+    {"speaker": "chancellor_varek", "text": "Di belakangku berdiri takdir kerajaan ini — dan seluruh sejarah yang akan kutulis ulang. Di belakangmu... apa? Harapan?"},
+    {"speaker": "chancellor_varek", "text": "Ayo, Pejalan Waktu. Tunjukkan padaku apakah harapan cukup kuat untuk melawan takdir."}
+  ],
+  "choices": [
+    {"text": "Harapan lebih kuat dari takdir, Varek.", "require_flags": [], "set_flags": ["varek_boss_ready"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "dialog_maria_intro",
+  "require_flags": ["arc3_started"],
+  "require_not_flags": ["met_maria"],
+  "lines": [
+    {"speaker": "mother_maria", "text": "Tenanglah, anakku. Aku Ibu Maria — bidan desa, dan untuk sebagian orang, satu-satunya wajah gereja yang mereka percaya."},
+    {"speaker": "mother_maria", "text": "Gereja Api Suci di ibukota mungkin mengirim inkuisitor dan api. Tapi gereja yang kukenal... tidak membakar rumah."},
+    {"speaker": "mother_maria", "text": "Jangan terlalu cepat menghakimi seluruh gereja karena satu Sister Iris, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Apa yang kau tahu tentang inkuisisi?", "require_flags": [], "set_flags": ["met_maria"], "next": "dialog_maria_truth"},
+    {"text": "Aku butuh pertolonganmu untuk warga.", "require_flags": [], "set_flags": ["met_maria"], "next": "dialog_maria_help"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

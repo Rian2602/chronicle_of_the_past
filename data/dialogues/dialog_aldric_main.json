@@ -1,0 +1,15 @@
+{
+  "id": "dialog_aldric_main",
+  "require_flags": ["met_aldric"],
+  "require_not_flags": ["king_informed", "varek_unmasked"],
+  "lines": [
+    {"speaker": "king_aldric", "text": "Desa Ashen... Aku ingat. Ada sesuatu yang aneh tentang desa itu. Para pendahuluku selalu menyinggungnya dengan berbisik."},
+    {"speaker": "king_aldric", "text": "Kanselir Varek mengelolakan urusan-urusan desa untukku. Dia orang yang cakap. Terlalu cakap, kadang."},
+    {"speaker": "king_aldric", "text": "Apa yang kau cari dari mahkota, Pejalan Waktu?"}
+  ],
+  "choices": [
+    {"text": "Aku punya bukti pengkhianatan Varek.", "require_flags": ["have_evidence_letter"], "set_flags": ["king_informed", "aldric_told_varek"], "next": "dialog_aldric_varek"},
+    {"text": "Aku hanya ingin tahu tentang reruntuhan di bawah desa.", "require_flags": [], "set_flags": ["aldric_asked_ruins"], "next": "dialog_aldric_ruins"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

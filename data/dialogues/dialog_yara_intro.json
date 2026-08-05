@@ -1,0 +1,15 @@
+{
+  "id": "dialog_yara_intro",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["met_yara"],
+  "lines": [
+    {"speaker": "alchemist_yara", "text": "Awas — jangan sentuh apa pun di meja ini. Setengahnya beracun, setengahnya lagi mahal."},
+    {"speaker": "alchemist_yara", "text": "Aku Yara, alkemis Perkumpulan Cendekia. Ramuan penyembuh, elixir, dan hal-hal yang tidak boleh kau tanyakan."},
+    {"speaker": "alchemist_yara", "text": "Profesor Kael menyebut namamu dalam suratnya. Katanya kau 'menarik'. Bagiku itu berarti berbahaya."}
+  ],
+  "choices": [
+    {"text": "Kael benar — aku butuh ramuan kuat.", "require_flags": [], "set_flags": ["met_yara"], "next": "dialog_yara_shop"},
+    {"text": "Apa yang terjadi di kalangan cendekia?", "require_flags": [], "set_flags": ["met_yara"], "next": "dialog_yara_news"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

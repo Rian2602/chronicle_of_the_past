@@ -1,0 +1,12 @@
+{
+  "id": "dialog_sera_followup",
+  "require_flags": ["aligned_rebels"],
+  "lines": [
+    {"speaker": "sera", "text": "Keputusan yang bijak. Kamp ini terbuka untukmu, Pejalan Waktu."},
+    {"speaker": "sera", "text": "Ingin tahu kenapa kami melawan?"}
+  ],
+  "choices": [
+    {"text": "Ceritakan.", "require_flags": [], "set_flags": [], "next": "dialog_sera_cause"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "quest045",
+  "title": "Benih Musim Kedua",
+  "type": "main",
+  "description": "Tanda anomali waktu muncul. Cerita berlanjut...",
+  "objectives": [
+    "Lihat tanda dari masa depan."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "season1_ended"
+    }
+  ],
+  "rewards": {
+    "xp": 0
+  },
+  "flags_on_complete": [
+    "season2_hint"
+  ],
+  "next": null
+}

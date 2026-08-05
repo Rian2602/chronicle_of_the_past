@@ -1,0 +1,15 @@
+{
+  "id": "dialog_spirit_seal_time",
+  "require_flags": ["seal_of_wisdom_ok"],
+  "require_not_flags": ["seal_of_time_ok"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Segel ketiga adalah ujian waktu. Pilih dua memori untuk diselaraskan dengan Jangkar."},
+    {"speaker": "ancient_spirit", "text": "Memori pertama: desa yang terbakar. Memori kedua: sihir terlarang. Memori ketiga: hari Jangkar ditempa."}
+  ],
+  "choices": [
+    {"text": "Selaraskan memori desa yang terbakar dan hari penempaan.", "require_flags": [], "set_flags": ["seal_of_time_ok", "seal_time_burning_forge"], "next": "dialog_spirit_seal_time_done"},
+    {"text": "Selaraskan memori sihir terlarang dan desa yang terbakar.", "require_flags": [], "set_flags": ["seal_of_time_ok", "seal_time_magic_burning"], "next": "dialog_spirit_seal_time_done"},
+    {"text": "Selaraskan memori sihir terlarang dan hari penempaan.", "require_flags": [], "set_flags": ["seal_of_time_ok", "seal_time_magic_forge"], "next": "dialog_spirit_seal_time_done"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

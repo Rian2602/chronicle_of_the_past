@@ -1,0 +1,14 @@
+{
+  "id": "dialog_kade_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["kade_met"],
+  "lines": [
+    {"speaker": "kade", "text": "Heh. Siapa yang menyerahkan diri ke sarangku tanpa senjata?"},
+    {"speaker": "kade", "text": "Aku Kade. Di gang-gang gelap ini, semua punya harga — termasuk informasi."},
+    {"speaker": "kade", "text": "Kau datang ke tempat yang tepat, atau tempat yang salah. Itu tergantung isi dompetmu."}
+  ],
+  "choices": [
+    {"text": "Aku mencari informasi.", "require_flags": [], "set_flags": ["kade_met"], "next": "dialog_kade_offer"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

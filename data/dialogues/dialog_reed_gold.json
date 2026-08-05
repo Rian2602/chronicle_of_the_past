@@ -1,0 +1,14 @@
+{
+  "id": "dialog_reed_gold",
+  "require_flags": ["reed_info_told"],
+  "require_not_flags": ["reed_gold_told"],
+  "lines": [
+    {"speaker": "scout_reed", "text": "Emas kerajaan selalu dicap — bunga teratai di belakang koin. Siapa pun yang pernah mencuri dari istana akan mengenalnya."},
+    {"speaker": "scout_reed", "text": "Aku melihat sekantong penuh koin itu dibayarkan pada seorang kapten tentara bayaran. Dan dia menyebut nama satu orang: Kanselir."},
+    {"speaker": "scout_reed", "text": "Hati-hati, Pejalan Waktu. Bayangan yang kau lawan mungkin duduk sangat dekat dengan takhta."}
+  ],
+  "choices": [
+    {"text": "Aku akan mengingat nama itu.", "require_flags": [], "set_flags": ["reed_gold_told", "varek_first_suspect"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["reed_gold_told"], "next": null}
+  ]
+}

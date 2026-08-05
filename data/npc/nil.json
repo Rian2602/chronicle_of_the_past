@@ -1,0 +1,9 @@
+{
+  "id": "nil",
+  "name": "Nil",
+  "location": "village",
+  "role": "child",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_nil_arc3", "dialog_nil_intro", "dialog_nil_hope", "dialog_nil_drawing", "dialog_nil_generic"]
+}

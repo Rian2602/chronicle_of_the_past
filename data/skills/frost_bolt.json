@@ -1,0 +1,11 @@
+{
+  "id": "frost_bolt",
+  "name": "Frost Bolt",
+  "type": "magic",
+  "cost": 7,
+  "target": "single_enemy",
+  "power": 10,
+  "effects": [{"status": "slow", "power": 2, "duration": 2}],
+  "requires": {},
+  "description": "Baut es yang memperlambat musuh."
+}

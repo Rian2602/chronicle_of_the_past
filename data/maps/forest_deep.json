@@ -1,0 +1,16 @@
+{
+  "id": "forest_deep",
+  "name": "Hutan Ashen Dalam",
+  "region": "3",
+  "threat_level": 8,
+  "description": "Hutan lebat di utara desa. Di antara pepohonan, terdengar langkah kaki yang bukan hewan.",
+  "ascii_art": "forest_deep",
+  "exits": ["forest", "rebel_camp"],
+  "npcs": ["scout_reed"],
+  "enemy_pool": [
+    {"id": "direwolf", "weight": 3},
+    {"id": "forest_spider", "weight": 2},
+    {"id": "mercenary_soldier", "weight": 2},
+    {"id": "royal_scout", "weight": 1}
+  ]
+}

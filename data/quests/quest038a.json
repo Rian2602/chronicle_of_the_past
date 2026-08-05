@@ -1,0 +1,23 @@
+{
+  "id": "quest038a",
+  "title": "Sumpah Penjaga",
+  "type": "main",
+  "description": "Ritual penyegelan bersama Aria dan Lyra. Jadilah Penjaga Baru.",
+  "objectives": [
+    "Selesaikan ritual penyegelan Jangkar."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "seal_ritual_done"
+    }
+  ],
+  "rewards": {
+    "xp": 250
+  },
+  "flags_on_complete": [
+    "season1_path_done",
+    "ending_a_done"
+  ],
+  "next": "quest039"
+}

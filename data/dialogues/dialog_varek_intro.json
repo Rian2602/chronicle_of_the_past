@@ -1,0 +1,15 @@
+{
+  "id": "dialog_varek_intro",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["met_varek"],
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "Ah, Pejalan Waktu dari Desa Ashen. Kanselir Varek, penasihat utama Yang Mulia Raja Aldric."},
+    {"speaker": "chancellor_varek", "text": "Kudengar desamu mengalami... kesulitan. Kebakaran, inkuisisi, hal-hal yang tidak menyenangkan. Sangat disayangkan."},
+    {"speaker": "chancellor_varek", "text": "Semoga kau menemukan apa yang kau cari di ibukota, Pejalan Waktu. Dan semoga apa yang kau temukan tidak terlalu berat untuk dibawa pulang."}
+  ],
+  "choices": [
+    {"text": "Kau tahu banyak tentang kesulitan desaku.", "require_flags": [], "set_flags": ["met_varek"], "next": "dialog_varek_main"},
+    {"text": "Kami tidak butuh simpati istana.", "require_flags": [], "set_flags": ["met_varek", "varek_cold"], "next": "dialog_varek_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

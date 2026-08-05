@@ -1,0 +1,23 @@
+{
+  "id": "quest004",
+  "title": "Batu yang Berdenyut",
+  "type": "main",
+  "description": "Turun ke ruang bawah tanah dan temukan dinding batu yang berdenyut.",
+  "objectives": [
+    "Kunjungi ruang bawah tanah (anchor_vault)."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "anchor_vault"
+    }
+  ],
+  "rewards": {
+    "xp": 50,
+    "gold": 15
+  },
+  "flags_on_complete": [
+    "found_anchor_vault"
+  ],
+  "next": "quest005"
+}

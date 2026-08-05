@@ -1,0 +1,14 @@
+{
+  "id": "dialog_varek_fire",
+  "require_flags": ["varek_asked_fire"],
+  "require_not_flags": ["varek_fire_told"],
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "Kebenaran? Kebenaran adalah barang mewah, Pejalan Waktu. Yang miskin tak mampu membelinya, dan yang kaya tak mau membaginya."},
+    {"speaker": "chancellor_varek", "text": "Api di desamu? Gereja yang menyalakannya, kata mereka. Atau mungkin pemberontak. Atau mungkin... itu hanya kebetulan yang sangat disayangkan."},
+    {"speaker": "chancellor_varek", "text": "Jangan terlalu lama memandangi api, Pejalan Waktu. Kau bisa kehilangan sesuatu yang lebih berharga daripada kebenaran."}
+  ],
+  "choices": [
+    {"text": "Aku akan menemukan siapa di balik api itu.", "require_flags": [], "set_flags": ["varek_fire_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["varek_fire_told"], "next": null}
+  ]
+}

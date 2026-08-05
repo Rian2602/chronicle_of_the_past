@@ -1,0 +1,14 @@
+{
+  "id": "dialog_yara_news",
+  "require_flags": ["met_yara"],
+  "require_not_flags": ["yara_news_told"],
+  "lines": [
+    {"speaker": "alchemist_yara", "text": "Perkumpulan sedang gelisah. Kael mengirim kabar tentang ukiran yang kau temukan — dan beberapa anggota senior menganggapnya terlalu berbahaya untuk dipelajari."},
+    {"speaker": "alchemist_yara", "text": "Lalu ada orang-orang berjubah hitam yang membeli jamur langka dan kristal dari apotek-apotek di ibukota. Jumlahnya tidak wajar."},
+    {"speaker": "alchemist_yara", "text": "Bahan-bahan itu... kalau dicampur dengan benar, bisa membuat sesuatu yang bukan ramuan. Aku tidak suka arah pikiranku sendiri."}
+  ],
+  "choices": [
+    {"text": "Orang berjubah hitam itu... siapa?", "require_flags": [], "set_flags": ["yara_news_told", "yara_cult_hint"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["yara_news_told"], "next": null}
+  ]
+}

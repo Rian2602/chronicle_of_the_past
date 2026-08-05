@@ -1,0 +1,15 @@
+{
+  "id": "dialog_iris_main",
+  "require_flags": ["met_iris"],
+  "require_not_flags": ["boss_arc3_defeated"],
+  "lines": [
+    {"speaker": "sister_iris", "text": "Masih di sini? Bagus. Kau lebih berani dari yang kuduga — atau lebih bodoh."},
+    {"speaker": "sister_iris", "text": "Aku tidak menikmati ini. Tapi gereja melihat hal-hal yang kalian tidak lihat. Batu itu akan menghancurkan lebih dari satu desa."},
+    {"speaker": "sister_iris", "text": "Berhentilah memeluk kebohonganmu. Serahkan batu itu, dan aku berjanji desa ini selamat."}
+  ],
+  "choices": [
+    {"text": "Katakan padaku siapa yang benar-benar mengirimmu ke sini.", "require_flags": [], "set_flags": ["iris_asked_who"], "next": "dialog_iris_main_who"},
+    {"text": "Hadapi aku sekarang, Iris.", "require_flags": [], "set_flags": ["iris_duel_ready"], "next": "dialog_iris_duel"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

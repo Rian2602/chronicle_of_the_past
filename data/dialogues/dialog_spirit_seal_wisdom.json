@@ -1,0 +1,14 @@
+{
+  "id": "dialog_spirit_seal_wisdom",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["seal_of_wisdom_ok"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Segel kedua tidak dibuka dengan pedang, Pejalan Waktu, melainkan dengan ingatan."},
+    {"speaker": "ancient_spirit", "text": "Jawab: mengapa Kaum Arah menciptakan Jangkar, bila mereka tahu ia akan menghancurkan mereka?"}
+  ],
+  "choices": [
+    {"text": "Karena mereka lebih takut pada sejarah yang terulang daripada pada kehancuran diri mereka.", "require_flags": [], "set_flags": ["seal_of_wisdom_ok", "spirit_seal_passed"], "next": "dialog_spirit_seal_wisdom_done"},
+    {"text": "Karena mereka serakah dan bodoh.", "require_flags": [], "set_flags": ["seal_of_wisdom_failed"], "next": "dialog_spirit_failed"},
+    {"text": "Aku tidak tahu.", "require_flags": [], "set_flags": [], "next": "dialog_spirit_hint"}
+  ]
+}

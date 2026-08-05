@@ -1,0 +1,12 @@
+{
+  "id": "dialog_kade_nego",
+  "require_flags": ["kade_paid_nego"],
+  "lines": [
+    {"speaker": "kade", "text": "...Kau tahu cara bicara dengan pedagang. Baiklah."},
+    {"speaker": "kade", "text": "Dua puluh emas. Dan kau berhutang budi pada gilda dagang — jangan lupakan itu."}
+  ],
+  "choices": [
+    {"text": "Sepakat.", "require_flags": [], "set_flags": ["kade_nego_done"], "next": "dialog_kade_paid"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

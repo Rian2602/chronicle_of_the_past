@@ -1,0 +1,9 @@
+{
+  "id": "dialog_erik_generic",
+  "lines": [
+    {"speaker": "guard_erik", "text": "Jaga dirimu di luar desa. Aku menjaga pintu masuk, tapi hutan itu... bukan wilayahku."}
+  ],
+  "choices": [
+    {"text": "Terima kasih.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

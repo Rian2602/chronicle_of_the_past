@@ -1,0 +1,26 @@
+{
+  "id": "quest019",
+  "title": "Malam Serigala",
+  "type": "main",
+  "description": "Inkuisisi menyerang desa di malam hari. Pertahankan desa.",
+  "objectives": [
+    "Kalahkan 3 tentara inkuisisi (inquisitor_soldier)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "killed_inquisitor_soldier_3"
+    }
+  ],
+  "rewards": {
+    "xp": 120,
+    "gold": 30,
+    "reputation": {
+      "rebels": 5
+    }
+  },
+  "flags_on_complete": [
+    "village_defended"
+  ],
+  "next": "quest020"
+}

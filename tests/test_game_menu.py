@@ -51,6 +51,22 @@ def test_build_dispatches_dialog_menu(game):
     assert game_menu.END_DIALOG in [target for _, target in items]
 
 
+def test_dialog_menu_shows_shop_for_merchant(game):
+    game.state.current_map.npcs.append("ben")
+    game.ctx.npc["ben"]["location"] = game.state.current_map.id
+    game.run_turn("talk ben")
+    items = game_menu.build(game)
+    assert ("Berbelanja", "shop") in items
+
+
+def test_shop_menu_lists_buy_and_exit(game):
+    game._shop_npc_id = "ben"
+    items = game_menu.build(game)
+    labels = [label for label, _ in items]
+    assert "Beli" in labels
+    assert ("Keluar Toko", game_menu.END_SHOP) in items
+
+
 def test_go_submenu_shows_map_names(game):
     items = game_menu.build(game)
     go_targets = [target for label, target in items if label == "Pergi"]
@@ -74,6 +90,45 @@ def test_talk_submenu_shows_npc_names(game):
     assert "Kepala Desa" in labels
     assert "talk old_man" in targets
     assert None in targets
+
+
+def test_explore_menu_shows_learn_skill_with_points(game):
+    game.state.player.skill_points = 1
+    labels = [label for label, _ in game_menu.build(game)]
+    assert "Latih Skill" in labels
+
+
+def test_explore_menu_hides_learn_skill_without_points(game):
+    game.state.player.skill_points = 0
+    labels = [label for label, _ in game_menu.build(game)]
+    assert "Latih Skill" not in labels
+
+
+def test_learn_submenu_lists_unlearned_class_skills(game):
+    game.state.player.skill_points = 1
+    items = game_menu.build(game)
+    learn_target = next(
+        target for label, target in items if label == "Latih Skill"
+    )
+    submenu = learn_target()
+    labels = [label for label, _ in submenu]
+    targets = [target for _, target in submenu]
+    assert any("Shield Bash" in label for label in labels)
+    assert any("War Cry" in label for label in labels)
+    assert "learn shield_bash" in targets
+    assert None in targets
+
+
+def test_learn_submenu_excludes_learned_skills(game):
+    game.state.player.skill_points = 1
+    game.state.player.learned_skills.append("shield_bash")
+    items = game_menu.build(game)
+    learn_target = next(
+        target for label, target in items if label == "Latih Skill"
+    )
+    labels = [label for label, _ in learn_target()]
+    assert not any("Shield Bash" in label for label in labels)
+    assert any("War Cry" in label for label in labels)
 
 
 def test_skill_and_magic_split_by_type(ctx):

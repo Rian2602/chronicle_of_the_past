@@ -1,0 +1,13 @@
+{
+  "id": "dialog_nil_drawing",
+  "require_flags": ["met_nil"],
+  "require_not_flags": ["nil_drawing_told"],
+  "lines": [
+    {"speaker": "nil", "text": "Ini! Ini rumahku, dan ini ladang Tom. Di sini aku menggambar orang-orang — kau lihat, yang ini sedang menolong orang lain."},
+    {"speaker": "nil", "text": "Aku belum pernah melihat wajahnya, tapi aku tahu dia baik. Aku menggambar semua orang baik yang akan datang ke desa ini."}
+  ],
+  "choices": [
+    {"text": "Kau membuatku ingin menjadi orang baik itu.", "require_flags": [], "set_flags": ["nil_drawing_told", "nil_promised"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["nil_drawing_told"], "next": null}
+  ]
+}

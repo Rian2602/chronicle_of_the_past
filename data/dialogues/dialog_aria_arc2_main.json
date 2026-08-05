@@ -1,0 +1,13 @@
+{
+  "id": "dialog_aria_arc2_main",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["aria_arc2_done"],
+  "lines": [
+    {"speaker": "old_man", "text": "Pejalan Waktu. Aku mencarimu sejak tadi malam."},
+    {"speaker": "old_man", "text": "Ada sesuatu di bawah perpustakaan ini. Sesuatu yang berdenyut seperti jantung... dan aku bukan satu-satunya yang menyadarinya."}
+  ],
+  "choices": [
+    {"text": "Ada apa?", "require_flags": [], "set_flags": [], "next": "dialog_aria_arc2_news"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

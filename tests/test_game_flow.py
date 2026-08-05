@@ -83,7 +83,7 @@ def test_travel_invalid_destination(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)
     g.new_game("Rian", "warrior")
-    out = g.run_turn("go capital")
+    out = g.run_turn("go ibukota_kuno")
     assert "Tidak ada jalan" in out
 
 
@@ -492,6 +492,36 @@ def test_continue_with_missing_player_raises_save_error(tmp_path):
         g.continue_game(str(p))
 
 
+def test_failed_load_keeps_game_playable(tmp_path):
+    p = tmp_path / "noplayer.json"
+    p.write_text('{"schema_version": 1, "flags": {}}')
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn(f"load {p}")
+    assert "Save tidak lengkap" in out
+    assert g.state.player.name == "Rian"
+    assert "Rian" in g.run_turn("status")
+
+
+def test_quest_reward_xp_via_go_triggers_level_up(tmp_path):
+    from src.engine import quest_engine
+    from src.systems import level_system
+
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    quest_engine.start_quest(g.state, "quest004")
+    g.state.player.xp = level_system.xp_to_next(g.state.player.level) - 1
+    out = g.run_turn("go anchor_vault")
+    assert g.state.player.level == 2
+    assert "Naik level! Kamu kini level 2." in out
+    assert "Pilih bonus level-up" in out
+    assert g._pending_levels == 1
+    g.run_turn("1")  # pilih bonus level-up
+    assert g._pending_levels == 0
+
+
 def test_restore_combat_corrupt_result_does_not_crash(tmp_path):
     _, g = _mid_combat_game(tmp_path)
     g._combat = None
@@ -643,6 +673,35 @@ def test_equip_unknown_item_message(tmp_path):
     assert "Item tidak dikenal" in out
 
 
+def test_learn_command_spends_point_and_learns(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.skill_points = 1
+    out = g.run_turn("learn shield_bash")
+    assert "mempelajari skill" in out
+    assert g.state.player.skill_points == 0
+    assert "shield_bash" in g.state.player.learned_skills
+
+
+def test_learn_command_insufficient_points(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.skill_points = 0
+    out = g.run_turn("learn shield_bash")
+    assert "Skill Point tidak cukup" in out
+    assert "shield_bash" not in g.state.player.learned_skills
+
+
+def test_learn_command_unknown_skill(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("learn bogus")
+    assert "Skill tidak dikenal" in out
+
+
 def test_talk_unknown_npc_message(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)
@@ -674,6 +733,32 @@ def test_select_without_number_does_not_crash(tmp_path):
     g.run_turn("talk old_man")
     out = g.run_turn("select")
     assert "Pilihan tidak valid." in out
+
+
+def test_arc2_dialog_hidden_before_arc2(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    out = g.run_turn("talk old_man")
+    assert "Aku mencarimu" not in out
+
+
+def test_arc2_dialog_chain_and_followup(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.flags["arc2_started"] = True
+    g.run_turn("talk old_man")
+    out = g.run_turn("1")  # Ada apa? -> news
+    assert "lambang kerajaan" in out
+    out = g.run_turn("1")  # Tunjukkan ruang rahasia -> room
+    assert "Simbol Kaum Arah" in out
+    out = g.run_turn("1")  # Ceritakan tentang Jangkar -> jangkar
+    assert "menulis ulang sejarah" in out
+    g.run_turn("1")  # akhiri percakapan
+    out = g.run_turn("talk old_man")
+    assert "Bicaralah dengan Lyra" in out  # followup, bukan main lagi
+    assert "Aku mencarimu" not in out
 
 
 def test_memories_empty_and_after_grant(tmp_path):

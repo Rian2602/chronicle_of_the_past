@@ -1,0 +1,22 @@
+{
+  "id": "quest044",
+  "title": "Epilog: Pagi di Ashen",
+  "type": "main",
+  "description": "Scene penutup. Pagi di Ashen, bab terakhir musim pertama.",
+  "objectives": [
+    "Selesaikan cerita musim pertama."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "season1_path_done"
+    }
+  ],
+  "rewards": {
+    "xp": 0
+  },
+  "flags_on_complete": [
+    "season1_ended"
+  ],
+  "next": "quest045"
+}

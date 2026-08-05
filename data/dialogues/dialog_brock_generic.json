@@ -1,0 +1,9 @@
+{
+  "id": "dialog_brock_generic",
+  "lines": [
+    {"speaker": "smith_brock", "text": "Besi yang baik tidak pernah berbohong, Pejalan Waktu. Kalau kau butuh sesuatu yang jujur, datanglah ke bengkel ini."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

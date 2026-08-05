@@ -1,0 +1,29 @@
+{
+  "id": "quest018",
+  "title": "Pengkhianatan di Pasar",
+  "type": "main",
+  "description": "Marcus menjual info lokasi Jangkar. Selamatkan dia dari pengawal gilda.",
+  "objectives": [
+    "Bicaralah dengan Marcus.",
+    "Kalahkan pengawal gilda (guild_guard)."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "marcus"
+    },
+    {
+      "kind": "enemy",
+      "target": "guild_guard"
+    }
+  ],
+  "rewards": {
+    "xp": 110,
+    "gold": 40,
+    "reputation": {
+      "merchant_guild": 5
+    }
+  },
+  "flags_on_complete": [],
+  "next": "quest019"
+}

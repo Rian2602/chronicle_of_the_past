@@ -1,0 +1,23 @@
+{
+  "id": "quest032",
+  "title": "Pengepungan Gereja",
+  "type": "main",
+  "description": "Inkuisisi mengepung desa. Pertahankan garis terakhir.",
+  "objectives": [
+    "Kalahkan 4 tentara inkuisisi (inquisitor_soldier)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "killed_inquisitor_soldier_4"
+    }
+  ],
+  "rewards": {
+    "xp": 160,
+    "gold": 40
+  },
+  "flags_on_complete": [
+    "siege_won"
+  ],
+  "next": "quest033"
+}

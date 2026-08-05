@@ -1,0 +1,9 @@
+{
+  "id": "dialog_nil_generic",
+  "lines": [
+    {"speaker": "nil", "text": "Kalau kau sedang sedih, coba gambar sesuatu yang indah. Itu selalu berhasil untukku."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

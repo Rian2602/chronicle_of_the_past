@@ -1,0 +1,25 @@
+{
+  "id": "quest024",
+  "title": "Segel Kebijaksanaan",
+  "type": "main",
+  "description": "Segel kedua dibuka dengan akal: jawab teka-teki Roh Penjaga.",
+  "objectives": [
+    "Bicaralah dengan Roh Penjaga.",
+    "Jawab teka-teki dengan benar."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "ancient_spirit"
+    },
+    {
+      "kind": "flag",
+      "target": "seal_of_wisdom_ok"
+    }
+  ],
+  "rewards": {
+    "xp": 120
+  },
+  "flags_on_complete": [],
+  "next": "quest025"
+}

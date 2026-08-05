@@ -1,0 +1,15 @@
+{
+  "id": "dialog_kael_main",
+  "require_flags": ["met_kael"],
+  "require_not_flags": ["ancient_script_decoded"],
+  "lines": [
+    {"speaker": "kael", "text": "Bahasa Kaum Arah — peradaban yang lenyap sebelum kerajaan ini berdiri. Aku menemukan huruf-hurufnya di dinding reruntuhan."},
+    {"speaker": "kael", "text": "Sayangnya, sebagian gulungan kuno yang berisi kunci terjemahan hilang. Aku membutuhkan dua gulungan untuk menyelesaikan terjemahan ini."},
+    {"speaker": "kael", "text": "Bawakan aku dua gulungan kuno, dan aku akan mengartikan seluruh ukiran itu untukmu. Kata-kata pertama yang kuberhasil baca... cukup mengkhawatirkan."}
+  ],
+  "choices": [
+    {"text": "Gulungan macam apa yang kau cari?", "require_flags": [], "set_flags": ["kael_asked_scrolls"], "next": "dialog_kael_scrolls"},
+    {"text": "Aku akan mencarinya.", "require_flags": [], "set_flags": ["kael_quest_offered"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "rebel_soldier",
+  "name": "Prajurit Pemberontak",
+  "level": 8,
+  "stats": {"attack": 13, "defense": 7, "hp": 40, "mp": 0, "agility": 10, "intelligence": 5},
+  "behavior": "aggressive",
+  "reward": {"xp": 90, "gold": [14, 22]},
+  "skills": ["slash"],
+  "loot": [
+    {"item": "potion", "chance": 20, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Pejuang kemerdekaan yang mengangkat senjata melawan mahkota."
+}

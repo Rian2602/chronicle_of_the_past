@@ -1,0 +1,21 @@
+{
+  "id": "quest021",
+  "title": "Gerbang yang Terkunci",
+  "type": "main",
+  "description": "Gerbang dalam reruntuhan bertulis tiga segel. Buka jalan masuk.",
+  "objectives": [
+    "Kunjungi kedalaman reruntuhan (ruins_depth)."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "ruins_depth"
+    }
+  ],
+  "rewards": {
+    "xp": 100,
+    "gold": 20
+  },
+  "flags_on_complete": [],
+  "next": "quest022"
+}

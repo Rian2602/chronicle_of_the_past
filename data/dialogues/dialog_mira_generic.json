@@ -1,0 +1,9 @@
+{
+  "id": "dialog_mira_generic",
+  "lines": [
+    {"speaker": "innkeeper_mira", "text": "Tiga puluh tahun mengelola penginapan, dan satu hal yang kupelajari: setiap orang menyimpan rahasia. Termasuk kau, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

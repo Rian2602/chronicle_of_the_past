@@ -1,0 +1,9 @@
+{
+  "id": "dialog_yara_generic",
+  "lines": [
+    {"speaker": "alchemist_yara", "text": "Ilmu pengetahuan tidak pernah netral, Pejalan Waktu. Yang menentukan adalah tangan yang memegangnya."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

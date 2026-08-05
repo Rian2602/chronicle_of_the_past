@@ -1,0 +1,15 @@
+{
+  "id": "dialog_aldric_intro",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["met_aldric"],
+  "lines": [
+    {"speaker": "king_aldric", "text": "...Masuklah. Aku Aldric, raja Ashenfeld. Meski belakangan ini aku sering lupa mengapa takhta ini masih milikku."},
+    {"speaker": "king_aldric", "text": "Kau datang dari Desa Ashen? Desaku yang paling jauh — dan paling sering kukirim pajak, tapi jarang kukirim perhatian."},
+    {"speaker": "king_aldric", "text": "Bicaralah, Pejalan Waktu. Aku punya banyak waktu dan sedikit kebenaran."}
+  ],
+  "choices": [
+    {"text": "Desamu terbakar, Baginda. Atas perintah yang konon berasal dari istana.", "require_flags": ["have_evidence_letter"], "set_flags": ["met_aldric", "king_informed", "aldric_told_varek"], "next": "dialog_aldric_varek"},
+    {"text": "Aku datang untuk meminta bantuan.", "require_flags": [], "set_flags": ["met_aldric"], "next": "dialog_aldric_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "quest016",
+  "title": "Kamp Pemberontak",
+  "type": "main",
+  "description": "Sera mengundangmu ke kamp pemberontak. Bantu mereka atau tolak.",
+  "objectives": [
+    "Kunjungi kamp pemberontak (rebel_camp).",
+    "Bicaralah dengan Sera."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "rebel_camp"
+    },
+    {
+      "kind": "talk",
+      "target": "sera"
+    }
+  ],
+  "rewards": {
+    "xp": 100,
+    "gold": 30,
+    "reputation": {
+      "rebels": 10
+    }
+  },
+  "flags_on_complete": [],
+  "next": "quest017"
+}

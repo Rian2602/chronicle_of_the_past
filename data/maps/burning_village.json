@@ -1,0 +1,14 @@
+{
+  "id": "burning_village",
+  "name": "Ashen yang Terbakar",
+  "region": "1",
+  "threat_level": 9,
+  "description": "Desa yang dulu hangat kini hutan api. Asap hitam menutupi langit, dan teriakan bergema dari kejauhan.",
+  "ascii_art": "burning_village",
+  "exits": ["village", "rebel_camp"],
+  "npcs": ["tom"],
+  "enemy_pool": [
+    {"id": "inquisitor_soldier", "weight": 3},
+    {"id": "burnt_husk", "weight": 2}
+  ]
+}

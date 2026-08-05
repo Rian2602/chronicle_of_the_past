@@ -1,0 +1,14 @@
+{
+  "id": "dialog_aria_arc2_room",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["aria_room_told"],
+  "lines": [
+    {"speaker": "old_man", "text": "Di bawah lantai perpustakaan tersembunyi ruang yang dijaga rapat. Simbol Kaum Arah terukir di lantainya."},
+    {"speaker": "old_man", "text": "Kaum Arah... pembuat Jangkar. Dan Lyra tahu lebih banyak dariku soal itu."}
+  ],
+  "choices": [
+    {"text": "Ceritakan tentang Jangkar.", "require_flags": [], "set_flags": ["aria_room_told"], "next": "dialog_aria_arc2_jangkar"},
+    {"text": "Aku akan bicara dengan Lyra.", "require_flags": [], "set_flags": ["aria_room_told", "aria_sent_lyra"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["aria_room_told"], "next": null}
+  ]
+}

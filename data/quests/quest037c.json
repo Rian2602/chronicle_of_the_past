@@ -1,0 +1,28 @@
+{
+  "id": "quest037c",
+  "title": "Pembersihan Istana",
+  "type": "main",
+  "description": "Kalahkan pasukan Varek yang masih setia di istana.",
+  "objectives": [
+    "Kalahkan 2 pemuja kultus (cult_acolyte).",
+    "Kalahkan pembunuh mahkota (crown_assassin)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "killed_cult_acolyte_2"
+    },
+    {
+      "kind": "enemy",
+      "target": "crown_assassin"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest037c_done"
+  ],
+  "next": "quest038c"
+}

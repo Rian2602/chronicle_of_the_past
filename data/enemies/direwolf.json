@@ -1,0 +1,15 @@
+{
+  "id": "direwolf",
+  "name": "Serigala Guruh",
+  "level": 6,
+  "stats": {"attack": 12, "defense": 5, "hp": 30, "mp": 0, "agility": 11, "intelligence": 3},
+  "behavior": "aggressive",
+  "reward": {"xp": 60, "gold": [10, 18]},
+  "skills": ["bite"],
+  "loot": [
+    {"item": "herb", "chance": 40, "amount": 1},
+    {"item": "leather_armor", "chance": 8, "amount": 1}
+  ],
+  "tags": ["beast"],
+  "lore": "Serigala raksasa yang tak kenal takut, pemimpin kawanan hutan dalam."
+}

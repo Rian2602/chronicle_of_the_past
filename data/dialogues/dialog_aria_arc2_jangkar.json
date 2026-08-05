@@ -1,0 +1,13 @@
+{
+  "id": "dialog_aria_arc2_jangkar",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["aria_jangkar_told"],
+  "lines": [
+    {"speaker": "old_man", "text": "Jangkar Waktu. Sebuah batu yang mampu menulis ulang sejarah. Peradaban yang membuatnya menguburnya di sini — dan memerintahkan kami menjaganya."},
+    {"speaker": "old_man", "text": "Bila kerajaan menemukannya... bumi ini akan terbakar demi batu itu. Berhati-hatilah, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Aku mengerti. Terima kasih, Aria.", "require_flags": [], "set_flags": ["aria_jangkar_told", "knows_jangkar"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["aria_jangkar_told"], "next": null}
+  ]
+}

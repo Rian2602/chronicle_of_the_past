@@ -1,0 +1,9 @@
+{
+  "id": "guard_erik",
+  "name": "Erik",
+  "location": "village",
+  "role": "guard",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "royal_army",
+  "dialogs": ["dialog_erik_intro", "dialog_erik_forest", "dialog_erik_generic"]
+}

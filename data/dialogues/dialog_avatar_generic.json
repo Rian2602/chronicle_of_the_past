@@ -1,0 +1,9 @@
+{
+  "id": "dialog_avatar_generic",
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "Ruang ini sunyi di luar waktu, Pejalan Waktu. Di sini, keputusanmu bergema lebih lama daripada gema di lembah mana pun."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "quest012",
+  "title": "Api di Tepi Hutan",
+  "type": "main",
+  "description": "Rumah Tom terbakar. Selidiki jejak minyak api suci milik gereja.",
+  "objectives": [
+    "Bicaralah dengan Tom di desa.",
+    "Periksa lokasi kebakaran di hutan dalam (forest_deep)."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "tom"
+    },
+    {
+      "kind": "map",
+      "target": "forest_deep"
+    }
+  ],
+  "rewards": {
+    "xp": 80,
+    "gold": 20
+  },
+  "flags_on_complete": [
+    "first_fire",
+    "villager_missing"
+  ],
+  "next": "quest013"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "alchemist_yara",
+  "name": "Yara",
+  "location": "capital",
+  "role": "alchemist",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "scholar_society",
+  "dialogs": ["dialog_yara_intro", "dialog_yara_news", "dialog_yara_shop", "dialog_yara_generic"],
+  "shop": {
+    "buy": [
+      {"item": "potion", "price": 25},
+      {"item": "elixir", "price": 80},
+      {"item": "time_tincture", "price": 60},
+      {"item": "smoke_bomb", "price": 40}
+    ],
+    "sell_multiplier": 0.6
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "rebel_camp",
+  "name": "Kamp Pemberontak",
+  "region": "3",
+  "threat_level": 6,
+  "description": "Kamp tersembunyi di tengah hutan dalam. Bendera usang berkibar; mata-mata mengawasi dari bayangan.",
+  "ascii_art": "rebel_camp",
+  "exits": ["forest_deep"],
+  "npcs": ["sera", "scout_reed"],
+  "enemy_pool": [
+    {"id": "rebel_soldier", "weight": 2},
+    {"id": "rebel_elite", "weight": 1}
+  ]
+}

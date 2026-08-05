@@ -1,0 +1,9 @@
+{
+  "id": "chain_armor",
+  "name": "Chain Armor",
+  "type": "armor",
+  "slot": "armor",
+  "modifiers": {"defense": 7},
+  "price": 150,
+  "description": "Zirah rantai yang luwes dan kuat."
+}

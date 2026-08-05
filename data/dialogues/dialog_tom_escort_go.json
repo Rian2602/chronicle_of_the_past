@@ -1,0 +1,13 @@
+{
+  "id": "dialog_tom_escort_go",
+  "require_flags": ["escort_tom_started"],
+  "require_not_flags": ["tom_escort_done"],
+  "lines": [
+    {"speaker": "tom", "text": "Ayo. Jangan lupa membawa senjata — hutan dalam kini tidak hanya dihuni serigala."},
+    {"speaker": "tom", "text": "Bila kita bertemu mereka yang membakar rumahku... biarkan aku bicara dulu. Marta mungkin tahu sesuatu."}
+  ],
+  "choices": [
+    {"text": "Kita berangkat.", "require_flags": [], "set_flags": ["tom_escort_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["tom_escort_done"], "next": null}
+  ]
+}

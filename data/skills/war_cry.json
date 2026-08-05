@@ -1,0 +1,16 @@
+{
+  "id": "war_cry",
+  "name": "War Cry",
+  "type": "physical",
+  "cost": 8,
+  "target": "self",
+  "power": 0,
+  "effects": [],
+  "buff": {
+    "stat": "attack",
+    "power": 5,
+    "duration": 2
+  },
+  "requires": {},
+  "description": "Teriakan perang yang meningkatkan serangan 2 giliran."
+}

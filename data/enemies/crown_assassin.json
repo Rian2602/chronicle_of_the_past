@@ -1,0 +1,15 @@
+{
+  "id": "crown_assassin",
+  "name": "Pembunuh Mahkota",
+  "level": 17,
+  "stats": {"attack": 22, "defense": 11, "hp": 70, "mp": 14, "agility": 16, "intelligence": 9},
+  "behavior": "aggressive",
+  "reward": {"xp": 220, "gold": [32, 48]},
+  "skills": ["backstab"],
+  "loot": [
+    {"item": "potion", "chance": 25, "amount": 1},
+    {"item": "smoke_bomb", "chance": 15, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Bayangan istana yang melenyapkan siapa pun yang tahu terlalu banyak."
+}

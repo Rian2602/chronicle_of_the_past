@@ -86,3 +86,19 @@ def apply_choice(player, choice_key: str) -> None:
             player.attribute_bonuses.get(choice_key, 0)
             + dict(LEVEL_CHOICES)[choice_key]
         )
+
+
+SKILL_LEARN_COST = 1
+
+
+def learn_skill(player, class_id, skill_id, learnable_skills) -> str | None:
+    """Coba pelajari skill; kembalikan pesan error, atau None bila berhasil."""
+    if skill_id not in learnable_skills:
+        return f"Kelas {class_id} tidak bisa mempelajari skill {skill_id}."
+    if skill_id in player.learned_skills:
+        return "Skill sudah kamu kuasai."
+    if player.skill_points < SKILL_LEARN_COST:
+        return "Skill Point tidak cukup."
+    player.skill_points -= SKILL_LEARN_COST
+    player.learned_skills.append(skill_id)
+    return None

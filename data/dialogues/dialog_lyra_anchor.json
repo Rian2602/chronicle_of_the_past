@@ -1,0 +1,13 @@
+{
+  "id": "dialog_lyra_anchor",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["lyra_anchor_told"],
+  "lines": [
+    {"speaker": "lyra", "text": "Di bawah desa ada ruang yang tak boleh dimasuki sembarangan. Di sanalah Jangkar Waktu berdiri."},
+    {"speaker": "lyra", "text": "Batu itu bernapas, Pejalan Waktu. Dan ia mengenalimu — aku bisa merasakannya dari getarannya."}
+  ],
+  "choices": [
+    {"text": "Itu artinya aku harus turun ke sana.", "require_flags": [], "set_flags": ["lyra_anchor_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["lyra_anchor_told"], "next": null}
+  ]
+}

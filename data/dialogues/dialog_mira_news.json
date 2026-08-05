@@ -1,0 +1,15 @@
+{
+  "id": "dialog_mira_news",
+  "require_flags": ["met_mira"],
+  "require_not_flags": ["mira_news_told"],
+  "lines": [
+    {"speaker": "innkeeper_mira", "text": "Kabar? Hmm. Dengar-dengar, istana sedang sibuk. Kanselir Varek mengadakan rapat tertutup hampir setiap malam."},
+    {"speaker": "innkeeper_mira", "text": "Dan ada sesuatu yang aneh — beberapa pengawal baru di istana tidak seperti prajurit biasa. Mata mereka... kosong."},
+    {"speaker": "innkeeper_mira", "text": "Kata orang, mereka dari 'sekte' yang mengabdi pada kanselir. Aku tidak mau tahu lebih dalam. Di ibukota, tahu terlalu banyak itu berbahaya."}
+  ],
+  "choices": [
+    {"text": "Sekte apa itu?", "require_flags": [], "set_flags": ["mira_news_told", "mira_sekte_hint"], "next": null},
+    {"text": "Terima kasih, Mira.", "require_flags": [], "set_flags": ["mira_news_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["mira_news_told"], "next": null}
+  ]
+}

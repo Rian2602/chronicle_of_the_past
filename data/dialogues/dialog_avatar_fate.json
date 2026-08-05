@@ -1,0 +1,15 @@
+{
+  "id": "dialog_avatar_fate",
+  "require_flags": ["avatar_asked_fate"],
+  "require_not_flags": ["avatar_fate_told"],
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "Jika kau menyegelku, aku tidur selamanya — dan dunia berjalan tanpa penulis ulang sejarah. Aman, tapi rapuh."},
+    {"speaker": "anchor_avatar", "text": "Jika kau menyerahkanku pada tangan yang salah, aku menjadi senjata. Jika kau menghancurkanku, waktu kehilangan jangkarnya dan mulai tak menentu."},
+    {"speaker": "anchor_avatar", "text": "Dan jika kau menulis ulang masa lalu... aku tidak akan pernah diciptakan. Akankah kau tetap memilih jalan itu, Pejalan Waktu?"}
+  ],
+  "choices": [
+    {"text": "Aku akan memikirkan semuanya.", "require_flags": [], "set_flags": ["avatar_fate_told"], "next": "dialog_avatar_main"},
+    {"text": "Bawa aku ke ambang pintu itu.", "require_flags": [], "set_flags": ["avatar_fate_told", "avatar_ready"], "next": "dialog_avatar_farewell"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["avatar_fate_told"], "next": null}
+  ]
+}

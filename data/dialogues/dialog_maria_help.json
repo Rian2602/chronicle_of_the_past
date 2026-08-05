@@ -1,0 +1,14 @@
+{
+  "id": "dialog_maria_help",
+  "require_flags": ["met_maria"],
+  "require_not_flags": ["maria_help_done"],
+  "lines": [
+    {"speaker": "mother_maria", "text": "Tentu, anakku. Bawa yang terluka padaku — tentara, warga, bahkan inkuisitor yang terluka. Semua berhak atas tangan yang menolong."},
+    {"speaker": "mother_maria", "text": "Aku menyimpan ramuan dan perban di gudang penginapan. Kalau desa ini diserang, jadikan penginapan tempat berlindung."},
+    {"speaker": "mother_maria", "text": "Dan kalau kau menemukan orang-orang yang kebingungan di tengah api... bawa mereka ke sini. Kita sembuhkan dulu, baru kita tanya."}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Ibu Maria.", "require_flags": [], "set_flags": ["maria_help_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["maria_help_done"], "next": null}
+  ]
+}

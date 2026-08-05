@@ -1,0 +1,14 @@
+{
+  "id": "dialog_avatar_farewell",
+  "require_flags": ["avatar_ready"],
+  "require_not_flags": ["avatar_farewell_done"],
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "Inilah ambang pintu, Pejalan Waktu. Di depannya, takdir Jangkar — dan takdirmu sendiri."},
+    {"speaker": "anchor_avatar", "text": "Apapun yang kau pilih nanti, ingatlah: aku tidak takut pada akhir. Aku takut pada sejarah yang ditulis tanpa kesadaran."},
+    {"speaker": "anchor_avatar", "text": "Pergilah. Dan bawalah satu hal yang tak bisa kuberikan padamu: pilihan."}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Suara Jangkar.", "require_flags": [], "set_flags": ["avatar_farewell_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["avatar_farewell_done"], "next": null}
+  ]
+}

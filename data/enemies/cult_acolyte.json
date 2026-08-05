@@ -1,0 +1,15 @@
+{
+  "id": "cult_acolyte",
+  "name": "Acolyte Kultus",
+  "level": 15,
+  "stats": {"attack": 13, "defense": 9, "hp": 55, "mp": 45, "agility": 8, "intelligence": 16},
+  "behavior": "mage",
+  "reward": {"xp": 190, "gold": [28, 42]},
+  "skills": ["frost_bolt", "fireball"],
+  "loot": [
+    {"item": "old_scroll", "chance": 20, "amount": 1},
+    {"item": "time_tincture", "chance": 15, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Pemuja rahasia kanselir, mempelajari sihir terlarang demi kekuasaan."
+}

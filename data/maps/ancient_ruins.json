@@ -1,0 +1,14 @@
+{
+  "id": "ancient_ruins",
+  "name": "Reruntuhan Kuno",
+  "region": "2",
+  "threat_level": 7,
+  "description": "Aula besar peradaban yang terlupakan. Kolom-kolom menjulang, dan sesuatu berbisik dari dinding.",
+  "ascii_art": "ancient_ruins",
+  "exits": ["ruins_entrance", "ruins_depth"],
+  "npcs": ["ancient_spirit"],
+  "enemy_pool": [
+    {"id": "ruins_scavenger", "weight": 3},
+    {"id": "ruin_warden", "weight": 1}
+  ]
+}

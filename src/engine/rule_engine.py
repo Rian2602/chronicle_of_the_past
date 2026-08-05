@@ -85,12 +85,6 @@ def evaluate(condition: dict, game_state) -> bool:
     if kind == "level":
         if game_state.player is None:
             return False
-        if (
-            condition.get("operator") is None
-            and "gte" in condition
-            and "value" not in condition
-        ):
-            return game_state.player.level >= condition["gte"]
         operator = condition.get("operator", "EQ")
         value = condition.get("value", True)
         player_level = game_state.player.level

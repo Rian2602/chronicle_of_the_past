@@ -1,0 +1,12 @@
+{
+  "id": "dialog_helen_shop",
+  "require_flags": ["met_helen"],
+  "lines": [
+    {"speaker": "helen", "text": "Ini dia — ramuan penyembuh buatan rumahan, dan elixir langka yang kubeli dari pedagang keliling."},
+    {"speaker": "helen", "text": "(Etalase toko lengkap menyusul di Phase 0. Untuk sekarang, minta saja apa yang kau butuhkan.)"}
+  ],
+  "choices": [
+    {"text": "Sampai nanti, Helen.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

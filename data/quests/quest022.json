@@ -1,0 +1,20 @@
+{
+  "id": "quest022",
+  "title": "Echo: Hari Pembuat",
+  "type": "main",
+  "description": "Roh Penjaga memainkan echo terbesar: hari Jangkar ditempa.",
+  "objectives": [
+    "Bicaralah dengan Roh Penjaga."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "ancient_spirit"
+    }
+  ],
+  "rewards": {
+    "xp": 110
+  },
+  "flags_on_complete": [],
+  "next": "quest023"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "dialog_helen_news",
+  "require_flags": ["met_helen"],
+  "require_not_flags": ["helen_news_told"],
+  "lines": [
+    {"speaker": "helen", "text": "Kabar? Hmm. Penduduk desa mulai khawatir. Beberapa orang asing terlihat mengintai di sekitar perpustakaan tua."},
+    {"speaker": "helen", "text": "Dan aku mendengar dari penjual kain bahwa di ibukota sedang ramai soal 'batu terkutuk'. Kata-kata itu tidak pernah membawa kebaikan."},
+    {"speaker": "helen", "text": "Kalau kau orang yang suka bertualang, berhati-hatilah di luar sana. Di desa kecil, kabar buruk selalu datang lebih dulu daripada hujan."}
+  ],
+  "choices": [
+    {"text": "Terima kasih, Helen.", "require_flags": [], "set_flags": ["helen_news_told"], "next": null},
+    {"text": "Aku butuh ramuan.", "require_flags": [], "set_flags": ["helen_news_told"], "next": "dialog_helen_shop"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["helen_news_told"], "next": null}
+  ]
+}

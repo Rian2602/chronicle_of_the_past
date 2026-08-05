@@ -1,0 +1,14 @@
+{
+  "id": "dialog_iris_ultimatum",
+  "require_flags": ["met_iris"],
+  "require_not_flags": ["ultimatum_received"],
+  "lines": [
+    {"speaker": "sister_iris", "text": "Lima hari. Bukan lima bulan, bukan lima minggu. Hitung hari-harimu, Pejalan Waktu."},
+    {"speaker": "sister_iris", "text": "Setelah matahari terbenam di hari kelima, aku tidak akan lagi menahan api. Siapa pun yang masih di desa ini akan ikut terbakar bersamanya."},
+    {"speaker": "sister_iris", "text": "Selamat menyelamatkan apa pun yang kau anggap berharga."}
+  ],
+  "choices": [
+    {"text": "Kau akan menyesal mengancam desa ini.", "require_flags": [], "set_flags": ["ultimatum_received"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["ultimatum_received"], "next": null}
+  ]
+}

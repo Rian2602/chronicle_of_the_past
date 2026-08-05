@@ -1,0 +1,14 @@
+{
+  "id": "dialog_spirit_test",
+  "require_flags": ["spirit_met"],
+  "require_not_flags": ["spirit_tested"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Jawab, atau tinggalkan jalan ini selamanya."},
+    {"speaker": "ancient_spirit", "text": "Kaum Arah menciptakan Jangkar Waktu untuk apa?"}
+  ],
+  "choices": [
+    {"text": "Untuk memperbaiki sejarah.", "require_flags": [], "set_flags": ["spirit_tested", "spirit_passed"], "next": "dialog_spirit_echo"},
+    {"text": "Untuk menguasai dunia.", "require_flags": [], "set_flags": ["spirit_tested", "spirit_failed"], "next": "dialog_spirit_failed"},
+    {"text": "Aku tidak tahu.", "require_flags": [], "set_flags": ["spirit_asked"], "next": "dialog_spirit_hint"}
+  ]
+}

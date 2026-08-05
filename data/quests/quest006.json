@@ -1,0 +1,28 @@
+{
+  "id": "quest006",
+  "title": "Darah di Hutan Dalam",
+  "type": "main",
+  "description": "Selidiki jejak darah dan kamp tentara bayaran di hutan dalam.",
+  "objectives": [
+    "Kunjungi hutan dalam (forest_deep).",
+    "Kalahkan 2 tentara bayaran (mercenary_soldier)."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "forest_deep"
+    },
+    {
+      "kind": "flag",
+      "target": "killed_mercenary_soldier_2"
+    }
+  ],
+  "rewards": {
+    "xp": 80,
+    "gold": 25
+  },
+  "flags_on_complete": [
+    "forest_deep_searched"
+  ],
+  "next": "quest007"
+}

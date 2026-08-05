@@ -1,0 +1,15 @@
+{
+  "id": "general_corvin",
+  "name": "Panglima Corvin",
+  "level": 29,
+  "stats": {"attack": 30, "defense": 22, "hp": 450, "mp": 30, "agility": 12, "intelligence": 10},
+  "behavior": "aggressive",
+  "reward": {"xp": 380, "gold": [140, 180]},
+  "skills": ["slash", "shield_bash", "war_cry"],
+  "loot": [
+    {"item": "time_edged_blade", "chance": 100, "amount": 1},
+    {"item": "guardian_plate", "chance": 100, "amount": 1}
+  ],
+  "tags": ["boss", "humanoid"],
+  "lore": "Panglima kerajaan yang setia pada mahkota — meski mahkota itu sudah dipalsukan."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "quest014",
+  "title": "Sarang Serigala Malam",
+  "type": "main",
+  "description": "Cari arsip pembayaran gereja di sarang Kade.",
+  "objectives": [
+    "Kunjungi sarang (crime_den).",
+    "Bicaralah dengan Kade tentang arsip pembayaran."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "crime_den"
+    },
+    {
+      "kind": "talk",
+      "target": "kade"
+    }
+  ],
+  "rewards": {
+    "xp": 90,
+    "gold": 35
+  },
+  "flags_on_complete": [
+    "crime_archive",
+    "have_evidence_letter"
+  ],
+  "next": "quest015"
+}

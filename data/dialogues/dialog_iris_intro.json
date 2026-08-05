@@ -1,0 +1,15 @@
+{
+  "id": "dialog_iris_intro",
+  "require_flags": ["arc3_started"],
+  "require_not_flags": ["met_iris"],
+  "lines": [
+    {"speaker": "sister_iris", "text": "Atas nama Gereja Api Suci, aku, Sister Iris, memerintahkan desa ini untuk berhenti."},
+    {"speaker": "sister_iris", "text": "Aku tahu ada batu terkutuk di bawah desa ini — sebuah batu yang berbisik kepada iblis. Dan kalian menyembunyikannya."},
+    {"speaker": "sister_iris", "text": "Kau punya lima hari, Pejalan Waktu. Serahkan batu itu, atau api penyucian akan membersihkan desa ini sampai ke akarnya."}
+  ],
+  "choices": [
+    {"text": "Batu itu bukan milik gerejamu. Aku tidak akan menyerahkannya.", "require_flags": [], "set_flags": ["met_iris", "ultimatum_received", "ultimatum_5_days", "iris_challenged"], "next": "dialog_iris_ultimatum"},
+    {"text": "Tidak ada iblis di sini. Tapi mari kita bicara baik-baik.", "require_flags": [], "set_flags": ["met_iris", "ultimatum_received", "ultimatum_5_days", "iris_calmed"], "next": "dialog_iris_ultimatum"},
+    {"text": "(Diam.)", "require_flags": [], "set_flags": ["met_iris", "ultimatum_received", "ultimatum_5_days"], "next": "dialog_iris_ultimatum"}
+  ]
+}

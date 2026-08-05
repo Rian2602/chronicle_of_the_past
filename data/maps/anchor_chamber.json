@@ -1,0 +1,14 @@
+{
+  "id": "anchor_chamber",
+  "name": "Ruang Jangkar",
+  "region": "2",
+  "threat_level": 12,
+  "description": "Di tengah ruangan, sebuah batu besar berdenyut seperti jantung. Ini dia — Jangkar Waktu.",
+  "ascii_art": "anchor_chamber",
+  "exits": ["ruins_depth"],
+  "npcs": ["anchor_avatar"],
+  "enemy_pool": [
+    {"id": "time_wraith", "weight": 2},
+    {"id": "anchor_guard", "weight": 1}
+  ]
+}

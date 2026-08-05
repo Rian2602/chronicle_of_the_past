@@ -1,0 +1,20 @@
+{
+  "id": "smith_brock",
+  "name": "Brock",
+  "location": "capital",
+  "role": "blacksmith",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_brock_intro", "dialog_brock_news", "dialog_brock_shop", "dialog_brock_generic"],
+  "shop": {
+    "buy": [
+      {"item": "steel_sword", "price": 120},
+      {"item": "rune_blade", "price": 320},
+      {"item": "chain_armor", "price": 150},
+      {"item": "rune_plate", "price": 380},
+      {"item": "iron_helmet", "price": 70},
+      {"item": "rune_crown", "price": 260}
+    ],
+    "sell_multiplier": 0.5
+  }
+}

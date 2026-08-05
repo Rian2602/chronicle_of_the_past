@@ -1,0 +1,10 @@
+{
+  "id": "elixir",
+  "name": "Elixir",
+  "type": "consumable",
+  "slot": null,
+  "modifiers": {},
+  "price": 80,
+  "heal": 500,
+  "description": "Ramuan langka yang memulihkan seluruh HP."
+}

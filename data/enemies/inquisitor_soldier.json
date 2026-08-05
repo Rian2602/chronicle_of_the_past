@@ -1,0 +1,15 @@
+{
+  "id": "inquisitor_soldier",
+  "name": "Tentara Inkuisisi",
+  "level": 13,
+  "stats": {"attack": 17, "defense": 10, "hp": 60, "mp": 10, "agility": 9, "intelligence": 7},
+  "behavior": "aggressive",
+  "reward": {"xp": 160, "gold": [24, 36]},
+  "skills": ["slash", "fireball"],
+  "loot": [
+    {"item": "potion", "chance": 30, "amount": 1},
+    {"item": "iron_helmet", "chance": 10, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Prajurit gereja yang membakar apa pun yang dianggap sesat."
+}

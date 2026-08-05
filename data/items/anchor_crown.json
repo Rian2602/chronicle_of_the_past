@@ -1,0 +1,9 @@
+{
+  "id": "anchor_crown",
+  "name": "Anchor Crown",
+  "type": "helmet",
+  "slot": "helmet",
+  "modifiers": {"defense": 8, "intelligence": 4},
+  "price": 650,
+  "description": "Mahkota yang berdenyut pelan, seperti jantung Jangkar."
+}

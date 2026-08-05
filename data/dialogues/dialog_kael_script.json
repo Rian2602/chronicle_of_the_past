@@ -1,0 +1,15 @@
+{
+  "id": "dialog_kael_script",
+  "require_flags": ["ancient_script_decoded"],
+  "require_not_flags": ["kael_script_told"],
+  "lines": [
+    {"speaker": "kael", "text": "Ini dia! Dengan gulungan-gulungan itu, aku berhasil mengartikan semuanya."},
+    {"speaker": "kael", "text": "Ukiran itu berbicara tentang sebuah 'Jangkar' — mesin yang mampu menulis ulang sejarah. Dan ada peringatan: 'Barangsiapa memegangnya tanpa darah Arah, akan terkoyak waktu.'"},
+    {"speaker": "kael", "text": "Pejalan Waktu... kau disebut secara langsung. 'Dan ia akan datang bersama hujan pertama setelah gerhana.'"}
+  ],
+  "choices": [
+    {"text": "Itu... berarti aku?", "require_flags": [], "set_flags": ["kael_script_told", "prophecy_learned"], "next": null},
+    {"text": "Apa lagi yang kau temukan?", "require_flags": [], "set_flags": ["kael_script_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["kael_script_told"], "next": null}
+  ]
+}

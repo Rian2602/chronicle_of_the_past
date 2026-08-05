@@ -1,0 +1,14 @@
+{
+  "id": "dialog_erik_forest",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["erik_forest_told"],
+  "lines": [
+    {"speaker": "guard_erik", "text": "Ada kamp kecil di dalam hutan dalam. Tentara — dengan pedang terlatih, bukan pemburu."},
+    {"speaker": "guard_erik", "text": "Aku melihat panji elang emas di antara pohon. Itu lambang mahkota, Pejalan Waktu."},
+    {"speaker": "guard_erik", "text": "Bila mereka tahu kita mengintai... desa ini bisa kena masalah besar."}
+  ],
+  "choices": [
+    {"text": "Aku akan memeriksanya sendiri.", "require_flags": [], "set_flags": ["erik_forest_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["erik_forest_told"], "next": null}
+  ]
+}

@@ -1,5 +1,6 @@
 from src.core.game_state import GameState
-from src.engine.event_engine import process_events
+from src.engine.event_engine import process_day_tick, process_events
+from src.models.player import Player
 
 
 def test_event_fires_on_flag():
@@ -67,3 +68,46 @@ def test_event_grant_memory_skips_without_player():
     process_events(gs, None, events)
     assert gs.player is None
     assert "knows_village_burns" not in gs.flags
+
+
+def test_event_play_scene_returns_rendered_scene():
+    gs = GameState()
+    gs.flags["x"] = True
+    gs.scenes = [{"id": "s1", "lines": ["Baris satu."]}]
+    events = [
+        {
+            "id": "e1",
+            "trigger": [{"kind": "flag", "flag": "x", "value": True}],
+            "actions": [{"kind": "play_scene", "id": "s1"}],
+        }
+    ]
+    out = process_events(gs, None, events)
+    assert "Baris satu." in out[0]
+
+
+def test_event_recap_uses_ending_flag():
+    gs = GameState()
+    gs.flags["x"] = True
+    gs.flags["ending_e_done"] = True
+    gs.player = Player("Rian", "warrior", 100, 10, {"hp": 100, "mp": 10})
+    gs.player.quests_done = ["quest001", "quest002"]
+    events = [
+        {
+            "id": "e1",
+            "trigger": [{"kind": "flag", "flag": "x", "value": True}],
+            "actions": [{"kind": "recap"}],
+        }
+    ]
+    out = process_events(gs, None, events)
+    assert "menghancurkan Jangkar" in "\n".join(out)
+    assert "Quest selesai: 2" in "\n".join(out)
+
+
+def test_process_day_tick_counts_ultimatum_days():
+    gs = GameState()
+    gs.flags["ultimatum_5_days"] = True
+    assert process_day_tick(gs) == ["Ultimatum gereja tersisa 4 hari."]
+    for _ in range(4):
+        out = process_day_tick(gs)
+    assert gs.flags["ultimatum_expired"] is True
+    assert out == ["Ultimatum gereja habis. Inkuisisi mulai bergerak."]

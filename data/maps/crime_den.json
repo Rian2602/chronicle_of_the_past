@@ -1,0 +1,15 @@
+{
+  "id": "crime_den",
+  "name": "Sarang Serigala Malam",
+  "region": "1",
+  "threat_level": 7,
+  "description": "Gudang tua yang menjadi sarang sindikat. Bau uang dan besi menyengat di udara.",
+  "ascii_art": "crime_den",
+  "exits": ["village"],
+  "npcs": ["kade"],
+  "enemy_pool": [
+    {"id": "thug", "weight": 3},
+    {"id": "guild_guard", "weight": 1},
+    {"id": "shadow_stalker", "weight": 1}
+  ]
+}

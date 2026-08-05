@@ -1,0 +1,15 @@
+{
+  "id": "dialog_finn_main",
+  "require_flags": ["arc2_started", "met_finn"],
+  "require_not_flags": ["finn_caught"],
+  "lines": [
+    {"speaker": "finn", "text": "Hanya pedagang biasa, Pejalan Waktu. Aku lewat ke desa ini karena mendengar kabar soal perpustakaan tua."},
+    {"speaker": "finn", "text": "Katanya, perpustakaan ini menyimpan rahasia yang lebih tua dari kerajaan itu sendiri..."},
+    {"speaker": "finn", "text": "Ah, tapi aku terlalu banyak bicara. Kau terlihat lelah — istirahatlah."}
+  ],
+  "choices": [
+    {"text": "Kau terlihat gugup.", "require_flags": [], "set_flags": ["finn_caught"], "next": "dialog_finn_caught"},
+    {"text": "Rahasia apa maksudmu?", "require_flags": [], "set_flags": [], "next": "dialog_finn_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

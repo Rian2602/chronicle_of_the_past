@@ -1,0 +1,23 @@
+{
+  "id": "quest038d",
+  "title": "Halaman Baru",
+  "type": "main",
+  "description": "Kael membuka sekolah waktu dengan Jangkar.",
+  "objectives": [
+    "Selesaikan pembukaan sekolah waktu."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "school_opened"
+    }
+  ],
+  "rewards": {
+    "xp": 250
+  },
+  "flags_on_complete": [
+    "season1_path_done",
+    "ending_d_done"
+  ],
+  "next": "quest039"
+}

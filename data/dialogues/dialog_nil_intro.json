@@ -1,0 +1,15 @@
+{
+  "id": "dialog_nil_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_nil"],
+  "lines": [
+    {"speaker": "nil", "text": "Hei, kau orang baru! Aku Nil. Semua orang bilang aku harus hati-hati pada orang asing... tapi aku pikir kau tidak menyeramkan."},
+    {"speaker": "nil", "text": "Aku suka duduk di sini dan menggambar. Kadang aku menggambar desa — dengan matahari yang tidak pernah terbenam."},
+    {"speaker": "nil", "text": "Orang dewasa selalu khawatir. Tapi kalau aku menggambar hal yang indah, bukankah itu bisa menjadi kenyataan?"}
+  ],
+  "choices": [
+    {"text": "Itu cara berpikir yang bagus, Nil.", "require_flags": [], "set_flags": ["met_nil"], "next": "dialog_nil_hope"},
+    {"text": "Gambar apa yang sedang kau buat?", "require_flags": [], "set_flags": ["met_nil"], "next": "dialog_nil_drawing"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

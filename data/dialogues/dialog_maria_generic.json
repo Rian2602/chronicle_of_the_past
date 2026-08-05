@@ -1,0 +1,9 @@
+{
+  "id": "dialog_maria_generic",
+  "lines": [
+    {"speaker": "mother_maria", "text": "Doa bukanlah kata-kata yang diucapkan, Pejalan Waktu. Doa adalah apa yang kau lakukan ketika tidak ada yang melihat."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

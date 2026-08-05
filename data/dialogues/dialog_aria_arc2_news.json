@@ -1,0 +1,14 @@
+{
+  "id": "dialog_aria_arc2_news",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["aria_arc2_done"],
+  "lines": [
+    {"speaker": "old_man", "text": "Tadi malam, dua orang asing mencoba masuk ke ruang bawah perpustakaan. Aku mengusir mereka... tapi mereka membawa lambang kerajaan."},
+    {"speaker": "old_man", "text": "Mereka tahu, Pejalan Waktu. Kerajaan tahu ada sesuatu di bawah desa ini."}
+  ],
+  "choices": [
+    {"text": "Tunjukkan ruang rahasia itu.", "require_flags": [], "set_flags": ["aria_arc2_done", "aria_showed_room"], "next": "dialog_aria_arc2_room"},
+    {"text": "Apa itu Jangkar Waktu?", "require_flags": [], "set_flags": ["aria_arc2_done"], "next": "dialog_aria_arc2_jangkar"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["aria_arc2_done"], "next": null}
+  ]
+}

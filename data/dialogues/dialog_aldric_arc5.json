@@ -1,0 +1,14 @@
+{
+  "id": "dialog_aldric_arc5",
+  "require_flags": ["varek_unmasked"],
+  "require_not_flags": ["aldric_arc5_done"],
+  "lines": [
+    {"speaker": "king_aldric", "text": "Pejalan Waktu. Kanselir telah mengkhianati takhta — dan aku, si tua bodoh ini, membiarkannya selama bertahun-tahun."},
+    {"speaker": "king_aldric", "text": "Kutulis surat perintah ini dengan tanganku sendiri: semua pasukan yang setia padaku akan mengikuti perintahmu."},
+    {"speaker": "king_aldric", "text": "Selamatkan desamu. Selamatkan mahkota dari orang yang telah menodainya. Dan selamatkan aku dari rasa bersalah ini."}
+  ],
+  "choices": [
+    {"text": "Takhta akan selamat, Baginda.", "require_flags": [], "set_flags": ["aldric_arc5_done", "king_declares_war"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["aldric_arc5_done"], "next": null}
+  ]
+}

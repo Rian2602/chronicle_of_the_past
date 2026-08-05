@@ -1,0 +1,11 @@
+{
+  "id": "shield_bash",
+  "name": "Shield Bash",
+  "type": "physical",
+  "cost": 6,
+  "target": "single_enemy",
+  "power": 10,
+  "effects": [{"status": "stun", "power": 0, "duration": 1}],
+  "requires": {},
+  "description": "Hantaman perisai yang mengejutkan musuh."
+}

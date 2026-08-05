@@ -1,0 +1,16 @@
+{
+  "id": "kade",
+  "name": "Kade",
+  "location": "crime_den",
+  "role": "crime_boss",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "crime",
+  "dialogs": [
+    "dialog_kade_intro",
+    "dialog_kade_offer",
+    "dialog_kade_paid",
+    "dialog_kade_nego",
+    "dialog_kade_refused",
+    "dialog_kade_generic"
+  ]
+}

@@ -11,3 +11,6 @@ class Item:
     price: int = 0
     description: str = ""
     heal: int = 0
+    heal_mp: int = 0
+    escape: bool = False
+    quest_flag: str | None = None

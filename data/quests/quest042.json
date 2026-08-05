@@ -1,0 +1,22 @@
+{
+  "id": "quest042",
+  "title": "Waktu yang Tersisa",
+  "type": "main",
+  "description": "Di ambang perpisahan, buat pilihan kecil: meninggalkan masa ini atau tinggal.",
+  "objectives": [
+    "Bicaralah dengan Suara Jangkar (anchor_avatar)."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "anchor_avatar"
+    }
+  ],
+  "rewards": {
+    "xp": 100
+  },
+  "flags_on_complete": [
+    "quest042_done"
+  ],
+  "next": "quest043"
+}

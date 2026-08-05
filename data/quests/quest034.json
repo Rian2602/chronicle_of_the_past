@@ -1,0 +1,25 @@
+{
+  "id": "quest034",
+  "title": "Api Dimulai",
+  "type": "main",
+  "description": "Inkuisisi membakar desa. Evakuasi Tom dan warga ke kamp pemberontak.",
+  "objectives": [
+    "Evakuasi warga desa (village_evacuated)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "village_evacuated"
+    }
+  ],
+  "rewards": {
+    "xp": 180,
+    "reputation": {
+      "rebels": 10
+    }
+  },
+  "flags_on_complete": [
+    "map_capital_keep_unlocked"
+  ],
+  "next": "quest035"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "capital",
+  "name": "Ibukota Ashenfeld",
+  "region": "5",
+  "threat_level": 4,
+  "description": "Kota besar berbau roti dan logam. Menara kerajaan menjulang di kejauhan, diapit patung-patung raja.",
+  "ascii_art": "capital",
+  "exits": ["capital_keep", "crime_den"],
+  "npcs": ["innkeeper_mira", "smith_brock", "alchemist_yara"],
+  "enemy_pool": [
+    {"id": "city_guard", "weight": 2},
+    {"id": "cult_acolyte", "weight": 1},
+    {"id": "crown_assassin", "weight": 1}
+  ]
+}

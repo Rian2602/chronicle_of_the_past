@@ -1,0 +1,12 @@
+{
+  "id": "dialog_kade_refused",
+  "require_flags": ["kade_refused"],
+  "lines": [
+    {"speaker": "kade", "text": "Menolak tawaranku? Hmph."},
+    {"speaker": "kade", "text": "Biar utusanku yang bicara denganmu nanti... dengan cara yang lebih meyakinkan."}
+  ],
+  "choices": [
+    {"text": "Aku siap.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

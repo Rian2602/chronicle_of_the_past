@@ -1,0 +1,14 @@
+{
+  "id": "dialog_tom_escort",
+  "require_flags": ["tom_escort_offer"],
+  "require_not_flags": ["tom_escorted"],
+  "lines": [
+    {"speaker": "tom", "text": "Jalan ke hutan dalam berbahaya — apalagi bagi orang yang baru kehilangan rumah. Tapi aku kenal setiap akar di sana."},
+    {"speaker": "tom", "text": "Kalau kau mau, temani aku ke hutan. Aku tunjukkan tempatku menemukan jubah hitam itu, dan kita cari jejak Marta bersama."}
+  ],
+  "choices": [
+    {"text": "Aku menemanimu, Tom.", "require_flags": [], "set_flags": ["tom_escorted", "escort_tom_started"], "next": "dialog_tom_escort_go"},
+    {"text": "Aku duluan. Kau tunggu di sini.", "require_flags": [], "set_flags": ["tom_escorted", "tom_left_behind"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

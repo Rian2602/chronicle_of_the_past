@@ -1,0 +1,13 @@
+{
+  "id": "dialog_spirit_seal_time_done",
+  "require_flags": ["seal_of_time_ok"],
+  "require_not_flags": ["spirit_seal_time_done"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Segel Waktu berputar dan mengunci. Dua dari tiga segel kini milikmu."},
+    {"speaker": "ancient_spirit", "text": "Yang terakhir menantimu di koridor berdenyut di bawah reruntuhan."}
+  ],
+  "choices": [
+    {"text": "Lanjutkan.", "require_flags": [], "set_flags": ["spirit_seal_time_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["spirit_seal_time_done"], "next": null}
+  ]
+}

@@ -7,9 +7,10 @@ import os
 
 from src.core import save_manager
 from src.engine import dialog_engine
-from src.systems import level_system
+from src.systems import level_system, shop_system
 
 END_DIALOG = "!end_dialog"
+END_SHOP = "!end_shop"
 
 _SLOT_SAVE = "save saves/slot1.json"
 _SLOT_LABELS = {"weapon": "Senjata", "armor": "Zirah", "helmet": "Helm"}
@@ -25,6 +26,8 @@ def build(game):
         return _level_up_menu(game)
     if getattr(game, "_combat", None) is not None:
         return _combat_menu(game)
+    if getattr(game, "_shop_npc_id", None) is not None:
+        return _shop_menu(game)
     if getattr(game, "_current_dialog", None) is not None:
         return _dialog_menu(game)
     return _explore_menu(game)
@@ -61,6 +64,8 @@ def _explore_menu(game):
             items.append(("Kenangan", "memories"))
         if getattr(player, "quests_active", None):
             items.append(("Quest", "quests"))
+        if getattr(player, "skill_points", 0) > 0:
+            items.append(("Latih Skill", _learn_submenu(game, player)))
     items.extend(
         [
             ("Status", "status"),
@@ -112,6 +117,26 @@ def _talk_submenu(game, npcs):
         for nid in npcs:
             name = game.ctx.npc.get(nid, {}).get("name", nid)
             items.append((name, f"talk {nid}"))
+        items.append(("Kembali", None))
+        return items
+
+    return submenu
+
+
+def _learn_submenu(game, player):
+    """Submenu skill yang bisa dipelajari kelas pemain (1 Skill Point)."""
+
+    def submenu():
+        class_id = player.class_id
+        learnable = game.ctx.classes.get(class_id, {}).get(
+            "learnable_skills", []
+        )
+        items = []
+        for sid in learnable:
+            if sid in player.learned_skills:
+                continue
+            skill = game.ctx.skills.get(sid, {})
+            items.append((skill.get("name", sid), f"learn {sid}"))
         items.append(("Kembali", None))
         return items
 
@@ -226,5 +251,48 @@ def _dialog_menu(game):
         dialog_engine.available_choices(dialog, game.state), start=1
     ):
         items.append((choice.get("text", str(idx)), str(idx)))
+    npc = game.ctx.npc.get(game._talk_npc_id) if game._talk_npc_id else None
+    if shop_system.has_shop(npc):
+        items.append(("Berbelanja", "shop"))
     items.append(("Akhiri Percakapan", END_DIALOG))
     return items
+
+
+def _shop_menu(game):
+    """Menu toko untuk NPC yang sedang dibuka."""
+    npc = game.ctx.npc.get(game._shop_npc_id)
+    if not shop_system.has_shop(npc):
+        return [("Keluar Toko", END_SHOP)]
+    items = []
+    buy_list = shop_system.list_buy(game.state, npc)
+    if buy_list:
+        items.append(("Beli", _buy_submenu(buy_list)))
+    sell_list = shop_system.list_sell(game.state, npc)
+    if sell_list:
+        items.append(("Jual", _sell_submenu(sell_list)))
+    items.append(("Keluar Toko", END_SHOP))
+    return items
+
+
+def _buy_submenu(buy_list):
+    def submenu():
+        items = [
+            (f"{name} - {price} emas", f"buy {item_id}")
+            for item_id, name, price in buy_list
+        ]
+        items.append(("Kembali", None))
+        return items
+
+    return submenu
+
+
+def _sell_submenu(sell_list):
+    def submenu():
+        items = [
+            (f"{name} x{qty} - {price} emas", f"sell {item_id}")
+            for item_id, name, price, qty in sell_list
+        ]
+        items.append(("Kembali", None))
+        return items
+
+    return submenu

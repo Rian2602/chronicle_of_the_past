@@ -1,0 +1,24 @@
+{
+  "id": "quest007",
+  "title": "Pilihan Aliansi",
+  "type": "main",
+  "description": "Pilih satu faksi untuk diajak bekerja sama menghadapi konflik yang memanas.",
+  "objectives": [
+    "Bicaralah dengan pemimpin faksi pilihanmu."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "aligned_any"
+    }
+  ],
+  "rewards": {
+    "xp": 70,
+    "gold": 20,
+    "reputation": {
+      "ancient_order": 10
+    }
+  },
+  "flags_on_complete": [],
+  "next": "quest008"
+}

@@ -1,0 +1,28 @@
+{
+  "id": "quest037d",
+  "title": "Menara Terkepung",
+  "type": "main",
+  "description": "Akademi diserang. Pertahankan laboratorium.",
+  "objectives": [
+    "Kalahkan 2 hantu waktu (time_wraith).",
+    "Kalahkan arwah penguasa waktu (time_lord_wraith)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "killed_time_wraith_2"
+    },
+    {
+      "kind": "enemy",
+      "target": "time_lord_wraith"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest037d_done"
+  ],
+  "next": "quest038d"
+}

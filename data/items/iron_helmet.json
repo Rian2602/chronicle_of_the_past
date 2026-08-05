@@ -1,0 +1,9 @@
+{
+  "id": "iron_helmet",
+  "name": "Iron Helmet",
+  "type": "helmet",
+  "slot": "helmet",
+  "modifiers": {"defense": 5},
+  "price": 70,
+  "description": "Helm besi pelindung kepala."
+}

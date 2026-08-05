@@ -1,0 +1,21 @@
+{
+  "id": "quest023",
+  "title": "Segel Darah",
+  "type": "main",
+  "description": "Segel pertama dibuka dengan kekuatan: kalahkan penjaga altar.",
+  "objectives": [
+    "Kalahkan penjaga reruntuhan (ruin_warden)."
+  ],
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "ruin_warden"
+    }
+  ],
+  "rewards": {
+    "xp": 120,
+    "gold": 25
+  },
+  "flags_on_complete": [],
+  "next": "quest024"
+}

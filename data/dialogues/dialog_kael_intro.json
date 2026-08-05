@@ -1,0 +1,15 @@
+{
+  "id": "dialog_kael_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["met_kael"],
+  "lines": [
+    {"speaker": "kael", "text": "Ah, Pejalan Waktu! Profesor Kael, Perkumpulan Cendekia. Aku mendengar desas-desus tentang batu yang bernapas di bawah desa ini."},
+    {"speaker": "kael", "text": "Jangan khawatir — aku bukan tentara, bukan inkuisitor. Aku hanya seorang yang haus akan pengetahuan."},
+    {"speaker": "kael", "text": "Ukiran-ukiran di reruntuhan kuno itu... mereka berbicara dalam bahasa yang sudah mati. Dan aku hampir mengartikannya."}
+  ],
+  "choices": [
+    {"text": "Bahasa apa itu?", "require_flags": [], "set_flags": ["met_kael"], "next": "dialog_kael_main"},
+    {"text": "Bisa aku bantu?", "require_flags": [], "set_flags": ["met_kael"], "next": "dialog_kael_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

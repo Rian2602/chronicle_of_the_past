@@ -1,0 +1,28 @@
+{
+  "id": "quest009",
+  "title": "Dinding Reruntuhan",
+  "type": "main",
+  "description": "Gerbang reruntuhan terkunci. Kumpulkan rune_key dari pemulung reruntuhan.",
+  "objectives": [
+    "Kunjungi pintu masuk reruntuhan (ruins_entrance).",
+    "Dapatkan kunci batu berukir (rune_key)."
+  ],
+  "requirements": [
+    {
+      "kind": "map",
+      "target": "ruins_entrance"
+    },
+    {
+      "kind": "flag",
+      "target": "have_rune_key"
+    }
+  ],
+  "rewards": {
+    "xp": 70,
+    "gold": 20
+  },
+  "flags_on_complete": [
+    "map_ancient_ruins_unlocked"
+  ],
+  "next": "quest010"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "general_corvin",
+  "name": "Panglima Corvin",
+  "location": "capital_keep",
+  "role": "general",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "royal_army",
+  "dialogs": ["dialog_corvin_arc5", "dialog_corvin_boss", "dialog_corvin_intro", "dialog_corvin_main", "dialog_corvin_generic"]
+}

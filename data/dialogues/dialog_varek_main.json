@@ -1,0 +1,15 @@
+{
+  "id": "dialog_varek_main",
+  "require_flags": ["met_varek"],
+  "require_not_flags": ["conspiracy_proven"],
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "Aku pria yang sederhana, Pejalan Waktu. Aku membaca laporan, menandatangani dokumen, dan memastikan roda kerajaan tetap berputar."},
+    {"speaker": "chancellor_varek", "text": "Sayangnya, roda itu membutuhkan minyak — dan kadang, minyak itu berwarna merah. Begitulah cara kerja kerajaan."},
+    {"speaker": "chancellor_varek", "text": "Tapi kau tidak datang ke sini untuk mendengar filsafat kanselir tua, bukan?"}
+  ],
+  "choices": [
+    {"text": "Aku datang untuk mencari kebenaran tentang api di desaku.", "require_flags": [], "set_flags": ["varek_asked_fire"], "next": "dialog_varek_fire"},
+    {"text": "Aku hanya lewat.", "require_flags": [], "set_flags": [], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

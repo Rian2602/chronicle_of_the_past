@@ -1,0 +1,10 @@
+{
+  "id": "evidence_letter",
+  "name": "Surat Bukti",
+  "type": "quest",
+  "slot": null,
+  "modifiers": {},
+  "price": 0,
+  "quest_flag": "have_evidence_letter",
+  "description": "Surat berstempel kanselir yang memerintahkan pembakaran desa."
+}

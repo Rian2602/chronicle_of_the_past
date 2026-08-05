@@ -1,0 +1,15 @@
+{
+  "id": "capital_keep",
+  "name": "Benteng Kerajaan",
+  "region": "5",
+  "threat_level": 11,
+  "description": "Benteng batu putih tempat raja bertahta. Penjaga berzirah penuh berdiri di setiap gerbang.",
+  "ascii_art": "capital_keep",
+  "exits": ["capital"],
+  "npcs": ["king_aldric", "chancellor_varek", "general_corvin"],
+  "enemy_pool": [
+    {"id": "royal_knight", "weight": 2},
+    {"id": "elite_guard", "weight": 1},
+    {"id": "crown_assassin", "weight": 1}
+  ]
+}

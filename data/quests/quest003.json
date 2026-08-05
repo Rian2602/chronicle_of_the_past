@@ -1,0 +1,32 @@
+{
+  "id": "quest003",
+  "title": "Gema di Bawah Perpustakaan",
+  "type": "main",
+  "description": "Bicaralah dengan Aria lalu hadapi mata-mata kerajaan di ruang bawah perpustakaan.",
+  "objectives": [
+    "Bicaralah dengan Aria di desa.",
+    "Kalahkan mata-mata kerajaan (royal_scout)."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "old_man"
+    },
+    {
+      "kind": "enemy",
+      "target": "royal_scout"
+    }
+  ],
+  "rewards": {
+    "xp": 60,
+    "gold": 20,
+    "reputation": {
+      "ancient_order": 5
+    }
+  },
+  "flags_on_complete": [
+    "arc2_started",
+    "map_anchor_vault_unlocked"
+  ],
+  "next": "quest004"
+}

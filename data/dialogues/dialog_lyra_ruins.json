@@ -1,0 +1,13 @@
+{
+  "id": "dialog_lyra_ruins",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["lyra_ruins_told"],
+  "lines": [
+    {"speaker": "lyra", "text": "Gerbang Reruntuhan Kuno terkunci dengan kunci batu berukir. Pemulung-pemulung di sana yang menyimpannya."},
+    {"speaker": "lyra", "text": "Bawa kuncinya ke gerbang, dan jalan menuju lantai dalam akan terbuka. Hati-hatilah di dalam."}
+  ],
+  "choices": [
+    {"text": "Aku akan mencarinya.", "require_flags": [], "set_flags": ["lyra_ruins_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["lyra_ruins_told"], "next": null}
+  ]
+}

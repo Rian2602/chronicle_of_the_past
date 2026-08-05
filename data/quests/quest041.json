@@ -1,0 +1,20 @@
+{
+  "id": "quest041",
+  "title": "Kenangan Terakhir",
+  "type": "main",
+  "description": "Kumpulkan sisa kenangan dan pahami makna Pejalan Waktu.",
+  "objectives": [
+    "Bicaralah dengan Lyra."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "lyra"
+    }
+  ],
+  "rewards": {
+    "xp": 100
+  },
+  "flags_on_complete": [],
+  "next": "quest042"
+}

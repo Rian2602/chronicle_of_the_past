@@ -1,0 +1,16 @@
+{
+  "id": "shadow_step",
+  "name": "Shadow Step",
+  "type": "physical",
+  "cost": 5,
+  "target": "self",
+  "power": 0,
+  "effects": [],
+  "buff": {
+    "stat": "agility",
+    "power": 8,
+    "duration": 2
+  },
+  "requires": {},
+  "description": "Langkah bayangan yang meningkatkan kelincahan."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "ancient_tyrant",
+  "name": "Tiran Kuno",
+  "level": 30,
+  "stats": {"attack": 32, "defense": 24, "hp": 500, "mp": 60, "agility": 12, "intelligence": 16},
+  "behavior": "aggressive",
+  "reward": {"xp": 400, "gold": [150, 200]},
+  "skills": ["slash", "shield_bash", "fireball", "war_cry"],
+  "loot": [
+    {"item": "anchor_crown", "chance": 100, "amount": 1},
+    {"item": "time_edged_blade", "chance": 100, "amount": 1}
+  ],
+  "tags": ["boss", "ancient"],
+  "lore": "Penguasa era Kaum Arah yang menolak sejarah ditulis ulang — penjaga terakhir paradoks."
+}

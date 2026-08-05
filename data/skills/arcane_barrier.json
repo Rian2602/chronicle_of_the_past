@@ -1,0 +1,16 @@
+{
+  "id": "arcane_barrier",
+  "name": "Arcane Barrier",
+  "type": "magic",
+  "cost": 6,
+  "target": "self",
+  "power": 0,
+  "effects": [],
+  "buff": {
+    "stat": "defense",
+    "power": 6,
+    "duration": 1
+  },
+  "requires": {},
+  "description": "Perisai arcane yang mengurangi damage 1 giliran."
+}

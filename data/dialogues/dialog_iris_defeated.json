@@ -1,0 +1,15 @@
+{
+  "id": "dialog_iris_defeated",
+  "require_flags": ["boss_arc3_defeated"],
+  "require_not_flags": ["iris_revealed"],
+  "lines": [
+    {"speaker": "sister_iris", "text": "...Aku kalah. Gereja Api Suci tidak pernah kalah. Dan itu artinya... aku memang bukan dikirim gereja."},
+    {"speaker": "sister_iris", "text": "Dengar, Pejalan Waktu. Aku hanya alat. Yang memegang talinya duduk di ibukota — penasihat raja. Mereka memanggilnya Kanselir."},
+    {"speaker": "sister_iris", "text": "Varek. Namanya Varek. Dia yang menyalakan api ini sebelum aku tiba. Dan dia belum selesai dengan desamu."},
+    {"speaker": "sister_iris", "text": "Aku berhutang nyawa padamu. Mungkin itu cukup untuk membayar satu kebenaran: waspadalah terhadap mahkota."}
+  ],
+  "choices": [
+    {"text": "Nama itu akan kubawa ke istana.", "require_flags": [], "set_flags": ["iris_revealed", "varek_revealed"], "next": null},
+    {"text": "Istirahatlah, Iris.", "require_flags": [], "set_flags": ["iris_revealed"], "next": null}
+  ]
+}

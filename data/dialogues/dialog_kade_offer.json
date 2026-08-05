@@ -1,0 +1,14 @@
+{
+  "id": "dialog_kade_offer",
+  "require_flags": ["kade_met"],
+  "require_not_flags": ["kade_deal_done"],
+  "lines": [
+    {"speaker": "kade", "text": "Kau ingin tahu siapa yang membayar tentara bayaran di hutan dalam, bukan?"},
+    {"speaker": "kade", "text": "Tiga puluh emas. Harga ramah — karena aku suka wajahmu."}
+  ],
+  "choices": [
+    {"text": "Aku bayar.", "require_flags": [], "set_flags": ["kade_deal_done", "kade_paid"], "next": "dialog_kade_paid"},
+    {"text": "Nego.", "require_reputation": {"merchant_guild": 10}, "set_flags": ["kade_deal_done", "kade_paid_nego"], "next": "dialog_kade_nego"},
+    {"text": "Tolak. Aku tidak butuh urusanmu.", "require_flags": [], "set_flags": ["kade_deal_done", "kade_refused"], "next": "dialog_kade_refused"}
+  ]
+}

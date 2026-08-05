@@ -320,6 +320,9 @@ def _game_loop(game, initial_output: str = ""):
         if cmd == game_menu.END_DIALOG:
             game._current_dialog = None
             cmd = "look"
+        if cmd == game_menu.END_SHOP:
+            game._shop_npc_id = None
+            cmd = "look"
         try:
             last_output = game.run_turn(cmd)
         except save_manager.SaveError as e:

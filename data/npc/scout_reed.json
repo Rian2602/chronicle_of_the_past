@@ -1,0 +1,9 @@
+{
+  "id": "scout_reed",
+  "name": "Reed",
+  "location": "forest_deep",
+  "role": "scout",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "rebels",
+  "dialogs": ["dialog_reed_intro", "dialog_reed_main", "dialog_reed_gold", "dialog_reed_generic"]
+}

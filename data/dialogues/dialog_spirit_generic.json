@@ -1,0 +1,9 @@
+{
+  "id": "dialog_spirit_generic",
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Reruntuhan ini mengawasimu, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Aku mengerti.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

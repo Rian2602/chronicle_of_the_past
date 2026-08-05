@@ -55,5 +55,443 @@
       {"kind": "grant_memory", "id": "memory002"},
       {"kind": "set_flag", "flag": "arc1_divergence_shown", "value": true}
     ]
+  },
+  {
+    "id": "event_arc2_gate",
+    "trigger": [
+      {"kind": "flag", "flag": "quest001_done", "value": true},
+      {"kind": "flag", "flag": "quest002_done", "value": true},
+      {"kind": "flag", "flag": "arc2_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 2 — JANGKAR WAKTU"},
+      {"kind": "log", "text": "Aria mengetukmu di malam hari: 'Ada sesuatu di bawah perpustakaan.'"},
+      {"kind": "start_quest", "id": "quest003"},
+      {"kind": "set_flag", "flag": "arc2_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_alias_ancient",
+    "trigger": [
+      {"kind": "flag", "flag": "lyra_story_done", "value": true},
+      {"kind": "flag", "flag": "aligned_ancient_order", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "aligned_ancient_order", "value": true},
+      {"kind": "set_flag", "flag": "aligned_any", "value": true}
+    ]
+  },
+  {
+    "id": "event_alias_rebels",
+    "trigger": [
+      {"kind": "flag", "flag": "sera_cause_told", "value": true},
+      {"kind": "flag", "flag": "aligned_rebels", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "aligned_rebels", "value": true},
+      {"kind": "set_flag", "flag": "aligned_any", "value": true}
+    ]
+  },
+  {
+    "id": "event_alias_merchant",
+    "trigger": [
+      {"kind": "flag", "flag": "marcus_quest_done", "value": true},
+      {"kind": "flag", "flag": "aligned_merchant_guild", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "aligned_merchant_guild", "value": true},
+      {"kind": "set_flag", "flag": "aligned_any", "value": true}
+    ]
+  },
+  {
+    "id": "event_alias_scholar",
+    "trigger": [
+      {"kind": "flag", "flag": "kael_quest_offered", "value": true},
+      {"kind": "flag", "flag": "aligned_scholar_society", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "aligned_scholar_society", "value": true},
+      {"kind": "set_flag", "flag": "aligned_any", "value": true}
+    ]
+  },
+  {
+    "id": "event_conspiracy_proven",
+    "trigger": [
+      {"kind": "flag", "flag": "have_evidence_letter", "value": true},
+      {"kind": "flag", "flag": "crime_archive", "value": true},
+      {"kind": "flag", "flag": "conspiracy_proven", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "conspiracy_proven", "value": true},
+      {"kind": "log", "text": "Bukti terkumpul: surat perintah dari ibukota membuktikan konspirasi Varek."}
+    ]
+  },
+  {
+    "id": "event_echo_1",
+    "trigger": [
+      {"kind": "flag", "flag": "quest010_done", "value": true},
+      {"kind": "flag", "flag": "memory003_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "play_scene", "id": "echo_anchor_forged"},
+      {"kind": "log", "text": "Reruntuhan berbisik — sebuah kilas balik menyelimuti matamu."},
+      {"kind": "grant_memory", "id": "memory003"},
+      {"kind": "set_flag", "flag": "memory003_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_arc2_complete",
+    "trigger": [
+      {"kind": "flag", "flag": "quest011_done", "value": true},
+      {"kind": "flag", "flag": "arc2_complete_shown", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 2 SELESAI — JANGKAR WAKTU"},
+      {"kind": "log", "text": "Sebelum kapten bayaran itu mati, ia menggumam satu nama."},
+      {"kind": "grant_memory", "id": "memory004"},
+      {"kind": "set_flag", "flag": "arc2_complete_shown", "value": true}
+    ]
+  },
+  {
+    "id": "event_arc3_gate",
+    "trigger": [
+      {"kind": "flag", "flag": "boss_arc2_defeated", "value": true},
+      {"kind": "flag", "flag": "arc3_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 3 — PERANG BAYANGAN"},
+      {"kind": "log", "text": "Api menyentuh tepi hutan. Inkuisisi sudah bergerak."},
+      {"kind": "start_quest", "id": "quest012"},
+      {"kind": "set_flag", "flag": "arc3_started", "value": true},
+      {"kind": "set_flag", "flag": "map_forest_deep_unlocked", "value": true}
+    ]
+  },
+  {
+    "id": "event_echo_2",
+    "trigger": [
+      {"kind": "flag", "flag": "quest022_done", "value": true},
+      {"kind": "flag", "flag": "memory006_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "play_scene", "id": "echo_guardian_oath"},
+      {"kind": "log", "text": "Roh Penjaga memutar waktu — kau menyaksikan hari Jangkar ditempa."},
+      {"kind": "grant_memory", "id": "memory006"},
+      {"kind": "set_flag", "flag": "memory006_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_arc3_complete",
+    "trigger": [
+      {"kind": "flag", "flag": "boss_arc3_defeated", "value": true},
+      {"kind": "flag", "flag": "arc3_complete_shown", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 3 SELESAI — PERANG BAYANGAN"},
+      {"kind": "log", "text": "Sebelum jatuh, Iris menyebut satu nama. Nama itu kini tergantung di udara seperti asap."},
+      {"kind": "grant_memory", "id": "memory005"},
+      {"kind": "set_flag", "flag": "arc3_complete_shown", "value": true}
+    ]
+  },
+  {
+    "id": "event_arc4_gate",
+    "trigger": [
+      {"kind": "flag", "flag": "quest020_done", "value": true},
+      {"kind": "flag", "flag": "arc4_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 4 — RERUNTUHAN WAKTU"},
+      {"kind": "log", "text": "Gerbang reruntuhan terbuka penuh. Tiga segel menanti."},
+      {"kind": "start_quest", "id": "quest021"},
+      {"kind": "set_flag", "flag": "arc4_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_arc4_complete",
+    "trigger": [
+      {"kind": "flag", "flag": "quest029_done", "value": true},
+      {"kind": "flag", "flag": "arc4_complete_shown", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 4 SELESAI — RERUNTUHAN WAKTU"},
+      {"kind": "log", "text": "Penjaga Waktu jatuh. Dari ruangan itu, sebuah suara memanggil namamu."},
+      {"kind": "grant_memory", "id": "memory007"},
+      {"kind": "set_flag", "flag": "arc4_complete_shown", "value": true}
+    ]
+  },
+  {
+    "id": "event_arc5_gate",
+    "trigger": [
+      {"kind": "flag", "flag": "quest029_done", "value": true},
+      {"kind": "flag", "flag": "arc5_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "ARC 5 — SEJARAH BARU"},
+      {"kind": "log", "text": "Ultimatum hampir habis. Inkuisisi mengepung. Keputusan terakhir menanti."},
+      {"kind": "start_quest", "id": "quest030"},
+      {"kind": "set_flag", "flag": "arc5_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_memory008",
+    "trigger": [
+      {"kind": "flag", "flag": "quest030_done", "value": true},
+      {"kind": "flag", "flag": "memory008_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "grant_memory", "id": "memory008"},
+      {"kind": "set_flag", "flag": "memory008_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_memory009",
+    "trigger": [
+      {"kind": "flag", "flag": "quest034_done", "value": true},
+      {"kind": "flag", "flag": "memory009_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "grant_memory", "id": "memory009"},
+      {"kind": "set_flag", "flag": "memory009_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_ending_choice",
+    "trigger": [
+      {"kind": "flag", "flag": "quest035_done", "value": true},
+      {"kind": "flag", "flag": "ending_choice_pending", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "PILIHAN TERAKHIR — Nasib Jangkar ada di tanganmu."},
+      {"kind": "play_scene", "id": "ending_choice"},
+      {"kind": "set_flag", "flag": "ending_choice_pending", "value": true}
+    ]
+  },
+  {
+    "id": "event_start_path_a",
+    "trigger": [
+      {"kind": "flag", "flag": "ending_a", "value": true},
+      {"kind": "flag", "flag": "quest037a_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest037a"},
+      {"kind": "set_flag", "flag": "quest037a_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_start_path_b",
+    "trigger": [
+      {"kind": "flag", "flag": "ending_b", "value": true},
+      {"kind": "flag", "flag": "quest037b_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest037b"},
+      {"kind": "set_flag", "flag": "quest037b_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_start_path_c",
+    "trigger": [
+      {"kind": "flag", "flag": "ending_c", "value": true},
+      {"kind": "flag", "flag": "quest037c_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest037c"},
+      {"kind": "set_flag", "flag": "quest037c_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_start_path_d",
+    "trigger": [
+      {"kind": "flag", "flag": "ending_d", "value": true},
+      {"kind": "flag", "flag": "quest037d_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest037d"},
+      {"kind": "set_flag", "flag": "quest037d_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_start_path_e",
+    "trigger": [
+      {"kind": "flag", "flag": "ending_e", "value": true},
+      {"kind": "flag", "flag": "quest037e_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest037e"},
+      {"kind": "set_flag", "flag": "quest037e_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_start_path_f",
+    "trigger": [
+      {"kind": "flag", "flag": "ending_f", "value": true},
+      {"kind": "flag", "flag": "quest037f_started", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "start_quest", "id": "quest037f"},
+      {"kind": "set_flag", "flag": "quest037f_started", "value": true}
+    ]
+  },
+  {
+    "id": "event_path_a_ritual",
+    "trigger": [
+      {"kind": "flag", "flag": "quest037a_done", "value": true},
+      {"kind": "flag", "flag": "seal_ritual_done", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "seal_ritual_done", "value": true},
+      {"kind": "log", "text": "Ritual penyegelan selesai. Kau kini Penjaga Baru."}
+    ]
+  },
+  {
+    "id": "event_path_b_decree",
+    "trigger": [
+      {"kind": "flag", "flag": "quest037b_done", "value": true},
+      {"kind": "flag", "flag": "decree_written", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "decree_written", "value": true},
+      {"kind": "log", "text": "Dekrit penindasan ditulis ulang. Rakyat memegang pena."}
+    ]
+  },
+  {
+    "id": "event_path_c_throne",
+    "trigger": [
+      {"kind": "flag", "flag": "quest037c_done", "value": true},
+      {"kind": "flag", "flag": "throne_sealed", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "throne_sealed", "value": true},
+      {"kind": "log", "text": "Jangkar tersegel di bawah istana. Varek dihukum."}
+    ]
+  },
+  {
+    "id": "event_path_d_school",
+    "trigger": [
+      {"kind": "flag", "flag": "quest037d_done", "value": true},
+      {"kind": "flag", "flag": "school_opened", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "school_opened", "value": true},
+      {"kind": "log", "text": "Sekolah waktu dibuka. Ilmu pengetahuan menyalakan kembali masa depan."}
+    ]
+  },
+  {
+    "id": "event_path_e_destroy",
+    "trigger": [
+      {"kind": "flag", "flag": "quest037e_done", "value": true},
+      {"kind": "flag", "flag": "anchor_destroyed", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "anchor_destroyed", "value": true},
+      {"kind": "log", "text": "Jangkar hancur. Dunia berjalan tanpa jangkar waktu."}
+    ]
+  },
+  {
+    "id": "event_path_f_rewrite",
+    "trigger": [
+      {"kind": "flag", "flag": "quest037f_done", "value": true},
+      {"kind": "flag", "flag": "rewrite_done", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "rewrite_done", "value": true},
+      {"kind": "log", "text": "Sejarah ditulis ulang. Konflik tak pernah terjadi."}
+    ]
+  },
+  {
+    "id": "event_recap_prepared",
+    "trigger": [
+      {"kind": "flag", "flag": "quest042_done", "value": true},
+      {"kind": "flag", "flag": "recap_prepared", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "set_flag", "flag": "recap_prepared", "value": true},
+      {"kind": "recap"},
+      {"kind": "log", "text": "Catatan seorang Pejalan Waktu siap dituliskan."}
+    ]
+  },
+  {
+    "id": "event_memory010",
+    "trigger": [
+      {"kind": "flag", "flag": "season1_path_done", "value": true},
+      {"kind": "flag", "flag": "memory010_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "grant_memory", "id": "memory010"},
+      {"kind": "set_flag", "flag": "memory010_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_memory011",
+    "trigger": [
+      {"kind": "flag", "flag": "quest041_done", "value": true},
+      {"kind": "flag", "flag": "memory011_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "grant_memory", "id": "memory011"},
+      {"kind": "set_flag", "flag": "memory011_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_memory012",
+    "trigger": [
+      {"kind": "flag", "flag": "quest044_done", "value": true},
+      {"kind": "flag", "flag": "memory012_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "═══════════════════════════════════════"},
+      {"kind": "log", "text": "TAMAT — SEASON 1"},
+      {"kind": "play_scene", "id": "epilogue_morning"},
+      {"kind": "log", "text": "Pagi di Ashen. Sebuah bab berakhir; yang lain menanti."},
+      {"kind": "grant_memory", "id": "memory012"},
+      {"kind": "set_flag", "flag": "memory012_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_memory013",
+    "trigger": [
+      {"kind": "flag", "flag": "quest045_done", "value": true},
+      {"kind": "flag", "flag": "memory013_granted", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "play_scene", "id": "season2_seed"},
+      {"kind": "grant_memory", "id": "memory013"},
+      {"kind": "set_flag", "flag": "memory013_granted", "value": true}
+    ]
+  },
+  {
+    "id": "event_ultimatum_expired",
+    "trigger": [
+      {"kind": "flag", "flag": "ultimatum_expired", "value": true},
+      {"kind": "flag", "flag": "ultimatum_resolved", "operator": "MISSING"},
+      {"kind": "flag", "flag": "ultimatum_failures_applied", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "Api menjilat langit. Quest yang belum selesai di Desa Ashen ikut terbakar."},
+      {"kind": "fail_quest", "id": "quest014"},
+      {"kind": "fail_quest", "id": "quest016"},
+      {"kind": "fail_quest", "id": "quest018"},
+      {"kind": "fail_quest", "id": "quest019"},
+      {"kind": "set_flag", "flag": "ultimatum_failures_applied", "value": true}
+    ]
+  },
+  {
+    "id": "event_rewrite_key",
+    "trigger": [
+      {"kind": "flag", "flag": "echo_1_collected", "value": true},
+      {"kind": "flag", "flag": "echo_2_collected", "value": true},
+      {"kind": "flag", "flag": "rewrite_key", "operator": "MISSING"}
+    ],
+    "actions": [
+      {"kind": "log", "text": "Semua echo terkumpul. Kunci untuk menulis ulang masa lalu terbuka."},
+      {"kind": "set_flag", "flag": "rewrite_key", "value": true}
+    ]
   }
 ]

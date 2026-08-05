@@ -1,0 +1,9 @@
+{
+  "id": "anchor_avatar",
+  "name": "Suara Jangkar",
+  "location": "anchor_chamber",
+  "role": "ancient_being",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_avatar_intro", "dialog_avatar_truth", "dialog_avatar_ending", "dialog_avatar_farewell", "dialog_avatar_main", "dialog_avatar_generic"]
+}

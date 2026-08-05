@@ -1,0 +1,9 @@
+{
+  "id": "guardian_plate",
+  "name": "Guardian Plate",
+  "type": "armor",
+  "slot": "armor",
+  "modifiers": {"defense": 15},
+  "price": 800,
+  "description": "Zirah penjaga reruntuhan yang tak terkikis zaman."
+}

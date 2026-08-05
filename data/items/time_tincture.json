@@ -1,0 +1,11 @@
+{
+  "id": "time_tincture",
+  "name": "Ramuan Waktu",
+  "type": "consumable",
+  "slot": null,
+  "modifiers": {},
+  "price": 60,
+  "heal": 0,
+  "heal_mp": 999,
+  "description": "Ramuan yang memulihkan seluruh MP."
+}

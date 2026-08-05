@@ -1,0 +1,15 @@
+{
+  "id": "mercenary_soldier",
+  "name": "Tentara Bayaran",
+  "level": 7,
+  "stats": {"attack": 14, "defense": 8, "hp": 38, "mp": 4, "agility": 9, "intelligence": 5},
+  "behavior": "aggressive",
+  "reward": {"xp": 80, "gold": [12, 20]},
+  "skills": ["slash"],
+  "loot": [
+    {"item": "potion", "chance": 25, "amount": 1},
+    {"item": "iron_sword", "chance": 10, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Prajurit sewaan kerajaan yang menyamar sebagai pemburu."
+}

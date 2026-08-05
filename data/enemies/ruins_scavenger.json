@@ -1,0 +1,16 @@
+{
+  "id": "ruins_scavenger",
+  "name": "Pemulung Reruntuhan",
+  "level": 5,
+  "stats": {"attack": 10, "defense": 5, "hp": 28, "mp": 0, "agility": 7, "intelligence": 4},
+  "behavior": "aggressive",
+  "reward": {"xp": 60, "gold": [10, 16]},
+  "skills": [],
+  "loot": [
+    {"item": "herb", "chance": 30, "amount": 1},
+    {"item": "rune_key", "chance": 40, "amount": 1},
+    {"item": "wooden_helmet", "chance": 5, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Pencari harta karun yang nekat memasuki reruntuhan terlarang."
+}

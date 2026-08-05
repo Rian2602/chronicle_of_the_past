@@ -1,0 +1,18 @@
+{
+  "id": "marcus",
+  "name": "Marcus",
+  "location": "village",
+  "role": "merchant",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "merchant_guild",
+  "dialogs": ["dialog_marcus_quest", "dialog_marcus_betrayal", "dialog_marcus_main"],
+  "shop": {
+    "buy": [
+      {"item": "potion", "price": 25},
+      {"item": "elixir", "price": 80},
+      {"item": "steel_sword", "price": 120},
+      {"item": "chain_armor", "price": 150}
+    ],
+    "sell_multiplier": 0.5
+  }
+}

@@ -37,6 +37,12 @@ def _engine_state(game_state, combat=None):
                 {"kind": eff.kind, "duration": eff.duration, "power": eff.power}
                 for eff in effects
             ]
+        serialized_buffs = {}
+        for target_id, effects in combat.buffs.items():
+            serialized_buffs[target_id] = [
+                {"stat": eff.stat, "duration": eff.duration, "power": eff.power}
+                for eff in effects
+            ]
         combat_data = {
             "round_no": combat.round_no,
             "turn_order": combat.turn_order,
@@ -48,6 +54,7 @@ def _engine_state(game_state, combat=None):
             "player_defending": combat.player_defending,
             "enemy_defending": combat.enemy_defending,
             "statuses": serialized_statuses,
+            "buffs": serialized_buffs,
             "xp": getattr(combat, "xp", 0),
             "gold": getattr(combat, "gold", 0),
             "loot": combat.loot or [],
@@ -93,6 +100,7 @@ def save_game(game_state, path, schema_version=SCHEMA_VERSION, combat=None):
         if game_state.player
         else None,
         "flags": game_state.flags,
+        "counters": getattr(game_state, "counters", {}),
         "engine_state": _engine_state(game_state, combat),
         "saved_at": datetime.datetime.now(datetime.UTC).isoformat(),
     }
@@ -135,6 +143,7 @@ def load_game(path, game_context=None):
     if player_data:
         gs.player = _restore_player(player_data, game_context)
     gs.flags = data.get("flags", {})
+    gs.counters = data.get("counters", {})
     engine = data.get("engine_state", {})
     gs.current_map = engine.get("current_map")
     gs.time = engine.get("current_time", "morning")
@@ -174,6 +183,7 @@ def _restore_player(player_data, game_context):
             overlay[key] = player_data.get(key, getattr(p, key))
         overlay["inventory"] = player_data.get("inventory", [])
         overlay["quests_done"] = player_data.get("quests_done", [])
+        overlay["quests_failed"] = player_data.get("quests_failed", [])
         overlay["memories"] = player_data.get("memories", [])
         overlay["learned_skills"] = player_data.get("learned_skills", [])
         for field_name in ("hp", "mp", "level", "xp", "gold", "skill_points"):
@@ -204,6 +214,7 @@ def _restore_player(player_data, game_context):
         flags={},
         quests_active={},
         quests_done=[],
+        quests_failed=[],
         memories=[],
         learned_skills=[],
     )

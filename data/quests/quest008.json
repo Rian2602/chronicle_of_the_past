@@ -1,0 +1,26 @@
+{
+  "id": "quest008",
+  "title": "Punggung Pisau",
+  "type": "main",
+  "description": "Kade tahu siapa yang membayar tentara bayaran. Tawarkan kesepakatan.",
+  "objectives": [
+    "Bicaralah dengan Kade di sarang.",
+    "Selesaikan kesepakatan dengan Kade."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "kade"
+    },
+    {
+      "kind": "flag",
+      "target": "kade_deal_done"
+    }
+  ],
+  "rewards": {
+    "xp": 80,
+    "gold": 30
+  },
+  "flags_on_complete": [],
+  "next": "quest009"
+}

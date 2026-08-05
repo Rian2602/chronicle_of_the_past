@@ -1,0 +1,15 @@
+{
+  "id": "ruin_warden",
+  "name": "Penjaga Reruntuhan",
+  "level": 9,
+  "stats": {"attack": 13, "defense": 12, "hp": 52, "mp": 8, "agility": 5, "intelligence": 6},
+  "behavior": "defensive",
+  "reward": {"xp": 100, "gold": [16, 26]},
+  "skills": ["shield_bash"],
+  "loot": [
+    {"item": "iron_helmet", "chance": 20, "amount": 1},
+    {"item": "chain_armor", "chance": 10, "amount": 1}
+  ],
+  "tags": ["construct"],
+  "lore": "Patung penjaga yang hidup kembali untuk melindungi altar."
+}

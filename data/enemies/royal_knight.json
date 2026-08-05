@@ -1,0 +1,16 @@
+{
+  "id": "royal_knight",
+  "name": "Ksatria Kerajaan",
+  "level": 16,
+  "stats": {"attack": 19, "defense": 13, "hp": 80, "mp": 12, "agility": 10, "intelligence": 7},
+  "behavior": "aggressive",
+  "reward": {"xp": 200, "gold": [30, 45]},
+  "skills": ["slash", "shield_bash"],
+  "loot": [
+    {"item": "potion", "chance": 25, "amount": 1},
+    {"item": "chain_armor", "chance": 12, "amount": 1},
+    {"item": "steel_sword", "chance": 10, "amount": 1}
+  ],
+  "tags": ["humanoid"],
+  "lore": "Ksatria bersumpah pada mahkota — dan pada siapa pun yang duduk di atasnya."
+}

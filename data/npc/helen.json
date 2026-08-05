@@ -1,0 +1,17 @@
+{
+  "id": "helen",
+  "name": "Helen",
+  "location": "village",
+  "role": "innkeeper",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_helen_intro", "dialog_helen_news", "dialog_helen_shop", "dialog_helen_generic"],
+  "shop": {
+    "buy": [
+      {"item": "herb", "price": 10},
+      {"item": "potion", "price": 25},
+      {"item": "elixir", "price": 80}
+    ],
+    "sell_multiplier": 0.5
+  }
+}

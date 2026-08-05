@@ -1,0 +1,15 @@
+{
+  "id": "dialog_tom_fire",
+  "require_flags": ["met_tom"],
+  "require_not_flags": ["tom_fire_told"],
+  "lines": [
+    {"speaker": "tom", "text": "Api menjilat atap dalam hitungan detik. Bukan seperti kayu terbakar — seperti sesuatu yang menyebar dengan sengaja."},
+    {"speaker": "tom", "text": "Aku mendengar teriakan, lalu langkah kaki mundur ke arah hutan. Saat kukejar, hanya kutemukan sisa seragam — jubah hitam dengan lambang api."},
+    {"speaker": "tom", "text": "Marta... Marta tidak pernah meninggalkan rumah di tengah malam. Seseorang membawanya pergi, Pejalan Waktu."}
+  ],
+  "choices": [
+    {"text": "Tunjukkan aku tempatnya. Aku akan menyelidiki.", "require_flags": [], "set_flags": ["tom_fire_told", "tom_escort_offer"], "next": "dialog_tom_escort"},
+    {"text": "Aku akan menyelidikinya sendiri.", "require_flags": [], "set_flags": ["tom_fire_told"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["tom_fire_told"], "next": null}
+  ]
+}

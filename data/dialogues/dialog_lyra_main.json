@@ -1,0 +1,14 @@
+{
+  "id": "dialog_lyra_main",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["lyra_story_done"],
+  "lines": [
+    {"speaker": "lyra", "text": "Aria bilang kau akan datang. Selamat datang, Pejalan Waktu."},
+    {"speaker": "lyra", "text": "Aku menjaga catatan tentang Jangkar Waktu dan Reruntuhan Kuno di bawah desa ini."}
+  ],
+  "choices": [
+    {"text": "Ceritakan tentang batu yang berdenyut.", "require_flags": [], "set_flags": ["lyra_story_done", "lyra_told_anchor", "map_crime_den_unlocked"], "next": "dialog_lyra_anchor"},
+    {"text": "Bagaimana aku bisa masuk ke reruntuhan?", "require_flags": [], "set_flags": ["lyra_story_done"], "next": "dialog_lyra_ruins"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["lyra_story_done"], "next": null}
+  ]
+}

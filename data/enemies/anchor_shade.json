@@ -1,0 +1,15 @@
+{
+  "id": "anchor_shade",
+  "name": "Bayangan Jangkar",
+  "level": 28,
+  "stats": {"attack": 24, "defense": 16, "hp": 420, "mp": 80, "agility": 12, "intelligence": 22},
+  "behavior": "mage",
+  "reward": {"xp": 350, "gold": [120, 150]},
+  "skills": ["frost_bolt", "fireball", "lore_strike"],
+  "loot": [
+    {"item": "time_edged_blade", "chance": 100, "amount": 1},
+    {"item": "elixir", "chance": 100, "amount": 2}
+  ],
+  "tags": ["boss", "undead"],
+  "lore": "Jelmaan murka Jangkar yang menolak dihancurkan."
+}

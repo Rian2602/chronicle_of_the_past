@@ -1,0 +1,9 @@
+{
+  "id": "dialog_ben_generic",
+  "lines": [
+    {"speaker": "ben", "text": "Besi bisa ditempa kembali, Pejalan Waktu. Manusia tidak selalu. Jagalah yang kau miliki."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

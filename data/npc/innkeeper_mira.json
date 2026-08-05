@@ -1,0 +1,16 @@
+{
+  "id": "innkeeper_mira",
+  "name": "Mira",
+  "location": "capital",
+  "role": "innkeeper",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": null,
+  "dialogs": ["dialog_mira_intro", "dialog_mira_news", "dialog_mira_shop", "dialog_mira_generic"],
+  "shop": {
+    "buy": [
+      {"item": "potion", "price": 25},
+      {"item": "elixir", "price": 80}
+    ],
+    "sell_multiplier": 0.5
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "burnt_husk",
+  "name": "Arang Hidup",
+  "level": 11,
+  "stats": {"attack": 12, "defense": 8, "hp": 44, "mp": 30, "agility": 7, "intelligence": 13},
+  "behavior": "mage",
+  "reward": {"xp": 130, "gold": [18, 30]},
+  "skills": ["fireball"],
+  "loot": [
+    {"item": "herb", "chance": 20, "amount": 1},
+    {"item": "elixir", "chance": 5, "amount": 1}
+  ],
+  "tags": ["undead"],
+  "lore": "Korban api suci yang masih berjalan, membawa abu di setiap langkahnya."
+}

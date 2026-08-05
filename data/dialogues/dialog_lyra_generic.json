@@ -1,0 +1,9 @@
+{
+  "id": "dialog_lyra_generic",
+  "lines": [
+    {"speaker": "lyra", "text": "Halo. Aku Lyra, penjaga arsip kuno desa ini."}
+  ],
+  "choices": [
+    {"text": "Sampai jumpa.", "require_flags": [], "set_flags": ["met_lyra"], "next": null}
+  ]
+}

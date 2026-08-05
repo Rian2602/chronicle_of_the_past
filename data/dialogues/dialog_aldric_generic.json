@@ -1,0 +1,9 @@
+{
+  "id": "dialog_aldric_generic",
+  "lines": [
+    {"speaker": "king_aldric", "text": "Takhta ini dingin, Pejalan Waktu. Semakin lama kau duduk, semakin sedikit yang kau rasakan. Jangan biarkan itu terjadi padamu."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

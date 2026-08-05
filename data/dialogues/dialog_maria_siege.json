@@ -1,0 +1,14 @@
+{
+  "id": "dialog_maria_siege",
+  "require_flags": ["siege_won"],
+  "require_not_flags": ["maria_siege_done"],
+  "lines": [
+    {"speaker": "mother_maria", "text": "Kau selamat. Kita semua selamat — sebagian besar dari kita."},
+    {"speaker": "mother_maria", "text": "Malam itu aku merawat tiga belas orang. Tiga belas nyawa yang menggantung di antara doa dan luka. Gereja yang kukenal tidak pernah mengirim luka seperti ini."},
+    {"speaker": "mother_maria", "text": "Terima kasih telah bertahan, Pejalan Waktu. Dunia ini masih butuh orang-orang yang memilih untuk bertahan."}
+  ],
+  "choices": [
+    {"text": "Terima kasih atas segalanya, Ibu Maria.", "require_flags": [], "set_flags": ["maria_siege_done"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["maria_siege_done"], "next": null}
+  ]
+}

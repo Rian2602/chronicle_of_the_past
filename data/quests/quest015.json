@@ -1,0 +1,22 @@
+{
+  "id": "quest015",
+  "title": "Harga Sebuah Nama",
+  "type": "main",
+  "description": "Sebuah faksi memintamu mengungkap lokasi Jangkar. Pilih dengan bijak.",
+  "objectives": [
+    "Buat keputusan tentang lokasi Jangkar."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "quest015_resolved"
+    }
+  ],
+  "rewards": {
+    "xp": 100
+  },
+  "flags_on_complete": [
+    "map_rebel_camp_unlocked"
+  ],
+  "next": "quest016"
+}

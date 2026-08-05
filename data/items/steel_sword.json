@@ -1,0 +1,9 @@
+{
+  "id": "steel_sword",
+  "name": "Steel Sword",
+  "type": "weapon",
+  "slot": "weapon",
+  "modifiers": {"attack": 12, "agility": -1},
+  "price": 120,
+  "description": "Pedang baja yang lebih tajam dari besi."
+}

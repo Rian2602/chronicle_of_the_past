@@ -1,0 +1,14 @@
+{
+  "id": "dialog_kade_paid",
+  "require_flags": ["kade_deal_done"],
+  "require_not_flags": ["kade_refused"],
+  "lines": [
+    {"speaker": "kade", "text": "Uang di tangan, cerita di tangan. Ini untukmu:"},
+    {"speaker": "kade", "text": "Yang membayar tentara bayaran itu bukan raja. Itu kanselir kerajaan — Varek."},
+    {"speaker": "kade", "text": "Raja tua di singgasana itu hanya wayang. Hati-hatilah, Pejalan Waktu. Nama itu lebih berat dari emas."}
+  ],
+  "choices": [
+    {"text": "Varek...", "require_flags": [], "set_flags": ["knows_varek_name"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

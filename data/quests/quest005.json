@@ -1,0 +1,29 @@
+{
+  "id": "quest005",
+  "title": "Utusan dari Ibukota",
+  "type": "main",
+  "description": "Finn tertangkap basah mengirim burung surat ke ibukota.",
+  "objectives": [
+    "Bicaralah dengan Finn.",
+    "Tangkap atau lepaskan Finn."
+  ],
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "finn"
+    },
+    {
+      "kind": "flag",
+      "target": "finn_caught"
+    }
+  ],
+  "rewards": {
+    "xp": 60,
+    "gold": 10
+  },
+  "flags_on_complete": [
+    "met_finn",
+    "map_forest_deep_unlocked"
+  ],
+  "next": "quest006"
+}

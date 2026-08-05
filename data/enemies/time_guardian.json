@@ -1,0 +1,16 @@
+{
+  "id": "time_guardian",
+  "name": "Penjaga Waktu",
+  "level": 22,
+  "stats": {"attack": 22, "defense": 20, "hp": 300, "mp": 30, "agility": 8, "intelligence": 12},
+  "behavior": "defensive",
+  "reward": {"xp": 280, "gold": [80, 100]},
+  "skills": ["shield_bash", "lore_strike"],
+  "loot": [
+    {"item": "rune_crown", "chance": 100, "amount": 1},
+    {"item": "time_tincture", "chance": 100, "amount": 2},
+    {"item": "guardian_plate", "chance": 40, "amount": 1}
+  ],
+  "tags": ["boss", "construct"],
+  "lore": "Konstruk kuno penjaga ruang Jangkar. Setelah kalah, ia berbicara atas nama batu."
+}

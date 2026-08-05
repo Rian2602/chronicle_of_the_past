@@ -1,0 +1,9 @@
+{
+  "id": "dialog_kade_generic",
+  "lines": [
+    {"speaker": "kade", "text": "Lorong gelap punya harga. Tanyakan saja, kalau kau berani."}
+  ],
+  "choices": [
+    {"text": "Hmm.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "dialog_corvin_intro",
+  "require_flags": ["arc4_started"],
+  "require_not_flags": ["met_corvin"],
+  "lines": [
+    {"speaker": "general_corvin", "text": "Berhenti. Panglima Corvin, panglima pasukan kerajaan Ashenfeld. Siapa kau yang berani memasuki benteng tanpa nama?"},
+    {"speaker": "general_corvin", "text": "...Pejalan Waktu, katamu? Aku pernah mendengar istilah itu dalam laporan-laporan aneh dari desa tepi."},
+    {"speaker": "general_corvin", "text": "Bicaralah cepat. Benteng ini tidak ramah pada pengembara — dan akhir-akhir ini, bahkan kurang ramah pada penduduknya sendiri."}
+  ],
+  "choices": [
+    {"text": "Aku datang membawa kabar dari Desa Ashen.", "require_flags": [], "set_flags": ["met_corvin"], "next": "dialog_corvin_main"},
+    {"text": "Aku mencari keadilan.", "require_flags": [], "set_flags": ["met_corvin"], "next": "dialog_corvin_main"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

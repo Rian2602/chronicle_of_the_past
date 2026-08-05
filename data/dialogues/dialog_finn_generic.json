@@ -1,0 +1,9 @@
+{
+  "id": "dialog_finn_generic",
+  "lines": [
+    {"speaker": "finn", "text": "Oh, orang baru di desa? Jangan terlalu percaya pada siapa pun di sini — termasuk aku."}
+  ],
+  "choices": [
+    {"text": "Hmm.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

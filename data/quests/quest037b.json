@@ -1,0 +1,28 @@
+{
+  "id": "quest037b",
+  "title": "Menyerbu Ibukota",
+  "type": "main",
+  "description": "Bantu pemberontak merebut istana.",
+  "objectives": [
+    "Kalahkan 2 ksatria kerajaan (royal_knight).",
+    "Kalahkan pengawal elit (elite_guard)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "killed_royal_knight_2"
+    },
+    {
+      "kind": "enemy",
+      "target": "elite_guard"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest037b_done"
+  ],
+  "next": "quest038b"
+}

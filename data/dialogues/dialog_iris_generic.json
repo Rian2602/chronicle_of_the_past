@@ -1,0 +1,9 @@
+{
+  "id": "dialog_iris_generic",
+  "lines": [
+    {"speaker": "sister_iris", "text": "Hari-harimu terus berjalan, Pejalan Waktu. Jangan bilang aku tidak mengingatkanmu."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

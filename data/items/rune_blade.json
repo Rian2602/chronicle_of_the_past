@@ -1,0 +1,9 @@
+{
+  "id": "rune_blade",
+  "name": "Rune Blade",
+  "type": "weapon",
+  "slot": "weapon",
+  "modifiers": {"attack": 18, "intelligence": 3},
+  "price": 320,
+  "description": "Pedang berukir rune kuno yang menyalurkan kecerdasan."
+}

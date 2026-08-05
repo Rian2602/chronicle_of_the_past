@@ -1,0 +1,9 @@
+{
+  "id": "chancellor_varek",
+  "name": "Kanselir Varek",
+  "location": "capital_keep",
+  "role": "chancellor",
+  "relationship": {"trust": 0, "affinity": 0, "knowledge": 0},
+  "faction": "royal_army",
+  "dialogs": ["dialog_varek_intro", "dialog_varek_confront", "dialog_varek_final", "dialog_varek_main", "dialog_varek_generic"]
+}

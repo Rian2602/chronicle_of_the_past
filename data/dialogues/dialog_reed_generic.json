@@ -1,0 +1,9 @@
+{
+  "id": "dialog_reed_generic",
+  "lines": [
+    {"speaker": "scout_reed", "text": "Mata-mata tidak punya banyak teman, Pejalan Waktu. Tapi aku menilai kau layak untuk diajak bicara."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

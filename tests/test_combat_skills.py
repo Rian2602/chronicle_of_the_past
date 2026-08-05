@@ -84,6 +84,7 @@ def make_magic_skill(cost=4, power=10, effects=None):
 
 def test_physical_skill_costs_mp_and_deals_damage():
     player = make_player()
+    player.learned_skills = ["strike"]
     enemy = make_enemy(hp=50)
     state = start_combat(
         player,
@@ -99,6 +100,7 @@ def test_physical_skill_costs_mp_and_deals_damage():
 
 def test_magic_skill_uses_magic_formula_and_applies_burn():
     player = make_player(intelligence=8)
+    player.learned_skills = ["fire"]
     enemy = make_enemy(hp=50, intelligence=3)
     skill = make_magic_skill(
         effects=[{"status": "burn", "duration": 3, "power": 2}]
@@ -118,6 +120,7 @@ def test_magic_skill_uses_magic_formula_and_applies_burn():
 
 def test_skill_not_enough_mp_consumes_turn_without_action():
     player = make_player(mp=5, intelligence=0)
+    player.learned_skills = ["strike"]
     enemy = make_enemy(hp=50)
     state = start_combat(
         player,
@@ -145,6 +148,7 @@ def test_magic_unknown_id_raises_value_error():
 
 def test_physical_skill_power_adds_damage():
     player = make_player(attack=10)
+    player.learned_skills = ["strike"]
     enemy = make_enemy(hp=50, defense=2)
     rng = FixedRandomizer([0, 0, 0, 0, 0, 0, 100])
     state = start_combat(
@@ -159,6 +163,7 @@ def test_physical_skill_power_adds_damage():
 
 def test_physical_skill_miss_ignores_power():
     player = make_player(attack=10)
+    player.learned_skills = ["strike"]
     enemy = make_enemy(hp=50, defense=2)
     rng = FixedRandomizer([0, 0, 0, 0, 0, 100, 100])
     state = start_combat(
@@ -173,6 +178,7 @@ def test_physical_skill_miss_ignores_power():
 
 def test_physical_skill_miss_does_not_apply_status_effects():
     player = make_player(attack=10)
+    player.learned_skills = ["strike"]
     enemy = make_enemy(hp=50, defense=2)
     skill = make_physical_skill(
         cost=3,
@@ -196,6 +202,23 @@ def test_unlearned_magic_is_rejected():
     )
     assert player_action(state, CombatAction.MAGIC, "fire") is False
     assert enemy.stats["hp"] == 50
+    assert "Kamu belum mempelajari skill ini." in state.log
+
+
+def test_unlearned_skill_rejected_even_when_learned_skills_empty():
+    # Regresi: daftar learned_skills kosong dulu melewati gate (karena cek
+    # truthiness list), sehingga pemain bisa memakai skill katalog apa pun
+    # yang belum dipelajari. Sekarang daftar kosong = tidak ada skill yang
+    # boleh dipakai.
+    player = make_player(intelligence=10, mp=50)
+    player.learned_skills = []
+    enemy = make_enemy(hp=50, intelligence=3)
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"fire": make_magic_skill()}
+    )
+    assert player_action(state, CombatAction.MAGIC, "fire") is False
+    assert enemy.stats["hp"] == 50
+    assert state.player.mp == 50  # MP tidak terpakai, tidak ada serangan
     assert "Kamu belum mempelajari skill ini." in state.log
 
 

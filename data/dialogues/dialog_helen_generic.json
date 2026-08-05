@@ -1,0 +1,9 @@
+{
+  "id": "dialog_helen_generic",
+  "lines": [
+    {"speaker": "helen", "text": "Penginapan ini telah melihat banyak hal, Pejalan Waktu. Yang aneh bukanlah pengunjungnya — tapi apa yang mereka bawa masuk."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

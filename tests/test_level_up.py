@@ -1,7 +1,11 @@
 import pytest
 
 from src.models.player import Player
-from src.systems.level_system import LEVEL_CHOICES, apply_choice
+from src.systems.level_system import (
+    LEVEL_CHOICES,
+    apply_choice,
+    learn_skill,
+)
 
 
 def make_player(**overrides):
@@ -95,3 +99,33 @@ def test_level_choices_shape():
         ("mp", 10),
         ("skill_point", 1),
     ]
+
+
+def test_learn_skill_spends_point_and_learns():
+    p = make_player(skill_points=1)
+    msg = learn_skill(p, "warrior", "shield_bash", ["shield_bash", "war_cry"])
+    assert msg is None
+    assert p.skill_points == 0
+    assert "shield_bash" in p.learned_skills
+
+
+def test_learn_skill_requires_skill_point():
+    p = make_player(skill_points=0)
+    msg = learn_skill(p, "warrior", "shield_bash", ["shield_bash"])
+    assert msg == "Skill Point tidak cukup."
+    assert p.learned_skills == []
+
+
+def test_learn_skill_rejects_unlearnable_for_class():
+    p = make_player(skill_points=1)
+    msg = learn_skill(p, "warrior", "frost_bolt", ["shield_bash"])
+    assert msg == "Kelas warrior tidak bisa mempelajari skill frost_bolt."
+    assert p.skill_points == 1
+    assert p.learned_skills == []
+
+
+def test_learn_skill_rejects_already_learned():
+    p = make_player(skill_points=1, learned_skills=["shield_bash"])
+    msg = learn_skill(p, "warrior", "shield_bash", ["shield_bash"])
+    assert msg == "Skill sudah kamu kuasai."
+    assert p.skill_points == 1

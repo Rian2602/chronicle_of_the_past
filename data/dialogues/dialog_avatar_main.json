@@ -1,0 +1,15 @@
+{
+  "id": "dialog_avatar_main",
+  "require_flags": ["avatar_truth_told"],
+  "require_not_flags": ["avatar_farewell_done"],
+  "lines": [
+    {"speaker": "anchor_avatar", "text": "Kaum Arah menciptakanku untuk memperbaiki yang rusak. Mereka tidak pernah membayangkan bahwa yang rusak adalah mereka sendiri."},
+    {"speaker": "anchor_avatar", "text": "Kini kau berdiri di antara dua dunia, Pejalan Waktu. Yang menulis ulang sejarah — dan yang menerimanya apa adanya."},
+    {"speaker": "anchor_avatar", "text": "Jangkar menunggumu. Keputusan terakhir ada di tanganmu. Aku hanya bisa menemanimu sampai ambang pintu itu."}
+  ],
+  "choices": [
+    {"text": "Apa yang akan terjadi pada Jangkar setelah keputusan itu?", "require_flags": [], "set_flags": ["avatar_asked_fate"], "next": "dialog_avatar_fate"},
+    {"text": "Aku siap. Bawa aku ke ambang pintu itu.", "require_flags": [], "set_flags": ["avatar_ready"], "next": "dialog_avatar_farewell"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

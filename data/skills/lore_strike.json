@@ -1,0 +1,11 @@
+{
+  "id": "lore_strike",
+  "name": "Lore Strike",
+  "type": "magic",
+  "cost": 7,
+  "target": "single_enemy",
+  "power": 11,
+  "effects": [],
+  "requires": {},
+  "description": "Serangan sihir yang terukur dari pengetahuan kuno."
+}

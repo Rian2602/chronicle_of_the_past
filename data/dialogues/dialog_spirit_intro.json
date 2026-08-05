@@ -1,0 +1,14 @@
+{
+  "id": "dialog_spirit_intro",
+  "require_flags": ["arc2_started"],
+  "require_not_flags": ["spirit_met"],
+  "lines": [
+    {"speaker": "ancient_spirit", "text": "Kau... berani melangkah ke aula yang telah sunyi selama seribu tahun."},
+    {"speaker": "ancient_spirit", "text": "Aku Penjaga Reruntuhan. Mereka yang datang membawa keserakahan tidak akan pulang membawa nyawa."},
+    {"speaker": "ancient_spirit", "text": "Bicara, Pejalan Waktu. Dan buktikan niatmu."}
+  ],
+  "choices": [
+    {"text": "Aku mencari Jangkar Waktu.", "require_flags": [], "set_flags": ["spirit_met"], "next": "dialog_spirit_test"},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

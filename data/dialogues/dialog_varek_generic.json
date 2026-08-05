@@ -1,0 +1,9 @@
+{
+  "id": "dialog_varek_generic",
+  "lines": [
+    {"speaker": "chancellor_varek", "text": "Sejarah menunggumu, Pejalan Waktu. Bertindaklah sebelum sejarah menulis dirimu sendiri."}
+  ],
+  "choices": [
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

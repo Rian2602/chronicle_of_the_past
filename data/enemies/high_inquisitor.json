@@ -1,0 +1,15 @@
+{
+  "id": "high_inquisitor",
+  "name": "Inkuisitor Agung",
+  "level": 28,
+  "stats": {"attack": 30, "defense": 20, "hp": 430, "mp": 50, "agility": 13, "intelligence": 14},
+  "behavior": "aggressive",
+  "reward": {"xp": 360, "gold": [130, 170]},
+  "skills": ["slash", "fireball", "shield_bash"],
+  "loot": [
+    {"item": "rune_crown", "chance": 100, "amount": 1},
+    {"item": "guardian_plate", "chance": 80, "amount": 1}
+  ],
+  "tags": ["boss", "humanoid"],
+  "lore": "Pemimpin pasukan gereja yang membawa api suci ke setiap desa yang 'berdosa'."
+}

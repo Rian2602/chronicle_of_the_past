@@ -17,5 +17,45 @@
             "\"Berhati-hatilah. Aku pernah membaca... desa ini akan terbakar.\"",
             "\"Mulailah dengan menemui Kepala Desa. Dia perlu tahu ada orang baru di sini.\""
         ]
+    },
+    {
+        "id": "echo_anchor_forged",
+        "lines": [
+            "Reruntuhan membuka ingatan yang bukan milikmu.",
+            "Di kedalaman waktu, Jangkar ditempa dari doa, rasa takut, dan ambisi.",
+            "Setiap kilau logamnya menyimpan harga yang belum lunas."
+        ]
+    },
+    {
+        "id": "echo_guardian_oath",
+        "lines": [
+            "Roh Penjaga mengangkat tangannya, dan masa lalu berhenti bernapas.",
+            "Kau melihat para penjaga pertama bersumpah menjaga waktu dari raja dan imam.",
+            "Sumpah itu retak, tetapi belum sepenuhnya mati."
+        ]
+    },
+    {
+        "id": "ending_choice",
+        "lines": [
+            "Jangkar berdetak seperti jantung dunia.",
+            "Semua jalan yang kau tempuh bertemu di satu ruangan sunyi.",
+            "Pilihan terakhir tidak lagi bisa ditunda."
+        ]
+    },
+    {
+        "id": "epilogue_morning",
+        "lines": [
+            "Pagi tiba di Ashen tanpa api di langit.",
+            "Orang-orang masih terluka, tetapi mereka menyebut hari ini awal baru.",
+            "Namamu menjadi bisik-bisik di antara halaman buku tua."
+        ]
+    },
+    {
+        "id": "season2_seed",
+        "lines": [
+            "Saat semuanya tampak selesai, langit kembali berubah.",
+            "Sebuah surat tanpa pengirim jatuh di ambang pintu perpustakaan.",
+            "Di dalamnya hanya tertulis: sejarah lain sedang runtuh."
+        ]
     }
 ]

@@ -1,0 +1,13 @@
+{
+  "id": "dialog_finn_freed",
+  "require_flags": ["finn_freed"],
+  "lines": [
+    {"speaker": "finn", "text": "Kau membiarkanku pergi... padahal bisa saja kau serahkan aku pada warga."},
+    {"speaker": "finn", "text": "Aku tak akan lupa ini. Bila suatu hari kau sampai di ibukota, cari aku di penginapan Mira."},
+    {"speaker": "finn", "text": "Aku punya telinga di istana. Dan mungkin... hati nurani juga."}
+  ],
+  "choices": [
+    {"text": "Aku akan mengingatnya.", "require_flags": [], "set_flags": ["finn_grateful"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": [], "next": null}
+  ]
+}

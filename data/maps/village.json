@@ -5,7 +5,20 @@
   "threat_level": 0,
   "description": "Desa kecil yang hangat. Orang-orang memandangmu dengan curiga.",
   "ascii_art": "village",
-  "exits": ["forest"],
-  "npcs": ["old_man", "village_chief"],
+  "exits": ["forest", "anchor_vault", "ruins_entrance", "crime_den", "capital"],
+  "npcs": [
+    "old_man",
+    "village_chief",
+    "lyra",
+    "finn",
+    "marcus",
+    "guard_erik",
+    "kael",
+    "helen",
+    "ben",
+    "tom",
+    "nil",
+    "mother_maria"
+  ],
   "enemy_pool": []
 }

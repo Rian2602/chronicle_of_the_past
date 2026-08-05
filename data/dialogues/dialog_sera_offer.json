@@ -1,0 +1,15 @@
+{
+  "id": "dialog_sera_offer",
+  "require_flags": ["met_sera"],
+  "require_not_flags": ["sera_aligned", "sera_declined"],
+  "lines": [
+    {"speaker": "sera", "text": "Desa Ashen. Kami dengar ada 'benda tua' di bawahnya — dan mahkota mengirim pasukan untuk mengambilnya."},
+    {"speaker": "sera", "text": "Kami bisa saling membantu, Pejalan Waktu. Mata-mata kami, pengetahuan kami... untuk melawan siapa pun yang mengancam desamu."},
+    {"speaker": "sera", "text": "Kau pilih: berdiri bersama kami, atau pulang membawa tangan kosong."}
+  ],
+  "choices": [
+    {"text": "Aku akan bekerja sama dengan pemberontak.", "require_flags": [], "set_flags": ["sera_aligned", "aligned_rebels", "aligned_any"], "next": "dialog_sera_followup"},
+    {"text": "Aku belum bisa memihak siapa pun.", "require_flags": [], "set_flags": ["sera_declined"], "next": null},
+    {"text": "Pergi.", "require_flags": [], "set_flags": ["sera_declined"], "next": null}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "quest037a",
+  "title": "Benteng Terakhir",
+  "type": "main",
+  "description": "Pertahankan ruang Jangkar dari pasukan gereja yang menyerbu.",
+  "objectives": [
+    "Kalahkan 3 tentara inkuisisi (inquisitor_soldier).",
+    "Kalahkan Inkuisitor Agung (high_inquisitor)."
+  ],
+  "requirements": [
+    {
+      "kind": "flag",
+      "target": "killed_inquisitor_soldier_3"
+    },
+    {
+      "kind": "enemy",
+      "target": "high_inquisitor"
+    }
+  ],
+  "rewards": {
+    "xp": 200,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest037a_done"
+  ],
+  "next": "quest038a"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "time_wraith",
+  "name": "Hantu Waktu",
+  "level": 12,
+  "stats": {"attack": 10, "defense": 6, "hp": 46, "mp": 40, "agility": 10, "intelligence": 14},
+  "behavior": "mage",
+  "reward": {"xp": 140, "gold": [20, 32]},
+  "skills": ["frost_bolt", "fireball"],
+  "loot": [
+    {"item": "old_scroll", "chance": 50, "amount": 1},
+    {"item": "time_tincture", "chance": 10, "amount": 1}
+  ],
+  "tags": ["undead"],
+  "lore": "Sisa jiwa yang tersangkut di arus waktu, membisu dan murka."
+}
