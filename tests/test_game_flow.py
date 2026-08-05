@@ -440,6 +440,23 @@ def test_restore_combat_does_not_mutate_shared_enemy(tmp_path):
     assert wolf.stats["hp"] == original_hp
 
 
+def test_midcombat_save_restores_enemy_mp(tmp_path):
+    ctx, g = _mid_combat_game(tmp_path)
+    g._combat.enemy.stats["mp"] = 3
+    path = str(tmp_path / "mp.json")
+    g.run_turn(f"save {path}")
+    g2 = Game(ctx)
+    g2.continue_game(path)
+    assert g2._combat.enemy.stats["mp"] == 3
+
+
+def test_restore_combat_old_save_without_enemy_mp_keeps_template_mp(tmp_path):
+    _, g = _mid_combat_game(tmp_path)
+    template_mp = g.state.enemies["wild_wolf"].stats.get("mp", 0)
+    g._restore_combat({"enemy_id": "wild_wolf", "enemy_hp": 5, "statuses": {}})
+    assert g._combat.enemy.stats["mp"] == template_mp
+
+
 def test_item_command_in_combat_shows_message_not_crash(tmp_path):
     _, g = _mid_combat_game(tmp_path)
     assert "Item tidak dimiliki" in g.run_turn("item potion")
@@ -762,6 +779,36 @@ def test_select_without_number_does_not_crash(tmp_path):
     g.run_turn("talk old_man")
     out = g.run_turn("select")
     assert "Pilihan tidak valid." in out
+
+
+def test_talk_falls_back_to_flagless_dialog_even_when_not_last(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    npc = dict(g.ctx.npc["old_man"])
+    flagless = g.ctx.dialogues[npc["dialogs"][-1]]
+    gated = dict(flagless)
+    gated["require_flags"] = ["never_set"]
+    g.ctx.dialogues["gated_last"] = gated
+    npc["dialogs"] = [npc["dialogs"][-1], "gated_last"]
+    g.ctx.npc["old_man"] = npc
+    out = g.run_turn("talk old_man")
+    assert "belum pernah melihatmu" in out  # dialog generik, bukan yang gated
+
+
+def test_talk_never_shows_gated_dialog_when_no_flagless_exists(tmp_path):
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    npc = dict(g.ctx.npc["old_man"])
+    gated = dict(g.ctx.dialogues[npc["dialogs"][-1]])
+    gated["require_flags"] = ["never_set"]
+    g.ctx.dialogues["gated_only"] = gated
+    npc["dialogs"] = ["gated_only"]
+    g.ctx.npc["old_man"] = npc
+    out = g.run_turn("talk old_man")
+    assert "belum pernah melihatmu" not in out
+    assert "tidak punya dialog" in out
 
 
 def test_arc2_dialog_hidden_before_arc2(tmp_path):

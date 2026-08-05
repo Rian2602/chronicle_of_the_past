@@ -240,10 +240,9 @@ def _on_victory(state):
         if state.loot_resolver is not None
         else []
     )
-    gained_xp = int(
-        level_system.award_xp(state.player, state.xp) * _xp_multiplier(state)
+    gained_xp = level_system.gain_xp(
+        state.player, state.xp, _xp_multiplier(state)
     )
-    state.player.xp += gained_xp
     state.player.gold += state.gold
     for entry in state.loot:
         item = state.items.get(entry["id"])

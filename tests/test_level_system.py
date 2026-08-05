@@ -1,6 +1,10 @@
-from src.core.randomizer import Randomizer
 from src.models.player import Player
-from src.systems.level_system import award_xp, gain_xp, xp_to_next
+from src.systems.level_system import (
+    award_xp,
+    gain_xp,
+    process_level_ups,
+    xp_to_next,
+)
 
 
 def make_player(**overrides):
@@ -21,38 +25,50 @@ def test_xp_curve():
     assert xp_to_next(3) == 150
 
 
-def test_gain_xp_no_level():
+def test_gain_xp_adds_amount():
     p = make_player(level=1, xp=10)
-    assert gain_xp(p, 20) == []
+    assert gain_xp(p, 20) == 20
     assert p.level == 1
     assert p.xp == 30
 
 
-def test_gain_xp_single_level():
+def test_gain_xp_applies_xp_bonus():
+    assert gain_xp(make_player(xp_bonus=1.2), 30) == 36
+    assert gain_xp(make_player(), 30) == 30
+
+
+def test_gain_xp_applies_multiplier():
+    p = make_player(xp_bonus=1.2)
+    assert gain_xp(p, 30, multiplier=2.0) == 72
+    assert p.xp == 72
+
+
+def test_process_level_ups_no_level():
+    p = make_player(level=1, xp=30)
+    assert process_level_ups(p) == []
+    assert p.level == 1
+    assert p.xp == 30
+
+
+def test_process_level_ups_single_level():
     p = make_player(level=1, xp=40)
-    assert gain_xp(p, 20) == [2]
+    gain_xp(p, 20)
+    assert process_level_ups(p) == [2]
     assert p.level == 2
     assert p.xp == 10
 
 
-def test_gain_xp_single_level_with_randomizer():
+def test_process_level_ups_multi_level():
     p = make_player(level=1, xp=40)
-    r = Randomizer(seed=1)
-    assert gain_xp(p, 20, r) == [2]
-    assert p.level == 2
-    assert p.xp == 10
-
-
-def test_gain_xp_multi_level():
-    p = make_player(level=1, xp=40)
-    assert gain_xp(p, 120) == [2, 3]
+    gain_xp(p, 120)
+    assert process_level_ups(p) == [2, 3]
     assert p.level == 3
     assert p.xp == 10
 
 
-def test_gain_xp_exact_threshold():
+def test_process_level_ups_exact_threshold():
     p = make_player(level=1, xp=50)
-    assert gain_xp(p, 0) == [2]
+    assert process_level_ups(p) == [2]
     assert p.level == 2
     assert p.xp == 0
 

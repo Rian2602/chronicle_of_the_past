@@ -138,6 +138,11 @@ class Game:
         enemy.stats["hp"] = combat_data.get(
             "enemy_hp", enemy.stats.get("hp", 1)
         )
+        # Set MP enemy sesuai yang tersimpan (fallback MP template utk
+        # save lama yang belum punya enemy_mp)
+        enemy.stats["mp"] = combat_data.get(
+            "enemy_mp", enemy.stats.get("mp", 0)
+        )
         # Rekonstruksi statuses dari dict ke StatusEffect objects
         restored_statuses = {}
         for target_id, effects in combat_data.get("statuses", {}).items():
@@ -459,9 +464,9 @@ class Game:
             dialog = d
             break
 
-        if dialog is None:
-            dialog = self.ctx.dialogues.get(npc["dialogs"][-1])
-
+        # Tanpa dialog yang cocok, jangan tampilkan dialog flag-gated;
+        # fallback lama `dialogs[-1]` bisa bocorkan dialog terkunci bila
+        # data diurutkan ulang. NPC dianggap tidak punya dialog saat itu.
         if dialog is None:
             out.append(f"{npc['name']} tidak punya dialog.")
             return
@@ -870,16 +875,10 @@ class Game:
     def _check_level_up(self) -> list:
         """Cek apakah XP yang tersimpan sudah cukup untuk naik level.
 
-        Berbeda dengan gain_xp, fungsi ini tidak menambah XP baru —
-        hanya mengolah XP yang sudah ada di player.xp.
+        Tidak menambah XP baru — hanya mengolah XP yang sudah ada di
+        player.xp; logika level-up ada di level_system.process_level_ups.
         """
-        p = self.state.player
-        levels = []
-        while p.xp >= level_system.xp_to_next(p.level):
-            p.xp -= level_system.xp_to_next(p.level)
-            p.level += 1
-            levels.append(p.level)
-        return levels
+        return level_system.process_level_ups(self.state.player)
 
     def _apply_pending_levels(self, out):
         """Deteksi level-up dan tunda bonus stat sampai pemain memilih."""

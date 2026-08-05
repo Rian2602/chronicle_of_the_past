@@ -9,18 +9,31 @@ def award_xp(player, amount: int) -> int:
     return int(amount * getattr(player, "xp_bonus", 1.0))
 
 
-def gain_xp(player, amount: int, randomizer=None) -> list:
-    """Tambahkan XP dan kembalikan daftar level baru yang dicapai.
+def gain_xp(player, amount: int, multiplier: float = 1.0) -> int:
+    """Tambahkan XP ke pemain (bonus kelas + pengali opsional).
 
     Args:
         player: Pemain yang menerima XP.
         amount: XP mentah sebelum bonus kelas.
-        randomizer: Tidak dipakai; dipertahankan untuk kompatibilitas API.
+        multiplier: Pengali tambahan (mis. buff xp_bonus saat bertarung).
 
     Returns:
-        List level yang berhasil dicapai (kosong bila tidak naik level).
+        Jumlah XP yang benar-benar ditambahkan setelah bonus.
     """
-    player.xp += award_xp(player, amount)
+    gained = int(award_xp(player, amount) * multiplier)
+    player.xp += gained
+    return gained
+
+
+def process_level_ups(player) -> list:
+    """Olah XP yang sudah ada di player.xp menjadi kenaikan level.
+
+    Level-up tidak diterapkan di sini — game menunda pemberian bonus stat
+    sampai pemain memilih (lihat _apply_pending_levels di game.py).
+
+    Returns:
+        List level baru yang dicapai (kosong bila tidak naik level).
+    """
     levels = []
     while player.xp >= xp_to_next(player.level):
         player.xp -= xp_to_next(player.level)

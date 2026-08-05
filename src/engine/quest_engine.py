@@ -180,8 +180,7 @@ def _complete_quest(game_state, player, quest_id) -> str:
     """
     quest = game_state.quests[quest_id]
     rewards = quest.get("rewards", {})
-    gained_xp = level_system.award_xp(player, rewards.get("xp", 0))
-    player.xp += gained_xp
+    gained_xp = level_system.gain_xp(player, rewards.get("xp", 0))
     gold = rewards.get("gold", 0)
     player.gold += gold
     reputation = rewards.get("reputation", {})

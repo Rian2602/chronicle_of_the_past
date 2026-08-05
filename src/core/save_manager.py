@@ -65,6 +65,9 @@ def _engine_state(game_state, combat=None):
             "enemy_hp": combat.enemy.stats.get("hp", 0)
             if hasattr(combat, "enemy") and combat.enemy
             else 0,
+            "enemy_mp": combat.enemy.stats.get("mp", 0)
+            if hasattr(combat, "enemy") and combat.enemy
+            else 0,
         }
     return {
         "current_map": current_map.id
