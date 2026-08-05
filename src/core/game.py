@@ -329,7 +329,8 @@ class Game:
         )
         out.append(
             "Menu utama: Lihat, Jelajah, Pergi, Bicara, Istirahat, "
-            "Inventori, Status, Simpan, Keluar."
+            "Inventori, Kenangan, Quest, Latih Skill, Status, Bantuan, "
+            "Simpan, Muat, Keluar."
         )
         out.append(
             "Saat bicara dengan pedagang: shop (buka toko), "

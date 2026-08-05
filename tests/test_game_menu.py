@@ -27,6 +27,24 @@ def test_build_dispatches_explore_menu(game):
     assert "Keluar" in labels
 
 
+def test_learn_skill_entry_hidden_when_all_class_skills_learned(game):
+    game.state.player.skill_points = 1
+    game.state.player.learned_skills = [
+        "slash",
+        "shield_bash",
+        "war_cry",
+    ]
+    labels = [label for label, _ in game_menu.build(game)]
+    assert "Latih Skill" not in labels
+
+
+def test_learn_skill_entry_shown_when_unlearned_remains(game):
+    game.state.player.skill_points = 1
+    game.state.player.learned_skills = ["slash", "shield_bash"]
+    labels = [label for label, _ in game_menu.build(game)]
+    assert "Latih Skill" in labels
+
+
 def test_build_dispatches_combat_menu(game):
     wolf = game.state.enemies["wild_wolf"]
     game._combat = start_combat(
@@ -41,6 +59,26 @@ def test_build_dispatches_combat_menu(game):
     assert labels[0] == "Serang"
     assert "Kabur" in labels
     assert "Bertahan" in labels
+
+
+def test_combat_item_menu_includes_mp_regen(game):
+    from src.systems.inventory_system import add_item
+
+    add_item(game.state.player, "time_tincture", 1)
+    wolf = game.state.enemies["wild_wolf"]
+    game._combat = start_combat(
+        game.state.player,
+        wolf,
+        game.randomizer,
+        skills=game.ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=game.state.items,
+    )
+    items = game_menu.build(game)
+    item_targets = [target for label, target in items if label == "Item"]
+    assert len(item_targets) == 1
+    submenu = item_targets[0]()
+    assert ("Ramuan Waktu", "item time_tincture") in submenu
 
 
 def test_build_dispatches_dialog_menu(game):

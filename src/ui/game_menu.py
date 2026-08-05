@@ -64,7 +64,9 @@ def _explore_menu(game):
             items.append(("Kenangan", "memories"))
         if getattr(player, "quests_active", None):
             items.append(("Quest", "quests"))
-        if getattr(player, "skill_points", 0) > 0:
+        if getattr(player, "skill_points", 0) > 0 and _has_unlearned_skills(
+            game, player
+        ):
             items.append(("Latih Skill", _learn_submenu(game, player)))
     items.extend(
         [
@@ -121,6 +123,14 @@ def _talk_submenu(game, npcs):
         return items
 
     return submenu
+
+
+def _has_unlearned_skills(game, player) -> bool:
+    """True bila masih ada skill kelas yang belum dipelajari pemain."""
+    learnable = game.ctx.classes.get(player.class_id, {}).get(
+        "learnable_skills", []
+    )
+    return any(sid not in player.learned_skills for sid in learnable)
 
 
 def _learn_submenu(game, player):
@@ -197,7 +207,10 @@ def _combat_menu(game):
             e["id"]
             for e in player.inventory
             if game.state.items.get(e["id"], None) is not None
-            and game.state.items[e["id"]].heal
+            and (
+                game.state.items[e["id"]].heal
+                or getattr(game.state.items[e["id"]], "heal_mp", 0)
+            )
         ]
         if consumables:
             items.append(("Item", _item_submenu(game, consumables)))

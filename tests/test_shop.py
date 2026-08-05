@@ -210,6 +210,17 @@ def test_list_sell_reflects_inventory():
     assert ("herb", "Herb", 5, 3) in result
 
 
+def test_list_sell_excludes_equipped_items():
+    gs = make_game_state(gold=0)
+    add_item(gs.player, "herb", 1)
+    add_item(gs.player, "steel_sword", 1)
+    equip(gs.player, STEEL_SWORD, gs.items)
+    npc = make_npc()
+    result = list_sell(gs, npc)
+    assert all(item_id != "steel_sword" for item_id, *_ in result)
+    assert ("herb", "Herb", 5, 1) in result
+
+
 def test_buy_zero_or_negative_quantity_rejected():
     gs = make_game_state(gold=100)
     npc = make_npc()

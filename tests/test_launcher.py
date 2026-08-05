@@ -46,6 +46,18 @@ def test_menu_loop_clears_screen_for_every_redraw(monkeypatch):
     assert len(clears) == 2
 
 
+def test_menu_loop_escape_does_not_select(monkeypatch):
+    keys = iter(["", "ENTER"])
+    monkeypatch.setattr(launcher, "_read_key", lambda: next(keys))
+
+    assert (
+        launcher._menu_loop(
+            lambda selection: f"Menu {selection}", 2, "Petunjuk"
+        )
+        == 0
+    )
+
+
 def test_settings_menu_cycles_then_resets_and_saves(monkeypatch, tmp_path):
     selections = iter([0, 1, 2, 3])
     monkeypatch.setattr(

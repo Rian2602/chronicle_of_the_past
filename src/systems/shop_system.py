@@ -87,6 +87,8 @@ def list_sell(game_state, npc):
     multiplier = _sell_multiplier(npc)
     result = []
     for entry in game_state.player.inventory:
+        if entry["id"] in game_state.player.equipped.values():
+            continue
         item_def = game_state.items.get(entry["id"])
         if item_def is None:
             continue

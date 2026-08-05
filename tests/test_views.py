@@ -39,11 +39,6 @@ def test_menu_main_highlight():
     assert "\n  Lanjutkan" in out
 
 
-def test_menu_arrow_wrap():
-    assert menu.arrow(0, 5) == 1
-    assert menu.arrow(4, 5) == 0
-
-
 def test_class_card_bars():
     card = menu.render_class_card(
         {

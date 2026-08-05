@@ -125,7 +125,7 @@ def _menu_loop(render_fn, total: int, hint: str, screen: str = "") -> int:
             selection = (selection - 1) % total if total > 0 else 0
         elif key in ("DOWN", "s", "j"):
             selection = (selection + 1) % total if total > 0 else 0
-        elif key in ("ENTER", ""):
+        elif key == "ENTER":
             return selection
         elif key == "q":
             raise KeyboardInterrupt

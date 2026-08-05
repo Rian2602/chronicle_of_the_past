@@ -12,13 +12,6 @@ def render_main(selection=0):
     return "\n".join(lines)
 
 
-def arrow(idx, total):
-    """Indeks berikutnya secara siklik dalam menu berjumlah total."""
-    if total <= 0:
-        return 0
-    return (idx + 1) % total if total > 1 else idx
-
-
 def render_class_card(class_data):
     """Render kartu ringkas kelas beserta bar stat."""
     lines = [f"{class_data['name']}"]
