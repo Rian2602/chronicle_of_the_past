@@ -65,6 +65,12 @@ class MainMenuScreen(Screen):
 class NameScreen(Screen):
     """Input nama kultivator sebelum permainan dimulai."""
 
+    BINDINGS = [("escape", "back", "Kembali")]
+
+    def action_back(self) -> None:
+        """Kembali ke menu utama tanpa memulai permainan."""
+        self.app.pop_screen()
+
     def compose(self) -> ComposeResult:
         """Susun prompt nama dan tombol mulai."""
         with Vertical(id="name-box"):
@@ -157,6 +163,12 @@ class GameScreen(Screen):
         """Satu langkah pertarungan dari input pemain (GDD §18.3)."""
         session = self.app.session
         log = self.query_one("#game-log", Log)
+        if command.name == "quit":
+            # Perintah global: pemain boleh keluar kapan pun (§18.1).
+            for line in session.dispatch(command):
+                log.write_line(line)
+            self.app.exit()
+            return
         if command.name == "observe":
             frame = session.battle_frame()
             log.write_line("[cyan]Amatan:[/]")
@@ -183,8 +195,9 @@ class GameScreen(Screen):
         session = self.app.session
         if session.state is None:
             return
-        status = session.dispatch(Command(name="status", args=(), raw="status"))
-        self.query_one("#hud", Static).update("\n".join(status))
+        # HUD memakai status_lines (bukan dispatch) agar tidak terblokir
+        # guard battle — stat tetap terlihat selama pertarungan.
+        self.query_one("#hud", Static).update("\n".join(session.status_lines()))
         if session.in_battle:
             frame = session.battle_frame()
             panel = "\n".join(self._enemy_lines(frame))

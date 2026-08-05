@@ -129,7 +129,8 @@ class GameSession:
         """Kirim perintah dunia; kembalikan baris pesan untuk UI."""
         if command.name not in AVAILABLE:
             return [UNAVAILABLE]
-        if self.in_battle:
+        # quit adalah perintah global (§18.1): tetap jalan saat bertarung.
+        if self.in_battle and command.name != "quit":
             return ["Kamu sedang bertarung! (attack/defend/observe/escape)"]
         # load harus jalan meski belum ada permainan aktif.
         if self.state is None and command.name != "load":
@@ -147,7 +148,13 @@ class GameSession:
             "  observe, escape (alias Indonesia juga berlaku).",
         ]
 
-    def _cmd_status(self, _command: Command) -> list[str]:
+    def status_lines(self) -> list[str]:
+        """Baris status pemain; dipakai perintah status & HUD UI.
+
+        Metode publik agar HUD tidak lewat dispatch (yang memblokir
+        perintah dunia saat battle) — stat tetap terlihat di HUD saat
+        bertarung.
+        """
         player = self.state.player
         tier = next((t for t in load_tiers() if t.id == player.tier_id), None)
         tier_name = tier.name if tier else "Mortal (belum bertingkat)"
@@ -162,6 +169,9 @@ class GameSession:
             f"Insight {player.insight} | Gold {player.gold}"
             f" | Meridian {player.meridian_buka}/8{injury}",
         ]
+
+    def _cmd_status(self, _command: Command) -> list[str]:
+        return self.status_lines()
 
     def _cmd_map(self, _command: Command) -> list[str]:
         unlocked = [START_LOCATION]

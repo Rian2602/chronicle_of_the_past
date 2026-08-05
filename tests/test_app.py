@@ -52,6 +52,21 @@ async def test_alur_mulai_baru_sampai_layar_game(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_escape_dari_layar_nama_kembali_ke_menu(tmp_path):
+    """Escape dari layar nama kembali ke menu tanpa memulai permainan."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.press("n")
+        await pilot.pause()
+        assert isinstance(app.screen, NameScreen)
+        await pilot.press("escape")
+        await pilot.pause()
+        assert isinstance(app.screen, MainMenuScreen)
+        assert app.session.state is None
+
+
+@pytest.mark.asyncio
 async def test_escape_dari_game_kembali_ke_menu(tmp_path):
     """Escape dari layar game kembali ke menu, bukan layar nama basi."""
     app = _app(tmp_path)
@@ -66,6 +81,29 @@ async def test_escape_dari_game_kembali_ke_menu(tmp_path):
         await pilot.press("escape")
         await pilot.pause()
         assert isinstance(app.screen, MainMenuScreen)
+
+
+@pytest.mark.asyncio
+async def test_hud_menampilkan_stat_saat_battle(tmp_path):
+    """HUD tetap menampilkan HP/Qi selama pertarungan (bukan pesan guard)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.press("n")
+        await pilot.pause()
+        app.screen.query_one("#name", Input).value = "Akar"
+        await pilot.press("enter")
+        await pilot.pause()
+        cmd = app.screen.query_one("#cmd", Input)
+        cmd.value = "go ashfall_forest"
+        await pilot.press("enter")
+        await pilot.pause()
+        cmd.value = "look"
+        await pilot.press("enter")
+        await pilot.pause()
+        hud = app.screen.query_one("#hud", Static).content
+        assert "HP" in str(hud)
+        assert "bertarung" not in str(hud)
 
 
 @pytest.mark.asyncio

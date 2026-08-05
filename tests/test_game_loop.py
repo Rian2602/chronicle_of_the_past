@@ -232,6 +232,34 @@ def test_dispatch_saat_battle_tidak_menimpa_pertarungan(tmp_path):
     assert session.state.location == "ashfall_forest"
 
 
+def test_status_lines_tetap_berfungsi_saat_battle(tmp_path):
+    """Status pemain tetap tersedia selama battle (dipakai HUD UI)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    assert session.in_battle
+    lines = session.status_lines()
+    assert any("HP" in line for line in lines)
+    assert any("Insight" in line for line in lines)
+    assert not any("bertarung" in line for line in lines)
+
+
+def test_quit_tetap_berfungsi_saat_battle(tmp_path):
+    """Perintah global quit tetap jalan saat bertarung (§18.1)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    assert session.in_battle
+    lines = _dispatch(session, "quit")
+    assert session.quit_requested is True
+    assert any("jumpa" in line for line in lines)
+    # Battle tetap utuh; keluar tidak merusak state.
+    assert session.in_battle
+    assert session.battle_frame().enemies[0]["name"] == "Bandit Perbatasan"
+
+
 def test_teknik_tidak_dikenal_di_battle_memberi_error(tmp_path):
     """Aksi battle yang tidak valid menghasilkan error tanpa crash."""
     session = _session(tmp_path)
