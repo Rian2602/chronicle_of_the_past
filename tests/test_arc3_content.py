@@ -211,6 +211,19 @@ def test_ultimatum_resolved_prevents_auto_fail():
     assert game.state.player.quests_failed == []
 
 
+def test_quest032_completion_sets_ultimatum_resolved():
+    """Kemenangan pengepungan (q032) menuntaskan ultimatum secara nyata."""
+    _, game = make_game()
+    quest_engine.start_quest(game.state, "quest032")
+    game.state.flags["killed_inquisitor_soldier_4"] = True
+    quest_engine.complete_requirement(
+        game.state, "flag", "killed_inquisitor_soldier_4"
+    )
+    assert "quest032" in game.state.player.quests_done
+    assert game.state.flags.get("ultimatum_resolved") is True
+    assert game.state.flags.get("siege_won") is True
+
+
 # ---------------------------------------------------------------------------
 # Reputation and alignment
 # ---------------------------------------------------------------------------

@@ -7,7 +7,7 @@ import os
 
 from src.core import save_manager
 from src.engine import dialog_engine
-from src.systems import level_system, shop_system
+from src.systems import level_system, shop_system, travel_system
 
 END_DIALOG = "!end_dialog"
 END_SHOP = "!end_shop"
@@ -98,11 +98,17 @@ def _load_submenu():
 
 
 def _go_submenu(game, exits):
-    """Submenu peta tujuan yang tersedia dari peta saat ini."""
+    """Submenu peta tujuan yang tersedia dari peta saat ini.
+
+    Peta terkunci (belum ada flag `map_<id>_unlocked`) tidak ditampilkan,
+    sesuai §6 story-season1-spec.md.
+    """
 
     def submenu():
         items = []
         for mid in exits:
+            if not travel_system.can_travel(game.state, mid):
+                continue
             name = game.ctx.maps.get(mid, {}).get("name", mid)
             items.append((name, f"go {mid}"))
         items.append(("Kembali", None))

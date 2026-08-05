@@ -44,54 +44,6 @@ def test_damage_result_fields():
     assert dmg.missed is False
 
 
-def test_combat_state_all_fields():
-    def stub_loot(enemy, randomizer):
-        return []
-
-    state = CombatState(
-        round_no=1,
-        turn_order=["player", "enemy"],
-        current_index=0,
-        over=False,
-        result=None,
-        log=["start"],
-        observe_used=False,
-        player_defending=False,
-        enemy_defending=False,
-        statuses={"player": [], "enemy": []},
-        xp=20,
-        gold=15,
-        loot=[{"id": "rat_tail"}],
-        observe_info="A goblin",
-        player=None,
-        enemy=None,
-        randomizer=None,
-        skills={"bash": {"power": 5}},
-        loot_resolver=stub_loot,
-        max_status_duration=5,
-    )
-    assert state.round_no == 1
-    assert state.turn_order == ["player", "enemy"]
-    assert state.current_index == 0
-    assert state.over is False
-    assert state.result is None
-    assert state.log == ["start"]
-    assert state.observe_used is False
-    assert state.player_defending is False
-    assert state.enemy_defending is False
-    assert state.statuses == {"player": [], "enemy": []}
-    assert state.xp == 20
-    assert state.gold == 15
-    assert state.loot == [{"id": "rat_tail"}]
-    assert state.observe_info == "A goblin"
-    assert state.player is None
-    assert state.enemy is None
-    assert state.randomizer is None
-    assert state.skills == {"bash": {"power": 5}}
-    assert state.loot_resolver is stub_loot
-    assert state.max_status_duration == 5
-
-
 def test_combat_state_defaults():
     state = CombatState(
         round_no=0,

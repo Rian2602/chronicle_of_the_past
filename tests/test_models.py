@@ -81,7 +81,7 @@ def test_player_from_dict():
         "gold": 75,
         "skill_points": 2,
         "equipped": {"weapon": "iron_sword"},
-        "inventory": ["potion", "bread"],
+        "inventory": [{"id": "potion", "qty": 1}, {"id": "bread", "qty": 2}],
         "reputation": {"merchant_guild": 10},
         "relationship": {"mira": 5},
         "flags": {"met_queen": True},

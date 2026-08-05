@@ -130,6 +130,14 @@ def test_buy_no_discount_below_reputation_threshold():
     assert msg == "Kamu membeli Potion x1 seharga 25 emas."
 
 
+def test_buy_no_discount_just_below_threshold():
+    gs = make_game_state(gold=100)
+    gs.player.reputation["merchant_guild"] = 14
+    npc = make_npc(faction="merchant_guild")
+    msg = buy(gs, npc, "potion", 1)
+    assert msg == "Kamu membeli Potion x1 seharga 25 emas."
+
+
 def test_buy_no_discount_for_non_merchant_guild_npc():
     gs = make_game_state(gold=100)
     gs.player.reputation["merchant_guild"] = 50

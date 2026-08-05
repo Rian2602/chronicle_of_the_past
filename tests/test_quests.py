@@ -265,7 +265,7 @@ def test_quest_data_files_load_via_load_json():
     assert quest002["requirements"] == [
         {"kind": "enemy", "target": "wild_wolf"}
     ]
-    assert quest002["next"] is None
+    assert quest002["next"] == "quest003"
 
 
 def test_next_objective_none_when_no_active_quest():

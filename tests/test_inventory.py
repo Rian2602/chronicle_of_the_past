@@ -163,7 +163,7 @@ def test_use_consumable_missing_registry_no_consumption():
     assert p.hp == 100
 
 
-def test_use_consumable_zero_heal_no_consumption():
+def test_use_non_consumable_rejected_no_consumption():
     p = make_player()
     gs = GameState()
     gs.items = {"iron_sword": IRON_SWORD}

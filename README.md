@@ -325,7 +325,7 @@ Buka toko dengan **`shop`** saat bicara dengan pedagang, atau pilih **Berbelanja
 | **Brock** | capital | steel_sword 120g, rune_blade 320g, chain_armor 150g, rune_plate 380g, rune_crown 260g |
 | **Yara** | capital | potion 25g, elixir 80g, time_tincture 60g, smoke_bomb 40g |
 
-**Diskon reputasi:** merchant_guild ≥ 10 → opsi nego harga di q008; merchant_guild ≥ **15** → diskon beli **−15%** di semua toko berfaksi merchant_guild (Marcus, Kael).
+**Diskon reputasi:** merchant_guild ≥ 10 → opsi nego harga di q008; merchant_guild ≥ **15** → diskon beli **−15%** di semua toko berfaksi merchant_guild (Marcus saja — Kael berfaksi scholar_society, tanpa diskon).
 
 ---
 

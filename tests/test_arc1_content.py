@@ -65,8 +65,7 @@ def test_quest_reputation_uses_valid_factions():
 
 def test_quest_requirement_kinds():
     ctx = GameContext(data_dir="data")
-    valid_kinds = {"talk", "map", "flag", "enemy", "collect", "kill_count",
-                    "escort"}
+    valid_kinds = {"talk", "map", "flag", "enemy"}
     for qid, quest in ctx.quests.items():
         for req in quest.get("requirements", []):
             assert req.get("kind") in valid_kinds, (

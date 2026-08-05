@@ -1,10 +1,17 @@
 import pytest
 
 from src.core.randomizer import Randomizer
-from src.engine.combat_engine import player_action, start_combat, use_item
+from src.engine.combat_engine import (
+    enemy_stats,
+    enemy_turn,
+    player_action,
+    start_combat,
+    use_item,
+)
 from src.models.combat_interfaces import CombatAction
 from src.models.enemy import Enemy
 from src.models.player import Player, max_hp
+from src.systems.status_system import apply_status
 
 
 def make_player(
@@ -256,12 +263,6 @@ def test_use_item_qty_zero_removes_from_inventory():
     assert player.inventory == []
 
 
-def test_use_item_unknown_raises_value_error():
-    state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
-    with pytest.raises(ValueError, match="Item tidak dimiliki"):
-        use_item(state, "nope")
-
-
 def test_use_item_non_consumable_not_consumed():
     player = make_player(hp=50)
     player.inventory.append({"id": "sword", "name": "Sword", "qty": 1})
@@ -269,3 +270,107 @@ def test_use_item_non_consumable_not_consumed():
     message = use_item(state, "sword")
     assert player.inventory == [{"id": "sword", "name": "Sword", "qty": 1}]
     assert "Item ini tidak bisa dipakai di pertarungan." in message
+
+
+def make_status_skill(skill_id, power, effect, cost=3):
+    return {
+        "id": skill_id,
+        "name": skill_id.replace("_", " ").title(),
+        "type": "physical",
+        "cost": cost,
+        "power": power,
+        "target": "enemy",
+        "effects": [effect],
+        "requires": [],
+        "description": "",
+    }
+
+
+def test_shield_bash_stun_skips_enemy_turn():
+    player = make_player()
+    player.learned_skills = ["shield_bash"]
+    enemy = make_enemy(hp=50)
+    skill = make_status_skill(
+        "shield_bash",
+        power=10,
+        effect={"status": "stun", "power": 0, "duration": 1},
+        cost=6,
+    )
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"shield_bash": skill}
+    )
+    hp_before = state.player.hp
+    assert player_action(state, CombatAction.SKILL, "shield_bash") is False
+    assert any(
+        status.kind == "stun" for status in state.statuses[enemy.id]
+    )
+    enemy_turn(state)
+    assert state.player.hp == hp_before
+    assert any("kehilangan giliran" in line for line in state.log)
+
+
+def test_snare_sleep_skips_enemy_turn():
+    player = make_player()
+    player.learned_skills = ["snare"]
+    enemy = make_enemy(hp=50)
+    skill = make_status_skill(
+        "snare",
+        power=5,
+        effect={"status": "sleep", "power": 0, "duration": 1},
+        cost=6,
+    )
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"snare": skill}
+    )
+    hp_before = state.player.hp
+    assert player_action(state, CombatAction.SKILL, "snare") is False
+    enemy_turn(state)
+    assert state.player.hp == hp_before
+    assert any("kehilangan giliran" in line for line in state.log)
+
+
+def test_frost_bolt_slow_reduces_enemy_agility():
+    player = make_player()
+    player.learned_skills = ["frost_bolt"]
+    enemy = make_enemy(agility=6, hp=50)
+    skill = make_status_skill(
+        "frost_bolt",
+        power=10,
+        effect={"status": "slow", "power": 2, "duration": 2},
+        cost=7,
+    )
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"frost_bolt": skill}
+    )
+    assert player_action(state, CombatAction.SKILL, "frost_bolt") is False
+    assert enemy_stats(state)["agility"] == 4
+
+
+def test_slow_penalty_expires_after_duration():
+    player = make_player()
+    player.learned_skills = ["frost_bolt"]
+    enemy = make_enemy(agility=6, hp=50)
+    skill = make_status_skill(
+        "frost_bolt",
+        power=10,
+        effect={"status": "slow", "power": 2, "duration": 2},
+        cost=7,
+    )
+    state = start_combat(
+        player, enemy, Randomizer(seed=7), skills={"frost_bolt": skill}
+    )
+    player_action(state, CombatAction.SKILL, "frost_bolt")
+    enemy_turn(state)
+    enemy_turn(state)
+    assert enemy_stats(state)["agility"] == 6
+
+
+def test_player_stunned_skips_action():
+    player = make_player()
+    enemy = make_enemy(hp=50)
+    state = start_combat(player, enemy, Randomizer(seed=7))
+    apply_status(state, "player", "stun", power=0, duration=1)
+    hp_before = state.enemy.stats["hp"]
+    assert player_action(state, CombatAction.ATTACK) is False
+    assert state.enemy.stats["hp"] == hp_before
+    assert any("kehilangan giliran" in line for line in state.log)

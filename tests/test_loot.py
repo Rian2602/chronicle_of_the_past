@@ -156,3 +156,13 @@ def test_loot_empty_table_gives_empty_drops():
         reward={"xp": 30, "gold": [6, 12]},
     )
     assert roll_loot(e, Randomizer(seed=9)) == []
+
+
+def test_ruins_scavenger_drops_rune_key():
+    """ruins_scavenger punya peluang 40% menjatuhkan rune_key (§13.1)."""
+    from src.core.game_context import GameContext
+
+    ctx = GameContext(data_dir="data")
+    scavenger = ctx.enemies["ruins_scavenger"]
+    loot = {entry["item"]: entry for entry in scavenger.get("loot", [])}
+    assert loot["rune_key"]["chance"] == 40

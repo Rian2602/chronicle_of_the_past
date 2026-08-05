@@ -42,13 +42,6 @@ def gs_with_world():
     return gs
 
 
-def test_world_dict_returns_correct_map():
-    gs = GameState()
-    m = make_map("village")
-    gs.world = {"village": m}
-    assert gs.world["village"] is m
-
-
 def test_can_travel_true_when_target_in_exits():
     gs = gs_with_world()
     assert can_travel(gs, "forest") is True

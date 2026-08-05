@@ -117,6 +117,26 @@ def test_go_submenu_shows_map_names(game):
     assert None in targets  # Kembali
 
 
+def test_go_submenu_hides_locked_maps(game):
+    items = game_menu.build(game)
+    go_targets = [target for label, target in items if label == "Pergi"]
+    submenu = go_targets[0]()
+    targets = [target for _, target in submenu]
+    assert "go anchor_vault" not in targets
+    assert "go crime_den" not in targets
+    assert "go capital" not in targets
+    assert "go forest" in targets
+
+
+def test_go_submenu_shows_locked_map_after_unlock(game):
+    game.state.flags["map_anchor_vault_unlocked"] = True
+    items = game_menu.build(game)
+    go_targets = [target for label, target in items if label == "Pergi"]
+    submenu = go_targets[0]()
+    targets = [target for _, target in submenu]
+    assert "go anchor_vault" in targets
+
+
 def test_talk_submenu_shows_npc_names(game):
     items = game_menu.build(game)
     talk_targets = [target for label, target in items if label == "Bicara"]

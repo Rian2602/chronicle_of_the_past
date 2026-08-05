@@ -368,14 +368,14 @@ Struktur skill mengikuti `data/skills/*.json` yang ada (`type`, `cost`, `power`,
   2. **rebels** (temui Sera di forest_deep → kamp dibuka) → +10 reputasi rebels.
   3. **merchant_guild** (bicara Marcus) → +10 reputasi merchant_guild; diskon toko.
   4. **scholar_society** (bicara Kael) → +10 reputasi scholar_society.
-- **Requirements:** `talk <tokoh sesuai pilihan>` — event `event_alias_choice` membaca pilihan dan set flag `aligned_<faksi>`, lalu menutup opsi lain (pilihan lain tidak lagi muncul di dialog).
+- **Requirements:** `flag aligned_any` — event `event_alias_choice` membaca pilihan (pemicu dari talk tokoh) dan set flag `aligned_<faksi>` + `aligned_any`, lalu menutup opsi lain (pilihan lain tidak lagi muncul di dialog).
 - **Hadiah:** 70 XP, 20 emas, +10 reputasi faksi pilihan.
 - **Next:** quest008.
 - **Konsekuensi jauh:** reputasi faksi ini memberi bonus dialog & quest eksklusif di Arc 3–5, dan memengaruhi ketersediaan ending (§12.5).
 
 #### quest008 — Punggung Pisau
 - **Alur:** Kade (bos Serigala Malam) tahu siapa yang membayar tentara bayaran. Ia menawarkan info itu — dengan imbalan reputasi.
-- **Requirements:** `talk kade` (crime_den dibuka via flag dari dialog Aria/Lyra) + `flag crime_deal_done`.
+- **Requirements:** `talk kade` (crime_den dibuka via flag dari dialog Aria/Lyra) + `flag kade_deal_done`.
 - **Hadiah:** 80 XP, 30 emas. **Trade-off:** pilihan dialog:
   1. Terima tawarannya → +10 reputasi crime, tapi −5 reputasi royal_army (mereka tahu kau berurusan dengan penjahat).
   2. Tolak & serang utusannya → pertarungan `thug` ×2, +5 reputasi ancient_order, tanpa info.

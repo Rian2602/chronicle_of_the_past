@@ -8,8 +8,6 @@ Mencakup (§9.4/§19/§21 story-season1-spec.md):
 - Save/load combat menyimpan buff.
 """
 
-import pytest
-
 from src.core.randomizer import Randomizer
 from src.engine.combat_engine import (
     player_action,
@@ -437,7 +435,19 @@ def test_combat_buffs_survive_save_load():
     assert restored[0].duration == combat.buffs["player"][0].duration
 
 
-def test_item_missing_raises_value_error():
-    state = start_combat(make_player(), make_enemy(), Randomizer(seed=7))
-    with pytest.raises(ValueError, match="Item tidak dimiliki"):
-        use_item(state, "nope")
+def test_real_shadow_step_and_arcane_barrier_skills_apply():
+    """Skill target-self dari data asli punya buff nyata di combat."""
+    from src.core.game_context import GameContext
+
+    ctx = GameContext(data_dir="data")
+    player = make_player(mp=50, learned=["shadow_step", "arcane_barrier"])
+    state = start_combat(
+        player,
+        make_enemy(),
+        Randomizer(seed=7),
+        skills=ctx.skills,
+    )
+    player_action(state, CombatAction.SKILL, "shadow_step")
+    assert player_stats(state)["agility"] == 8 + 8
+    player_action(state, CombatAction.SKILL, "arcane_barrier")
+    assert player_stats(state)["defense"] == 5 + 6

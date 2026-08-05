@@ -11,7 +11,7 @@ FACTIONS = [
 
 # Status effect constants
 DOT_KINDS = {"poison", "burn", "bleed"}
-CONTROL_KINDS = {"blind", "silence", "fear", "sleep"}
+CONTROL_KINDS = {"blind", "silence", "fear", "sleep", "stun"}
 STATUS_LABELS = {
     "poison": "racun",
     "burn": "luka bakar",
@@ -20,4 +20,6 @@ STATUS_LABELS = {
     "silence": "kebisuan",
     "fear": "ketakutan",
     "sleep": "tidur",
+    "stun": "stun",
+    "slow": "perlambatan",
 }

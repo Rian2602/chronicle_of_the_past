@@ -9,5 +9,5 @@
   ],
   "rewards": {"xp": 40, "gold": 15, "reputation": {"merchant_guild": 5}},
   "flags_on_complete": ["quest002_done"],
-  "next": null
+  "next": "quest003"
 }

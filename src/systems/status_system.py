@@ -95,3 +95,23 @@ def tick_statuses(state, actor_id: str) -> list:
     _set_actor_hp(actor, actor_id, hp)
     state.statuses[actor_id] = remaining
     return messages
+
+
+def actor_controlled(state, actor_id: str) -> bool:
+    """True bila aktor masih di bawah status kontrol aktif (stun/sleep/dll).
+
+    Status kontrol membuat aktor kehilangan giliran di combat (§9.4).
+    """
+    return any(
+        effect.kind in CONTROL_KINDS
+        for effect in state.statuses.get(actor_id, [])
+    )
+
+
+def slow_penalty(state, actor_id: str) -> int:
+    """Total pengurang agility dari status `slow` aktif (§9.4 frost_bolt)."""
+    return sum(
+        effect.power
+        for effect in state.statuses.get(actor_id, [])
+        if effect.kind == "slow"
+    )

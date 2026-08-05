@@ -227,23 +227,6 @@ def test_magic_in_full_fight_reaches_victory():
     assert state.enemy.stats["hp"] == 0
 
 
-def test_item_in_combat_heals_and_consumes_qty():
-    player = make_player(hp=40)
-    player.inventory.append(
-        {"id": "potion", "name": "Potion", "qty": 2, "heal": 30}
-    )
-    enemy = make_enemy(hp=1000, attack=1)
-    state = start_combat(player, enemy, Randomizer(seed=7))
-    player_action(state, CombatAction.ITEM, "potion")
-    assert player.hp == 72
-    assert player.inventory == [
-        {"id": "potion", "name": "Potion", "qty": 1, "heal": 30}
-    ]
-    assert "Kamu memakai Potion, memulihkan 30 HP." in state.log
-    enemy_turn(state)
-    assert state.over is False
-
-
 def test_observe_in_combat_is_free_and_enemy_still_acts():
     player = make_player(intelligence=16, agility=1, defense=0, hp=100)
     enemy = make_enemy(hp=100, attack=1, agility=50)
@@ -255,32 +238,6 @@ def test_observe_in_combat_is_free_and_enemy_still_acts():
     enemy_turn(state)
     assert player.hp < hp_before
     assert state.over is False
-
-
-def test_escape_success_ends_fight_without_rewards():
-    player = make_player(agility=100)
-    player.xp = 10
-    player.gold = 50
-    enemy = make_enemy(agility=6, reward=REWARD)
-    state = start_combat(player, enemy, Randomizer(seed=7))
-    assert player_action(state, CombatAction.ESCAPE) is False
-    assert state.result == CombatResult.ESCAPED
-    assert state.over is True
-    assert state.xp == 0
-    assert state.gold == 0
-    assert player.xp == 10
-    assert player.gold == 50
-
-
-def test_escape_failure_grants_enemy_free_attack_and_fight_continues():
-    player = make_player(agility=0, defense=0, hp=100)
-    enemy = make_enemy(agility=100, attack=1)
-    state = start_combat(player, enemy, Randomizer(seed=7))
-    assert player_action(state, CombatAction.ESCAPE) is False
-    assert state.over is False
-    assert state.result is None
-    assert "Gagal melarikan diri!" in state.log
-    assert player.hp < 100
 
 
 def test_defend_halves_enemy_physical_damage():

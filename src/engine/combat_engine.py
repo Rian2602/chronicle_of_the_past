@@ -174,22 +174,32 @@ def player_stats(state) -> dict:
     """Stat efektif pemain ditambah stat turunan untuk pertarungan.
 
     Buff self (attack/defense/agility) ikut ditambahkan ke stat efektif
-    selama durasinya masih aktif (§9.4/§19 Phase 0).
+    selama durasinya masih aktif (§9.4/§19 Phase 0). Status `slow`
+    mengurangi agility sesuai power-nya (§9.4 frost_bolt).
     """
     effective = {stat: effective_stat(state.player, stat) for stat in STATS}
     for buff in state.buffs.get("player", []):
         if buff.stat in effective:
             effective[buff.stat] = effective[buff.stat] + buff.power
+    slow = status_system.slow_penalty(state, "player")
+    if slow:
+        effective["agility"] = max(0, effective["agility"] - slow)
     effective.update(rule_engine.derived_stats(state.player, state.randomizer))
     return effective
 
 
 def enemy_stats(state) -> dict:
-    """Stat musuh termasuk buff self aktif (war_cry/arcane_barrier, §9.4)."""
+    """Stat musuh termasuk buff self aktif (war_cry/arcane_barrier, §9.4).
+
+    Status `slow` mengurangi agility sesuai power-nya (§9.4 frost_bolt).
+    """
     stats = dict(state.enemy.stats)
     for buff in state.buffs.get(state.enemy.id, []):
         if buff.stat in stats:
             stats[buff.stat] = stats[buff.stat] + buff.power
+    slow = status_system.slow_penalty(state, state.enemy.id)
+    if slow:
+        stats["agility"] = max(0, stats.get("agility", 0) - slow)
     return stats
 
 
@@ -436,6 +446,7 @@ def player_action(state, action, choice=None) -> bool:
     if state.over:
         return False
     state.player_defending = False
+    controlled = status_system.actor_controlled(state, "player")
     messages = status_system.tick_statuses(state, "player")
     if messages:
         state.log.extend(messages)
@@ -446,6 +457,9 @@ def player_action(state, action, choice=None) -> bool:
         _on_defeat(state)
         return False
     _apply_player_regen(state)
+    if controlled:
+        state.log.append("Kamu terkena efek kontrol — kehilangan giliran!")
+        return False
     try:
         parsed = CombatAction(action)
     except ValueError:
@@ -723,6 +737,7 @@ def enemy_turn(state):
     """Jalankan satu giliran musuh sesuai perilaku AI-nya."""
     if state.over:
         return
+    controlled = status_system.actor_controlled(state, state.enemy.id)
     messages = status_system.tick_statuses(state, state.enemy.id)
     if messages:
         state.log.extend(messages)
@@ -731,6 +746,11 @@ def enemy_turn(state):
         state.log.extend(buff_messages)
     if state.enemy.stats["hp"] <= 0:
         _on_victory(state)
+        return
+    if controlled:
+        state.log.append(
+            f"{state.enemy.name} terkena efek kontrol — kehilangan giliran!"
+        )
         return
     behavior = state.enemy.behavior
     if behavior == "defensive":

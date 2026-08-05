@@ -1,7 +1,12 @@
 from src.models.combat_interfaces import CombatState, StatusEffect
 from src.models.enemy import Enemy
 from src.models.player import Player
-from src.systems.status_system import apply_status, tick_statuses
+from src.systems.status_system import (
+    actor_controlled,
+    apply_status,
+    slow_penalty,
+    tick_statuses,
+)
 
 
 def make_state(player_hp=100, enemy_hp=50, cap=10):
@@ -132,3 +137,30 @@ def test_empty_statuses_return_no_messages():
     state = make_state()
     assert tick_statuses(state, "goblin") == []
     assert tick_statuses(state, "player") == []
+
+
+def test_actor_controlled_true_when_control_active():
+    state = make_state()
+    apply_status(state, "goblin", "sleep", power=0, duration=1)
+    assert actor_controlled(state, "goblin") is True
+    assert actor_controlled(state, "player") is False
+
+
+def test_actor_controlled_true_for_stun():
+    state = make_state()
+    apply_status(state, "goblin", "stun", power=0, duration=2)
+    assert actor_controlled(state, "goblin") is True
+
+
+def test_actor_controlled_ignores_dot_and_slow():
+    state = make_state()
+    apply_status(state, "goblin", "poison", power=3, duration=2)
+    apply_status(state, "goblin", "slow", power=2, duration=2)
+    assert actor_controlled(state, "goblin") is False
+
+
+def test_slow_penalty_sums_power():
+    state = make_state()
+    apply_status(state, "goblin", "slow", power=2, duration=2)
+    assert slow_penalty(state, "goblin") == 2
+    assert slow_penalty(state, "player") == 0

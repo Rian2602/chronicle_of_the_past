@@ -17,7 +17,8 @@
     "gold": 40
   },
   "flags_on_complete": [
-    "siege_won"
+    "siege_won",
+    "ultimatum_resolved"
   ],
   "next": "quest033"
 }
