@@ -513,6 +513,7 @@ def test_quest_reward_xp_via_go_triggers_level_up(tmp_path):
     g.new_game("Rian", "warrior")
     quest_engine.start_quest(g.state, "quest004")
     g.state.player.xp = level_system.xp_to_next(g.state.player.level) - 1
+    g.state.flags["map_anchor_vault_unlocked"] = True
     out = g.run_turn("go anchor_vault")
     assert g.state.player.level == 2
     assert "Naik level! Kamu kini level 2." in out
@@ -700,6 +701,34 @@ def test_learn_command_unknown_skill(tmp_path):
     g.new_game("Rian", "warrior")
     out = g.run_turn("learn bogus")
     assert "Skill tidak dikenal" in out
+
+
+def test_learn_e2e_use_buff_skill_in_combat(tmp_path):
+    # E2E (Task 6): belajar skill via run_turn, lalu pakai di pertarungan
+    # dan pastikan buff benar-benar terpasang (README:348 dapat dicapai).
+    ctx = GameContext(data_dir="data")
+    g = Game(ctx)
+    g.new_game("Rian", "warrior")
+    g.state.player.skill_points = 1
+    out = g.run_turn("learn war_cry")
+    assert "mempelajari skill" in out
+    assert "war_cry" in g.state.player.learned_skills
+    assert g.state.player.skill_points == 0
+
+    wolf = g.state.enemies["wild_wolf"]
+    g._combat = start_combat(
+        g.state.player,
+        wolf,
+        g.randomizer,
+        skills=ctx.skills,
+        loot_resolver=loot_system.roll_loot,
+        items=g.state.items,
+    )
+    g.run_turn("skill war_cry")
+    buffs = g._combat.buffs.get("player", [])
+    assert any("meningkat" in line for line in g._combat.log)
+    assert any(buff.stat == "attack" for buff in buffs)
+    assert g.state.player.mp < max_mp(g.state.player)
 
 
 def test_talk_unknown_npc_message(tmp_path):

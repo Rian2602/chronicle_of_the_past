@@ -170,9 +170,7 @@ def test_defeat_full_fight_grants_no_rewards():
 
 
 def test_burn_from_magic_skill_ticks_on_later_rounds():
-    player = make_player(
-        attack=0, intelligence=8, defense=5, agility=1, mp=50
-    )
+    player = make_player(attack=0, intelligence=8, defense=5, agility=1, mp=50)
     player.learned_skills = ["fire"]
     enemy = make_enemy(hp=60, attack=1, intelligence=3)
     skills = {
@@ -204,6 +202,7 @@ def test_burn_from_magic_skill_ticks_on_later_rounds():
 
 def test_physical_skill_in_full_fight_reaches_victory():
     player = make_player(attack=10, defense=5, agility=1, intelligence=7, mp=50)
+    player.learned_skills = ["strike"]
     enemy = make_enemy(hp=30, attack=1, defense=2)
     skills = {"strike": make_physical_skill(cost=3, power=8)}
     state = run_fight(
@@ -217,6 +216,7 @@ def test_physical_skill_in_full_fight_reaches_victory():
 
 def test_magic_in_full_fight_reaches_victory():
     player = make_player(attack=1, intelligence=8, defense=5, agility=1, mp=50)
+    player.learned_skills = ["fire"]
     enemy = make_enemy(hp=40, attack=1, intelligence=3)
     skills = {"fire": make_magic_skill(cost=4, power=8)}
     state = run_fight(

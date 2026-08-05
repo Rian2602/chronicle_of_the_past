@@ -1,6 +1,7 @@
 from src.core.game_state import GameState
 from src.models.item import Item
 from src.models.player import Player
+from src.systems.equipment_system import equip
 from src.systems.inventory_system import add_item
 from src.systems.shop_system import buy, has_shop, list_buy, list_sell, sell
 
@@ -163,6 +164,18 @@ def test_sell_item_not_owned_rejected():
     npc = make_npc()
     msg = sell(gs, npc, "herb", 1)
     assert msg == "Kamu tidak memiliki item itu sejumlah itu."
+
+
+def test_sell_equipped_item_rejected():
+    gs = make_game_state(gold=0)
+    add_item(gs.player, "steel_sword", 1)
+    equip(gs.player, STEEL_SWORD, gs.items)
+    assert gs.player.equipped == {"weapon": "steel_sword"}
+    msg = sell(gs, make_npc(), "steel_sword", 1)
+    assert msg == "Item yang sedang dipasang tidak bisa dijual."
+    assert gs.player.gold == 0
+    assert gs.player.equipped == {"weapon": "steel_sword"}
+    assert gs.player.inventory == [{"id": "steel_sword", "qty": 1}]
 
 
 def test_sell_npc_without_shop_rejected():

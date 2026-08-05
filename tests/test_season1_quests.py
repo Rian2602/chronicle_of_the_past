@@ -100,7 +100,7 @@ def test_map_requirements_are_unlockable():
     mustahil dibuka (mis. forest_deep tanpa map_forest_deep_unlocked).
     """
     ctx = GameContext(data_dir="data")
-    open_maps = {"village", "forest", "anchor_vault", "ruins_entrance"}
+    open_maps = {"village", "forest", "ruins_entrance"}
     unlocked = set()
     for _, quest in ctx.quests.items():
         for flag in quest.get("flags_on_complete", []):
@@ -321,6 +321,7 @@ def test_map_requirement_completed_by_travel():
     """Quest004 selesai saat pemain melakukan `go anchor_vault`."""
     _, game = make_game()
     quest_engine.start_quest(game.state, "quest004")
+    game.state.flags["map_anchor_vault_unlocked"] = True
     out = game.run_turn("go anchor_vault")
     assert "Quest selesai" in out
     assert "quest004" not in game.state.player.quests_active

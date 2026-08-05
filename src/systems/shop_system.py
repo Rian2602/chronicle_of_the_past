@@ -133,6 +133,8 @@ def sell(game_state, npc, item_id, qty=1) -> str:
     if not has_shop(npc):
         return f"{npc.get('name', 'NPC ini')} tidak berjualan."
     player = game_state.player
+    if item_id in player.equipped.values():
+        return "Item yang sedang dipasang tidak bisa dijual."
     owned = next((e for e in player.inventory if e["id"] == item_id), None)
     if owned is None or owned.get("qty", 0) < qty:
         return "Kamu tidak memiliki item itu sejumlah itu."

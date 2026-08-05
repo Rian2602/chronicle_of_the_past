@@ -60,10 +60,14 @@ def box(text, border_style="normal"):
 
 
 def bar(current, total, width=14):
-    """Bar progres teks; ASCII (#/.) atau Unicode (█/░) sesuai mode."""
-    filled_char, empty_char = (
-        ("#", ".") if _render_mode == "ascii" else ("█", "░")
-    )
+    """Bar progres teks; ASCII (#/.) atau Unicode (█/░) sesuai mode.
+
+    Keputusan karakter selalu lewat ``supports_unicode()`` agar konsisten
+    dengan ``_border``/``box`` (bug lama: bar memakai ``_render_mode ==
+    "ascii"`` sehingga di mode auto+Windows, kotak sudah ASCII tapi bar HP
+    tetap Unicode).
+    """
+    filled_char, empty_char = ("█", "░") if supports_unicode() else ("#", ".")
     if total <= 0:
         return empty_char * width
     filled = round(current / total * width)

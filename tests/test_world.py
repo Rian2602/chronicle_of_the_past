@@ -79,6 +79,19 @@ def test_travel_raises_value_error_on_non_exit():
         travel(gs, "capital")
 
 
+def test_anchor_vault_locked_until_quest003_unlocks():
+    gs = gs_with_world()
+    gs.world["anchor_vault"] = make_map("anchor_vault")
+    gs.world["village"] = make_map("village", exits=["forest", "anchor_vault"])
+    gs.current_map = gs.world["village"]
+    assert can_travel(gs, "anchor_vault") is False
+    with pytest.raises(ValueError):
+        travel(gs, "anchor_vault")
+    gs.flags["map_anchor_vault_unlocked"] = True
+    assert can_travel(gs, "anchor_vault") is True
+    assert travel(gs, "anchor_vault") == "Kamu tiba di Anchor_Vault."
+
+
 def test_no_encounter_at_low_threat():
     gs = GameState()
     gs.time = "morning"

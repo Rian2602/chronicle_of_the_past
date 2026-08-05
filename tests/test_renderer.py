@@ -27,6 +27,21 @@ def test_box_ascii_fallback(monkeypatch):
     assert "| hai |" in out
 
 
+def test_bar_and_box_consistent_in_auto_windows(monkeypatch):
+    # Regresi: di mode auto+Windows, box memakai ASCII (via supports_unicode)
+    # tapi bar lama memakai Unicode karena cek _render_mode == "ascii".
+    # Keduanya harus konsisten (sama-sama ASCII).
+    from src.ui import renderer
+
+    renderer.set_render_mode("auto")
+    monkeypatch.setattr(renderer, "supports_unicode", lambda: False)
+    try:
+        assert box("hai").splitlines()[0] == "+-----+"
+        assert bar(1, 2, width=4) == "##.."
+    finally:
+        renderer.set_render_mode("auto")
+
+
 def test_box_contains_lines():
     out = box("baris satu\nbaris dua")
     assert "baris satu" in out and "baris dua" in out

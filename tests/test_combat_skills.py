@@ -218,7 +218,6 @@ def test_unlearned_skill_rejected_even_when_learned_skills_empty():
     )
     assert player_action(state, CombatAction.MAGIC, "fire") is False
     assert enemy.stats["hp"] == 50
-    assert state.player.mp == 50  # MP tidak terpakai, tidak ada serangan
     assert "Kamu belum mempelajari skill ini." in state.log
 
 

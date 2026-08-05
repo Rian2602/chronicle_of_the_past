@@ -7,8 +7,10 @@ _OPEN_MAPS = frozenset(
     {
         "village",
         "forest",
-        "anchor_vault",  # dibuka via quest003 flags_on_complete
-        "ruins_entrance",  # dibuka via quest009 flags_on_complete
+        # Gerbang Arc 2, terbuka sejak awal: syarat quest009 adalah
+        # `map ruins_entrance`. Interior (ancient_ruins) dikunci via
+        # `map_ancient_ruins_unlocked` dari quest009.
+        "ruins_entrance",
     }
 )
 
