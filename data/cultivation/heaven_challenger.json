@@ -1,0 +1,15 @@
+{
+  "id": "heaven_challenger",
+  "name": "Penantang Surga",
+  "order": 6,
+  "insight_required": 12000,
+  "stat_bonus": {
+    "attack": 45,
+    "defense": 8,
+    "vitality": 6,
+    "spirit": 6,
+    "hp_max": 240,
+    "qi_max": 60
+  },
+  "unlocks": ["technique_pinnacle"]
+}

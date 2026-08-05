@@ -1,0 +1,13 @@
+{
+  "id": "flame_strike",
+  "name": "Tebasan Api",
+  "path": "sword",
+  "element": "fire",
+  "type": "technique",
+  "qi_cost": 8,
+  "power": 10,
+  "effects": [
+    {"status": "burn", "duration": 3, "power": 4}
+  ],
+  "requires": {"tier": "qi_condensation"}
+}

@@ -1,0 +1,19 @@
+{
+  "id": "bandit_perbatasan",
+  "name": "Bandit Perbatasan",
+  "tier": "qi_condensation",
+  "element": "metal",
+  "behavior": "defensive",
+  "stats": {
+    "attack": 6,
+    "defense": 5,
+    "agility": 3,
+    "intelligence": 3,
+    "vitality": 5,
+    "spirit": 3,
+    "hp": 35,
+    "qi": 8
+  },
+  "skills": ["qi_slash"],
+  "tags": ["human"]
+}

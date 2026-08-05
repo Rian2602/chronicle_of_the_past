@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chronicle-of-the-past"
+version = "0.1.0"
+description = "RPG teks berbasis cerita dengan sistem kultivasi - fantasi gelap."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "rich>=13.0",
+    "textual>=0.50",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 80
+target-version = "py312"
+exclude = ["graphify-out"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

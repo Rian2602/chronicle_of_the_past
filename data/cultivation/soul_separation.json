@@ -1,0 +1,14 @@
+{
+  "id": "soul_separation",
+  "name": "Jiwa Terpisah",
+  "order": 4,
+  "insight_required": 2000,
+  "stat_bonus": {
+    "attack": 22,
+    "intelligence": 4,
+    "spirit": 4,
+    "hp_max": 130,
+    "qi_max": 30
+  },
+  "unlocks": ["beast_spirit", "soul_technique"]
+}
