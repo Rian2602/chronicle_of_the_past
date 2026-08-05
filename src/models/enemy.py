@@ -18,6 +18,7 @@ class Enemy:
     skills: list[str] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     requires_flag: str | None = None
+    rewards: dict[str, int] = field(default_factory=dict)
 
     @property
     def is_boss(self) -> bool:

@@ -5,15 +5,19 @@
   "element": "metal",
   "behavior": "defensive",
   "stats": {
-    "attack": 6,
+    "attack": 4,
     "defense": 5,
     "agility": 3,
-    "intelligence": 3,
+    "intelligence": 1,
     "vitality": 5,
     "spirit": 3,
-    "hp": 35,
+    "hp": 28,
     "qi": 8
   },
   "skills": ["qi_slash"],
-  "tags": ["human"]
+  "tags": ["human"],
+  "rewards": {
+    "insight": 25,
+    "gold": 20
+  }
 }

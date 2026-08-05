@@ -16,7 +16,9 @@ REQUIRED_KEYS = {
     "stats",
     "skills",
     "tags",
+    "rewards",
 }
+REWARD_KEYS = {"insight", "gold"}
 STAT_KEYS = {
     "attack",
     "defense",
@@ -58,6 +60,20 @@ def test_semua_musuh_memenuhi_skema():
         assert isinstance(data["tags"], list)
         assert all(isinstance(item, str) and item for item in data["skills"])
         assert all(isinstance(item, str) for item in data["tags"])
+        # rewards: optional field, kunci subset {insight, gold}, nilai >= 0.
+        assert isinstance(data["rewards"], dict)
+        assert set(data["rewards"]) <= REWARD_KEYS
+        assert all(
+            isinstance(value, int) and value >= 0
+            for value in data["rewards"].values()
+        )
+
+
+def test_musuh_arc1_memiliki_reward():
+    """Musuh Arc 1 punya reward insight/gold untuk MVP (§4.3)."""
+    for path in DATA_DIR.glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        assert data["rewards"], f"{path.name}: rewards kosong"
 
 
 def test_skill_musuh_terresolve_ke_teknik():

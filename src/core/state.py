@@ -99,15 +99,21 @@ class GameState:
     settings: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        """Normalisasi reputasi ke 5 faksi kanonik (GDD §8).
+        """Normalisasi reputasi 5 faksi (§8) dan hp/qi konkret.
 
-        Invariant: state.reputation selalu memuat kelima faksi; dipakai
-        semua sistem (quest, ending) tanpa cek kehadiran kunci.
+        Invariant: state.reputation selalu memuat kelima faksi, dan
+        state.player.hp/qi selalu angka (save lama tanpa field -> penuh).
         """
         self.reputation = {
             faction: int(self.reputation.get(faction, 0))
             for faction in FACTIONS
         }
+        if self.player.hp is None:
+            self.player.hp = self.player.hp_max
+        if self.player.qi is None:
+            self.player.qi = self.player.qi_max
+        self.player.hp = min(self.player.hp, self.player.hp_max)
+        self.player.qi = min(self.player.qi, self.player.qi_max)
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize state ke dict save lengkap (§19.2)."""

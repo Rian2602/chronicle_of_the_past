@@ -53,8 +53,12 @@ def combatant_from_player(
     skills: list[str] | None = None,
     element: str = "netral",
 ) -> Combatant:
-    """Buat Combatant dari Player; stat efektif memperhitungkan cedera."""
-    return Combatant(
+    """Buat Combatant dari Player; stat efektif memperhitungkan cedera.
+
+    hp/qi saat ini diwarisi dari Player (None berarti penuh), sehingga
+    luka di dunia ikut terbawa ke pertarungan (GDD §17.2, §20.4).
+    """
+    combatant = Combatant(
         name=player.name,
         element=element,
         stats=dict(player.effective_stats),
@@ -63,6 +67,9 @@ def combatant_from_player(
         qi_regen=player.qi_regen,
         skills=list(skills or []),
     )
+    combatant.hp = player.hp if player.hp is not None else combatant.hp_max
+    combatant.qi = player.qi if player.qi is not None else combatant.qi_max
+    return combatant
 
 
 def combatant_from_enemy(enemy: Enemy) -> Combatant:

@@ -31,11 +31,17 @@ class Player:
     path: str | None = None
     stats: dict[str, int] = field(default_factory=lambda: dict(BASE_STATS))
     tier_bonus: dict[str, int] = field(default_factory=dict)
+    hp: int | None = None
+    qi: int | None = None
 
     def __post_init__(self) -> None:
-        """Validasi rentang meridian 0–8 (GDD §17.3)."""
+        """Validasi meridian 0–8 dan hp/qi non-negatif (GDD §17.3)."""
         if not 0 <= self.meridian_buka <= 8:
             raise ValueError("meridian_buka harus antara 0–8")
+        if self.hp is not None and self.hp < 0:
+            raise ValueError("hp tidak boleh negatif")
+        if self.qi is not None and self.qi < 0:
+            raise ValueError("qi tidak boleh negatif")
 
     @property
     def is_injured(self) -> bool:
@@ -96,6 +102,8 @@ class Player:
             "gold": self.gold,
             "meridian_buka": self.meridian_buka,
             "injury_days_remaining": self.injury_days_remaining,
+            "hp": self.hp,
+            "qi": self.qi,
         }
 
     @classmethod
@@ -118,4 +126,6 @@ class Player:
             gold=data.get("gold", 0),
             meridian_buka=data.get("meridian_buka", 0),
             injury_days_remaining=data.get("injury_days_remaining", 0),
+            hp=data.get("hp"),
+            qi=data.get("qi"),
         )

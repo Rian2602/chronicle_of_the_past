@@ -136,6 +136,23 @@ def test_from_dict_menolak_tanpa_player():
         GameState.from_dict({"schema_version": 1})
 
 
+def test_save_lama_tanpa_hp_qi_jadi_penuh():
+    """Load save tanpa hp/qi (versi lama) mengisi penuh (§19.3 migrasi)."""
+    data = {
+        "player": {"name": "Akar", "gold": 5},
+        "reputation": {
+            "court": 0,
+            "holy_order": 0,
+            "rebels": 0,
+            "guilds": 0,
+            "ancient_order": 0,
+        },
+    }
+    state = GameState.from_dict(data)
+    assert state.player.hp == state.player.hp_max
+    assert state.player.qi == state.player.qi_max
+
+
 def test_time_validasi_rentang():
     """Waktu divalidasi: hour 0-23, day >= 1."""
     with pytest.raises(ValueError):

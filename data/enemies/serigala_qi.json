@@ -15,5 +15,9 @@
     "qi": 10
   },
   "skills": ["flame_strike", "qi_slash"],
-  "tags": ["beast"]
+  "tags": ["beast"],
+  "rewards": {
+    "insight": 15,
+    "gold": 10
+  }
 }

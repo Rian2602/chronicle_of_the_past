@@ -93,6 +93,8 @@ def test_to_dict_memuat_skema_save():
         gold=25,
         meridian_buka=2,
         injury_days_remaining=1,
+        hp=60,
+        qi=8,
     )
     assert player.to_dict() == {
         "name": "Akar",
@@ -104,6 +106,8 @@ def test_to_dict_memuat_skema_save():
         "gold": 25,
         "meridian_buka": 2,
         "injury_days_remaining": 1,
+        "hp": 60,
+        "qi": 8,
     }
 
 
@@ -118,6 +122,8 @@ def test_from_dict_roundtrip_tanpa_rekonstruksi_tier():
         gold=25,
         meridian_buka=2,
         injury_days_remaining=1,
+        hp=60,
+        qi=8,
     )
     restored = Player.from_dict(player.to_dict())
     assert restored.name == "Akar"
@@ -128,6 +134,8 @@ def test_from_dict_roundtrip_tanpa_rekonstruksi_tier():
     assert restored.insight == 150
     assert restored.meridian_buka == 2
     assert restored.injury_days_remaining == 1
+    assert restored.hp == 60
+    assert restored.qi == 8
     assert restored.stats == BASE_STATS
     # Rekonstruksi tier_order/bonus adalah tugas GameState (data-driven).
     assert restored.tier_order == 0
@@ -138,3 +146,25 @@ def test_from_dict_tanpa_nama_ditolak():
     """from_dict menolak data tanpa nama dengan ValueError (bukan KeyError)."""
     with pytest.raises(ValueError):
         Player.from_dict({"tier": "qi_condensation"})
+
+
+def test_hp_qi_default_none():
+    """Player baru belum punya hp/qi saat ini; penuh saat dipakai (§19.2)."""
+    player = Player(name="Akar")
+    assert player.hp is None
+    assert player.qi is None
+
+
+def test_hp_qi_negatif_ditolak():
+    """hp/qi tidak boleh negatif."""
+    with pytest.raises(ValueError):
+        Player(name="Akar", hp=-1)
+    with pytest.raises(ValueError):
+        Player(name="Akar", qi=-5)
+
+
+def test_from_dict_tanpa_hp_qi_ok():
+    """Save lama tanpa hp/qi dimuat dengan hp/qi None (bukan error)."""
+    player = Player.from_dict({"name": "Akar", "gold": 5})
+    assert player.hp is None
+    assert player.qi is None

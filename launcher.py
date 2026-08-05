@@ -1,20 +1,11 @@
-"""Entry point game — Chronicle of the Past.
+"""Entry point game — Chronicle of the Past (GDD §14.1)."""
 
-Menampilkan judul dan status pembangunan. Logika permainan (Fase 0)
-belum tersedia; launcher diperluas mengikuti roadmap GDD §23.
-"""
-
-from rich.console import Console
+from src.ui.app import ChronicleApp
 
 
 def main() -> int:
-    """Cetak judul game dan pesan status, lalu kembalikan kode keluar 0."""
-    console = Console()
-    console.print("[bold cyan]Chronicle of the Past[/bold cyan]")
-    console.print("RPG teks fantasi gelap dengan sistem kultivasi.")
-    console.print(
-        "[dim]Fase 0 (MVP) sedang dikembangkan — lihat GDD §23.[/dim]"
-    )
+    """Jalankan aplikasi Textual dan kembalikan kode keluar 0."""
+    ChronicleApp().run()
     return 0
 
 
