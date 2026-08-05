@@ -246,10 +246,14 @@ def _on_victory(state):
     state.player.gold += state.gold
     for entry in state.loot:
         item = state.items.get(entry["id"])
-        added = inventory_system.add_item(
-            state.player, entry["id"], entry.get("qty", 1)
-        )
-        if not added:
+        try:
+            added = inventory_system.add_item(
+                state.player, entry["id"], entry.get("qty", 1)
+            )
+            if not added:
+                name = item.name if item is not None else entry["id"]
+                state.log.append(f"Inventaris penuh — {name} tidak tersimpan.")
+        except inventory_system.InventoryFullError:
             name = item.name if item is not None else entry["id"]
             state.log.append(f"Inventaris penuh — {name} tidak tersimpan.")
     state.log.append(f"Kamu mendapat {gained_xp} XP dan {state.gold} emas.")
@@ -266,8 +270,9 @@ def use_item(state, item_id) -> str | None:
     """Pakai item saat bertarung; kurangi qty dan terapkan efeknya.
 
     Mendukung efek: pulihkan HP (`heal`), pulihkan MP (`heal_mp`,
-    mis. time_tincture), dan kabur pasti berhasil (`escape`, mis.
-    smoke_bomb) — §9.2/§21 Phase 0.
+    mis. time_tincture), kabur pasti berhasil (`escape`, mis.
+    smoke_bomb), dan pulihkan HP penuh (`heal_full`, mis. elixir) —
+    §9.2/§21 Phase 0.
 
     Returns:
         Pesan hasil pemakaian (termasuk pesan item non-konsumabel).
@@ -280,15 +285,19 @@ def use_item(state, item_id) -> str | None:
     if item is None:
         raise ValueError(f"Item tidak dimiliki: {item_id}")
     item_def = state.items.get(item_id)
+    heal_full = bool(item_def and item_def.heal_full)
     heal = (
         item_def.heal
         if item_def is not None and item_def.heal
         else item.get("heal")
     )
+    # Jika heal_full aktif, override heal dengan max_hp player
+    if heal_full:
+        heal = max_hp(state.player) - state.player.hp
     heal_mp = item_def.heal_mp if item_def is not None else item.get("heal_mp")
     is_escape = bool(item_def and item_def.escape)
     name = item_def.name if item_def is not None else item.get("name", item_id)
-    if not is_escape and heal is None and not heal_mp:
+    if not is_escape and not heal_full and heal is None and not heal_mp:
         message = "Item ini tidak bisa dipakai di pertarungan."
         state.log.append(message)
         return message
@@ -307,10 +316,18 @@ def use_item(state, item_id) -> str | None:
         state.player.mp = min(max_mp(state.player), state.player.mp + heal_mp)
     parts = []
     if heal:
-        parts.append(f"memulihkan {heal} HP")
+        if heal_full:
+            parts.append("memulihkan HP sepenuhnya")
+        elif heal > 0:
+            parts.append(f"memulihkan {heal} HP")
     if heal_mp:
         parts.append(f"memulihkan {heal_mp} MP")
-    message = f"Kamu memakai {name}, " + " dan ".join(parts) + "."
+    if parts:
+        message = f"Kamu memakai {name}, " + " dan ".join(parts) + "."
+    else:
+        message = (
+            f"Kamu memakai {name} (tidak ada efek karena HP/MP sudah penuh)."
+        )
     state.log.append(message)
     return message
 

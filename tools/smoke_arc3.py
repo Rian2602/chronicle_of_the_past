@@ -10,40 +10,22 @@ marcus) atau lewat complete_requirement untuk talk biasa (tom, kade, sera,
 kael) — sama dengan pola test_arc3_content.py.
 """
 
-from src.core.game import Game
-from src.core.game_context import GameContext
+import os
+import sys
+
+# Pastikan folder proyek ada di sys.path (skrip dijalankan dari tools/)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.engine import event_engine, quest_engine
-from src.engine.combat_engine import start_combat
-from src.models.combat_interfaces import CombatResult
-from src.systems import loot_system
 
-ctx = GameContext(data_dir="data")
-g = Game(ctx, rng_seed=7)
-g.new_game("Rian", "warrior")
+# Import helper dengan fallback: relatif (package) atau absolut (direct run)
+try:
+    from ._smoke_helpers import clear_levels, force_victory, make_game
+except ImportError:
+    from _smoke_helpers import clear_levels, force_victory, make_game
+
+ctx, g = make_game()
 state = g.state
-
-
-def clear_levels():
-    while g._pending_levels > 0:
-        g.run_turn("select 1")
-
-
-def force_victory(enemy_id):
-    enemy = state.enemies[enemy_id]
-    combat = start_combat(
-        state.player,
-        enemy,
-        g.randomizer,
-        skills=ctx.skills,
-        loot_resolver=loot_system.roll_loot,
-        items=state.items,
-    )
-    combat.enemy.stats["hp"] = 1
-    combat.result = CombatResult.VICTORY
-    combat.over = True
-    combat.loot = []
-    g._finish_combat(combat)
-    clear_levels()
 
 
 def end_talk(npc_id):
@@ -87,10 +69,10 @@ print("[2] quest012 (Api di Tepi Hutan)")
 state.current_map = state.world["village"]
 g.run_turn("talk tom")
 end_talk("tom")
-clear_levels()
+clear_levels(g)
 g.run_turn("go forest")
 g.run_turn("go forest_deep")
-clear_levels()
+clear_levels(g)
 check("quest012 selesai", "quest012" in state.player.quests_done)
 check("quest013 aktif", "quest013" in state.player.quests_active)
 
@@ -100,7 +82,7 @@ state.current_map = state.world["village"]
 g.run_turn("talk sister_iris")  # dialog_iris_intro
 g.run_turn("1")  # -> dialog_iris_ultimatum
 g.run_turn("1")  # pilih ultimatum -> dialog berakhir -> talk selesai
-clear_levels()
+clear_levels(g)
 check("ultimatum_received diset", state.flags.get("ultimatum_received") is True)
 check("ultimatum_5_days diset", state.flags.get("ultimatum_5_days") is True)
 check("quest013 selesai", "quest013" in state.player.quests_done)
@@ -117,7 +99,7 @@ check("HUD: Api dalam 5 hari", "Api dalam 5 hari" in htxt)
 # ===== STEP 6: rest -> day tick =====
 print("[5] rest -> process_day_tick")
 g.run_turn("rest")
-clear_levels()
+clear_levels(g)
 print("    ultimatum_days_passed =", state.flags.get("ultimatum_days_passed"))
 htxt2 = hud.render(state.player, state, ctx.npc)
 check("HUD: Api dalam 4 hari", "Api dalam 4 hari" in htxt2)
@@ -128,7 +110,7 @@ state.current_map = state.world["village"]
 g.run_turn("go crime_den")
 g.run_turn("talk kade")
 end_talk("kade")
-clear_levels()
+clear_levels(g)
 check("quest014 selesai", "quest014" in state.player.quests_done)
 check("quest015 aktif", "quest015" in state.player.quests_active)
 check("have_evidence_letter", state.flags.get("have_evidence_letter") is True)
@@ -138,7 +120,7 @@ print("[7] quest015 (Harga Sebuah Nama)")
 state.current_map = state.world["village"]
 g.run_turn("talk lyra")
 g.run_turn("1")
-clear_levels()
+clear_levels(g)
 check("quest015_resolved diset", state.flags.get("quest015_resolved") is True)
 check("quest015 selesai", "quest015" in state.player.quests_done)
 check("quest016 aktif", "quest016" in state.player.quests_active)
@@ -152,7 +134,7 @@ g.run_turn("go forest_deep")
 g.run_turn("go rebel_camp")
 g.run_turn("talk sera")
 end_talk("sera")
-clear_levels()
+clear_levels(g)
 check("quest016 selesai", "quest016" in state.player.quests_done)
 if "have_old_scrolls" not in state.flags:
     # Simulasi collect: set flag + panggil hook flag (seperti _track_loot_flags)
@@ -161,23 +143,23 @@ if "have_old_scrolls" not in state.flags:
 state.current_map = state.world["village"]
 g.run_turn("talk kael")
 end_talk("kael")
-clear_levels()
+clear_levels(g)
 check("quest017 selesai", "quest017" in state.player.quests_done)
 state.current_map = state.world["village"]
 g.run_turn("talk marcus")
 g.run_turn("1")
-clear_levels()
-force_victory("guild_guard")
+clear_levels(g)
+force_victory(g, "guild_guard")
 check("quest018 selesai", "quest018" in state.player.quests_done)
 check("marcus_betrayal_found", state.flags.get("marcus_betrayal_found") is True)
 for _ in range(3):
-    force_victory("inquisitor_soldier")
+    force_victory(g, "inquisitor_soldier")
 check("quest019 selesai", "quest019" in state.player.quests_done)
 check("quest020 aktif", "quest020" in state.player.quests_active)
 
 # ===== STEP 10: boss quest020 -> arc3_complete =====
 print("[9] quest020 (Api Hakim - BOSS Iris)")
-force_victory("sister_iris")
+force_victory(g, "sister_iris")
 check("quest020 selesai", "quest020" in state.player.quests_done)
 check("boss_arc3_defeated", state.flags.get("boss_arc3_defeated") is True)
 lines2 = event_engine.process_events(state, g.randomizer)

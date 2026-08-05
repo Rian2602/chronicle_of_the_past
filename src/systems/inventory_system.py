@@ -1,6 +1,12 @@
 from src.models.player import max_hp, max_mp
 
 
+class InventoryFullError(Exception):
+    """Exception raised when inventory is full and cannot add more items."""
+
+    pass
+
+
 def carry_capacity(player) -> int:
     """Kapasitas total inventaris pemain (30 + 2 per level)."""
     return 30 + player.level * 2
@@ -23,13 +29,19 @@ def add_item(player, item_id, qty=1, game_state=None) -> bool:
 
     Returns:
         True bila item ditambahkan, False bila qty invalid atau penuh.
+
+    Raises:
+        InventoryFullError: Bila inventaris penuh dan tidak bisa menambah item.
     """
     # Validasi: qty harus positif
     if qty <= 0:
         return False
     # Cek kapasitas sebelum menambahkan
     if count_items(player) + qty > carry_capacity(player):
-        return False
+        raise InventoryFullError(
+            f"Inventaris penuh! Kapasitas: {carry_capacity(player)}, "
+            f"terisi: {count_items(player)}, butuh: {qty}"
+        )
     for entry in player.inventory:
         if entry["id"] == item_id:
             entry["qty"] = entry.get("qty", 0) + qty

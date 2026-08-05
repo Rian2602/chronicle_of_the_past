@@ -1,5 +1,6 @@
 {
   "id": "dialog_marcus_main",
+  "require_not_flags": ["met_marcus"],
   "lines": [
     {"speaker": "marcus", "text": "Selamat datang! Semua yang kau butuhkan ada di sini — ramuan, senjata, dan berita."},
     {"speaker": "marcus", "text": "Belum ada etalase permanen, tapi tanyakan saja apa yang kau cari. (Toko lengkap menyusul di Phase 0.)"}

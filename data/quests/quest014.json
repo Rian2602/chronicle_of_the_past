@@ -25,5 +25,10 @@
     "crime_archive",
     "have_evidence_letter"
   ],
-  "next": "quest015"
+  "flags_on_fail": [
+    "quest014_failed",
+    "arc2_failed"
+  ],
+  "next": "quest015",
+  "category": "main"
 }

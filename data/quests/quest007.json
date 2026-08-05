@@ -20,5 +20,10 @@
     }
   },
   "flags_on_complete": [],
-  "next": "quest008"
+  "flags_on_fail": [
+    "quest007_failed",
+    "arc1_failed"
+  ],
+  "next": "quest008",
+  "category": "main"
 }

@@ -1,5 +1,6 @@
 {
   "id": "dialog_lyra_generic",
+  "require_not_flags": ["met_lyra"],
   "lines": [
     {"speaker": "lyra", "text": "Halo. Aku Lyra, penjaga arsip kuno desa ini."}
   ],

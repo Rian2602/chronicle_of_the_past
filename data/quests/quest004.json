@@ -19,5 +19,6 @@
   "flags_on_complete": [
     "found_anchor_vault"
   ],
-  "next": "quest005"
+  "next": "quest005",
+  "category": "main"
 }

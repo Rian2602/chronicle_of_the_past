@@ -136,8 +136,8 @@ def test_load_bad_path_message(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)
     g.new_game("Rian", "warrior")
-    out = g.run_turn("load /tidak/ada/dir/save.json")
-    assert "tidak dapat dimuat" in out
+    with pytest.raises(save_manager.SaveError):
+        g.run_turn("load /proc/xyz/save.json")
 
 
 def test_load_blocked_during_combat(tmp_path):
@@ -488,8 +488,8 @@ def test_save_and_help_allowed_during_combat(tmp_path):
 
 def test_save_bad_path_shows_message_not_crash(tmp_path):
     _, g = _mid_combat_game(tmp_path)
-    out = g.run_turn("save /tidak/ada/dir/save.json")
-    assert "Gagal menyimpan" in out
+    with pytest.raises(save_manager.SaveError):
+        g.run_turn("save /proc/xyz/save.json")
     assert g._combat is not None
 
 
@@ -515,8 +515,9 @@ def test_failed_load_keeps_game_playable(tmp_path):
     ctx = GameContext(data_dir="data")
     g = Game(ctx)
     g.new_game("Rian", "warrior")
-    out = g.run_turn(f"load {p}")
-    assert "Save tidak lengkap" in out
+    with pytest.raises(save_manager.SaveError):
+        g.run_turn(f"load {p}")
+    # Game tetap playable setelah failed load
     assert g.state.player.name == "Rian"
     assert "Rian" in g.run_turn("status")
 

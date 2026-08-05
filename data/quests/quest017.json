@@ -27,5 +27,10 @@
   "flags_on_complete": [
     "ancient_script_decoded"
   ],
-  "next": "quest018"
+  "flags_on_fail": [
+    "quest017_failed",
+    "arc3_failed"
+  ],
+  "next": "quest018",
+  "category": "main"
 }

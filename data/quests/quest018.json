@@ -25,5 +25,6 @@
     }
   },
   "flags_on_complete": [],
-  "next": "quest019"
+  "next": "quest019",
+  "category": "main"
 }

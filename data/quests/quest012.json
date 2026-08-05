@@ -25,5 +25,6 @@
     "first_fire",
     "villager_missing"
   ],
-  "next": "quest013"
+  "next": "quest013",
+  "category": "main"
 }

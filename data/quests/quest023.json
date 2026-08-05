@@ -17,5 +17,6 @@
     "gold": 25
   },
   "flags_on_complete": [],
-  "next": "quest024"
+  "next": "quest024",
+  "category": "main"
 }

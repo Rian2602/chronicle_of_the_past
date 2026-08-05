@@ -19,5 +19,6 @@
     "season1_path_done",
     "ending_b_done"
   ],
-  "next": "quest039"
+  "next": "quest039",
+  "category": "main"
 }

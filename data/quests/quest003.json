@@ -28,5 +28,6 @@
     "arc2_started",
     "map_anchor_vault_unlocked"
   ],
-  "next": "quest004"
+  "next": "quest004",
+  "category": "main"
 }

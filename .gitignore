@@ -1,3 +1,4 @@
+```
 # Python
 __pycache__/
 *.py[cod]
@@ -20,36 +21,32 @@ wheels/
 .installed.cfg
 *.egg
 
-# Cache & tooling
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
-
-# IDE
-.vscode/
-.idea/
+# Logs
+*.log
+logs/
 
 # Environment
 .env
 .env.local
 .env.*
+.env~*
 .venv/
 venv/
 ENV/
 
-# Logs
-*.log
-logs/
-saves/*.json
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
 
-# OS
-.DS_Store
-Thumbs.db
+# Coverage
+.coverage
+coverage/
+htmlcov/
 
-# Generated graph artifacts
-graphify-out/
-
-# Dokumen kerja internal AI (tidak untuk publik)
-docs/
-.worktrees/
-.superpowers/
+# Testing
+.pytest_cache/
+.mypy_cache/
+```

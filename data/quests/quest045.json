@@ -18,5 +18,6 @@
   "flags_on_complete": [
     "season2_hint"
   ],
-  "next": null
+  "next": null,
+  "category": "main"
 }

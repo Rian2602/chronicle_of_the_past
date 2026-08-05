@@ -25,5 +25,6 @@
     "met_finn",
     "map_forest_deep_unlocked"
   ],
-  "next": "quest006"
+  "next": "quest006",
+  "category": "main"
 }

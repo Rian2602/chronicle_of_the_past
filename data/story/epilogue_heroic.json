@@ -1,0 +1,38 @@
+{
+  "id": "epilogue_heroic",
+  "title": "Epilog: Jalan Pahlawan",
+  "chapters": [
+    {
+      "id": "heroic_dawn",
+      "title": "Fajar Penyelamatan",
+      "narration": "Matahari terbit di atas Ashen yang selamat. Api tidak pernah menyala, dan rakyat tetap berdiri. Namamu dibisikkan dengan hormat di setiap sudut desa - sebagai Pejalan Waktu yang memilih jalan paling mulia.",
+      "scene": "village",
+      "characters": ["anchor_avatar", "nil", "helen"],
+      "dialogue_tree": null,
+      "choices": [],
+      "rewards": {
+        "xp": 500,
+        "flags_set": ["ending_heroic_achieved"]
+      },
+      "next_chapter": "heroic_legacy"
+    },
+    {
+      "id": "heroic_legacy",
+      "title": "Warisan Cahaya",
+      "narration": "Jangkar Waktu kini diam, tugasnya selesai. Kau memilih menghancurkannya demi keseimbangan alam. Para penjaga lama tersenyum bangga - kau telah membuktikan bahwa manusia bisa bertanggung jawab atas kekuatan terbesar sekalipun.",
+      "scene": "anchor_chamber",
+      "characters": ["anchor_avatar"],
+      "dialogue_tree": null,
+      "choices": [],
+      "rewards": {
+        "flags_set": ["anchor_destroyed", "peace_restored"]
+      },
+      "next_chapter": null
+    }
+  ],
+  "triggers": {
+    "required_flags": ["quest035_done", "heroic_path_chosen"],
+    "forbidden_flags": ["neutral_path_chosen", "tragic_path_chosen"]
+  },
+  "conclusion": "Ending Heroic: Dunia selamat, Jangkar dihancurkan, perdamaian abadi."
+}

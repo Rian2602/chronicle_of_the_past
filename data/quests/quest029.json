@@ -23,5 +23,6 @@
     "boss_arc4_defeated",
     "met_anchor_avatar"
   ],
-  "next": "quest030"
+  "next": "quest030",
+  "category": "main"
 }

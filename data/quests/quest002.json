@@ -2,12 +2,26 @@
   "id": "quest002",
   "title": "Bahaya di Hutan",
   "type": "main",
-    "description": "Kalahkan serigala di tepi hutan.",
-    "objectives": ["Kalahkan serigala liar di Ashen Forest."],
-  "requirements": [
-    {"kind": "enemy", "target": "wild_wolf"}
+  "description": "Kalahkan serigala di tepi hutan.",
+  "objectives": [
+    "Kalahkan serigala liar di Ashen Forest."
   ],
-  "rewards": {"xp": 40, "gold": 15, "reputation": {"merchant_guild": 5}},
-  "flags_on_complete": ["quest002_done"],
-  "next": "quest003"
+  "requirements": [
+    {
+      "kind": "enemy",
+      "target": "wild_wolf"
+    }
+  ],
+  "rewards": {
+    "xp": 40,
+    "gold": 15,
+    "reputation": {
+      "merchant_guild": 5
+    }
+  },
+  "flags_on_complete": [
+    "quest002_done"
+  ],
+  "next": "quest003",
+  "category": "main"
 }

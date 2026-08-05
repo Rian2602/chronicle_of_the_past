@@ -12,5 +12,6 @@ class Item:
     description: str = ""
     heal: int = 0
     heal_mp: int = 0
+    heal_full: bool = False
     escape: bool = False
     quest_flag: str | None = None

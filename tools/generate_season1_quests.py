@@ -488,7 +488,7 @@ QUESTS["quest032"] = quest(
     ["Kalahkan 4 tentara inkuisisi (inquisitor_soldier)."],
     [{"kind": "flag", "target": "killed_inquisitor_soldier_4"}],
     {"xp": 160, "gold": 40},
-    ["siege_won"],
+    ["siege_won", "ultimatum_resolved"],
     "quest033",
 )
 

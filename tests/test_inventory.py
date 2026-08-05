@@ -8,7 +8,7 @@ from src.models.enemy import Enemy
 from src.models.item import Item
 from src.models.player import Player, max_hp, max_mp
 from src.systems.equipment_system import equip, total_stats, unequip
-from src.systems.inventory_system import add_item, remove_item, use_consumable
+from src.systems.inventory_system import InventoryFullError, add_item, remove_item, use_consumable
 
 IRON_SWORD = Item(
     id="iron_sword",
@@ -92,14 +92,16 @@ def test_add_item_merges_existing_entry():
 def test_add_item_over_capacity_rejected_no_partial():
     p = make_player(level=1)
     assert add_item(p, "herb", 32) is True
-    assert add_item(p, "potion", 1) is False
+    with pytest.raises(InventoryFullError):
+        add_item(p, "potion", 1)
     assert p.inventory == [{"id": "herb", "qty": 32}]
 
 
 def test_add_item_capacity_scales_with_level():
     p = make_player(level=3)
     assert add_item(p, "herb", 36) is True
-    assert add_item(p, "potion", 1) is False
+    with pytest.raises(InventoryFullError):
+        add_item(p, "potion", 1)
     assert p.inventory == [{"id": "herb", "qty": 36}]
 
 
@@ -316,4 +318,5 @@ def test_combat_loot_over_capacity_skipped():
     )
     while not state.over:
         player_action(state, CombatAction.ATTACK)
+    # Loot seharusnya ditolak karena inventory penuh
     assert p.inventory == [{"id": "herb", "qty": 32}]

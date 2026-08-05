@@ -16,5 +16,6 @@
     "xp": 200
   },
   "flags_on_complete": [],
-  "next": null
+  "next": null,
+  "category": "main"
 }

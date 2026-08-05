@@ -24,5 +24,6 @@
   "flags_on_complete": [
     "map_ancient_ruins_unlocked"
   ],
-  "next": "quest010"
+  "next": "quest010",
+  "category": "main"
 }

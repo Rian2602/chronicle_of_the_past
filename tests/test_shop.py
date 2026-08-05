@@ -1,3 +1,5 @@
+import pytest
+
 from src.core.game_state import GameState
 from src.models.item import Item
 from src.models.player import Player
@@ -107,8 +109,8 @@ def test_buy_over_capacity_rejected_no_gold_deducted():
     gs = make_game_state(gold=10_000, level=1)
     add_item(gs.player, "herb", 30)  # dekati kapasitas (30 + level*2 = 32)
     npc = make_npc()
-    msg = buy(gs, npc, "potion", 5)
-    assert msg == "Tas penuh, tidak bisa membawa item lagi."
+    with pytest.raises(Exception):  # InventoryFullError
+        buy(gs, npc, "potion", 5)
     assert gs.player.gold == 10_000
 
 

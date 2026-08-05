@@ -24,5 +24,6 @@
   "flags_on_complete": [
     "quest037c_done"
   ],
-  "next": "quest038c"
+  "next": "quest038c",
+  "category": "main"
 }

@@ -1,0 +1,38 @@
+{
+  "id": "epilogue_neutral",
+  "title": "Epilog: Jalan Kompromi",
+  "chapters": [
+    {
+      "id": "neutral_dawn",
+      "title": "Fajar Keraguan",
+      "narration": "Matahari terbit di atas Ashen yang terluka tapi tidak hancur. Beberapa bangunan terbakar, beberapa nyawa hilang - tapi sebagian besar rakyat selamat. Kau memilih jalan tengah: Jangkar tetap ada, disegel rapat di ruang paling tersembunyi.",
+      "scene": "village",
+      "characters": ["nil", "village_chief"],
+      "dialogue_tree": null,
+      "choices": [],
+      "rewards": {
+        "xp": 300,
+        "flags_set": ["ending_neutral_achieved"]
+      },
+      "next_chapter": "neutral_watch"
+    },
+    {
+      "id": "neutral_watch",
+      "title": "Penjaga Bayangan",
+      "narration": "Kau memutuskan untuk tetap mengawasi Jangkar dari bayang-bayang. Bukan menghancurkan, bukan menguasai - hanya menjaga. Mungkin suatu hari nanti, seseorang akan menemukan cara lebih baik. Sampai saat itu tiba, kau adalah penjaganya.",
+      "scene": "anchor_vault",
+      "characters": ["anchor_avatar"],
+      "dialogue_tree": null,
+      "choices": [],
+      "rewards": {
+        "flags_set": ["anchor_sealed", "player_became_guardian"]
+      },
+      "next_chapter": null
+    }
+  ],
+  "triggers": {
+    "required_flags": ["quest035_done", "neutral_path_chosen"],
+    "forbidden_flags": ["heroic_path_chosen", "tragic_path_chosen"]
+  },
+  "conclusion": "Ending Neutral: Dunia selamat dengan korban, Jangkar disegel, player menjadi penjaga."
+}

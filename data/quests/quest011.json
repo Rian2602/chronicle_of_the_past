@@ -23,5 +23,6 @@
     "boss_arc2_defeated",
     "reiner_info"
   ],
-  "next": "quest012"
+  "next": "quest012",
+  "category": "main"
 }

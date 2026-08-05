@@ -24,5 +24,6 @@
     "iris_revealed",
     "map_ruins_depth_unlocked"
   ],
-  "next": "quest021"
+  "next": "quest021",
+  "category": "main"
 }

@@ -1,6 +1,27 @@
+import logging
+
 from src.engine import quest_engine, rule_engine
 from src.systems import memory_system
 from src.ui import story_view
+
+# Setup logging untuk debugging event
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# File handler untuk log event
+try:
+    file_handler = logging.FileHandler("logs/event_debug.log", encoding="utf-8")
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+except Exception:
+    # Fallback ke console handler jika folder logs belum ada
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    logger.addHandler(console_handler)
 
 _ENDING_RECAPS = {
     "ending_a_done": "Kau memilih menjadi Penjaga Baru Jangkar.",
@@ -25,18 +46,46 @@ def process_events(game_state, randomizer=None, events=None):
     """
     if events is None:
         events = getattr(game_state, "events", [])
+
+    logger.info(f"Processing {len(events)} events...")
+    logger.debug(f"Current flags: {list(game_state.flags.keys())[:10]}...")
+
     log_lines = []
     for event in events:
-        if not all(
-            rule_engine.evaluate(c, game_state) for c in event["trigger"]
-        ):
+        event_id = event.get("id", "unknown")
+
+        # Log trigger evaluation
+        trigger_conditions = event.get("trigger", [])
+        all_met = True
+        for i, condition in enumerate(trigger_conditions):
+            result = rule_engine.evaluate(condition, game_state)
+            logger.debug(
+                f"Event {event_id} trigger[{i}]: {condition} = {result}"
+            )
+            if not result:
+                all_met = False
+
+        if not all_met:
+            logger.debug(
+                f"Event {event_id} skipped: trigger conditions not met"
+            )
             continue
+
+        actions_count = len(event.get("actions", []))
+        msg = f"Event {event_id} triggered!"
+        msg += f" Processing {actions_count} actions..."
+        logger.info(msg)
+
         for action in event["actions"]:
             kind = action["kind"]
             if kind == "set_flag":
-                game_state.flags[action["flag"]] = action.get("value", True)
+                flag_name = action["flag"]
+                game_state.flags[flag_name] = action.get("value", True)
+                logger.debug(
+                    f"Set flag: {flag_name} = {game_state.flags[flag_name]}"
+                )
                 flag_msg = quest_engine.complete_requirement(
-                    game_state, "flag", action["flag"]
+                    game_state, "flag", flag_name
                 )
                 if flag_msg and flag_msg != "Tidak ada syarat yang sesuai.":
                     log_lines.append(flag_msg)
@@ -49,24 +98,35 @@ def process_events(game_state, randomizer=None, events=None):
                         log_lines.append(
                             f"Kenangan terbuka: {memory['title']}."
                         )
+                        logger.info(f"Granted memory: {memory['title']}")
             elif kind == "start_quest":
                 if game_state.player is not None:
-                    log_lines.append(
-                        quest_engine.start_quest(game_state, action["id"])
+                    quest_msg = quest_engine.start_quest(
+                        game_state, action["id"]
                     )
+                    log_lines.append(quest_msg)
+                    logger.info(f"Started quest: {action['id']}")
             elif kind == "fail_quest":
                 if game_state.player is not None:
-                    log_lines.append(
-                        quest_engine.fail_quest(game_state, action["id"])
+                    quest_msg = quest_engine.fail_quest(
+                        game_state, action["id"]
                     )
+                    log_lines.append(quest_msg)
+                    logger.warning(f"Failed quest: {action['id']}")
             elif kind == "log":
                 log_lines.append(action["text"])
             elif kind == "play_scene":
                 scene = _find_scene(game_state, action["id"])
                 if scene is not None:
-                    log_lines.append(story_view.render_scene(scene))
+                    rendered = story_view.render_scene(scene)
+                    log_lines.append(rendered)
+                    logger.debug(f"Played scene: {action['id']}")
             elif kind == "recap":
                 log_lines.extend(_recap_lines(game_state))
+
+    logger.info(
+        f"Event processing complete. Generated {len(log_lines)} log lines."
+    )
     return log_lines
 
 

@@ -1,0 +1,38 @@
+{
+  "id": "epilogue_tragic",
+  "title": "Epilog: Jalan Pengorbanan",
+  "chapters": [
+    {
+      "id": "tragic_dawn",
+      "title": "Fajar Air Mata",
+      "narration": "Matahari terbit di atas Ashen yang hangus. Desa yang kau kenal telah menjadi abu. Banyak yang tidak selamat - termasuk mereka yang paling kau cintai. Tapi Jangkar akhirnya berhenti berdetak, dan waktu kembali normal. Harga yang mahal... terlalu mahal.",
+      "scene": "burning_village",
+      "characters": ["helen"],
+      "dialogue_tree": null,
+      "choices": [],
+      "rewards": {
+        "xp": 200,
+        "flags_set": ["ending_tragic_achieved"]
+      },
+      "next_chapter": "tragic_resolve"
+    },
+    {
+      "id": "tragic_resolve",
+      "title": "Tekad Baru",
+      "narration": "Kau berdiri sendirian di antara puing-puing, menggenggam sisa harapan. Jangkar hancur, tapi begitu pula banyak mimpi. Kau bersumpah: jika ada kesempatan lain, kau akan menemukan jalan yang lebih baik. Untuk sekarang, kau akan membangun kembali - dari nol.",
+      "scene": "burning_village",
+      "characters": [],
+      "dialogue_tree": null,
+      "choices": [],
+      "rewards": {
+        "flags_set": ["anchor_destroyed", "village_destroyed", "player_survived"]
+      },
+      "next_chapter": null
+    }
+  ],
+  "triggers": {
+    "required_flags": ["quest035_done", "tragic_path_chosen"],
+    "forbidden_flags": ["heroic_path_chosen", "neutral_path_chosen"]
+  },
+  "conclusion": "Ending Tragic: Desa hancur dengan banyak korban, Jangkar hancur, player bertahan dengan trauma."
+}

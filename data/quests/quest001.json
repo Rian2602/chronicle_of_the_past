@@ -2,12 +2,26 @@
   "id": "quest001",
   "title": "Temui Kepala Desa",
   "type": "main",
-    "description": "Bicaralah dengan Kepala Desa.",
-    "objectives": ["Bicaralah dengan Kepala Desa di Ashen Village."],
-  "requirements": [
-    {"kind": "talk", "target": "village_chief"}
+  "description": "Bicaralah dengan Kepala Desa.",
+  "objectives": [
+    "Bicaralah dengan Kepala Desa di Ashen Village."
   ],
-  "rewards": {"xp": 50, "gold": 20, "reputation": {"merchant_guild": 10}},
-  "flags_on_complete": ["quest001_done"],
-  "next": null
+  "requirements": [
+    {
+      "kind": "talk",
+      "target": "village_chief"
+    }
+  ],
+  "rewards": {
+    "xp": 50,
+    "gold": 20,
+    "reputation": {
+      "merchant_guild": 10
+    }
+  },
+  "flags_on_complete": [
+    "quest001_done"
+  ],
+  "next": null,
+  "category": "main"
 }

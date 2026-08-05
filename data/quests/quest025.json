@@ -18,5 +18,6 @@
   "flags_on_complete": [
     "map_anchor_chamber_unlocked"
   ],
-  "next": "quest026"
+  "next": "quest026",
+  "category": "main"
 }

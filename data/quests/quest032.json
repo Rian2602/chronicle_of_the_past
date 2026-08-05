@@ -20,5 +20,6 @@
     "siege_won",
     "ultimatum_resolved"
   ],
-  "next": "quest033"
+  "next": "quest033",
+  "category": "main"
 }

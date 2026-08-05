@@ -16,48 +16,21 @@ Deteksi jalan buntu: jika sebuah quest aktif tapi requirement-nya tidak
 bisa dipenuhi, smoke test berhenti dengan FAIL di quest tersebut.
 """
 
+import os
 import sys
 
-from src.core.game import Game
-from src.core.game_context import GameContext
+# Pastikan folder proyek ada di sys.path (skrip dijalankan dari tools/)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.engine import event_engine, quest_engine
-from src.engine.combat_engine import start_combat
-from src.models.combat_interfaces import CombatResult
-from src.systems import loot_system
+
+# Import helper dengan fallback: relatif (package) atau absolut (direct run)
+try:
+    from ._smoke_helpers import clear_levels, force_victory, make_game
+except ImportError:
+    from _smoke_helpers import clear_levels, force_victory, make_game
 
 FAILURES = []
-
-
-def make_game(name="Rian", class_id="warrior", seed=7):
-    ctx = GameContext(data_dir="data")
-    game = Game(ctx, rng_seed=seed)
-    game.new_game(name, class_id)
-    return ctx, game
-
-
-def clear_levels(game):
-    while game._pending_levels > 0:
-        game.run_turn("select 1")
-
-
-def force_victory(game, enemy_id):
-    """Jalankan `_finish_combat` dengan kemenangan paksa atas satu musuh."""
-    state = game.state
-    enemy = state.enemies[enemy_id]
-    combat = start_combat(
-        state.player,
-        enemy,
-        game.randomizer,
-        skills=game.ctx.skills,
-        loot_resolver=loot_system.roll_loot,
-        items=state.items,
-    )
-    combat.enemy.stats["hp"] = 1
-    combat.result = CombatResult.VICTORY
-    combat.over = True
-    combat.loot = []
-    game._finish_combat(combat)
-    clear_levels(game)
 
 
 def complete_quest(game, qid, ctx):
@@ -90,8 +63,9 @@ def complete_quest(game, qid, ctx):
             # Kill count dipenuhi via flags killed_<enemy>_<N>.
             for n in range(1, amount + 1):
                 state.flags[f"killed_{target}_{n}"] = True
-                quest_engine.complete_requirement(state, "flag",
-                                                  f"killed_{target}_{n}")
+                quest_engine.complete_requirement(
+                    state, "flag", f"killed_{target}_{n}"
+                )
         else:
             print(f"  ⚠ qid {qid}: kind tak dikenal {kind}")
     clear_levels(game)
@@ -172,8 +146,12 @@ def main():
 
     # Jalankan semua 6 jalur ending (masing-masing dari snapshot q036).
     for suffix, endflag in (
-        ("a", "ending_a"), ("b", "ending_b"), ("c", "ending_c"),
-        ("d", "ending_d"), ("e", "ending_e"), ("f", "ending_f"),
+        ("a", "ending_a"),
+        ("b", "ending_b"),
+        ("c", "ending_c"),
+        ("d", "ending_d"),
+        ("e", "ending_e"),
+        ("f", "ending_f"),
     ):
         print(f"\n[Ending {suffix.upper()}] q037{suffix} -> q045")
         print(f"  [OK] pilihan {endflag} diset")

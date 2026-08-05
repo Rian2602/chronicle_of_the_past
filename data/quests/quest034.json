@@ -21,5 +21,6 @@
   "flags_on_complete": [
     "map_capital_keep_unlocked"
   ],
-  "next": "quest035"
+  "next": "quest035",
+  "category": "main"
 }

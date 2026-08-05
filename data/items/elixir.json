@@ -5,6 +5,6 @@
   "slot": null,
   "modifiers": {},
   "price": 80,
-  "heal": 500,
+  "heal_full": true,
   "description": "Ramuan langka yang memulihkan seluruh HP."
 }

@@ -373,6 +373,7 @@ Buka toko dengan **`shop`** saat bicara dengan pedagang, atau pilih **Berbelanja
 - **Smoke test CLI (tmux):** `bash tools/smoke_menu.sh` — memverifikasi menu "Muat" & level-up interaktif di terminal nyata (butuh `tmux` di sistem lokal).
 - **Playtest Arc 1:** `python3 tools/playtest_arc1.py --count 20 --all-classes` — simulasi playthrough otomatis untuk memastikan keseimbangan tetap memungkinkan menyelesaikan Arc 1.
 - **Smoke test Arc 3:** `PYTHONPATH=. python3 tools/smoke_arc3.py` — verifikasi end-to-end rantai quest q012–q020 (gate → ultimatum → boss Iris → memory005).
+- **Validasi Quest Chains:** `python3 tools/validate_quest_chains.py` — deteksi circular dependencies, validasi referensi NPCs/maps/items/enemies, dan identifikasi side quests (quests tanpa prerequisite). Tool ini wajib dijalankan sebelum menambahkan quest baru.
 - **Lisensi:** [MIT](LICENSE) © 2026 Rian2602.
 
 *Dibuat dengan Python dan semangat bercerita. Selamat berkelana, Pejalan Waktu.* 🕰️

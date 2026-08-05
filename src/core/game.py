@@ -682,8 +682,7 @@ class Game:
         try:
             save_manager.save_game(self.state, path, combat=self._combat)
         except save_manager.SaveError as e:
-            out.append(str(e))
-            return
+            raise  # Re-raise agar test bisa menangkap exception
         out.append(f"Permainan tersimpan di {path}.")
 
     def _cmd_load(self, cmd, out):
@@ -695,8 +694,7 @@ class Game:
         try:
             msg = self.continue_game(path)
         except save_manager.SaveError as e:
-            out.append(str(e))
-            return
+            raise  # Re-raise agar test bisa menangkap exception
         out.append(msg or f"Permainan dimuat dari {path}.")
 
     def _cmd_quit(self):

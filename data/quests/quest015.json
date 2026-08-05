@@ -18,5 +18,6 @@
   "flags_on_complete": [
     "map_rebel_camp_unlocked"
   ],
-  "next": "quest016"
+  "next": "quest016",
+  "category": "main"
 }

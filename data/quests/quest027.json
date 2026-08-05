@@ -22,5 +22,10 @@
     "gold": 40
   },
   "flags_on_complete": [],
-  "next": "quest028"
+  "flags_on_fail": [
+    "quest027_failed",
+    "arc5_failed"
+  ],
+  "next": "quest028",
+  "category": "main"
 }

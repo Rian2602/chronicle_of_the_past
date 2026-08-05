@@ -24,5 +24,6 @@
     "ultimatum_5_days",
     "map_crime_den_unlocked"
   ],
-  "next": "quest014"
+  "next": "quest014",
+  "category": "main"
 }

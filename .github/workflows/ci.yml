@@ -18,5 +18,7 @@ jobs:
         run: ruff check src launcher.py tools tests
       - name: Format check
         run: ruff format --check src launcher.py tools tests
+      - name: Validate quest chains
+        run: python3 tools/validate_quest_chains.py
       - name: Tests
         run: pytest -q

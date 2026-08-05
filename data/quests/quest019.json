@@ -22,5 +22,6 @@
   "flags_on_complete": [
     "village_defended"
   ],
-  "next": "quest020"
+  "next": "quest020",
+  "category": "main"
 }

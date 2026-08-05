@@ -1,0 +1,18 @@
+{
+  "default": {
+    "box_single": ["┌", "─", "┐", "│", "└", "┘"],
+    "box_double": ["╔", "═", "╗", "║", "╚", "╝"],
+    "divider": "─",
+    "bullet_point": "•",
+    "arrow": "→",
+    "separator": "│"
+  },
+  "ancient": {
+    "box_single": ["⌌", "─", "⌍", "│", "⌎", "⌏"],
+    "box_double": ["╔", "═", "╗", "║", "╚", "╝"],
+    "divider": "━",
+    "bullet_point": "◆",
+    "arrow": "»",
+    "separator": "║"
+  }
+}

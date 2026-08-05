@@ -32,5 +32,6 @@
   "flags_on_complete": [
     "echo_1_collected"
   ],
-  "next": "quest011"
+  "next": "quest011",
+  "category": "main"
 }

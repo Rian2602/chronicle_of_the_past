@@ -1,5 +1,6 @@
 {
   "id": "dialog_old_man_main",
+  "require_not_flags": ["met_old_man"],
   "lines": [
     {"speaker": "old_man", "text": "Kau... Aku belum pernah melihatmu."}
   ],

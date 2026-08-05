@@ -24,5 +24,6 @@
   "flags_on_complete": [
     "varek_unmasked"
   ],
-  "next": "quest034"
+  "next": "quest034",
+  "category": "main"
 }

@@ -1,0 +1,37 @@
+{
+  "maps": {
+    "village": "\u001b[32m",
+    "forest": "\u001b[32m",
+    "forest_deep": "\u001b[35m",
+    "ruins_entrance": "\u001b[90m",
+    "ancient_ruins": "\u001b[90m",
+    "ruins_depth": "\u001b[31m",
+    "anchor_vault": "\u001b[34m",
+    "anchor_chamber": "\u001b[34m",
+    "rebel_camp": "\u001b[31m",
+    "crime_den": "\u001b[35m",
+    "capital": "\u001b[33m",
+    "capital_keep": "\u001b[33m",
+    "burning_village": "\u001b[31m"
+  },
+  "enemies": {
+    "boss": "\u001b[31m",
+    "elite": "\u001b[35m",
+    "normal": "\u001b[37m",
+    "weak": "\u001b[90m"
+  },
+  "items": {
+    "legendary": "\u001b[33m",
+    "epic": "\u001b[35m",
+    "rare": "\u001b[34m",
+    "common": "\u001b[37m",
+    "quest": "\u001b[36m"
+  },
+  "ui": {
+    "text": "\u001b[37m",
+    "highlight": "\u001b[33m",
+    "error": "\u001b[31m",
+    "success": "\u001b[32m",
+    "info": "\u001b[34m"
+  }
+}

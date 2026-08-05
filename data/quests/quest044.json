@@ -18,5 +18,6 @@
   "flags_on_complete": [
     "season1_ended"
   ],
-  "next": "quest045"
+  "next": "quest045",
+  "category": "main"
 }

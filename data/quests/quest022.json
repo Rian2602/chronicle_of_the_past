@@ -16,5 +16,6 @@
     "xp": 110
   },
   "flags_on_complete": [],
-  "next": "quest023"
+  "next": "quest023",
+  "category": "main"
 }

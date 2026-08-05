@@ -24,5 +24,6 @@
   "flags_on_complete": [
     "forest_deep_searched"
   ],
-  "next": "quest007"
+  "next": "quest007",
+  "category": "main"
 }
