@@ -99,6 +99,23 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(f"{quest.id}: talk -> NPC {target} tidak ada")
             elif objective.kind == "map" and target not in map_ids:
                 errors.append(f"{quest.id}: map -> peta {target} tidak ada")
+            elif objective.kind in ("enemy", "kill_count") and (
+                target not in enemy_ids
+            ):
+                errors.append(
+                    f"{quest.id}: {objective.kind} -> musuh {target} tidak ada"
+                )
+            elif objective.kind == "collect" and target not in items:
+                errors.append(f"{quest.id}: collect -> item {target} tidak ada")
+            elif objective.kind == "breakthrough" and target not in tiers:
+                errors.append(
+                    f"{quest.id}: breakthrough -> tier {target} tidak ada"
+                )
+        grant_item = quest.rewards.get("grant_item")
+        if grant_item and grant_item.get("id") not in items:
+            errors.append(
+                f"{quest.id}: reward grant_item -> {grant_item['id']} tidak ada"
+            )
 
     for event in events:
         for condition in event.trigger:

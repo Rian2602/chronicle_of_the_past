@@ -123,6 +123,108 @@ def test_validator_menangkap_ref_item(tmp_path):
     assert any("pil_hantu" in e for e in collect_errors(data))
 
 
+def test_validator_menangkap_ref_quest_enemy(tmp_path):
+    """Objektif quest enemy ke musuh tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "quests" / "q_enemy.json").write_text(
+        json.dumps(
+            {
+                "id": "q_enemy",
+                "title": "Buruan",
+                "type": "faction",
+                "description": "Buru hantu kuno.",
+                "objectives": [{"kind": "enemy", "target": "hantu_kuno"}],
+                "rewards": {"insight": 10, "gold": 0},
+                "flags_on_complete": ["q_enemy_done"],
+                "next": None,
+                "category": "faction",
+                "requires_flag": None,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("hantu_kuno" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_quest_collect(tmp_path):
+    """Objektif quest collect ke item tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "quests" / "q_collect.json").write_text(
+        json.dumps(
+            {
+                "id": "q_collect",
+                "title": "Koleksi",
+                "type": "faction",
+                "description": "Kumpulkan batu hantu.",
+                "objectives": [{"kind": "collect", "target": "batu_hantu"}],
+                "rewards": {"insight": 10, "gold": 0},
+                "flags_on_complete": ["q_collect_done"],
+                "next": None,
+                "category": "faction",
+                "requires_flag": None,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("batu_hantu" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_quest_reward_grant_item(tmp_path):
+    """Reward quest grant_item ke item tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "quests" / "q_reward.json").write_text(
+        json.dumps(
+            {
+                "id": "q_reward",
+                "title": "Hadiah",
+                "type": "faction",
+                "description": "Hadiah misterius.",
+                "objectives": [{"kind": "talk", "target": "npc_hantu"}],
+                "rewards": {
+                    "insight": 10,
+                    "gold": 0,
+                    "grant_item": {"id": "pil_hantu", "count": 1},
+                },
+                "flags_on_complete": ["q_reward_done"],
+                "next": None,
+                "category": "faction",
+                "requires_flag": None,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("pil_hantu" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_quest_breakthrough(tmp_path):
+    """Objektif quest breakthrough ke tier tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "quests" / "q_tier.json").write_text(
+        json.dumps(
+            {
+                "id": "q_tier",
+                "title": "Terobosan",
+                "type": "main",
+                "description": "Naik ke tier misterius.",
+                "objectives": [
+                    {"kind": "breakthrough", "target": "tier_hantu"}
+                ],
+                "rewards": {"insight": 10, "gold": 0},
+                "flags_on_complete": ["q_tier_done"],
+                "next": None,
+                "category": "main",
+                "requires_flag": None,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("tier_hantu" in e for e in collect_errors(data))
+
+
 def test_validator_menangkap_item_effect_tidak_dikenal(tmp_path):
     """Item dengan effect key tak dikenal wajib dilaporkan."""
     data = _pohon_data(tmp_path)
