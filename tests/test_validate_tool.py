@@ -40,6 +40,7 @@ def _pohon_data(tmp_path: Path) -> Path:
         "cultivation",
         "techniques",
         "enemies",
+        "dialogues",
     ):
         (data / sub).mkdir(parents=True)
     (data / "quests" / "q_test.json").write_text(
@@ -457,6 +458,75 @@ def test_validator_menangkap_ref_skill_rekan(tmp_path):
         encoding="utf-8",
     )
     assert any("hantu_kuno" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_dialog_npc_tak_ada(tmp_path):
+    """Dialog merujuk NPC tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "dialogues" / "dlg_test.json").write_text(
+        json.dumps(
+            {
+                "id": "dlg_test",
+                "npc": "hantu_npc",
+                "nodes": {"start": {"text": "Halo.", "choices": []}},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("hantu_npc" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_dialog_next_node_tak_ada(tmp_path):
+    """Pilihan dialog menuju node tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "dialogues" / "dlg_test.json").write_text(
+        json.dumps(
+            {
+                "id": "dlg_test",
+                "npc": "elder_mao",
+                "nodes": {
+                    "start": {
+                        "text": "Halo.",
+                        "choices": [{"text": "Lanjut", "next": "ghost_node"}],
+                    }
+                },
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("ghost_node" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_dialog_action_item(tmp_path):
+    """Aksi dialog grant_item ke item tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "dialogues" / "dlg_test.json").write_text(
+        json.dumps(
+            {
+                "id": "dlg_test",
+                "npc": "elder_mao",
+                "nodes": {
+                    "start": {
+                        "text": "Halo.",
+                        "choices": [
+                            {
+                                "text": "Terima",
+                                "next": None,
+                                "actions": [
+                                    {"kind": "grant_item", "id": "pil_hantu"}
+                                ],
+                            }
+                        ],
+                    }
+                },
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("pil_hantu" in e for e in collect_errors(data))
 
 
 def test_validator_data_lulus(tmp_path):

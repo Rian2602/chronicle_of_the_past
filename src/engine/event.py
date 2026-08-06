@@ -112,10 +112,14 @@ def check_trigger(event: GameEvent, state: GameState) -> bool:
     return all(_match_trigger(condition, state) for condition in event.trigger)
 
 
-def _apply_action(
+def apply_action(
     action: dict[str, Any], state: GameState, result: EventResult, event_id: str
 ) -> None:
-    """Terapkan satu aksi event ke state (GDD §15.3)."""
+    """Terapkan satu aksi event ke state (GDD §15.3).
+
+    Publik agar engine lain (mis. dialog §12.5) memakai parser aksi yang
+    sama — satu sumber kebenaran untuk aksi, tanpa duplikasi logika.
+    """
     kind = action["kind"]
     if kind not in ACTION_KINDS:
         raise ValueError(f"kind aksi tidak dikenal: {kind}")
@@ -202,7 +206,7 @@ def process_events(state: GameState, events: list[GameEvent]) -> EventResult:
         if not check_trigger(event, state):
             continue
         for action in event.actions:
-            _apply_action(action, state, result, event.id)
+            apply_action(action, state, result, event.id)
         result.fired.append(event.id)
         if event.once:
             state.flags[f"event_{event.id}_done"] = True

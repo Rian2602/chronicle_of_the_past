@@ -22,7 +22,8 @@ sys.path.insert(0, str(ROOT))
 from src.core.state import FACTIONS  # noqa: E402
 from src.engine.combat import load_enemies, load_techniques  # noqa: E402
 from src.engine.cultivation import load_tiers  # noqa: E402
-from src.engine.event import load_events  # noqa: E402
+from src.engine.dialog import load_dialogs  # noqa: E402
+from src.engine.event import ACTION_KINDS, load_events  # noqa: E402
 from src.engine.items import load_items  # noqa: E402
 from src.engine.maps import load_maps  # noqa: E402
 from src.engine.quest import load_quests  # noqa: E402
@@ -90,6 +91,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         "cure_poison",
     }
     npcs = _npc_records(data_dir / "npc")
+    dialogs = load_dialogs(data_dir / "dialogues")
     tiers = {tier.id for tier in load_tiers(data_dir / "cultivation")}
     techniques = {
         technique.id for technique in load_techniques(data_dir / "techniques")
@@ -163,6 +165,65 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"{event.id}: add_companion -> {action['id']} tidak ada"
                 )
+
+    # Dialog (GDD §12.5): npc, node `next`, dan aksi wajib ter-resolve.
+    for dialog_id, dialog in dialogs.items():
+        npc_id = dialog.get("npc")
+        if npc_id not in npcs:
+            errors.append(f"{dialog_id}: npc {npc_id} tidak ada")
+        nodes = dialog.get("nodes", {})
+        for node_id, node in nodes.items():
+            for choice in node.get("choices", []):
+                next_id = choice.get("next")
+                if next_id is not None and next_id not in nodes:
+                    errors.append(
+                        f"{dialog_id}: node {node_id} -> next "
+                        f"{next_id} tidak ada"
+                    )
+                for action in choice.get("actions", []):
+                    kind = action.get("kind")
+                    if kind not in ACTION_KINDS:
+                        errors.append(
+                            f"{dialog_id}: node {node_id} -> kind "
+                            f"aksi '{kind}' tak dikenal"
+                        )
+                        continue
+                    if kind == "start_quest" and action["id"] not in quests:
+                        errors.append(
+                            f"{dialog_id}: start_quest -> {action['id']}"
+                        )
+                    elif kind == "unlock_map" and (
+                        action["target"] not in map_ids
+                    ):
+                        errors.append(
+                            f"{dialog_id}: unlock_map -> {action['target']}"
+                        )
+                    elif kind == "grant_memory" and (
+                        action["memory_id"] not in memories
+                    ):
+                        errors.append(
+                            f"{dialog_id}: grant_memory -> "
+                            f"{action['memory_id']}"
+                        )
+                    elif kind == "change_reputation" and (
+                        action["faction"] not in FACTIONS
+                    ):
+                        errors.append(
+                            f"{dialog_id}: change_reputation -> "
+                            f"{action['faction']}"
+                        )
+                    elif kind == "grant_item" and action["id"] not in items:
+                        errors.append(
+                            f"{dialog_id}: grant_item -> "
+                            f"{action['id']} tidak ada"
+                        )
+                    elif kind == "add_companion" and action["id"] not in {
+                        companion.id for companion in companions
+                    }:
+                        errors.append(
+                            f"{dialog_id}: add_companion -> "
+                            f"{action['id']} tidak ada"
+                        )
 
     for npc_id, npc in npcs.items():
         if npc["location"] not in map_ids:

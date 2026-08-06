@@ -29,7 +29,14 @@ from src.engine.cultivation import (
     load_tiers,
     next_tier,
 )
-from src.engine.event import load_events, process_events
+from src.engine.dialog import (
+    apply_actions,
+    find_dialog,
+    get_node,
+    load_dialogs,
+    visible_choices,
+)
+from src.engine.event import EventResult, load_events, process_events
 from src.engine.items import load_items
 from src.engine.maps import load_maps
 from src.engine.quest import (
@@ -542,7 +549,13 @@ class GameSession:
         return lines
 
     def _cmd_talk(self, command: Command) -> list[str]:
-        """Bicara dengan NPC di lokasi saat ini (GDD §18.2, flag talked_)."""
+        """Bicara dengan NPC di lokasi saat ini (GDD §18.2, §12.5).
+
+        Bila NPC punya file dialog data-driven yang belum selesai,
+        percakapan bercabang dimulai (state machine via `choose`).
+        Tanpa file dialog, fallback ke dialog statis lama (`greeting`
+        + array) — kompatibilitas data eksisting (AGENTS §6).
+        """
         if not command.args:
             return ["Bicara dengan siapa? Contoh: talk elder_mao"]
         npc_id = command.args[0]
@@ -553,12 +566,37 @@ class GameSession:
         if npc["location"] != self.state.location:
             return [f"{npc['name']} tidak ada di sini."]
         self.state.flags[f"talked_{npc_id}"] = True
+        dialog = find_dialog(load_dialogs(), npc_id, self.state)
+        if dialog is not None:
+            return self._start_dialog(npc, dialog)
         return (
             [npc["greeting"]]
             + list(npc["dialog"])
             + self._run_quests()
             + self._run_events()
         )
+
+    def _start_dialog(
+        self, npc: dict[str, Any], dialog: dict[str, Any]
+    ) -> list[str]:
+        """Mulai percakapan bercabang: tampilkan node start + pilihan.
+
+        State machine disimpan di ``state.flags["pending_dialog"]``
+        (dialog_id + node saat ini) — pola sama dengan `pending_choice`.
+        Pilihan dijawab lewat perintah `choose <nomor>` (GDD §18.2).
+        """
+        node = get_node(dialog, "start")
+        self.state.flags["pending_dialog"] = {
+            "dialog_id": dialog["id"],
+            "node": "start",
+        }
+        lines = [f"{npc['name']}: {node['text']}"]
+        for index, choice in enumerate(visible_choices(node, self.state), 1):
+            lines.append(f"  [{index}] {choice['text']}")
+        lines.append("Pilih: choose <nomor>")
+        lines.extend(self._run_quests())
+        lines.extend(self._run_events())
+        return lines
 
     def _cmd_memories(self, _command: Command) -> list[str]:
         """Tampilkan echo memori yang terkumpul (GDD §15.3 grant_memory)."""
@@ -833,9 +871,7 @@ class GameSession:
             return ["Belum ada permainan. Mulai baru atau muat save."]
         pending = self.state.flags.get("pending_choice")
         if not pending:
-            return [
-                "Tidak ada pilihan aktif. Tunggu event yang meminta keputusan."
-            ]
+            return self._choose_dialog(command)
         options = pending.get("options", [])
         if not command.args:
             return ["Pilih opsi: choose <key> (contoh: choose a)"]
@@ -858,6 +894,69 @@ class GameSession:
         # Cascade quest + event (sama seperti perintah dunia lain)
         lines.extend(self._run_quests())
         lines.extend(self._run_events())
+        return lines
+
+    def _choose_dialog(self, command: Command) -> list[str]:
+        """Pilih nomor pilihan dalam dialog bercabang (GDD §12.5).
+
+        Membaca ``state.flags["pending_dialog"]`` (diset `_start_dialog`),
+        mengeksekusi aksi pilihan via event parser, lalu pindah ke node
+        berikutnya atau mengakhiri percakapan. `next: null` menandakan
+        akhir; saat itulah flag `talked_<dialog_id>` diset (sekali jalan).
+        """
+        pending = self.state.flags.get("pending_dialog")
+        if not pending:
+            return [
+                "Tidak ada pilihan aktif. Tunggu event yang meminta keputusan."
+            ]
+        if not command.args:
+            return ["Pilih opsi: choose <nomor> (contoh: choose 1)"]
+        raw = command.args[0]
+        if not raw.isdigit():
+            return [f"'{raw}' bukan nomor pilihan yang valid."]
+        dialogs = load_dialogs()
+        dialog = dialogs.get(pending["dialog_id"])
+        if dialog is None:
+            # ponytail: dialog tak ada di data (save lama) -> bersihkan
+            # state; validator §25.3 menjamin data->dialog ter-resolve.
+            self.state.flags.pop("pending_dialog", None)
+            return ["Dialog tidak ditemukan di data (save lama?)."]
+        node = get_node(dialog, pending["node"])
+        choices = visible_choices(node, self.state)
+        number = int(raw)
+        if not 1 <= number <= len(choices):
+            valid = ", ".join(str(i) for i in range(1, len(choices) + 1))
+            return [f"Pilihan '{number}' tidak valid. Pilihan: {valid}"]
+        choice = choices[number - 1]
+        lines: list[str] = []
+        result = EventResult()
+        apply_actions(
+            choice.get("actions", []),
+            self.state,
+            result,
+            dialog["id"],
+        )
+        lines.extend(result.logs)
+        next_id = choice.get("next")
+        if next_id is None:
+            # Percakapan selesai: flag once + bersihkan state machine.
+            self.state.flags[f"talked_{dialog['id']}"] = True
+            self.state.flags.pop("pending_dialog", None)
+            lines.extend(self._run_quests())
+            lines.extend(self._run_events())
+            return lines
+        # Lanjut ke node berikutnya.
+        self.state.flags["pending_dialog"] = {
+            "dialog_id": dialog["id"],
+            "node": next_id,
+        }
+        next_node = get_node(dialog, next_id)
+        lines.append(next_node["text"])
+        for index, option in enumerate(
+            visible_choices(next_node, self.state), 1
+        ):
+            lines.append(f"  [{index}] {option['text']}")
+        lines.append("Pilih: choose <nomor>")
         return lines
 
     def _advance_hours(self, hours: int) -> None:

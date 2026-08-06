@@ -1,0 +1,35 @@
+{
+  "id": "dialog_elder_mao_1",
+  "npc": "elder_mao",
+  "nodes": {
+    "start": {
+      "text": "Sesepuh Mao menatapmu: 'Apa kamu sudah siap memulai jalan kultivasimu?'",
+      "choices": [
+        {
+          "text": "Saya siap, Guru.",
+          "next": "ready",
+          "requires_flag": null,
+          "actions": [
+            {"kind": "change_reputation", "faction": "court", "delta": -5}
+          ]
+        },
+        {
+          "text": "Beri saya waktu.",
+          "next": null
+        }
+      ]
+    },
+    "ready": {
+      "text": "Sesepuh Mao mengangguk: 'Bagus. Mulailah bermeditasi. Temui aku lagi setelah kau melakukannya.'",
+      "choices": [
+        {
+          "text": "[Tinggalkan ruangan]",
+          "next": null,
+          "actions": [
+            {"kind": "set_flag", "flag": "dialog_elder_mao_1_selesai", "value": true}
+          ]
+        }
+      ]
+    }
+  }
+}
