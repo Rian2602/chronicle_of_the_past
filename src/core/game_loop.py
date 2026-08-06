@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -134,6 +134,7 @@ class BattleFrame:
     enemies: list[dict[str, Any]]
     error: str | None = None
     active_ally_name: str | None = None
+    allies: list[dict[str, Any]] = field(default_factory=list)
 
 
 class GameSession:
@@ -729,6 +730,315 @@ class GameSession:
         """Ringkasan tim untuk panel UI (read-only, tanpa efek)."""
         return self._cmd_party(Command(name="party", args=(), raw="party"))
 
+    # ------------------------------------------------------------------
+    # Menu no-typing (GDD §18.2, §14.1): aksi data-driven untuk UI
+    # ------------------------------------------------------------------
+    def menu_actions(self) -> list[dict[str, Any]]:
+        """Daftar aksi kontekstual untuk navigasi tanpa ketik (UI).
+
+        Konteks battle (``self.in_battle``) memuat aksi giliran; konteks
+        dunia memuat aksi eksplorasi. Sub-menu (``sub``) selalu data-driven
+        dari state: lokasi terbuka, NPC di lokasi, item tas, teknik.
+
+        Returns:
+            List dict: ``id``, ``label``, ``command`` (raw siap dispatch),
+            ``sub`` (list dict id/command/desc), ``icon`` (emoji),
+            ``battle`` (bool), ``desc`` (opsional).
+        """
+        if self.in_battle:
+            return self._battle_menu()
+        return self._world_menu()
+
+    def _world_menu(self) -> list[dict[str, Any]]:
+        """Menu konteks dunia: eksplorasi, sosial, dan manajemen."""
+        npcs = self._npc_at_location()
+        has_shop = self._shop_at_location() is not None
+        actions: list[dict[str, Any]] = [
+            {
+                "id": "lihat",
+                "label": "Lihat",
+                "command": "look",
+                "icon": "👁",
+                "battle": False,
+            },
+            {
+                "id": "pergi",
+                "label": "Pergi",
+                "command": "go",
+                "icon": "👟",
+                "battle": False,
+                "sub": self._open_maps(),
+            },
+            {
+                "id": "bicara",
+                "label": "Bicara",
+                "command": "talk",
+                "icon": "💬",
+                "battle": False,
+                "sub": npcs,
+            },
+            {
+                "id": "istirahat",
+                "label": "Istirahat",
+                "command": "rest",
+                "icon": "🌙",
+                "battle": False,
+            },
+            {
+                "id": "racik",
+                "label": "Racik",
+                "command": "refine",
+                "icon": "⚗",
+                "battle": False,
+            },
+            {
+                "id": "inventori",
+                "label": "Inventori",
+                "command": "inventory",
+                "icon": "🎒",
+                "battle": False,
+            },
+            {
+                "id": "misi",
+                "label": "Misi",
+                "command": "quests",
+                "icon": "📜",
+                "battle": False,
+            },
+            {
+                "id": "kenangan",
+                "label": "Kenangan",
+                "command": "memories",
+                "icon": "🧠",
+                "battle": False,
+            },
+            {
+                "id": "peta",
+                "label": "Peta",
+                "command": "map",
+                "icon": "🗺",
+                "battle": False,
+            },
+            {
+                "id": "tim",
+                "label": "Tim",
+                "command": "party",
+                "icon": "👥",
+                "battle": False,
+            },
+            {
+                "id": "kultivasi",
+                "label": "Kultivasi",
+                "command": "cultivate",
+                "icon": "⚡",
+                "battle": False,
+            },
+            {
+                "id": "terobosan",
+                "label": "Terobosan",
+                "command": "breakthrough",
+                "icon": "💥",
+                "battle": False,
+            },
+            {
+                "id": "status",
+                "label": "Status",
+                "command": "status",
+                "icon": "ℹ",
+                "battle": False,
+            },
+            {
+                "id": "simpan",
+                "label": "Simpan",
+                "command": "save",
+                "icon": "💾",
+                "battle": False,
+            },
+            {
+                "id": "bantuan",
+                "label": "Bantuan",
+                "command": "help",
+                "icon": "❓",
+                "battle": False,
+            },
+            {
+                "id": "keluar",
+                "label": "Keluar",
+                "command": "quit",
+                "icon": "🚪",
+                "battle": False,
+            },
+        ]
+        if has_shop:
+            actions.append(
+                {
+                    "id": "toko",
+                    "label": "Toko",
+                    "command": "shop",
+                    "icon": "🛍",
+                    "battle": False,
+                }
+            )
+        return actions
+
+    def _battle_menu(self) -> list[dict[str, Any]]:
+        """Menu battle: aksi giliran + sub-menu teknik & item."""
+        techniques = load_techniques()
+        technique_names = {t.id: t.name for t in techniques}
+        items = load_items()
+        owned = sorted(self.state.inventory.get("items", {}))
+        return [
+            {
+                "id": "serang",
+                "label": "Serang",
+                "command": "attack",
+                "icon": "⚔",
+                "battle": True,
+            },
+            {
+                "id": "teknik",
+                "label": "Teknik",
+                "command": "technique",
+                "icon": "✨",
+                "battle": True,
+                "sub": [
+                    {
+                        "id": skill,
+                        "command": f"technique:{skill}",
+                        "desc": technique_names.get(skill, skill),
+                    }
+                    for skill in self.player_skills
+                ],
+            },
+            {
+                "id": "bertahan",
+                "label": "Bertahan",
+                "command": "defend",
+                "icon": "🛡",
+                "battle": True,
+            },
+            {
+                "id": "amati",
+                "label": "Amati",
+                "command": "observe",
+                "icon": "👁",
+                "battle": True,
+            },
+            {
+                "id": "item",
+                "label": "Item",
+                "command": "use",
+                "icon": "🎒",
+                "battle": True,
+                "sub": [
+                    {
+                        "id": item_id,
+                        "command": f"use {item_id}",
+                        "desc": items.get(item_id, {}).get("name", item_id),
+                    }
+                    for item_id in owned
+                ],
+            },
+            {
+                "id": "kabur",
+                "label": "Kabur",
+                "command": "escape",
+                "icon": "🏃",
+                "battle": True,
+            },
+        ]
+
+    def _npc_at_location(self) -> list[dict[str, Any]]:
+        """NPC yang berada di lokasi pemain (untuk sub-menu bicara).
+
+        Schema NPC tidak punya field ``description``; ``greeting`` dipakai
+        sebagai deskripsi singkat (Ponytail: field description tersendiri
+        menyusul bila mockup UI butuh).
+        """
+        if self.state is None:
+            return []
+        npcs: list[dict[str, Any]] = []
+        for npc_path in sorted(NPC_DIR.glob("*.json")):
+            npc = json.loads(npc_path.read_text(encoding="utf-8"))
+            if npc.get("location") != self.state.location:
+                continue
+            npcs.append(
+                {
+                    "id": npc["id"],
+                    "command": f"talk {npc['id']}",
+                    "desc": npc.get("greeting", ""),
+                }
+            )
+        return npcs
+
+    def _open_maps(self) -> list[dict[str, Any]]:
+        """Lokasi terbuka (sub-menu pergi): start + flag map_*_unlocked.
+
+        Sumber otoritatif = flags (konsisten dengan ``_cmd_go``), bukan
+        ``state.map_unlocks`` (list itu hanya dicatat event).
+        """
+        unlocked = [START_LOCATION]
+        for flag, value in self.state.flags.items():
+            if flag.startswith("map_") and flag.endswith("_unlocked") and value:
+                unlocked.append(flag[len("map_") : -len("_unlocked")])
+        return [
+            {"id": location, "command": f"go {location}"}
+            for location in sorted(set(unlocked))
+        ]
+
+    def dialog_choices(self) -> list[dict[str, Any]]:
+        """Pilihan dialog aktif untuk UI (GDD §12.5).
+
+        Membaca ``state.flags["pending_dialog"]`` (diset `_start_dialog`);
+        tanpa dialog aktif mengembalikan daftar kosong. Setiap pilihan
+        memuat hint efek dari aksinya (mis. "→ Reputasi rebels +5").
+
+        Returns:
+            List dict: ``id`` (nomor 1-based), ``text``, ``effect_hint``
+            (opsional).
+        """
+        if self.state is None:
+            return []
+        pending = self.state.flags.get("pending_dialog")
+        if not pending:
+            return []
+        dialog = load_dialogs().get(pending["dialog_id"])
+        if dialog is None:
+            return []
+        node = get_node(dialog, pending["node"])
+        choices: list[dict[str, Any]] = []
+        for index, choice in enumerate(visible_choices(node, self.state), 1):
+            choices.append(
+                {
+                    "id": str(index),
+                    "text": choice["text"],
+                    "effect_hint": self._choice_effect_hint(choice),
+                }
+            )
+        return choices
+
+    def _choice_effect_hint(self, choice: dict[str, Any]) -> str:
+        """Hint efek dari aksi pilihan dialog (GDD §12.5).
+
+        Menyusun teks ringkas dari aksi yang dikenal (grant_item,
+        grant_gold, change_reputation); aksi lain diabaikan.
+        """
+        hints: list[str] = []
+        for action in choice.get("actions", []):
+            kind = action.get("kind")
+            if kind == "grant_item":
+                name = (
+                    load_items().get(action["id"], {}).get("name", action["id"])
+                )
+                hints.append(f"+{name}")
+            elif kind == "grant_gold":
+                hints.append(f"+{action['amount']} emas")
+            elif kind == "change_reputation":
+                for faction, delta in action.get("changes", {}).items():
+                    sign = "+" if delta >= 0 else ""
+                    hints.append(f"Reputasi {faction} {sign}{delta}")
+        return " → ".join(hints)
+
     def _cmd_go(self, command: Command) -> list[str]:
         if not command.args:
             return ["Tujuan? Contoh: go ashfall_forest"]
@@ -1135,6 +1445,16 @@ class GameSession:
             enemies=battle.observe(),
             error=error,
             active_ally_name=active_name,
+            allies=[
+                {
+                    "name": member.name,
+                    "hp": member.hp,
+                    "hp_max": member.hp_max,
+                    "qi": member.qi,
+                    "qi_max": member.qi_max,
+                }
+                for member in battle.allies
+            ],
         )
 
     def battle_step(self, action: str) -> BattleFrame:

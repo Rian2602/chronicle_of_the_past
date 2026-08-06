@@ -1494,3 +1494,80 @@ def test_party_menampilkan_roster_cadangan(tmp_path):
     joined = "\n".join(session.party_lines())
     assert "Mira" in joined
     assert "Cadangan" in joined
+
+
+# ----------------------------------------------------------------------
+# UI No-Typing (GDD §18.2, §14.1): menu_actions + dialog_choices
+# ----------------------------------------------------------------------
+
+
+def test_menu_actions_dunia_berisi_aksi_standar(tmp_path):
+    """Menu dunia memuat aksi inti dengan command raw yang valid."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    actions = session.menu_actions()
+    ids = {action["id"] for action in actions}
+    assert {"lihat", "pergi", "istirahat", "status"} <= ids
+    pergi = next(a for a in actions if a["id"] == "pergi")
+    assert any(sub["command"] == "go ashfall_forest" for sub in pergi["sub"])
+    assert any(sub["command"] == "go village_emberfall" for sub in pergi["sub"])
+
+
+def test_menu_actions_sub_bicara_hanya_npc_di_lokasi(tmp_path):
+    """Sub-menu bicara hanya NPC yang berada di lokasi pemain."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    actions = session.menu_actions()
+    bicara = next(a for a in actions if a["id"] == "bicara")
+    ids = {sub["id"] for sub in bicara["sub"]}
+    assert "elder_mao" in ids  # di village_emberfall
+    assert "penjaga_makam" not in ids  # di ruin_shrine
+
+
+def test_menu_actions_battle_memuat_aksi_giliran(tmp_path):
+    """Menu battle memuat serang/bertahan/amati/kabur + teknik & item."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    assert session.in_battle
+    actions = session.menu_actions()
+    ids = {action["id"] for action in actions}
+    assert {"serang", "bertahan", "amati", "kabur"} <= ids
+    assert all(action["battle"] for action in actions)
+
+
+def test_menu_actions_toko_hanya_saat_pedagang_ada(tmp_path):
+    """Aksi toko hanya muncul bila ada pedagang di lokasi."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    assert any(a["id"] == "toko" for a in session.menu_actions())
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    assert not any(a["id"] == "toko" for a in session.menu_actions())
+
+
+def test_dialog_choices_membaca_pending_dialog(tmp_path):
+    """dialog_choices: pilihan dialog aktif + hint efek dari aksi."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    assert session.dialog_choices() == []
+    _dispatch(session, "talk elder_mao")
+    choices = session.dialog_choices()
+    assert choices, "dialog elder_mao harus punya pilihan"
+    assert choices[0]["id"]
+    assert "text" in choices[0]
+
+
+def test_battle_frame_memuat_allies(tmp_path):
+    """BattleFrame.allies: nama + hp/qi tiap anggota tim (GDD §6)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    frame = session.battle_frame()
+    assert len(frame.allies) == 1  # hanya protagonis
+    assert frame.allies[0]["name"] == "Akar"
+    assert "hp" in frame.allies[0] and "qi_max" in frame.allies[0]
