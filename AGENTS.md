@@ -282,8 +282,8 @@ dan stabil. Sentuh hanya bila diminta eksplisit atau ada bug terbukti
 `_cmd_talk()`), `src/core/save.py` (tambah migrasi bila schema berubah)
 — perluas tanpa merestrukturisasi tanpa alasan kuat.
 * **Data eksisting** (6 tier, 10 teknik, 14 musuh, 30 event, 7 peta,
-  16 quest, 3 memori, 25 item, 1 toko, 11 NPC, 1 rekan) — **DILARANG**
-dihapus atau diganti; hanya ditambah.
+  16 quest, 3 memori, 25 item, 1 toko, 11 NPC, 1 rekan, 1 dialog) —
+  **DILARANG** dihapus atau diganti; hanya ditambah.
 
 ---
 
