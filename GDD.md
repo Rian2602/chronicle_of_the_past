@@ -421,6 +421,7 @@ chronicle_of_the_past/
 │   ├── dialogues/
 │   ├── maps/
 │   ├── npc/
+│   ├── companions/          # rekan & binatang roh (§20)
 │   ├── factions/
 │   └── story/              # memories, scenes, epilog
 └── tests/
@@ -674,6 +675,7 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
   "schema_version": 2,
   "player": {"name": "…", "background": "…", "path": "sword", "tier": "qi_condensation", "stats": {}, "insight": 0, "gold": 0, "meridian_buka": 0},
   "party": [{"id": "lin_wei", "tier": "…", "bond_xp": 0}],
+  "party_active": ["lin_wei"],
   "inventory": {"items": {}, "equipped": {}, "artifacts": {}},
   "quests": {"started": [], "done": [], "failed": []},
   "flags": {},
@@ -686,6 +688,10 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
   "shop_sold": {}
 }
 ```
+
+* **`party_active` (v1.4):** daftar id rekan yang ikut bertarung (max 3
+  slot, §20.1). Field baru dengan backfill default `[]` saat load — save
+  v1/v2 lama aman tanpa naikkan `schema_version`.
 
 ### 19.3 Migrasi & Anti-Corrupt
 
@@ -820,6 +826,18 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 * Angka halus keseimbangan (damage per skill, harga jual kembali toko) — disetel saat playtest Fase 5. Harga beli toko hidup di `price` data/items; jual kembali sementara 40% (§7).
 
 ### 24.3 Changelog
+
+**v1.4 (2026-08-06)** — Party system (fondasi Arc 2, Fase 2):
+
+* §20.1–20.4: engine rekan tim — model `Companion` (bond XP, peringkat,
+  elemen, teknik bawaan, tanpa meridian/breakthrough), battle multi-ally
+  (target musuh acak untuk multi-sekutu, pemain mengendalikan semua
+  anggota), bond XP naik pasca kemenangan, KO rekan pulih otomatis;
+  §15: aksi event `add_companion` (rekrut Lin Wei pasca quest103);
+  §14.2: folder `data/companions/`; §18: perintah `party`/`swap`
+  (gating lokasi aman — swap di combat ditunda, `ponytail:`); §19.2:
+  field `party_active` (backfill default, schema tetap v2); §6:
+  penanda giliran aktif di BattleFrame (regresi multi-ally).
 
 **v1.3 (2026-08-06)** — Textual UI overhaul (zero-dependency):
 
