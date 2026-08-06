@@ -1,7 +1,7 @@
 {
   "id": "pedagang_kelana",
   "name": "Pedagang Kelana",
-  "location": "hutan_kelabu",
+  "location": "village_emberfall",
   "greeting": "Hei, kultivator! Mau beli barang langka?",
   "dialog": [
     "Pedagang Kelana membuka tasnya: 'Aku punya esensi-api, esensi-air, esensi-kayu, esensi-tanah. Bahan bagus untuk racik pil.'",
