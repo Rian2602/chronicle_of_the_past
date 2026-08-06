@@ -145,8 +145,14 @@ class GameScreen(Screen):
         self.query_one("#cmd", Input).focus()
 
     def action_complete(self) -> None:
-        """Autocomplete perintah dari input saat ini (TAB, GDD §18)."""
+        """Autocomplete perintah dari input saat ini (TAB, GDD §18).
+
+        Hanya melengkapi input satu kata; input yang sudah berisi
+        argumen (multi-kata) tidak disentuh agar argumen tidak hilang.
+        """
         cmd = self.query_one("#cmd", Input)
+        if " " in cmd.value.strip():
+            return
         suggestion = complete_command(cmd.value)
         if suggestion:
             cmd.value = suggestion

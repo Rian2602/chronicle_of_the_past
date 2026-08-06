@@ -80,6 +80,10 @@ class CommandError(ValueError):
     """Perintah tidak bisa diparsing: pesan jelas untuk pemain."""
 
 
+# Nama kanonik dihitung sekali saat import (bukan tiap panggilan).
+_KANONIK: list[str] = sorted({value for value in ALIASES.values()})
+
+
 @dataclass(frozen=True)
 class Command:
     """Perintah ter-parse: nama kanonik + argumen + input mentah."""
@@ -89,18 +93,13 @@ class Command:
     raw: str
 
 
-def _kanonik() -> list[str]:
-    """Daftar nama kanonik untuk koreksi & autocomplete (GDD §18)."""
-    return sorted({value for value in ALIASES.values()})
-
-
 def _close_match(token: str, cutoff: float = 0.82) -> str | None:
     """Nama kanonik terdekat untuk token; None bila tak cukup dekat.
 
     Memakai difflib (stdlib) sebagai pengganti rapidfuzz — tangga
     Ponytail rung 3: pakai stdlib dulu.
     """
-    matches = difflib.get_close_matches(token, _kanonik(), n=1, cutoff=cutoff)
+    matches = difflib.get_close_matches(token, _KANONIK, n=1, cutoff=cutoff)
     return matches[0] if matches else None
 
 
@@ -120,9 +119,11 @@ def complete_command(raw: str) -> str | None:
     token = raw.strip().split()[0].lower() if raw.strip() else ""
     if not token:
         return None
-    prefixes = [name for name in _kanonik() if name.startswith(token)]
+    prefixes = [name for name in _KANONIK if name.startswith(token)]
     if len(prefixes) == 1:
         return prefixes[0]
+    # ponytail: alias Indonesia (misi/tas/racik) belum bisa dilengkapi
+    # TAB (prefix hanya cocokkan nama kanonik); upgrade bila perlu.
     return _close_match(token)
 
 

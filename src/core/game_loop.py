@@ -56,6 +56,9 @@ START_LOCATION = "village_emberfall"
 NPC_DIR = Path(__file__).resolve().parents[2] / "data" / "npc"
 UNAVAILABLE = "Belum tersedia (Fase 1)."
 
+# Warna semantik item di inventory (GDD §14.2): material, resep, alat.
+ITEM_TYPE_COLORS = {"material": "cyan", "recipe": "violet", "tool": "gold3"}
+
 # Perintah yang sistemnya sudah ada di MVP; sisanya menjawab "belum
 # tersedia" (kebijakan rencana: bukan error, bukan implementasi setengah).
 AVAILABLE = {
@@ -237,14 +240,13 @@ class GameSession:
         if not items:
             return ["Tasmu kosong."]
         names = load_items()
-        type_colors = {"material": "cyan", "recipe": "violet", "tool": "gold3"}
         lines = ["Isi tas:"]
         for item_id, count in sorted(items.items()):
             # ponytail: item tanpa data (save lama) -> id mentah; validator
             # §25.3 menjamin event->item ter-resolve.
             item = names.get(item_id, {})
             name = item.get("name", item_id)
-            color = type_colors.get(item.get("type", ""), "")
+            color = ITEM_TYPE_COLORS.get(item.get("type", ""), "")
             if color:
                 lines.append(f"  [{color}]{name}[/] x{count}")
             else:
