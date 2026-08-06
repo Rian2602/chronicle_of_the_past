@@ -158,6 +158,14 @@ def complete_quest(state: GameState, quest: Quest) -> list[str]:
     state.player.gold += gold
     for faction, delta in rewards.get("reputation", {}).items():
         state.add_reputation(faction, delta)
+    grant_item_line = None
+    grant_item = rewards.get("grant_item")
+    if grant_item:
+        item_id = grant_item["id"]
+        count = grant_item.get("count", 1)
+        items = state.inventory.setdefault("items", {})
+        items[item_id] = items.get(item_id, 0) + count
+        grant_item_line = f"Item +{count}: {item_id}."
     # Flag kelulusan otomatis engine (§12.2) — tidak tergantung data.
     state.flags[f"{quest.id}_done"] = True
     for flag in quest.flags_on_complete:
@@ -172,6 +180,8 @@ def complete_quest(state: GameState, quest: Quest) -> list[str]:
         lines.append(f"Gold +{gold}.")
     for faction, delta in rewards.get("reputation", {}).items():
         lines.append(f"Reputasi {faction} {delta:+d}.")
+    if grant_item_line:
+        lines.append(grant_item_line)
     return lines
 
 

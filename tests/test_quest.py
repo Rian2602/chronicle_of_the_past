@@ -250,6 +250,25 @@ def test_quest_rewards_applied():
     assert state.flags["path_unlocked_sword"] is True
 
 
+def test_quest_reward_grant_item_menambah_item_ke_tas():
+    """Reward grant_item menambah item ke inventory (skema §12.3)."""
+    state = _state()
+    quest = _quest(
+        rewards={"grant_item": {"id": "pil_pemulih", "count": 2}},
+    )
+    lines = complete_quest(state, quest)
+    assert state.inventory["items"]["pil_pemulih"] == 2
+    assert any("pil_pemulih" in line for line in lines)
+
+
+def test_quest_reward_grant_item_tanpa_count_default_satu():
+    """Reward grant_item tanpa count default 1 (kompatibilitas skema)."""
+    state = _state()
+    quest = _quest(rewards={"grant_item": {"id": "batu_qi"}})
+    complete_quest(state, quest)
+    assert state.inventory["items"]["batu_qi"] == 1
+
+
 def test_advance_quest_belum_semua_tidak_menyelesaikan():
     """advance_quest tanpa semua objektif selesai: tidak menyelesaikan."""
     state = _state()
