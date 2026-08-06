@@ -7,7 +7,7 @@ layar hanya meneruskan perintah dan menampilkan hasilnya.
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Input, RichLog, Static
 
@@ -118,10 +118,14 @@ class GameScreen(Screen):
         self._initial_log = list(initial_log or [])
 
     def compose(self) -> ComposeResult:
-        """Susun HUD, panel musuh, log, dan input perintah."""
+        """Susun HUD, log, sidebar quest/party, dan input perintah."""
         yield Static("", id="hud")
         yield Static("", id="enemy")
-        yield RichLog(id="game-log", markup=True)
+        with Horizontal(id="main-row"):
+            yield RichLog(id="game-log", markup=True)
+            with Vertical(id="side-col"):
+                yield Static("", id="panel-quest")
+                yield Static("", id="panel-party")
         yield Input(placeholder="Ketik perintah (help untuk bantuan)", id="cmd")
 
     def on_mount(self) -> None:
@@ -191,13 +195,22 @@ class GameScreen(Screen):
         return command.name
 
     def _refresh(self) -> None:
-        """Muat ulang HUD status dan panel musuh."""
+        """Muat ulang HUD status, sidebar, dan panel musuh."""
         session = self.app.session
         if session.state is None:
             return
         # HUD memakai status_lines (bukan dispatch) agar tidak terblokir
         # guard battle — stat tetap terlihat selama pertarungan.
         self.query_one("#hud", Static).update("\n".join(session.status_lines()))
+        # Sidebar: quest aktif + komposisi tim (read-only, tanpa efek).
+        quest_text = "\n".join(session.quest_lines())
+        self.query_one("#panel-quest", Static).update(
+            f"[bold gold3]Quest[/]\n{quest_text}"
+        )
+        party_text = "\n".join(session.party_lines())
+        self.query_one("#panel-party", Static).update(
+            f"[bold cyan]Partai[/]\n{party_text}"
+        )
         if session.in_battle:
             frame = session.battle_frame()
             panel = "\n".join(self._enemy_lines(frame))
@@ -238,7 +251,15 @@ class ChronicleApp(App):
     #hud { background: #1a1a1a; padding: 0 1; border-bottom: solid #303030; }
     #enemy { background: #1a0000; padding: 0 1; border-bottom: solid #4a0000;
              color: #ff5555; }
-    #game-log { height: 1fr; border: round #D4AF37; background: #0F0F0F; }
+    #main-row { height: 1fr; }
+    #game-log { width: 2fr; border: round #D4AF37; background: #0F0F0F; }
+    #side-col { width: 1fr; border-left: solid #303030; }
+    #panel-quest, #panel-party {
+        height: 1fr;
+        padding: 0 1;
+        border-bottom: solid #303030;
+        background: #121212;
+    }
     #cmd { border: tall #303030; background: #151515; }
     #cmd:focus { border: tall #D4AF37; }
     """

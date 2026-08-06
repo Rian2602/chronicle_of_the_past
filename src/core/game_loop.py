@@ -555,6 +555,18 @@ class GameSession:
     def _cmd_party(self, _command: Command) -> list[str]:
         return [f"Timmu hanya {self.state.player.name} (rekan: Fase 1)."]
 
+    def quest_lines(self) -> list[str]:
+        """Ringkasan quest aktif untuk panel UI (read-only, tanpa efek).
+
+        Reuse logika ``_cmd_quests`` agar panel dan perintah quests tidak
+        mungkin berbeda; tanpa cascade quest/event (murni tampilan).
+        """
+        return self._cmd_quests(Command(name="quests", args=(), raw="quests"))
+
+    def party_lines(self) -> list[str]:
+        """Ringkasan tim untuk panel UI (read-only, tanpa efek)."""
+        return self._cmd_party(Command(name="party", args=(), raw="party"))
+
     def _cmd_go(self, command: Command) -> list[str]:
         if not command.args:
             return ["Tujuan? Contoh: go ashfall_forest"]

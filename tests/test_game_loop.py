@@ -548,6 +548,24 @@ def test_quest102_selesai_setelah_talk_lin_wei_dan_go_shrine(tmp_path):
     assert "quest102" in state.quests.done
 
 
+def test_quest_lines_menampilkan_quest_aktif(tmp_path):
+    """Panel quest memakai data yang sama dengan perintah quests."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")  # quest101 dimulai via event intro
+    joined = "\n".join(session.quest_lines())
+    assert "Qi Pertama" in joined
+
+
+def test_party_lines_memakai_pesan_stub(tmp_path):
+    """Panel party read-only (stub Fase 1) tanpa efek samping."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    joined = "\n".join(session.party_lines())
+    assert "Timmu hanya" in joined
+    assert session.state.quests.started == []  # tidak memicu event
+
+
 def test_quests_menampilkan_deskripsi_quest(tmp_path):
     """Quest aktif menampilkan deskripsi naratif dari data (GDD §12.3)."""
     session = _session(tmp_path)

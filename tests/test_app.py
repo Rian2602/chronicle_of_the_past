@@ -1,7 +1,7 @@
 """Test tipis UI Textual: menu utama dan alur mulai baru (GDD §14.1)."""
 
 import pytest
-from textual.widgets import Input, Log, RichLog, Static
+from textual.widgets import Input, RichLog, Static
 
 from src.core.game_loop import GameSession
 from src.ui.app import ChronicleApp, GameScreen, MainMenuScreen, NameScreen
@@ -12,12 +12,19 @@ def _app(tmp_path) -> ChronicleApp:
     return ChronicleApp(session=GameSession(save_dir=tmp_path))
 
 
-def test_game_screen_menggunakan_richlog():
+@pytest.mark.asyncio
+async def test_game_screen_menggunakan_richlog(tmp_path):
     """Layar game memakai RichLog agar narasi bisa diberi markup warna."""
-    screen = GameScreen()
-    widgets = list(screen.compose())
-    assert any(isinstance(w, RichLog) for w in widgets)
-    assert not any(isinstance(w, Log) for w in widgets)
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.press("n")
+        await pilot.pause()
+        app.screen.query_one("#name", Input).value = "Akar"
+        await pilot.press("enter")
+        await pilot.pause()
+        # RichLog ada di layout panel (§14.1); Log klasik tidak dipakai.
+        assert isinstance(app.screen.query_one("#game-log"), RichLog)
 
 
 @pytest.mark.asyncio
@@ -57,6 +64,24 @@ async def test_alur_mulai_baru_sampai_layar_game(tmp_path):
         assert isinstance(app.screen, GameScreen)
         hud = app.screen.query_one("#hud", Static).content
         assert "Akar" in str(hud)
+
+
+@pytest.mark.asyncio
+async def test_layout_memiliki_panel_quest_dan_party(tmp_path):
+    """Layar game memuat panel quest & party di sidebar."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.press("n")
+        await pilot.pause()
+        app.screen.query_one("#name", Input).value = "Akar"
+        await pilot.press("enter")
+        await pilot.pause()
+        assert app.screen.query_one("#panel-quest") is not None
+        assert app.screen.query_one("#panel-party") is not None
+        # Sidebar terisi data quest aktif (quest101 via event intro).
+        quest = app.screen.query_one("#panel-quest", Static).content
+        assert "Quest" in str(quest)
 
 
 @pytest.mark.asyncio
