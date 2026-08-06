@@ -12,7 +12,12 @@ from textual.screen import Screen
 from textual.widgets import Button, Input, RichLog, Static
 
 from src.core.game_loop import BattleFrame, GameSession, make_bar
-from src.core.input import Command, CommandError, parse_command
+from src.core.input import (
+    Command,
+    CommandError,
+    complete_command,
+    parse_command,
+)
 
 
 class MainMenuScreen(Screen):
@@ -110,7 +115,10 @@ class GameScreen(Screen):
     ke battle_step selama ada pertarungan aktif.
     """
 
-    BINDINGS = [("escape", "back_to_menu", "Menu Utama")]
+    BINDINGS = [
+        ("escape", "back_to_menu", "Menu Utama"),
+        ("tab", "complete", "Lengkapi"),
+    ]
 
     def __init__(self, initial_log: list[str] | None = None) -> None:
         """Simpan baris log awal (mis. pesan hasil muat save)."""
@@ -135,6 +143,14 @@ class GameScreen(Screen):
             log.write(line + "\n")
         self._refresh()
         self.query_one("#cmd", Input).focus()
+
+    def action_complete(self) -> None:
+        """Autocomplete perintah dari input saat ini (TAB, GDD §18)."""
+        cmd = self.query_one("#cmd", Input)
+        suggestion = complete_command(cmd.value)
+        if suggestion:
+            cmd.value = suggestion
+            cmd.cursor_position = len(suggestion)
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
         """Parse perintah: arahkan ke battle atau dunia sesuai kondisi."""

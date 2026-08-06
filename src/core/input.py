@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import difflib
 from dataclasses import dataclass
 
 # Alias Indonesia -> perintah kanonik (GDD §18.1–18.3).
@@ -88,11 +89,51 @@ class Command:
     raw: str
 
 
+def _kanonik() -> list[str]:
+    """Daftar nama kanonik untuk koreksi & autocomplete (GDD §18)."""
+    return sorted({value for value in ALIASES.values()})
+
+
+def _close_match(token: str, cutoff: float = 0.82) -> str | None:
+    """Nama kanonik terdekat untuk token; None bila tak cukup dekat.
+
+    Memakai difflib (stdlib) sebagai pengganti rapidfuzz — tangga
+    Ponytail rung 3: pakai stdlib dulu.
+    """
+    matches = difflib.get_close_matches(token, _kanonik(), n=1, cutoff=cutoff)
+    return matches[0] if matches else None
+
+
+def complete_command(raw: str) -> str | None:
+    """Autocomplete: nama kanonik untuk kata pertama input (TAB).
+
+    Prefix yang tidak ambigu langsung dilengkapi; bila tidak ada prefix,
+    typo ringan dikoreksi via difflib. Input kosong atau ambigu
+    mengembalikan None.
+
+    Args:
+        raw: Input mentah pemain (bisa kosong atau berisi sebagian).
+
+    Returns:
+        Nama kanonik, atau None bila tidak ada yang dekat.
+    """
+    token = raw.strip().split()[0].lower() if raw.strip() else ""
+    if not token:
+        return None
+    prefixes = [name for name in _kanonik() if name.startswith(token)]
+    if len(prefixes) == 1:
+        return prefixes[0]
+    return _close_match(token)
+
+
 def parse_command(line: str) -> Command | None:
     """Parse satu baris input menjadi Command; None untuk baris kosong.
 
+    Typo ringan pada kata pertama diperbaiki otomatis (difflib); typo
+    jauh tetap CommandError.
+
     Raises:
-        CommandError: perintah tidak dikenal.
+        CommandError: perintah tidak dikenal (dan tidak ada koreksi dekat).
     """
     raw = line.strip()
     if not raw:
@@ -101,5 +142,11 @@ def parse_command(line: str) -> Command | None:
     alias = parts[0].lower()
     name = ALIASES.get(alias)
     if name is None:
-        raise CommandError(f"perintah tidak dikenal: '{alias}'. Ketik 'help'.")
+        corrected = _close_match(alias)
+        if corrected is not None:
+            name = corrected
+        else:
+            raise CommandError(
+                f"perintah tidak dikenal: '{alias}'. Ketik 'help'."
+            )
     return Command(name=name, args=tuple(parts[1:]), raw=raw)

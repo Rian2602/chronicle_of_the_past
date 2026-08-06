@@ -28,6 +28,24 @@ async def test_game_screen_menggunakan_richlog(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_tab_melengkapi_perintah(tmp_path):
+    """TAB melengkapi input ke perintah terdekat (GDD §18)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.press("n")
+        await pilot.pause()
+        app.screen.query_one("#name", Input).value = "Akar"
+        await pilot.press("enter")
+        await pilot.pause()
+        cmd = app.screen.query_one("#cmd", Input)
+        cmd.value = "stat"
+        await pilot.press("tab")
+        await pilot.pause()
+        assert cmd.value == "status"
+
+
+@pytest.mark.asyncio
 async def test_menu_utama_menampilkan_judul(tmp_path):
     """Layar menu menampilkan judul game dan tombol mulai."""
     app = _app(tmp_path)

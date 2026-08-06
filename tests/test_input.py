@@ -91,3 +91,26 @@ def test_perintah_tidak_dikenal_melempar_error():
     with pytest.raises(CommandError) as excinfo:
         parse_command("flying_sword")
     assert "flying_sword" in str(excinfo.value)
+
+
+def test_koreksi_ketik_dekat():
+    """Typo ringan diperbaiki otomatis (difflib stdlib, GDD §18)."""
+    assert parse_command("brakthrough").name == "breakthrough"
+    assert parse_command("inventroy").name == "inventory"
+    assert parse_command("kultivasi").name == "cultivate"  # alias utuh
+
+
+def test_typo_jauh_tetap_error():
+    """Typo jauh tidak dikoreksi (tetap CommandError)."""
+    with pytest.raises(CommandError):
+        parse_command("flying_sword")
+
+
+def test_complete_command_menyarankan():
+    """Autocomplete mengembalikan perintah terdekat untuk awalan/typo."""
+    from src.core.input import complete_command
+
+    assert complete_command("bre") == "breakthrough"
+    assert complete_command("invent") == "inventory"
+    assert complete_command("flying_sword") is None
+    assert complete_command("") is None
