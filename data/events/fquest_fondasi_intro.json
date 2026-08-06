@@ -1,0 +1,16 @@
+{
+  "id": "fquest_fondasi_intro",
+  "trigger": [
+    {"kind": "tier_reached", "tier": "foundation_establishment"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_fondasi"},
+    {"kind": "set_flag", "flag": "fquest_fondasi_active", "value": true},
+    {"kind": "unlock_map", "target": "gua_abyss"},
+    {
+      "kind": "log",
+      "text": "Gema Orde Kuno membisik saat meridianmu menguat: 'Fondasi telah tegak. Golem terbakar dan penunggu hutan menunggu di Gua Abyss — buktikan bahwa jalanmu layak disebut fondasi, atau biarkan nama itu tenggelam bersama yang gagal.'"
+    }
+  ],
+  "once": true
+}

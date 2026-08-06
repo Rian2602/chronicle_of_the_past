@@ -31,6 +31,13 @@ EXPECTED_EVENTS = {
     "fquest_kultisi_done",
     "fquest_pelipur_done",
     "fquest_fondasi_done",
+    "fquest_hutan_ember_intro",
+    "fquest_rebels_kiriman_intro",
+    "fquest_pelipur_intro",
+    "fquest_kultisi_intro",
+    "fquest_holyorder_mata_intro",
+    "fquest_abyssal_intro",
+    "fquest_fondasi_intro",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

@@ -1,0 +1,16 @@
+{
+  "id": "fquest_hutan_ember_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest103_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_hutan_ember"},
+    {"kind": "set_flag", "flag": "fquest_hutan_ember_active", "value": true},
+    {"kind": "unlock_map", "target": "hutan_kelabu"},
+    {
+      "kind": "log",
+      "text": "Jati, penjaga hutan, menyusulmu: 'Api di Hutan Ember tak padam sendiri — penebus Orde Suci yang menyalakannya, dan sesuatu di balik asap itu menunggu. Hantu laut dan serigala ember menjaga jalannya. Aku butuh tangan yang kuat, kultivator.'"
+    }
+  ],
+  "once": true
+}

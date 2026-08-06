@@ -4,7 +4,7 @@
   "description": "Gua dalam dengan dinding berkilau kristal hitam. Suara gemerisik cacing bergema dari kedalaman. Qi abyss tebal menyelimuti setiap sudut.",
   "tier": 2,
   "enemies": [
-    {"enemy": "abyssal_worm", "requires_flag": "fquest_abyssal"},
-    {"enemy": "golem_terbakar", "requires_flag": "fquest_fondasi"}
+    {"enemy": "abyssal_worm", "requires_flag": "fquest_abyssal_active"},
+    {"enemy": "golem_terbakar", "requires_flag": "fquest_fondasi_active"}
   ]
 }

@@ -5,7 +5,8 @@
   "tier": 1,
   "enemies": [
     {"enemy": "bandit_perbatasan"},
-    {"enemy": "babi_hutan_qi", "requires_flag": "quest103_done"},
-    {"enemy": "pembelot_pemberontak", "requires_flag": "fquest_rebels_kiriman_babi_dead"}
+    {"enemy": "babi_hutan_qi", "requires_flag": "fquest_rebels_kiriman_active"},
+    {"enemy": "pembelot_pemberontak", "requires_flag": "fquest_rebels_kiriman_active"},
+    {"enemy": "kultisi_merah", "requires_flag": "fquest_kultisi_active"}
   ]
 }

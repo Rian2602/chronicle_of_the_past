@@ -1,0 +1,16 @@
+{
+  "id": "fquest_pelipur_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest104_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_pelipur"},
+    {"kind": "set_flag", "flag": "fquest_pelipur_active", "value": true},
+    {"kind": "grant_item", "id": "batu_qi", "count": 3},
+    {
+      "kind": "log",
+      "text": "Mira mendekat, wajahnya pucat: 'Anakku sakit — meridiannya tertutup. Aku butuh tiga batu qi untuk ramuan. Batu-batu itu terletak di ladang barat yang dijaga, tempat tak seorang pun berani datang. Carikan untukku, dan kau akan menjadi harapan terakhir rumah ini.'"
+    }
+  ],
+  "once": true
+}

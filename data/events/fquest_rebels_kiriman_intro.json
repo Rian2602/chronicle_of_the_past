@@ -1,0 +1,15 @@
+{
+  "id": "fquest_rebels_kiriman_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest103_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_rebels_kiriman"},
+    {"kind": "set_flag", "flag": "fquest_rebels_kiriman_active", "value": true},
+    {
+      "kind": "log",
+      "text": "Jati menahanmu di Hutan Perbatasan: 'Kiriman obat pemberontak diseret di jalur ini — babi hutan qi dan pembelot pemberontak mengawasinya. Ambil kembali sebelum Orde Suci menemukannya lebih dulu.'"
+    }
+  ],
+  "once": true
+}

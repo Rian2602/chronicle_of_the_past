@@ -11,5 +11,5 @@
   "flags_on_complete": ["fquest_fondasi_done"],
   "next": null,
   "category": "faction",
-  "requires_flag": "foundation_establishment"
+  "requires_flag": "fquest_fondasi_active"
 }
