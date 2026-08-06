@@ -18,9 +18,9 @@ Foundation di bawah Linux Foundation): markdown polos tanpa skema wajib,
 dibaca otomatis oleh berbagai agent — termasuk **OpenCode, yang membaca
 file ini secara native**.
 
-\---
+---
 
-## §1. Konteks Proyek \& Sumber Kebenaran
+## §1. Konteks Proyek & Sumber Kebenaran
 
 |Aspek|Nilai|
 |-|-|
@@ -65,12 +65,12 @@ graphify update .                                   # perbarui knowledge graph s
 graphify query "<pertanyaan>"                       # tanya graph sebelum grep manual
 ```
 
-\---
+---
 
-## §2. Hukum Superpowers — TDD \& Disiplin Proses
+## §2. Hukum Superpowers — TDD & Disiplin Proses
 
 Prinsip diverifikasi langsung dari **obra/superpowers** (Jesse Vincent,
-MIT) — "agentic skills framework \& software development methodology".
+MIT) — "agentic skills framework & software development methodology".
 
 ### 2.1 Hukum Besi: RED → GREEN → REFACTOR → COMMIT
 
@@ -84,7 +84,7 @@ lulus (**GREEN**) → **refactor** bila perlu (struktur, bukan perilaku) →
 test konten (referensi NPC/musuh/peta valid, requirement quest bisa
 dipenuhi) sebelum menambah data massal.
 
-### 2.2 Brainstorming \& Desain Dulu
+### 2.2 Brainstorming & Desain Dulu
 
 * Sebelum fitur baru / konten besar / perubahan arah: **ajukan pertanyaan
 klarifikasi satu per satu**, eksplorasi 2–3 pendekatan, lalu susun
@@ -119,7 +119,7 @@ smoke test, atau output nyata) — **"seharusnya jalan" bukan bukti.**
 
 * Dilarang *guess-and-check* atau menambal gejala tanpa memahami akar
 masalah.
-* Ikuti 4 fase: **Investigasi Akar Masalah → Analisis Pola → Hipotesis \&
+* Ikuti 4 fase: **Investigasi Akar Masalah → Analisis Pola → Hipotesis &
 Uji → Implementasi.** Telusuri alur data (siapa memanggil siapa) —
 gunakan Graphify (§4) untuk ini — sebelum mengubah apa pun.
 
@@ -131,7 +131,7 @@ spesifikasi/desain (GDD)**, baru kemudian **kualitas kode**.
 Minor dicatat (mis. sebagai komentar `ponytail:`, lihat §3.3) tapi tidak
 memblokir.
 
-\---
+---
 
 ## §3. Hukum Ponytail — Tangga Minimalisme
 
@@ -161,7 +161,7 @@ Yang **TIDAK BOLEH** dikorbankan demi ringkas:
 
 * Validasi input di titik yang menerima data dari luar (save file, JSON).
 * Penanganan error yang mencegah kehilangan data (save rusak, data invalid).
-* Keamanan \& integritas state.
+* Keamanan & integritas state.
 * **Kompatibilitas terminal** — deteksi kapabilitas (mis. dukungan Unicode)
 sebelum memakai karakter/formatting yang bisa gagal di lingkungan lain;
 jangan hardcode asumsi tentang terminal pengguna.
@@ -185,7 +185,7 @@ merilis sebuah Fase (lihat GDD §23) untuk ditinjau ulang.
 
 |Ukuran tugas|Contoh|Proses|
 |-|-|-|
-|Kecil|bug 1 baris, 1 entri data, typo teks|TDD tetap wajib; brainstorming (§2.2) \& worktree (§2.3) boleh dilewati|
+|Kecil|bug 1 baris, 1 entri data, typo teks|TDD tetap wajib; brainstorming (§2.2) & worktree (§2.3) boleh dilewati|
 |Sedang|1 quest/dialog/NPC baru, 1 sistem kecil|Alur penuh §10, tanpa perlu dokumen desain terpisah|
 |Besar|sistem baru (mis. combat baru), ubah schema save, refactor lintas modul|Alur penuh §10 + dokumen desain (§2.2) + worktree (§2.3) + review dua tahap (§2.7)|
 
@@ -194,23 +194,23 @@ merilis sebuah Fase (lihat GDD §23) untuk ditinjau ulang.
 Utamakan kode/data dulu, penjelasan maksimal 3 baris untuk hal yang
 sengaja disederhanakan (gunakan format `ponytail:` di §3.3, bukan esai).
 
-\---
+---
 
 ## §4. Hukum Graphify — Navigasi Berbasis Graph
 
 Prinsip diverifikasi langsung dari **Graphify-Labs/graphify** (Apache
 2.0). Proyek ini **sudah punya knowledge graph aktif** di `graphify-out/`
-(`graph.json`, `GRAPH\_REPORT.md`, `graph.html`, snapshot harian) — bukan
+(`graph.json`, `GRAPH_REPORT.md`, `graph.html`, snapshot harian) — bukan
 hipotetis, sudah dipakai.
 
-### 4.1 Kapan \& Bagaimana
+### 4.1 Kapan & Bagaimana
 
 * Untuk pertanyaan seputar codebase: **`graphify query "<pertanyaan>"`
 dulu**, sebelum grep mentah atau baca file satu-satu. Gunakan
 `graphify path "<A>" "<B>"` untuk relasi antar modul, dan
 `graphify explain "<konsep>"` untuk konsep fokus. Hasilnya subgraf
 terarah — jauh lebih kecil dari hasil grep.
-* Baca `graphify-out/GRAPH\_REPORT.md` hanya untuk tinjauan arsitektur besar
+* Baca `graphify-out/GRAPH_REPORT.md` hanya untuk tinjauan arsitektur besar
 (bukan untuk tugas kecil sehari-hari).
 * Graph yang kotor setelah kode diubah adalah hal wajar — bukan alasan
 melewati Graphify. Lewati hanya jika tugasnya memang tentang grafik yang
@@ -231,7 +231,7 @@ berjalan lokal (tree-sitter, deterministic, tanpa LLM, tidak ada data
 yang keluar dari mesin) sehingga murah dan aman dijalankan sering.
 * Untuk perubahan murni data JSON, update graph **tidak wajib**.
 
-\---
+---
 
 ## §5. Peta Rujukan GDD — Jangan Duplikasi, Cukup Rujuk
 
@@ -241,13 +241,13 @@ yang keluar dari mesin) sehingga murah dan aman dijalankan sering.
 |Latar belakang / jalur kultivasi protagonis|§5|
 |Combat / formula damage / elemen|§6, §17|
 |Alkimia, pil, artefak, binatang roh, formasi|§7|
-|Faksi \& reputasi|§8|
-|Peta \& gating lokasi|§9|
+|Faksi & reputasi|§8|
+|Peta & gating lokasi|§9|
 |NPC baru / eksisting|§10|
-|Musuh \& bos|§11|
-|Quest (engine \& data)|§12.2–§12.4|
-|Dialog NPC (engine \& data)|§12.5, §10|
-|Ending \& epilog|§13, §21|
+|Musuh & bos|§11|
+|Quest (engine & data)|§12.2–§12.4|
+|Dialog NPC (engine & data)|§12.5, §10|
+|Ending & epilog|§13, §21|
 |Struktur folder / arsitektur|§14|
 |Event engine (trigger/action)|§15|
 |Status effect (buff/debuff/dot)|§16|
@@ -256,7 +256,7 @@ yang keluar dari mesin) sehingga murah dan aman dijalankan sering.
 |Save schema / migrasi|§19|
 |Rekrut/progresi anggota tim|§20|
 |Target konten per arc|§22|
-|Status Fase \& file mana yang stabil|§23|
+|Status Fase & file mana yang stabil|§23|
 |Keputusan yang tidak boleh diubah diam-diam|§24.1|
 |DataCache / profiler / asset validator|§25|
 
@@ -268,9 +268,9 @@ menambahkan bagian toko ke GDD.md (mis. sebagai §7a atau bagian baru)
 begitu desainnya stabil, supaya dokumen ini tetap bisa merujuk ke sana
 alih-alih menduplikasi aturannya di sini.
 
-\---
+---
 
-## §6. Keputusan Terkunci \& File Stabil Fase 0
+## §6. Keputusan Terkunci & File Stabil Fase 0
 
 * **GDD §24.1** berisi 23 keputusan desain terkunci (nama dunia, formula,
 siklus elemen, aturan flag, dll.). **DILARANG** mengubahnya secara diam-
@@ -280,15 +280,15 @@ diam — kontradiksi dengan §24.1 wajib dihentikan dan didiskusikan (§11).
 dan stabil. Sentuh hanya bila diminta eksplisit atau ada bug terbukti
 (dengan test yang membuktikannya, §2.1).
 * **File "stabil tapi bisa diperluas":** `src/engine/event.py` (tambah
-`start\_quest` action support), `src/core/game\_loop.py` (tambah handler
-`\_cmd\_talk()`), `src/core/save.py` (tambah migrasi bila schema berubah)
+`start_quest` action support), `src/core/game_loop.py` (tambah handler
+`_cmd_talk()`), `src/core/save.py` (tambah migrasi bila schema berubah)
 — perluas tanpa merestrukturisasi tanpa alasan kuat.
 * **Data eksisting** (6 tier, 3 teknik, 2 musuh, 3 event) — **DILARANG**
 dihapus atau diganti; hanya ditambah.
 
-\---
+---
 
-## §7. Konvensi Kode Python \& Docstring Google (WAJIB)
+## §7. Konvensi Kode Python & Docstring Google (WAJIB)
 
 * Python 3.12+; stdlib dulu, baru Rich/Textual bila perlu (tangga §3.1).
 * **Google Python Style Guide**: baris ≤ 80 karakter, import terurut
@@ -310,7 +310,7 @@ dokumentasi standar. **Isi/prosa** (ringkasan, deskripsi tiap parameter)
 **WAJIB Bahasa Indonesia**, konsisten dengan konten game.
 
 ```python
-def hitung\_damage\_fisik(attack: int, defense: int, mult\_elemen: float) -> int:
+def hitung_damage_fisik(attack: int, defense: int, mult_elemen: float) -> int:
     """Hitung damage fisik akhir setelah defense dan multiplier elemen.
 
     Rumus mengikuti GDD §6.4.
@@ -318,7 +318,7 @@ def hitung\_damage\_fisik(attack: int, defense: int, mult\_elemen: float) -> int
     Args:
         attack: Nilai attack penyerang.
         defense: Nilai defense target.
-        mult\_elemen: Multiplier elemen (0.7 kalah, 1.0 netral, 1.5 unggul).
+        mult_elemen: Multiplier elemen (0.7 kalah, 1.0 netral, 1.5 unggul).
 
     Returns:
         Damage akhir, dibulatkan ke bawah, minimum 1.
@@ -333,19 +333,19 @@ class Quest:
     """Satu quest (main atau faksi). Skema lengkap di GDD §12.3.
 
     Attributes:
-        id: ID unik quest, snake\_case (mis. "quest101").
+        id: ID unik quest, snake_case (mis. "quest101").
         title: Judul quest dalam Bahasa Indonesia.
         objectives: Daftar syarat yang harus dipenuhi untuk selesai.
     """
 ```
 
-* Setiap fungsi/method publik (tidak diawali `\_`) **wajib** punya
+* Setiap fungsi/method publik (tidak diawali `_`) **wajib** punya
 docstring. Fungsi privat kecil (<5 baris, logika trivial dari namanya)
 boleh tanpa docstring.
 * Docstring **bukan** tempat menaruh histori perubahan atau catatan
 TODO — pakai komentar `ponytail:` (§3.3) atau pesan commit (§9).
 
-\---
+---
 
 ## §8. Konvensi Data Game (JSON)
 
@@ -354,7 +354,7 @@ contoh file eksisting — **DILARANG membuat skema paralel.**
 
 * Bahasa Indonesia untuk `name`, `description`, `lore`, `text` dialog, dan
 semua pesan yang tampil ke pemain.
-* ID dalam `snake\_case` (`quest101`, `elder\_mao`, `qi\_slash`).
+* ID dalam `snake_case` (`quest101`, `elder_mao`, `qi_slash`).
 * Setiap file JSON valid (cek dengan parser); satu entitas per file
 kecuali koleksi (events, memories, scenes).
 * Referensi antar data (NPC di peta, item di loot, skill di musuh, quest
@@ -363,14 +363,14 @@ di event) **wajib valid** — jalankan validator data sebelum commit
 * Nada narasi **grimdark** (GDD §3.6): tidak ada kemenangan bersih, musuh
 punya alasan yang konsisten secara internal, kematian scripted tidak
 bisa di-undo. Baca GDD §3.6 sebelum menulis dialog/quest/event apa pun.
-* Quest yang selesai **wajib** men-set flag `quest<id>\_done` (otomatis via
+* Quest yang selesai **wajib** men-set flag `quest<id>_done` (otomatis via
 engine) — **DILARANG** menambah flag paralel tanpa alasan kuat.
 * Siklus elemen **Metal→Kayu→Tanah→Air→Api→Metal** harus konsisten di
 semua teknik, musuh, dan efek (GDD §6.2).
 
-\---
+---
 
-## §9. Konvensi Git \& Commit
+## §9. Konvensi Git & Commit
 
 * Satu commit = satu perubahan logis. Jangan campur perubahan data JSON
 besar-besaran dengan refactor engine dalam commit yang sama.
@@ -378,10 +378,10 @@ besar-besaran dengan refactor engine dalam commit yang sama.
 `quest: tambah validasi requirement kind=escort`. Lingkup umum:
 `kultivasi`, `combat`, `quest`, `dialog`, `data`, `test`, `docs`.
 * Tandai jelas di pesan commit bila menyentuh file "stabil Fase 0" (§6).
-* Jangan commit `saves/`, `\_\_pycache\_\_/`, `.venv/`, `logs/`, atau isi
+* Jangan commit `saves/`, `__pycache__/`, `.venv/`, `logs/`, atau isi
 cache `graphify-out/cache/` — cek `.gitignore` proyek sebelum commit.
 
-\---
+---
 
 ## §10. Alur Kerja Standar untuk Tugas Baru
 
@@ -390,7 +390,7 @@ navigasi codebase (§4); telusuri kode/data terkait.
 2. **Desain** (bila dampak sedang/besar, §3.4) — pertanyaan klarifikasi →
 2–3 pendekatan → dokumen desain ringkas → persetujuan pengguna.
 3. **Isolasi** (bila tugas besar/berisiko, §2.3) — branch/worktree baru.
-4. **Rencana** — pecah jadi tugas kecil dengan path file \& langkah
+4. **Rencana** — pecah jadi tugas kecil dengan path file & langkah
 verifikasi (§2.4).
 5. **Tangga Ponytail** (§3.1) — cek apakah solusi sudah tersedia sebelum
 menulis kode baru.
@@ -405,15 +405,15 @@ validator data/smoke test (§1).
 11. **Lapor ringkas** — apa yang diubah, bukti verifikasi, hal yang
 dilewati dan kapan perlu ditambahkan (rujuk komentar `ponytail:`).
 
-\---
+---
 
-## §11. Kondisi STOP \& Larangan Eksplisit
+## §11. Kondisi STOP & Larangan Eksplisit
 
 ### STOP — berhenti dan tanyakan ke pengguna, jangan menebak
 
 * Perubahan bertentangan dengan **GDD §24.1** (keputusan terkunci).
 * Perlu mengubah file "tidak perlu diubah" di §6 tanpa instruksi eksplisit.
-* Schema save (`GDD §19.2`) perlu berubah — `schema\_version` naik +
+* Schema save (`GDD §19.2`) perlu berubah — `schema_version` naik +
 migrasi wajib ditulis, minta konfirmasi dulu.
 * Requirement ambigu yang berdampak pada >1 sistem/file.
 * Ditemukan kredensial, secret, atau permintaan mengakses hal di luar
@@ -430,36 +430,36 @@ scope proyek ini.
 * Menghapus atau melemahkan test yang ada supaya suite terlihat hijau.
 * Menambah stat atau mekanik baru di luar GDD §17/§24 tanpa diskusi.
 * Hardcode gating cerita/peta di luar event engine (GDD §24.1 poin 18).
-* Membuat flag penyelesaian quest paralel selain `quest<id>\_done`.
+* Membuat flag penyelesaian quest paralel selain `quest<id>_done`.
 * Mengubah nama/ID dunia yang sudah terkunci (GDD §24.1 poin 10–11).
 * Menghapus atau mengganti data eksisting di `data/` (§6).
 
-\---
+---
 
 ## §12. Definisi Selesai (Definition of Done)
 
 Tugas **TIDAK BOLEH** dilaporkan selesai kecuali **semua** berikut
 terpenuhi — ini adalah gerbang (gate), bukan saran:
 
-* \[ ] Perilaku sesuai GDD dan spesifikasi yang disetujui.
-* \[ ] Test baru ditulis dengan pola RED→GREEN→REFACTOR; `pytest -q` lulus
+* [ ] Perilaku sesuai GDD dan spesifikasi yang disetujui.
+* [ ] Test baru ditulis dengan pola RED→GREEN→REFACTOR; `pytest -q` lulus
 penuh.
-* \[ ] `ruff check` dan `ruff format --check` bersih.
-* \[ ] Docstring Google-style lengkap untuk semua fungsi/method publik baru
+* [ ] `ruff check` dan `ruff format --check` bersih.
+* [ ] Docstring Google-style lengkap untuk semua fungsi/method publik baru
 (§7).
-* \[ ] Data JSON valid; semua referensi antar data ter-resolve.
-* \[ ] Alur utama terverifikasi (unit test dan/atau smoke test permainan).
-* \[ ] Tidak ada kode mati, duplikasi, atau abstraksi tak terpakai.
-* \[ ] Semua komentar `ponytail:` yang ditambahkan punya kondisi upgrade
+* [ ] Data JSON valid; semua referensi antar data ter-resolve.
+* [ ] Alur utama terverifikasi (unit test dan/atau smoke test permainan).
+* [ ] Tidak ada kode mati, duplikasi, atau abstraksi tak terpakai.
+* [ ] Semua komentar `ponytail:` yang ditambahkan punya kondisi upgrade
 yang jelas (§3.3).
-* \[ ] `graphify update .` dijalankan bila ada perubahan kode (§4.3).
-* \[ ] Tidak melanggar satu pun butir §11.
-* \[ ] Ringkasan singkat diberikan: perubahan, bukti verifikasi, dan hal
+* [ ] `graphify update .` dijalankan bila ada perubahan kode (§4.3).
+* [ ] Tidak melanggar satu pun butir §11.
+* [ ] Ringkasan singkat diberikan: perubahan, bukti verifikasi, dan hal
 yang sengaja dilewati.
 
-\---
+---
 
-## §13. Interoperabilitas Lintas Tool \& Pemeliharaan Dokumen
+## §13. Interoperabilitas Lintas Tool & Pemeliharaan Dokumen
 
 * **OpenCode** membaca `AGENTS.md` ini secara native (termasuk oleh plugin
 Superpowers, Ponytail, Graphify).
@@ -477,7 +477,7 @@ lebih berbahaya daripada baris yang hilang, karena agent akan
 mengikutinya dengan percaya diri. Jangan menduplikasi isi GDD.md di
 sini — perbarui rujukan §-nya saja bila GDD berubah.
 
-\---
+---
 
 *Diperbarui: 6 Agustus 2026. Disusun dari riset langsung terhadap
 obra/superpowers, DietrichGebert/ponytail, dan Graphify-Labs/graphify

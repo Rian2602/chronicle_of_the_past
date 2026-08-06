@@ -238,7 +238,7 @@ class GameSession:
     def _cmd_talk(self, command: Command) -> list[str]:
         """Bicara dengan NPC di lokasi saat ini (GDD §18.2, flag talked_)."""
         if not command.args:
-            return ["Bicara dengan siapa? Contoh: talk tuan_shi"]
+            return ["Bicara dengan siapa? Contoh: talk elder_mao"]
         npc_id = command.args[0]
         npc_path = NPC_DIR / f"{npc_id}.json"
         if not npc_path.is_file():

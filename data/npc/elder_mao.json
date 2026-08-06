@@ -1,10 +1,10 @@
 {
-  "id": "tuan_shi",
-  "name": "Tuan Shi",
+  "id": "elder_mao",
+  "name": "Sesepuh Mao",
   "location": "village_emberfall",
   "greeting": "Ah, murid baru. Duduklah.",
   "dialog": [
-    "Tuan Shi menatap meridianmu: 'Qi dalam tubuhmu masih liar. Kumpulkan pemahaman, lalu paksa breakthrough ke Pengumpul Qi.'",
+    "Sesepuh Mao menatap meridianmu: 'Qi dalam tubuhmu masih liar. Kumpulkan pemahaman, lalu paksa breakthrough ke Pengumpul Qi.'",
     "'Temui aku lagi setelah kau melakukannya. Ada yang harus kau ketahui tentang Reruntuhan Kuil.'"
   ]
 }

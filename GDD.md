@@ -5,12 +5,12 @@
 **Genre:** RPG teks berbasis cerita
 **Platform:** CLI terminal (Python 3.12+, Rich + Textual)
 **Bahasa:** Bahasa Indonesia
-**Nada:** Gelap \& serius
+**Nada:** Gelap & serius
 **Changelog:** v1.0 di §24.3.
 
-\---
+---
 
-## 1\. Ringkasan Eksekutif
+## 1. Ringkasan Eksekutif
 
 **Chronicle of the Past** adalah RPG berbasis teks (CLI) bertema **fantasi gelap dengan sistem kultivasi** — terinspirasi donghua *Against the Gods*. Pemain adalah pembudidaya (kultivator) yang menaiki tingkatan kekuatan, dari **Pengumpul Qi** hingga **Penantang Surga**, sambil mengungkap rahasia masa lalunya sendiri dan terjebak di tengah intrik **satu kerajaan luas** yang diguncang konflik antar faksi.
 
@@ -24,35 +24,35 @@ Keputusan kunci dari wawancara desain:
 * **Teknologi:** Python 3.12+, UI terminal mewah dengan **Rich + Textual**, konten **data-driven JSON**.
 * **Scope:** Multi-arc, target **15+ jam** playthrough lengkap (target konten per arc: §22).
 
-\---
+---
 
-## 2\. Pilar Desain (hasil wawancara)
+## 2. Pilar Desain (hasil wawancara)
 
 |#|Aspek|Keputusan|
 |-|-|-|
 |1|Genre|RPG teks berbasis cerita|
 |2|Platform|CLI terminal|
 |3|Tema|Fantasi gelap + sistem kultivasi (inspirasi *Against the Gods*)|
-|4|Nada|Gelap \& serius|
+|4|Nada|Gelap & serius|
 |5|Judul|Chronicle of the Past|
 |6|Bahasa|Bahasa Indonesia|
 |7|Scope|Besar: multi-arc, target 15+ jam|
 |8|Dunia|Satu kerajaan luas|
 |9|Protagonis|Kustomisasi latar belakang; rahasia diungkap bertahap|
 |10|Antagonis|Tanpa penjahat tunggal: entitas kuno, kultus fanatik, penguasa korup, antagonis abu-abu, konflik faksi|
-|11|Faksi|5+ aktif: kerajaan \& bangsawan, orde suci, pemberontak, gilda-gilda, orde rahasia kuno|
+|11|Faksi|5+ aktif: kerajaan & bangsawan, orde suci, pemberontak, gilda-gilda, orde rahasia kuno|
 |12|Progresi|Tingkatan kultivasi berjenjang (breakthrough)|
 |13|Jalur|Mulai 1 jalur, bisa diperluas ke jalur lain|
 |14|Combat|Turn-based + 5 elemen + tim 4 anggota|
-|15|Elemen khas|Alkimia \& pil, teknik rahasia, artefak/senjata roh, binatang roh, formasi/array, meridian \& qi|
+|15|Elemen khas|Alkimia & pil, teknik rahasia, artefak/senjata roh, binatang roh, formasi/array, meridian & qi|
 |16|Ending|Dinamis — variasi hasil tergantung pilihan sepanjang permainan|
 |17|Teknologi|Python 3.12+ + Rich + Textual|
 |18|Konten|Data-driven JSON|
 |19|Prioritas MVP|Sistem kultivasi + combat dulu|
 
-\---
+---
 
-## 3\. Premis Besar \& Latar
+## 3. Premis Besar & Latar
 
 ### 3.1 Premis
 
@@ -70,7 +70,7 @@ Selama permainan kamu akan:
 ### 3.2 Latar Dunia
 
 * **Satu kerajaan luas** — Ashenfeld: ibukota megah, wilayah perbatasan, sekte-sekte, kota-kota gilda.
-* **Desa awal:** **Desa Emberfall** (`village\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_emberfall`) — tempat protagonis memulai; dibedakan tegas dari nama kerajaan agar tidak membingungkan.
+* **Desa awal:** **Desa Emberfall** (`village_emberfall`) — tempat protagonis memulai; dibedakan tegas dari nama kerajaan agar tidak membingungkan.
 * **Kultivasi** adalah kekuatan nyata: tingkatan, qi, meridian, pil, artefak.
 * **Langit** dalam cerita ini bukan sekadar langit — ada *sesuatu* di baliknya yang telah lama diam (entitas kuno, §3.4).
 * **Periode waktu:** berlangsung sekitar **2–3 bulan** dalam waktu game, dibagi menjadi 4 arc.
@@ -94,9 +94,9 @@ Selama permainan kamu akan:
 |**Antagonis abu-abu**|Tokoh-tokoh dengan alasan moral sendiri — bisa sekutu atau lawan tergantung pilihan.|
 |**Konflik antar faksi**|Tidak ada "bos final" tunggal; setiap arc punya bos yang mewakili kepentingan faksi tertentu.|
 
-\---
+---
 
-## 4\. Sistem Kultivasi (inti gameplay)
+## 4. Sistem Kultivasi (inti gameplay)
 
 ### 4.1 Tingkatan Kultivasi
 
@@ -107,7 +107,7 @@ Kemajuan pemain diukur dalam **tingkatan kultivasi** — bukan level angka biasa
 |1|**Pengumpul Qi**|0 → 100|Arc 1|Awal; tubuh diresapi qi pertama kali|
 |2|**Pendirian Fondasi**|300|Arc 1–2|Fondasi meridian stabil; jalur kultivasi aktif|
 |3|**Kristal Emas**|800|Arc 2–3|Inti energi terbentuk; kekuatan mulai diperhitungkan faksi|
-|4|**Jiwa Terpisah**|2000|Arc 3|Jiwa bisa "berpisah"; binatang roh \& teknik jiwa terbuka|
+|4|**Jiwa Terpisah**|2000|Arc 3|Jiwa bisa "berpisah"; binatang roh & teknik jiwa terbuka|
 |5|**Pemutus Kehampaan**|5000|Arc 4|Menembus batas; mulai "terlihat" oleh entitas kuno|
 |6|**Penantang Surga**|12000|Arc 4 (akhir)|Puncak; posisi final melawan langit|
 
@@ -119,21 +119,21 @@ Kemajuan pemain diukur dalam **tingkatan kultivasi** — bukan level angka biasa
 * **Risiko (keputusan final):** bisa **gagal** → cedera **sementara** (−25% stat selama 2 hari game) dan 30% peluang memicu pertarungan **inner demon**. **Tidak ada penalti permanen** (lihat §24.1). Sukses dasar 55%, +5% per poin stat pendukung jalur, +10–20% dari pil breakthrough, cap 90%.
 * **Hadiah:** stat besar, teknik baru, penampilan/hud berubah, dan event cerita.
 
-### 4.2 Meridian \& Qi
+### 4.2 Meridian & Qi
 
 * **Qi** adalah sumber daya utama pertarungan (pengganti "MP" sederhana).
 * **Meridian** menentukan kapasitas qi dan laju regenerasi; bisa dibuka/diperkuat lewat kultivasi dan pil.
 * Serangan kuat (teknik tingkat tinggi) menguras qi besar; **meditasi** di lokasi aman memulihkan qi.
-* Formula kapasitas \& regenerasi di §17.
+* Formula kapasitas & regenerasi di §17.
 
 ### 4.3 Pemahaman (XP)
 
 * Nama internal: `insight` (pemahaman) — diperoleh dari pertarungan, quest, membaca gulungan, meditasi.
 * Kurva: meningkat per tingkatan; breakthrough membutuhkan insight + syarat khusus.
 
-\---
+---
 
-## 5\. Protagonis \& Jalur Kultivasi
+## 5. Protagonis & Jalur Kultivasi
 
 ### 5.1 Kustomisasi Latar Belakang
 
@@ -169,9 +169,9 @@ Pemain memilih **satu jalur utama** saat Pendirian Fondasi, dan **bisa mempelaja
 * Rahasia terungkap lewat *echo memori* — pecahan ingatan yang terbuka di momen-momen tertentu (diberikan lewat event engine, §15).
 * Tidak ada "kekuatan instan gratis": rahasia memberi akses teknik/quest unik, bukan cheat.
 
-\---
+---
 
-## 6\. Sistem Combat
+## 6. Sistem Combat
 
 ### 6.1 Dasar
 
@@ -199,7 +199,7 @@ Metal → Kayu → Tanah → Air → Api → Metal
 * **Keunggulan elemen:** damage ×1.5. **Kalah elemen:** damage ×0.7.
 * **Resonansi tim:** komposisi elemen tim memberi bonus sinergi (mis. 3 elemen berbeda → +10% qi regen).
 
-### 6.3 Qi \& Resource
+### 6.3 Qi & Resource
 
 * Setiap anggota punya **qi** sendiri (formula §17).
 * Teknik menguras qi; regenerasi per giliran (dari meridian).
@@ -207,81 +207,81 @@ Metal → Kayu → Tanah → Air → Api → Metal
 
 ### 6.4 Formula Dasar (angka final — lihat §17 untuk definisi stat)
 
-* **Damage fisik:** `max(1, attack − defense/2) × element\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_mult × rand(0.9–1.1)`.
-* **Damage teknik:** `max(1, power + stat\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_inti × 0.5 − resist\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_lawan) × element\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_mult × rand(0.9–1.1)`.
+* **Damage fisik:** `max(1, attack − defense/2) × element_mult × rand(0.9–1.1)`.
+* **Damage teknik:** `max(1, power + stat_inti × 0.5 − resist_lawan) × element_mult × rand(0.9–1.1)`.
 * **Multiplier elemen:** 1.5 jika unggul, 0.7 jika kalah.
 * **Crit:** `5% + agility × 0.1%` (cap 25%), damage crit ×1.8.
 * **Miss:** `max(5%, 20% − agility × 0.1%)` — minimun 5%.
 * **Dodge:** `5% + agility × 0.1%` (cap 30%).
 
-\---
+---
 
-## 7\. Elemen Khas Cultivation
+## 7. Elemen Khas Cultivation
 
 |Sistem|Deskripsi|
 |-|-|
-|**Alkimia \& Pil**|Racik bahan → pil: pil kultivasi (tambah insight), pil penyembuh, pil buff, pil breakthrough. Resep ditemukan/dibeli/dipelajari. Kualitas pil (rendah→surgawi) memengaruhi efek.|
+|**Alkimia & Pil**|Racik bahan → pil: pil kultivasi (tambah insight), pil penyembuh, pil buff, pil breakthrough. Resep ditemukan/dibeli/dipelajari. Kualitas pil (rendah→surgawi) memengaruhi efek.|
 |**Teknik Rahasia**|Skill langka terikat lore; beberapa hanya bisa didapat dari quest faksi, ruang rahasia, atau peti kuno. Bisa di-*equip* (jumlah slot terbatas).|
-|**Artefak \& Senjata Roh**|Item bertingkat (Mortil → Roh → Surgawi) yang **tumbuh bersama pemilik** — naik level artefak, bukan diganti. Senjata roh bisa punya "kesadaran" (dialog kecil).|
-|**Binatang Roh**|Rekan spiritual; **rekrut (kalahkan → ikat) ATAU menetas dari telur** — dua-duanya aktif (keputusan final, §24.1). Ikut bertarung, punya elemen \& teknik sendiri, bisa berevolusi sekali. Detail: §20.|
+|**Artefak & Senjata Roh**|Item bertingkat (Mortil → Roh → Surgawi) yang **tumbuh bersama pemilik** — naik level artefak, bukan diganti. Senjata roh bisa punya "kesadaran" (dialog kecil).|
+|**Binatang Roh**|Rekan spiritual; **rekrut (kalahkan → ikat) ATAU menetas dari telur** — dua-duanya aktif (keputusan final, §24.1). Ikut bertarung, punya elemen & teknik sendiri, bisa berevolusi sekali. Detail: §20.|
 |**Formasi / Array**|Ritual persiapan: pasang formasi sebelum pertempuran penting → buff area/efek besar. Beberapa formasi dipakai di luar combat (pertahanan, penyembuhan).|
-|**Meridian \& Qi**|Sistem resource utama (§4.2, formula §17).|
+|**Meridian & Qi**|Sistem resource utama (§4.2, formula §17).|
 
-\---
+---
 
-## 8\. Faksi \& Reputasi
+## 8. Faksi & Reputasi
 
 |Faksi|ID internal|Tokoh kunci|Tujuan|Sikap ke protagonis|
 |-|-|-|-|-|
 |**Istana Kerajaan**|`court`|Kaisar (boneka?), Kanselir, Jenderal|Mengendalikan kultivasi untuk kekuasaan|Rebut/diadili|
-|**Orde Suci (kultus)**|`holy\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_order`|Inkuisitor Agung, Para Uskup|"Memurnikan" dunia dari qi kotor|Musnahkan / rekrut|
+|**Orde Suci (kultus)**|`holy_order`|Inkuisitor Agung, Para Uskup|"Memurnikan" dunia dari qi kotor|Musnahkan / rekrut|
 |**Pemberontak**|`rebels`|Pemimpin gerakan, mantan bangsawan|Menumbangkan tirani kultivasi|Sekutu potensial|
 |**Gilda-gilda**|`guilds`|Gilda Dagang, Gilda Pembunuh, Gilda Petualang|Untung dari konflik|Klien / target|
-|**Orde Rahasia Kuno**|`ancient\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_order`|Penjaga rahasia, sisa orde lama|Mencegah entitas kuno bangkit|Kunci utama|
+|**Orde Rahasia Kuno**|`ancient_order`|Penjaga rahasia, sisa orde lama|Mencegah entitas kuno bangkit|Kunci utama|
 
-**Reputasi:** hadiah quest \& pilihan dialog menaikkan/turunkan reputasi per faksi (`change\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_reputation` di event, §15). Ambang tertentu membuka quest eksklusif, sekutu, diskon, dan **jalur ending** (§21). Kisaran: −100 s/d +100; ambang utama di ±30 dan ±70.
+**Reputasi:** hadiah quest & pilihan dialog menaikkan/turunkan reputasi per faksi (`change_reputation` di event, §15). Ambang tertentu membuka quest eksklusif, sekutu, diskon, dan **jalur ending** (§21). Kisaran: −100 s/d +100; ambang utama di ±30 dan ±70.
 
-\---
+---
 
-## 9\. Peta \& Dunia (satu kerajaan luas)
+## 9. Peta & Dunia (satu kerajaan luas)
 
 |ID|Wilayah|Arc|Keterangan|
 |-|-|-|-|
-|`village\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_emberfall`|Desa Emberfall|1|Desa awal; tempat protagonis memulai|
-|`ashfall\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_forest`|Hutan Perbatasan|1|Area latihan \& musuh liar|
-|`ruin\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_shrine`|Kuil Reruntuhan|1|Rahasia pertama; bos Arc 1|
-|`sect\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_azure`|Sekte Awan Biru|2|Sekte utama; akademi kultivasi|
-|`guild\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_city`|Kota Gilda|2|Kota dagang; gilda-gilda|
-|`holy\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_cathedral`|Katedral Suci|3|Markas Orde Suci (berbahaya)|
-|`rebel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_hideout`|Markas Pemberontak|3|Kamp rahasia|
+|`village_emberfall`|Desa Emberfall|1|Desa awal; tempat protagonis memulai|
+|`ashfall_forest`|Hutan Perbatasan|1|Area latihan & musuh liar|
+|`ruin_shrine`|Kuil Reruntuhan|1|Rahasia pertama; bos Arc 1|
+|`sect_azure`|Sekte Awan Biru|2|Sekte utama; akademi kultivasi|
+|`guild_city`|Kota Gilda|2|Kota dagang; gilda-gilda|
+|`holy_cathedral`|Katedral Suci|3|Markas Orde Suci (berbahaya)|
+|`rebel_hideout`|Markas Pemberontak|3|Kamp rahasia|
 |`capital`|Ibukota Ashenfeld|3–4|Istana, politik, arena|
-|`ancient\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_vault`|Ruang Rahasia Kuno|4|Orde rahasia; lore entitas kuno|
-|`sky\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_seal`|Segel Langit|4|Lokasi final; climactic battle|
+|`ancient_vault`|Ruang Rahasia Kuno|4|Orde rahasia; lore entitas kuno|
+|`sky_seal`|Segel Langit|4|Lokasi final; climactic battle|
 
-**Gating peta:** flag `map\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_unlocked` diset lewat event engine (`unlock\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_map`, §15) — mencegah lompat konten. Peta awal (`village\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_emberfall`) terbuka sejak awal.
+**Gating peta:** flag `map_<id>_unlocked` diset lewat event engine (`unlock_map`, §15) — mencegah lompat konten. Peta awal (`village_emberfall`) terbuka sejak awal.
 
-\---
+---
 
-## 10\. NPC \& Karakter (final default)
+## 10. NPC & Karakter (final default)
 
 |ID|Nama|Lokasi|Peran|
 |-|-|-|-|
-|`elder\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_mao`|Sesepuh Mao|village\_emberfall|Guru pertama; membimbing kultivasi awal|
-|`lin\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_wei`|Lin Wei|village\_emberfall|Rekan masa kecil; kunci latar protagonis|
-|`fang\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_yue`|Fang Yue|sect\_azure|Senior sekte; mentor Jalan Pedang|
-|`alchemist\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_xiu`|Xiu Sang Alkemi|sect\_azure / guild\_city|Guru alkimia; toko resep|
-|`blacksmith\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_tie`|Tie Pandai Senjata|guild\_city|Artefak \& senjata roh|
-|`kestrel`|Kestrel|guild\_city|Pemimpin Gilda Pembunuh (abu-abu)|
-|`inquisitor\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_vega`|Vega|holy\_cathedral|Inkuisitor; antagonis abu-abu yang bisa jadi sekutu|
-|`sera\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_ember`|Sera Ember|rebel\_hideout|Pemimpin pemberontak|
-|`warden\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_kai`|Penjaga Kai|ancient\_vault|Sisa Orde Rahasia; jembatan ke lore inti|
-|`the\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_voice`|Suara|sky\_seal|Entitas kuno (antagonis puncak)|
+|`elder_mao`|Sesepuh Mao|village_emberfall|Guru pertama; membimbing kultivasi awal|
+|`lin_wei`|Lin Wei|village_emberfall|Rekan masa kecil; kunci latar protagonis|
+|`fang_yue`|Fang Yue|sect_azure|Senior sekte; mentor Jalan Pedang|
+|`alchemist_xiu`|Xiu Sang Alkemi|sect_azure / guild_city|Guru alkimia; toko resep|
+|`blacksmith_tie`|Tie Pandai Senjata|guild_city|Artefak & senjata roh|
+|`kestrel`|Kestrel|guild_city|Pemimpin Gilda Pembunuh (abu-abu)|
+|`inquisitor_vega`|Vega|holy_cathedral|Inkuisitor; antagonis abu-abu yang bisa jadi sekutu|
+|`sera_ember`|Sera Ember|rebel_hideout|Pemimpin pemberontak|
+|`warden_kai`|Penjaga Kai|ancient_vault|Sisa Orde Rahasia; jembatan ke lore inti|
+|`the_voice`|Suara|sky_seal|Entitas kuno (antagonis puncak)|
 
-> Nama di atas adalah \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*default final\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* (keputusan §24.1) — dapat diganti hanya bila ada alasan desain yang kuat dan disetujui pengguna.
+> Nama di atas adalah **default final** (keputusan §24.1) — dapat diganti hanya bila ada alasan desain yang kuat dan disetujui pengguna.
 
-\---
+---
 
-## 11\. Musuh \& Bos (final default per arc)
+## 11. Musuh & Bos (final default per arc)
 
 Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan tingkatan pemain** (perbaikan I2): bos utama setiap arc berada satu tingkatan di bawah puncak pemain, kecuali bos final.
 
@@ -292,27 +292,27 @@ Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan 
 |3|Jiwa Terpisah|Tentara salib Orde Suci, Pembunuh gilda, Iblis formasi|**Inkuisitor Agung** (Kristal Emas puncak)|
 |4|Penantang Surga|Manifestasi entitas, Pion langit, Pemberontak fanatik|**Rasul Langit** (Pemutus Kehampaan puncak) → **Suara** (Penantang Surga — di luar ukuran mortal)|
 
-**Aturan bos:** tag `boss`, tak bisa kabur, hadiah istimewa, dan sering memicu event cerita (bukan sekadar naik XP). Setiap bos punya `requires\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flag` yang membuka kemunculannya (gate quest/arc — §15). **Bos final (Suara)** berada sedikit di atas tingkatan mortal: pemain harus menutup kesenjangan dengan ritual, formasi, artefak, dan sekutu (lihat §21 Penentu Ending).
+**Aturan bos:** tag `boss`, tak bisa kabur, hadiah istimewa, dan sering memicu event cerita (bukan sekadar naik XP). Setiap bos punya `requires_flag` yang membuka kemunculannya (gate quest/arc — §15). **Bos final (Suara)** berada sedikit di atas tingkatan mortal: pemain harus menutup kesenjangan dengan ritual, formasi, artefak, dan sekutu (lihat §21 Penentu Ending).
 
-\---
+---
 
-## 12\. Struktur Arc \& Quest
+## 12. Struktur Arc & Quest
 
 ### 12.1 Ringkasan Arc
 
 |Arc|Judul|Inti|Bos|
 |-|-|-|-|
 |1|**Gerbang Qi**|Bangun di desa; mulai kultivasi; kuil reruntuhan; rahasia pertama|Penjaga Makam|
-|2|**Sekte \& Intrik**|Masuk sekte; gilda; orde rahasia mulai mencari "yang ditunggu"|Kepala Sekte Bayangan|
-|3|**Antara Dua Langit**|Orde Suci \& pemberontak; entitas kuno bangkit; pilih posisi faksi|Inkuisitor Agung|
+|2|**Sekte & Intrik**|Masuk sekte; gilda; orde rahasia mulai mencari "yang ditunggu"|Kepala Sekte Bayangan|
+|3|**Antara Dua Langit**|Orde Suci & pemberontak; entitas kuno bangkit; pilih posisi faksi|Inkuisitor Agung|
 |4|**Menentang Langit**|Ruang rahasia kuno; rahasia penuh terungkap; keputusan final|Rasul Langit / Suara|
 
 ### 12.2 Quest
 
 * **32 quest utama** (8 per arc — target final, §22) mengalir berkelanjutan per arc, ditambah **10 quest faksi eksklusif**.
-* **Kind requirement** (engine quest): `talk`, `enemy`, `map`, `flag`, `collect`, `kill\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_count`, `escort`, `breakthrough` (baru — butuh pemain mencapai tingkatan tertentu).
+* **Kind requirement** (engine quest): `talk`, `enemy`, `map`, `flag`, `collect`, `kill_count`, `escort`, `breakthrough` (baru — butuh pemain mencapai tingkatan tertentu).
 * **Quest percabangan:** beberapa quest punya 2–3 penyelesaian yang memengaruhi reputasi dan flag ending (§21).
-* **Flag kelulusan:** quest yang selesai **otomatis** men-set flag `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` oleh engine (keputusan final §24.1) — event memakai flag ini sebagai trigger (§15).
+* **Flag kelulusan:** quest yang selesai **otomatis** men-set flag `quest<id>_done` oleh engine (keputusan final §24.1) — event memakai flag ini sebagai trigger (§15).
 
 ### 12.3 Format Quest (data-driven)
 
@@ -322,23 +322,23 @@ Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan 
   "title": "Qi Pertama",
   "type": "main",
   "description": "Sesepuh Mao mengajarkanmu menghirup qi langit-bumi.",
-  "objectives": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\["Bicaralah dengan Sesepuh Mao.", "Lakukan breakthrough ke Pengumpul Qi."],
-  "requirements": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[
-    {"kind": "talk", "target": "elder\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_mao"},
-    {"kind": "breakthrough", "target": "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_condensation"}
+  "objectives": ["Bicaralah dengan Sesepuh Mao.", "Lakukan breakthrough ke Pengumpul Qi."],
+  "requirements": [
+    {"kind": "talk", "target": "elder_mao"},
+    {"kind": "breakthrough", "target": "qi_condensation"}
   ],
   "rewards": {"insight": 50, "gold": 20, "reputation": {"rebels": 5}},
-  "flags\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_on\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_complete": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\["quest101\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done", "path\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_unlocked\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_sword"],
+  "flags_on_complete": ["quest101_done", "path_unlocked_sword"],
   "next": "quest102",
   "category": "main"
 }
 ```
 
-> \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*Catatan naming flag:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* wajib `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` (mis. `quest101\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`) — \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*bukan\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* `q101\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`. Berlaku konsisten di quest, event, dan musuh (`requires\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flag`).
+> **Catatan naming flag:** wajib `quest<id>_done` (mis. `quest101_done`) — **bukan** `q101_done`. Berlaku konsisten di quest, event, dan musuh (`requires_flag`).
 
-\---
+---
 
-## 13\. Ending Dinamis
+## 13. Ending Dinamis
 
 * **Tidak ada ending tunggal.** Jejak keputusan (flag + reputasi + posisi faksi) terakumulasi sepanjang 4 arc.
 * **3 ending besar** + **banyak variasi kecil**:
@@ -349,9 +349,9 @@ Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan 
 * Setiap ending punya epilog singkat yang menyebut faksi yang selamat/berkuasa berdasarkan reputasi pemain.
 * **Penentu mekanik ending (skor, ambang, tie-break):** §21.
 
-\---
+---
 
-## 14\. Teknologi \& Arsitektur
+## 14. Teknologi & Arsitektur
 
 ### 14.1 Stack
 
@@ -359,12 +359,12 @@ Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan 
 * **Rich** — warna, tabel, panel, progress bar untuk tampilan utama.
 * **Textual** — TUI interaktif untuk menu/dialog pilihan (dua-duanya dipakai).
 * **pytest** — testing (dev dependency).
-* **ruff** — lint \& format (Google Python Style Guide).
+* **ruff** — lint & format (Google Python Style Guide).
 
 ### 14.2 Struktur Proyek (final)
 
 ```
-chronicle\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_of\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_the\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_past/
+chronicle_of_the_past/
 ├── GDD.md                  # dokumen ini (sumber kebenaran desain)
 ├── AGENTS.md               # aturan perilaku agen AI
 ├── launcher.py             # entry point
@@ -379,7 +379,7 @@ chronicle\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 │   ├── cultivation/        # tingkatan, jalur
 │   ├── techniques/         # teknik rahasia
 │   ├── items/              # pil, artefak, bahan
-│   ├── enemies/            # musuh \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\& bos
+│   ├── enemies/            # musuh & bos
 │   ├── quests/             # quest per arc
 │   ├── events/             # event engine (§15)
 │   ├── dialogues/
@@ -396,12 +396,12 @@ chronicle\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 ```json
 {
-  "id": "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_condensation",
+  "id": "qi_condensation",
   "name": "Pengumpul Qi",
   "order": 1,
-  "insight\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_required": 100,
-  "stat\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_bonus": {"attack": 4, "hp": 40, "qi": 10},
-  "unlocks": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\["path\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_selection", "technique\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_basic"]
+  "insight_required": 100,
+  "stat_bonus": {"attack": 4, "hp": 40, "qi": 10},
+  "unlocks": ["path_selection", "technique_basic"]
 }
 ```
 
@@ -409,15 +409,15 @@ chronicle\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 ```json
 {
-  "id": "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_slash",
+  "id": "qi_slash",
   "name": "Tebasan Qi",
   "path": "sword",
   "element": "metal",
   "type": "physical",
-  "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_cost": 5,
+  "qi_cost": 5,
   "power": 8,
-  "effects": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[],
-  "requires": {"tier": "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_condensation"}
+  "effects": [],
+  "requires": {"tier": "qi_condensation"}
 }
 ```
 
@@ -425,10 +425,10 @@ chronicle\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 ```json
 {
-  "id": "pill\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_insight",
+  "id": "pill_insight",
   "name": "Pil Pemahaman",
   "effect": {"insight": 30},
-  "recipe": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[{"item": "herb\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_qi", "qty": 2}, {"item": "dew\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_morning", "qty": 1}]
+  "recipe": [{"item": "herb_qi", "qty": 2}, {"item": "dew_morning", "qty": 1}]
 }
 ```
 
@@ -436,23 +436,23 @@ chronicle\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 ```json
 {
-  "id": "grave\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_warden",
+  "id": "grave_warden",
   "name": "Penjaga Makam",
-  "tier": "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_condensation",
+  "tier": "qi_condensation",
   "element": "earth",
   "behavior": "defensive",
   "stats": {"attack": 10, "defense": 8, "hp": 45, "qi": 12},
-  "skills": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\["bone\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_crush", "earth\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_wall"],
-  "tags": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\["boss", "undead"],
-  "requires\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flag": "quest104\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done"
+  "skills": ["bone_crush", "earth_wall"],
+  "tags": ["boss", "undead"],
+  "requires_flag": "quest104_done"
 }
 ```
 
-> \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*Sistem save/load\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* (format, migrasi, anti-corrupt): §19. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*Event engine\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* (format event, trigger/action): §15.
+> **Sistem save/load** (format, migrasi, anti-corrupt): §19. **Event engine** (format event, trigger/action): §15.
 
-\---
+---
 
-## 15\. Event Engine (baru — fondasi gating \& narasi)
+## 15. Event Engine (baru — fondasi gating & narasi)
 
 Event adalah **mesin naratif data-driven**: pemicu kondisi (flag/quest/tier) → aksi (set flag, unlock peta, mulai quest, beri echo memori, ubah reputasi). Semua gating cerita, unlock peta, dan echo memori lewat event — **bukan hardcode di kode**.
 
@@ -460,13 +460,13 @@ Event adalah **mesin naratif data-driven**: pemicu kondisi (flag/quest/tier) →
 
 ```json
 {
-  "id": "event\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_guild\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_city\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_unlock",
-  "trigger": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[
-    {"kind": "flag", "flag": "quest102\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done", "operator": "EQUALS", "value": true}
+  "id": "event_guild_city_unlock",
+  "trigger": [
+    {"kind": "flag", "flag": "quest102_done", "operator": "EQUALS", "value": true}
   ],
-  "actions": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[
-    {"kind": "unlock\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_map", "target": "guild\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_city"},
-    {"kind": "set\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flag", "flag": "map\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_guild\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_city\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_unlocked", "value": true},
+  "actions": [
+    {"kind": "unlock_map", "target": "guild_city"},
+    {"kind": "set_flag", "flag": "map_guild_city_unlocked", "value": true},
     {"kind": "log", "text": "Rumor tentang kota gilda mencapai telingamu..."}
   ],
   "once": true
@@ -477,35 +477,35 @@ Event adalah **mesin naratif data-driven**: pemicu kondisi (flag/quest/tier) →
 
 |Kind|Makna|Contoh|
 |-|-|-|
-|`flag`|Cek flag dengan operator|`EQUALS` / `NOT\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_EQUALS` / `MISSING` (flag belum diset)|
-|`quest\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`|Quest selesai (shortcut `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`)|`{"kind": "quest\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done", "quest": "quest105"}`|
-|`tier\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_reached`|Tingkatan kultivasi tercapai|`{"kind": "tier\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_reached", "tier": "golden\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_core"}`|
-|`location\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_entered`|Pemain masuk peta|`{"kind": "location\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_entered", "map": "ancient\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_vault"}`|
-|`day\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_passed`|Waktu game mencapai hari ke-N|`{"kind": "day\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_passed", "day": 7}`|
+|`flag`|Cek flag dengan operator|`EQUALS` / `NOT_EQUALS` / `MISSING` (flag belum diset)|
+|`quest_done`|Quest selesai (shortcut `quest<id>_done`)|`{"kind": "quest_done", "quest": "quest105"}`|
+|`tier_reached`|Tingkatan kultivasi tercapai|`{"kind": "tier_reached", "tier": "golden_core"}`|
+|`location_entered`|Pemain masuk peta|`{"kind": "location_entered", "map": "ancient_vault"}`|
+|`day_passed`|Waktu game mencapai hari ke-N|`{"kind": "day_passed", "day": 7}`|
 
 ### 15.3 Kind Action
 
 |Kind|Efek|
 |-|-|
-|`set\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flag` / `clear\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flag`|Set/hapus flag (`{flag, value}`)|
-|`unlock\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_map`|Buka peta + set `map\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_unlocked`|
-|`start\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_quest`|Mulai quest (`{id}`)|
-|`grant\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_memory`|Beri echo memori (`{memory\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_id}`)|
-|`grant\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_item` / `grant\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_gold`|Beri item / emas|
-|`change\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_reputation`|Ubah reputasi faksi (`{faction, delta}`)|
-|`start\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_dialog`|Paksa dialog (`{dialog\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_id}`)|
+|`set_flag` / `clear_flag`|Set/hapus flag (`{flag, value}`)|
+|`unlock_map`|Buka peta + set `map_<id>_unlocked`|
+|`start_quest`|Mulai quest (`{id}`)|
+|`grant_memory`|Beri echo memori (`{memory_id}`)|
+|`grant_item` / `grant_gold`|Beri item / emas|
+|`change_reputation`|Ubah reputasi faksi (`{faction, delta}`)|
+|`start_dialog`|Paksa dialog (`{dialog_id}`)|
 |`log`|Teks narasi singkat|
 
 ### 15.4 Aturan Proses
 
 * **Kapan diproses:** setelah setiap aksi pemain di luar combat (setelah quest selesai, breakthrough, pindah peta, selesai dialog) — sekali per momen.
-* **`once: true`** → event otomatis men-set `event\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` setelah dijalankan; `once: false` → repeatable (dibatasi trigger-nya sendiri).
+* **`once: true`** → event otomatis men-set `event_<id>_done` setelah dijalankan; `once: false` → repeatable (dibatasi trigger-nya sendiri).
 * **Urutan:** event dievaluasi dalam urutan file; event yang memicu quest harus mendahului event yang bergantung pada flag quest itu.
-* **Flag `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` otomatis** dari engine quest (§12.2) menjamin trigger event tidak pernah "hilang" karena lupa set flag.
+* **Flag `quest<id>_done` otomatis** dari engine quest (§12.2) menjamin trigger event tidak pernah "hilang" karena lupa set flag.
 
-\---
+---
 
-## 16\. Status Effects (baru)
+## 16. Status Effects (baru)
 
 Daftar status yang dipakai engine combat. Semua efek dihitung pada awal giliran pemilik status (tick) sebelum aksi.
 
@@ -523,7 +523,7 @@ Daftar status yang dipakai engine combat. Semua efek dihitung pada awal giliran 
 |`barrier`|Perisai|buff|Defense +30%|3|Teknik tanah/formasi|
 |`strengthen`|Menguat|buff|Attack +25%|3|Pil buff / teknik|
 |`haste`|Cepat|buff|Agility +25%|3|Teknik angin/jiwa|
-|`qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_flow`|Aliran Qi|buff|Qi regen +50%|3|Formasi|
+|`qi_flow`|Aliran Qi|buff|Qi regen +50%|3|Formasi|
 
 **Aturan umum:**
 
@@ -533,9 +533,9 @@ Daftar status yang dipakai engine combat. Semua efek dihitung pada awal giliran 
 * Pembersihan status: pil penawar, teknik pembersih, atau rest.
 * Boss kebal terhadap control (`stun`/`freeze`/`charm`) kecuali dinyatakan lain di data musuh.
 
-\---
+---
 
-## 17\. Daftar Stat Final (baru — perbaikan I5)
+## 17. Daftar Stat Final (baru — perbaikan I5)
 
 Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar ini.
 
@@ -545,43 +545,43 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 |-|-|-|
 |`attack`|Kekuatan serangan fisik|Damage fisik (§6.4)|
 |`defense`|Ketahanan fisik|Pengurang damage fisik|
-|`agility`|Kecepatan \& presisi|Urutan giliran (§6.1), crit, miss, dodge|
+|`agility`|Kecepatan & presisi|Urutan giliran (§6.1), crit, miss, dodge|
 |`intelligence`|Kekuatan teknik|Damage teknik (jalur Alkimia/Formasi/Jiwa)|
 |`vitality`|Daya tahan tubuh|HP max, resistensi racun/bleed|
 |`spirit`|Kekuatan jiwa|Teknik Jalan Jiwa, resistensi charm/seal|
 
-### 17.2 Stat Resource \& Turunan
+### 17.2 Stat Resource & Turunan
 
 |Stat|Rumus|
 |-|-|
-|`hp\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_max`|`40 + vitality × 8 + bonus\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_tingkatan`|
-|`qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_max`|`10 + order\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_tingkatan × 5 + meridian\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_buka × 3`|
-|`qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_regen` (per giliran)|`2 + meridian\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_buka`|
-|`crit\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_chance`|`min(25%, 5% + agility × 0.1%)`|
-|`dodge\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_chance`|`min(30%, 5% + agility × 0.1%)`|
-|`miss\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_rate` (dikenakan ke lawan)|`max(5%, 20% − agility × 0.1%)`|
-|`resist\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_<elemen>`|Dari peralatan/teknik; default 0; pengurang linear damage teknik|
+|`hp_max`|`40 + vitality × 8 + bonus_tingkatan`|
+|`qi_max`|`10 + order_tingkatan × 5 + meridian_buka × 3`|
+|`qi_regen` (per giliran)|`2 + meridian_buka`|
+|`crit_chance`|`min(25%, 5% + agility × 0.1%)`|
+|`dodge_chance`|`min(30%, 5% + agility × 0.1%)`|
+|`miss_rate` (dikenakan ke lawan)|`max(5%, 20% − agility × 0.1%)`|
+|`resist_<elemen>`|Dari peralatan/teknik; default 0; pengurang linear damage teknik|
 
 ### 17.3 Stat Ekonomi
 
 * `gold` — mata uang.
 * `insight` — pemahaman (XP kultivasi, §4.3).
-* `meridian\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_buka` — jumlah meridian yang dibuka (0–8); menaikkan qi \& regen.
+* `meridian_buka` — jumlah meridian yang dibuka (0–8); menaikkan qi & regen.
 * Reputasi faksi (5 faksi, §8) — bukan stat combat, tapi penentu ending (§21).
 
-\---
+---
 
-## 18\. Daftar Perintah Game (baru)
+## 18. Daftar Perintah Game (baru)
 
 ### 18.1 Perintah Global (selalu tersedia)
 
 |Perintah|Deskripsi|
 |-|-|
-|`help`|Bantuan \& daftar perintah konteks|
+|`help`|Bantuan & daftar perintah konteks|
 |`status`|Stat, tingkatan, qi, kondisi|
 |`inventory` (alias `tas`)|Lihat item, equip/unequip|
 |`quests` (alias `misi`)|Daftar quest aktif/selesai|
-|`map`|Peta \& lokasi yang terbuka|
+|`map`|Peta & lokasi yang terbuka|
 |`party` (alias `tim`)|Kelola anggota tim (§20)|
 |`save` / `load`|Simpan/muat (§19)|
 |`settings` (alias `pengaturan`)|Tampilan, kecepatan teks, konfirmasi|
@@ -604,7 +604,7 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 |`formation <nama>` (alias `formasi`)|Pasang/bongkar formasi|
 |`equip` / `unequip`|Pasang/lepas senjata, artefak, teknik|
 |`use <item>`|Pakai item (pil, dll.)|
-|`recall <binatang\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_roh>`|Panggil/lepas binatang roh|
+|`recall <binatang_roh>`|Panggil/lepas binatang roh|
 
 ### 18.3 Perintah Combat (giliran pemain)
 
@@ -616,14 +616,14 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 |`item` (alias `pakai`)|Pakai item dalam pertarungan|
 |`observe` (alias `amati`)|Analisis musuh: lihat HP/qi/elemen/status (gratis, §keputusan combat)|
 |`swap <anggota>` (alias `ganti`)|Tukar anggota (1×/giliran, memakai giliran)|
-|`formation\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_skill`|Skill formasi aktif (bila formasi terpasang)|
+|`formation_skill`|Skill formasi aktif (bila formasi terpasang)|
 |`escape` (alias `kabur`)|Kabur (gagal vs boss)|
 
-\---
+---
 
-## 19\. Sistem Save (baru)
+## 19. Sistem Save (baru)
 
-### 19.1 Slot \& Momen Simpan
+### 19.1 Slot & Momen Simpan
 
 * **3 slot manual** (`save`) + **1 slot autosave** yang menimpa otomatis saat: quest selesai, breakthrough, rest, dan pindah arc.
 * Setiap save menyimpan **waktu game** (hari/jam) dan posisi pemain.
@@ -632,36 +632,36 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 
 ```json
 {
-  "schema\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_version": 1,
-  "player": {"name": "…", "background": "…", "path": "sword", "tier": "qi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_condensation", "stats": {}, "insight": 0, "gold": 0, "meridian\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_buka": 0},
-  "party": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[{"id": "lin\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_wei", "tier": "…", "bond\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_xp": 0}],
+  "schema_version": 1,
+  "player": {"name": "…", "background": "…", "path": "sword", "tier": "qi_condensation", "stats": {}, "insight": 0, "gold": 0, "meridian_buka": 0},
+  "party": [{"id": "lin_wei", "tier": "…", "bond_xp": 0}],
   "inventory": {"items": {}, "equipped": {}, "artifacts": {}},
-  "quests": {"started": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[], "done": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[], "failed": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[]},
+  "quests": {"started": [], "done": [], "failed": []},
   "flags": {},
-  "reputation": {"court": 0, "holy\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_order": 0, "rebels": 0, "guilds": 0, "ancient\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_order": 0},
-  "memories": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[],
-  "map\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_unlocks": \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[],
-  "location": "village\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_emberfall",
+  "reputation": {"court": 0, "holy_order": 0, "rebels": 0, "guilds": 0, "ancient_order": 0},
+  "memories": [],
+  "map_unlocks": [],
+  "location": "village_emberfall",
   "time": {"day": 1, "hour": 8},
   "settings": {}
 }
 ```
 
-### 19.3 Migrasi \& Anti-Corrupt
+### 19.3 Migrasi & Anti-Corrupt
 
-* **Migrasi:** `schema\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_version` dinaikkan saat struktur berubah; engine punya `migrations: dict\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[versi\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_lama → fungsi]`. **Backfill wajib:** saat load, untuk setiap quest di `quests.done` yang belum punya flag `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`, set flag itu (pelajaran dari proyek sebelumnya — mencegah event gate mati di save lama).
+* **Migrasi:** `schema_version` dinaikkan saat struktur berubah; engine punya `migrations: dict[versi_lama → fungsi]`. **Backfill wajib:** saat load, untuk setiap quest di `quests.done` yang belum punya flag `quest<id>_done`, set flag itu (pelajaran dari proyek sebelumnya — mencegah event gate mati di save lama).
 * **Validasi:** sebelum dimuat, cek JSON valid + referensi (item, quest, peta) ter-resolve. Gagal → coba backup `.bak`; tetap gagal → pesan jelas + kembali ke menu (tanpa crash).
 * **Atomic write:** tulis `save.json.tmp` lalu `os.replace` → tidak ada save setengah rusak.
 * **Anti-cheat ringan:** tidak ada enkripsi; data bisa diedit manual oleh pemain (konsekuensi ditanggung pemain).
 
-\---
+---
 
-## 20\. Aturan Rekrut Tim (baru)
+## 20. Aturan Rekrut Tim (baru)
 
 ### 20.1 Komposisi Tim
 
 * Tim aktif **maksimal 4**: protagonis + 3 slot rekan/binatang roh.
-* Anggota punya elemen \& teknik sendiri → komposisi memengaruhi **resonansi tim** (§6.2).
+* Anggota punya elemen & teknik sendiri → komposisi memengaruhi **resonansi tim** (§6.2).
 * **Swap komposisi hanya di lokasi aman** (desa/kota/rest). Dalam combat: `swap` 1×/giliran dengan memakai giliran anggota aktif.
 
 ### 20.2 Sumber Anggota
@@ -672,7 +672,7 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 |**Binatang roh — rekrut**|Kalahkan di pertarungan → ikat (butuh Jalan Jiwa atau item khusus)|Serigala Bayangan|
 |**Binatang roh — menetas**|Telur dari quest/loot/bos → menetas setelah N hari atau tier tertentu|Telur Phoenix Abu|
 
-> \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*Keputusan final:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* binatang roh memakai \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*dua-duanya\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* (rekrut + menetas) — bukan salah satu (§24.1).
+> **Keputusan final:** binatang roh memakai **dua-duanya** (rekrut + menetas) — bukan salah satu (§24.1).
 
 ### 20.3 Progresi Anggota
 
@@ -680,23 +680,23 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 * Tidak melakukan breakthrough seperti protagonis; naik **peringkat rekan** (1–3 peringkat per arc) yang membuka teknik mereka.
 * Binatang roh bisa **berevolusi sekali** (saat tier tertentu) — perubahan bentuk, elemen, stat.
 
-### 20.4 Kematian \& KO
+### 20.4 Kematian & KO
 
 * **KO** dalam combat: pulih otomatis setelah pertarungan/rest.
 * **Kematian permanen** hanya dari momen cerita yang ditulis (scripted) — selalu ada peringatan/kesempatan mencegah. Nada gelap ≠ hukuman tak adil.
 
-\---
+---
 
-## 21\. Penentu Ending (baru)
+## 21. Penentu Ending (baru)
 
 ### 21.1 Mekanik Skor
 
-* Sepanjang permainan ada **7 keputusan kunci** (1 di Arc 1, 2 di Arc 2–4) yang men-set flag **dan** menambah `ending\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_points` ke salah satu dari 3 jalur: `defy` (menentang langit), `seal` (menyegel diri), `reconcile` (rekonsiliasi).
+* Sepanjang permainan ada **7 keputusan kunci** (1 di Arc 1, 2 di Arc 2–4) yang men-set flag **dan** menambah `ending_points` ke salah satu dari 3 jalur: `defy` (menentang langit), `seal` (menyegel diri), `reconcile` (rekonsiliasi).
 * Keputusan kunci ditandai eksplisit di quest/dialog (biasanya pilihan sulit dengan konsekuensi reputasi).
 * **Ending utama:** jalur dengan poin tertinggi. **Tie-break:** keputusan kunci terakhir yang diambil menentukan.
 * Persyaratan minimum: tingkatan **Pemutus Kehampaan** dan sekutu/ritual cukup — jika tidak, ending berujung pada variasi "kegagalan heroik".
 
-### 21.2 Ending \& Epilog
+### 21.2 Ending & Epilog
 
 |Ending|Syarat utama|Variasi (contoh)|
 |-|-|-|
@@ -712,11 +712,11 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 
   1. **Persiapan ritual:** kumpulkan artefak + pasang formasi + pilih sekutu (komposisi tim) → memengaruhi buff/stat di tahap kedua.
   2. **Pertarungan Suara:** bos final (tier 6+, §11). Jika persiapan kurang, bos mendapat bonus (stat +25% per komponen ritual yang hilang).
-* Ini menegaskan prinsip "kekuatan tidak gratis": bahkan ending puncak butuh investasi naratif \& sistem.
+* Ini menegaskan prinsip "kekuatan tidak gratis": bahkan ending puncak butuh investasi naratif & sistem.
 
-\---
+---
 
-## 22\. Target Konten per Arc (baru)
+## 22. Target Konten per Arc (baru)
 
 Angka final untuk perencanaan produksi. Total = target minimum yang harus tercapai saat rilis.
 
@@ -735,9 +735,9 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 |Echo memori (rahasia)|2|2|2|3|**9**|
 |Durasi main|2–3 jam|3–4 jam|3–4 jam|4–5 jam|**12–16 jam** (15+ dengan side content)|
 
-\---
+---
 
-## 23\. Roadmap Pengembangan
+## 23. Roadmap Pengembangan
 
 |Fase|Isi|Kriteria selesai|
 |-|-|-|
@@ -745,12 +745,12 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 |**Fase 1 — Arc 1**|Data quest101+, event engine (§15), peta awal, NPC awal, bos Arc 1, rahasia pertama, echo memori|Arc 1 playable penuh + test|
 |**Fase 2 — Arc 2**|Sekte, gilda, orde rahasia, teknik/artefak/binatang roh (§20), reputasi faksi, rekan tim pertama|Arc 2 playable|
 |**Fase 3 — Arc 3**|Orde Suci, pemberontak, entitas kuno aktif, formasi, keputusan kunci pertama|Arc 3 playable|
-|**Fase 4 — Arc 4 \& Ending**|Ruang rahasia, rahasia penuh, sistem skor ending (§21), 3 ending + variasi, epilog|Game lengkap 15+ jam|
+|**Fase 4 — Arc 4 & Ending**|Ruang rahasia, rahasia penuh, sistem skor ending (§21), 3 ending + variasi, epilog|Game lengkap 15+ jam|
 |**Fase 5 — Polish**|Keseimbangan, save migration (§19.3), smoke tests, README, playtest|Rilis v1.0|
 
-\---
+---
 
-## 24\. Keputusan Desain Terkunci
+## 24. Keputusan Desain Terkunci
 
 ### 24.1 Keputusan Final (termasuk konversi "Belum Diputuskan" → default)
 
@@ -762,16 +762,16 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 6. Ending dinamis (3 besar + variasi), bukan 6 ending kaku; penentu mekanik di §21.
 7. Konten 100% data-driven JSON.
 8. UI Rich (tampilan) + Textual (interaksi).
-9. **Nama dunia final:** kerajaan **Ashenfeld**, desa awal **Emberfall** (`village\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_emberfall`), sekte **Awan Biru** (`sect\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_azure`); nama karakter di §10 adalah default final.
+9. **Nama dunia final:** kerajaan **Ashenfeld**, desa awal **Emberfall** (`village_emberfall`), sekte **Awan Biru** (`sect_azure`); nama karakter di §10 adalah default final.
 10. **Jumlah konten target:** 32 quest utama + 10 quest faksi (detail §22).
-11. **Formula keseimbangan:** angka konkret di §6.4 \& §17 (bukan draf).
+11. **Formula keseimbangan:** angka konkret di §6.4 & §17 (bukan draf).
 12. **Binatang roh:** rekrut + menetas — **keduanya** aktif (§20.2).
 13. **Ending "Menentang Langit":** ritual + pertarungan dua tahap (§21.3).
 14. **Inisiatif combat:** turn-based klasik — order dihitung sekali dari agility saat combat dimulai, tetap untuk seluruh pertarungan (§6.1).
-15. **Flag quest:** engine otomatis men-set `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` saat quest selesai; event/musuh memakai flag ini sebagai trigger (§12.2, §15). Naming wajib `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`, bukan `q<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`.
-16. **Gating peta \& cerita:** lewat event engine (`unlock\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_map`, trigger flag) — bukan hardcode (§15).
+15. **Flag quest:** engine otomatis men-set `quest<id>_done` saat quest selesai; event/musuh memakai flag ini sebagai trigger (§12.2, §15). Naming wajib `quest<id>_done`, bukan `q<id>_done`.
+16. **Gating peta & cerita:** lewat event engine (`unlock_map`, trigger flag) — bukan hardcode (§15).
 17. **Kematian rekan:** permanen hanya dari momen cerita scripted, dengan peringatan (§20.4).
-18. **Save:** 3 slot manual + autosave; migrasi + backfill `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` pada load save lama (§19).
+18. **Save:** 3 slot manual + autosave; migrasi + backfill `quest<id>_done` pada load save lama (§19).
 
 ### 24.2 Belum Diputuskan (terbuka untuk produksi)
 
@@ -784,16 +784,16 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 
 * **Perbaikan inkonsistensi (I1–I5):**
 
-  * I1 — Flag naming diseragamkan ke `quest<id>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done` di §12.3 \& §14.3 (sebelumnya `q101\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`/`q104\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_done`), selaras AGENTS.md §5.3.
+  * I1 — Flag naming diseragamkan ke `quest<id>_done` di §12.3 & §14.3 (sebelumnya `q101_done`/`q104_done`), selaras AGENTS.md §5.3.
   * I2 — Kurva bos diselaraskan dengan tingkatan pemain (§11): Rasul Langit → Pemutus Kehampaan, Suara → Penantang Surga+; tabel kini memuat kolom tingkatan pemain akhir arc.
-  * I3 — Cross-ref §3.1 diperbaiki (kini → §24.1); nama kerajaan **Ashenfeld** \& desa **Emberfall** diputuskan final agar tidak membingungkan.
+  * I3 — Cross-ref §3.1 diperbaiki (kini → §24.1); nama kerajaan **Ashenfeld** & desa **Emberfall** diputuskan final agar tidak membingungkan.
   * I4 — Inisiatif combat dikunci ke turn-based klasik (order tetap, dihitung sekali dari agility) di §6.1.
   * I5 — Daftar stat final eksplisit di §17; formula §6.4 kini merujuk definisi tunggal.
 * **Bagian baru:** §15 Event Engine, §16 Status Effects, §17 Daftar Stat Final, §18 Daftar Perintah Game, §19 Sistem Save, §20 Aturan Rekrut Tim, §21 Penentu Ending, §22 Target Konten per Arc.
 * **Konversi "Belum Diputuskan" → keputusan default terkunci** (§24.1): nama dunia, jumlah quest, formula keseimbangan, binatang roh (rekrut+menetas), cara melawan entitas kuno (ritual+pertarungan), penalti breakthrough (sementara), inisiatif klasik, flag otomatis.
 * Roadmap dipindah ke §23; struktur proyek §14.2 ditambah `data/events/`.
 
-\---
+---
 
 *Dokumen ini adalah sumber kebenaran desain. Perubahan bertentangan dengan dokumen ini wajib didiskusikan dengan pengguna (AGENTS.md §1). Status: v1.0 — dokumen kunci pembangunan.*
 
