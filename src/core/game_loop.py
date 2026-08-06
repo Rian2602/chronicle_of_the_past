@@ -221,9 +221,11 @@ class GameSession:
     def _cmd_use(self, command: Command) -> list[str]:
         """Pakai item konsumabel di luar combat (GDD §18.2).
 
-        Efek non-combat (heal_hp, restore_qi, add_insight, add_meridian)
-        diterapkan segera. Efek combat-ready (buff_*) diparse tapi tidak
-        dieksekusi.
+        Item divalidasi ke data/items sebelum dikonsumsi (item tak dikenal
+        tidak boleh raib); bahan (type=material) ditolak — arahkan ke
+        refine. Efek non-combat (heal_hp, restore_qi, add_insight,
+        add_meridian) diterapkan segera. Efek combat-ready (buff_*) diparse
+        tapi tidak dieksekusi.
         """
         if not command.args:
             return ["Pakai apa? Contoh: use <nama_item>."]
@@ -231,13 +233,18 @@ class GameSession:
         items = self.state.inventory.get("items", {})
         if items.get(item_id, 0) <= 0:
             return [f"Kamu tidak punya {item_id} di tas."]
-        items[item_id] -= 1
-        if items[item_id] == 0:
-            del items[item_id]
         catalog = load_items()
         item = catalog.get(item_id)
         if item is None:
             return [f"Item '{item_id}' tidak dikenal di data."]
+        if item.get("type") == "material":
+            return [
+                f"{item['name']} adalah bahan — tidak bisa dipakai "
+                "langsung. Racik dulu dengan refine."
+            ]
+        items[item_id] -= 1
+        if items[item_id] == 0:
+            del items[item_id]
         lines = [f"Kamu memakai {item['name']}."]
         effect = item.get("effect")
         player = self.state.player

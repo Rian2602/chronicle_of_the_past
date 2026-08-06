@@ -691,6 +691,34 @@ def test_use_item_tidak_ada_di_tas_memberi_error(tmp_path):
     assert any("tidak" in line.lower() for line in lines)
 
 
+def test_use_item_tak_dikenal_tidak_konsumsi(tmp_path):
+    """Use item tak dikenal data: item TIDAK boleh raib dari tas (bug).
+
+    Regresi: sebelumnya item dikurangi dulu (game_loop.py) baru divalidasi
+    ke katalog — item tak dikenal ikut terkonsumsi sia-sia.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["hantu_item"] = 1
+    lines = _dispatch(session, "use hantu_item")
+    assert any("tidak dikenal" in line for line in lines)
+    assert session.state.inventory["items"].get("hantu_item", 0) == 1
+
+
+def test_use_bahan_ditolak_tidak_konsumsi(tmp_path):
+    """Use bahan material: ditolak, item tetap di tas (cegah perangkap).
+
+    Bahan (type=material) tidak punya efek; memakainya hanya menghancurkan
+    item. Pemain harus diarahkan ke refine.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 1
+    lines = _dispatch(session, "use esensi_api")
+    assert any("racik" in line.lower() for line in lines)
+    assert session.state.inventory["items"]["esensi_api"] == 1
+
+
 # ----------------------------------------------------------------------
 # Sprint D: E2E Integration Tests (Arc 1 Variasi)
 # ----------------------------------------------------------------------
