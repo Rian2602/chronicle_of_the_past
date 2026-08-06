@@ -30,6 +30,7 @@ from src.engine.cultivation import (
     next_tier,
 )
 from src.engine.event import load_events, process_events
+from src.engine.items import load_items
 from src.engine.maps import load_maps
 from src.engine.quest import (
     active_quests,
@@ -51,10 +52,6 @@ CULTIVATE_INSIGHT = 10
 CULTIVATE_HOURS = 3
 REST_HOUR = 8
 START_LOCATION = "village_emberfall"
-FOREST_ID = "ashfall_forest"
-# Pertarungan MVP: Bandit Perbatasan (kalahkan-able oleh pemain tier 0).
-# Serigala Qi tetap di data sebagai musuh lebih kuat untuk Fase 1.
-FOREST_ENEMY = "bandit_perbatasan"
 NPC_DIR = Path(__file__).resolve().parents[2] / "data" / "npc"
 UNAVAILABLE = "Belum tersedia (Fase 1)."
 
@@ -201,10 +198,18 @@ class GameSession:
         return lines
 
     def _cmd_inventory(self, _command: Command) -> list[str]:
+        """Tampilkan isi tas dengan nama item dari data (GDD §14.2)."""
         items = self.state.inventory.get("items", {})
         if not items:
             return ["Tasmu kosong."]
-        return [f"Tas: {items}"]
+        names = load_items()
+        lines = ["Isi tas:"]
+        for item_id, count in sorted(items.items()):
+            # ponytail: item tanpa data (save lama) -> id mentah; validator
+            # §25.3 menjamin event->item ter-resolve.
+            name = names.get(item_id, {}).get("name", item_id)
+            lines.append(f"  {name} x{count}")
+        return lines
 
     def _cmd_quests(self, _command: Command) -> list[str]:
         """Tampilkan quest aktif dengan progres per objektif (GDD §12)."""
@@ -299,13 +304,23 @@ class GameSession:
         return [f"Lokasi belum terbuka: {location}."]
 
     def _cmd_look(self, _command: Command) -> list[str]:
-        """Amati lokasi saat ini: deskripsi dari data/maps (GDD §9)."""
+        """Amati lokasi saat ini: deskripsi dari data/maps (GDD §9).
+
+        Musuh per peta didefinisikan di data (enemies + requires_flag);
+        yang pertama memenuhi syarat dan belum dikalahkan memicu
+        pertarungan (GDD §11).
+        """
         location = self.state.location
-        if location == FOREST_ID and not self.state.flags.get(
-            "ashfall_forest_cleared"
-        ):
-            return self._start_battle(FOREST_ENEMY)
         data = load_maps().get(location)
+        if data is not None:
+            for entry in data.get("enemies", []):
+                enemy_id = entry["enemy"]
+                requires = entry.get("requires_flag")
+                if requires and not self.state.flags.get(requires):
+                    continue
+                if self.state.kills.get(enemy_id, 0) >= 1:
+                    continue
+                return self._start_battle(enemy_id)
         if data is None:
             # ponytail: peta tanpa data -> teks netral; hilang begitu semua
             # peta punya file JSON di data/maps.
@@ -579,6 +594,8 @@ class GameSession:
             # Quest dievaluasi setelah kemenangan (GDD §12.4); narasi
             # quest masuk log pertarungan agar terlihat UI.
             for line in self._run_quests():
+                battle.log.append(line)
+            for line in self._run_events():
                 battle.log.append(line)
         elif battle.winner == "enemies":
             # KO: pulih otomatis setelah pertarungan (GDD §20.4).

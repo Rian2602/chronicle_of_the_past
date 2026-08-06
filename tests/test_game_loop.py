@@ -372,6 +372,51 @@ def test_look_di_lokasi_baru_tidak_menipu(tmp_path):
     assert not any("Desa Emberfall" in line for line in lines)
 
 
+def test_look_kuil_sebelum_quest102_tidak_memicu_battle(tmp_path):
+    """Gating §11: kuil tanpa quest102_done tidak memunculkan musuh."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ruin_shrine")
+    lines = _dispatch(session, "look")
+    assert session.in_battle is False
+    assert any("Reruntuhan Kuil" in line for line in lines)
+
+
+def test_slice_kuil_lengkap_quest103_dan_rahasia(tmp_path):
+    """Alur Arc 1: zombi -> bos -> quest103 -> memori + pil."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "talk lin_wei")
+    _dispatch(session, "go ruin_shrine")
+    assert "quest102_done" in session.state.flags
+    assert "quest103" in session.state.quests.started
+    _dispatch(session, "look")
+    assert session.in_battle is True
+    frame = session.battle_frame()
+    while not frame.over:
+        frame = session.battle_step("attack")
+    assert frame.victory is True
+    _dispatch(session, "look")
+    assert session.in_battle is True
+    frame = session.battle_frame()
+    while not frame.over:
+        if session._ally.qi >= 8:
+            frame = session.battle_step("technique:flame_strike")
+        else:
+            frame = session.battle_step("attack")
+    assert frame.victory is True
+    assert "quest103_done" in session.state.flags
+    assert "memory_shrine_trial" in session.state.memories
+    assert session.state.inventory["items"]["pil_peneguh_fondasi"] == 1
+    lines = _dispatch(session, "inventory")
+    assert any("Pil Peneguh Fondasi" in line for line in lines)
+
+
 # ----------------------------------------------------------------------
 # Quest engine (GDD §12): talk, progres, penyelesaian, kills
 # ----------------------------------------------------------------------
