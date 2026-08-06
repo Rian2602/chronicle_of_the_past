@@ -596,7 +596,9 @@ class GameSession:
                 f"{companion.element} · HP {bar} {hp}/{companion.hp_max} · "
                 f"bond {companion.bond_xp} (peringkat {companion.rank})"
             )
-        for _ in range(3 - len(members)):
+        # Clamp defensif: cap aktif (3) dijaga event/swap, tapi panel tak
+        # boleh crash walau state korup (ponytail: len > 3 tak mungkin).
+        for _ in range(max(0, 3 - len(members))):
             lines.append("  (kosong)")
         return lines
 

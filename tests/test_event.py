@@ -564,3 +564,27 @@ def test_action_add_companion_menambah_party():
     _fire(event, state)
     assert any(m["id"] == "lin_wei" for m in state.party)
     assert "lin_wei" in state.party_active
+
+
+def test_action_add_companion_slot_aktif_maksimal_tiga():
+    """add_companion tidak melebihi 3 slot aktif (GDD §20.1, §24.1)."""
+    state = _state()
+    state.flags["quest103_done"] = True
+    state.party = [{"id": f"rekan{i}", "name": f"Rekan {i}"} for i in range(3)]
+    state.party_active = ["rekan0", "rekan1", "rekan2"]
+    event = _event(
+        trigger=[
+            {
+                "kind": "flag",
+                "flag": "quest103_done",
+                "operator": "EQUALS",
+                "value": True,
+            }
+        ],
+        actions=[{"kind": "add_companion", "id": "lin_wei"}],
+    )
+    _fire(event, state)
+    # Lin Wei masuk roster tapi tidak diaktifkan — slot penuh.
+    assert any(m["id"] == "lin_wei" for m in state.party)
+    assert "lin_wei" not in state.party_active
+    assert len(state.party_active) == 3

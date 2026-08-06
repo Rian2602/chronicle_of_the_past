@@ -152,8 +152,15 @@ def _apply_action(
         if not any(m.get("id") == companion_id for m in state.party):
             raw = load_companion(companion_id)  # loader di models/party.py
             state.party.append(Companion.from_dict(raw.to_dict()).to_dict())
-            state.party_active.append(companion_id)
-            result.logs.append(f"{raw.name} kini bersamamu.")
+            # GDD §20.1/§24.1: maks 3 slot rekan aktif. Saat penuh, rekan
+            # tetap masuk roster tapi tidak aktif (swap bisa mengaktifkan).
+            if len(state.party_active) < 3:
+                state.party_active.append(companion_id)
+                result.logs.append(f"{raw.name} kini bersamamu.")
+            else:
+                result.logs.append(
+                    f"{raw.name} bergabung ke rombongan (slot aktif penuh)."
+                )
     elif kind == "log":
         result.logs.append(action["text"])
     elif kind == "prompt_choice":
