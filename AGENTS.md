@@ -260,13 +260,11 @@ yang keluar dari mesin) sehingga murah dan aman dijalankan sering.
 |Keputusan yang tidak boleh diubah diam-diam|§24.1|
 |DataCache / profiler / asset validator|§25|
 
-**Catatan gap yang ditemukan saat penyusunan dokumen ini:** GDD.md belum
-punya bagian bernomor untuk **sistem toko/shop** meski pekerjaan itu
-sedang berjalan. Sesuai §2.2, fitur besar yang belum terdokumentasi di GDD
-wajib melalui brainstorming + ringkasan desain dulu — pertimbangkan
-menambahkan bagian toko ke GDD.md (mis. sebagai §7a atau bagian baru)
-begitu desainnya stabil, supaya dokumen ini tetap bisa merujuk ke sana
-alih-alih menduplikasi aturannya di sini.
+**Catatan gap yang sudah ditutup:** gap sistem toko/shop yang dicatat
+pada revisi sebelumnya kini telah terisi — **Toko & Ekonomi**
+didokumentasi di GDD §7, dengan `data/shops/` di §14.2, perintah
+`shop`/`buy`/`sell` di §18.2, dan `shop_sold` di save schema §19.2.
+Rujuk bagian itu alih-alih menduplikasi aturannya di sini.
 
 ---
 
@@ -284,7 +282,7 @@ dan stabil. Sentuh hanya bila diminta eksplisit atau ada bug terbukti
 `_cmd_talk()`), `src/core/save.py` (tambah migrasi bila schema berubah)
 — perluas tanpa merestrukturisasi tanpa alasan kuat.
 * **Data eksisting** (6 tier, 10 teknik, 14 musuh, 29 event, 7 peta,
-  16 quest, 3 memori, 21 item, 11 NPC) — **DILARANG**
+  16 quest, 3 memori, 21 item, 1 toko, 11 NPC) — **DILARANG**
 dihapus atau diganti; hanya ditambah.
 
 ---

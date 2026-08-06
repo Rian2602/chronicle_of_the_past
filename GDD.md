@@ -226,6 +226,7 @@ Metal → Kayu → Tanah → Air → Api → Metal
 |**Binatang Roh**|Rekan spiritual; **rekrut (kalahkan → ikat) ATAU menetas dari telur** — dua-duanya aktif (keputusan final, §24.1). Ikut bertarung, punya elemen & teknik sendiri, bisa berevolusi sekali. Detail: §20.|
 |**Formasi / Array**|Ritual persiapan: pasang formasi sebelum pertempuran penting → buff area/efek besar. Beberapa formasi dipakai di luar combat (pertahanan, penyembuhan).|
 |**Meridian & Qi**|Sistem resource utama (§4.2, formula §17).|
+|**Toko & Ekonomi**|Jual-beli item di lokasi ber-NPC pedagang (field `shop` di data NPC → file `data/shops/`). Harga beli = `price` di data/items; jual kembali = 40% harga beli (sementara, §24.2). Stok toko terbatas (`count`) dan **restock saat `rest`**; stok terjual tersimpan di save (`shop_sold`, §19.2).|
 
 ---
 
@@ -413,6 +414,7 @@ chronicle_of_the_past/
 │   ├── cultivation/        # tingkatan, jalur
 │   ├── techniques/         # teknik rahasia
 │   ├── items/              # pil, artefak, bahan
+│   ├── shops/              # stok toko (§7)
 │   ├── enemies/            # musuh & bos
 │   ├── quests/             # quest per arc
 │   ├── events/             # event engine (§15)
@@ -639,6 +641,9 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 |`equip` / `unequip`|Pasang/lepas senjata, artefak, teknik|
 |`use <item>`|Pakai item (pil, dll.)|
 |`recall <binatang_roh>`|Panggil/lepas binatang roh|
+|`shop` (alias `toko`)|Lihat dagangan pedagang di lokasi|
+|`buy <item> [jumlah]` (alias `beli`)|Beli item (kurangi emas; stok terbatas)|
+|`sell <item> [jumlah]` (alias `jual`)|Jual item seharga 40% harga beli|
 
 ### 18.3 Perintah Combat (giliran pemain)
 
@@ -666,7 +671,7 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "player": {"name": "…", "background": "…", "path": "sword", "tier": "qi_condensation", "stats": {}, "insight": 0, "gold": 0, "meridian_buka": 0},
   "party": [{"id": "lin_wei", "tier": "…", "bond_xp": 0}],
   "inventory": {"items": {}, "equipped": {}, "artifacts": {}},
@@ -677,13 +682,15 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
   "map_unlocks": [],
   "location": "village_emberfall",
   "time": {"day": 1, "hour": 8},
-  "settings": {}
+  "settings": {},
+  "shop_sold": {}
 }
 ```
 
 ### 19.3 Migrasi & Anti-Corrupt
 
 * **Migrasi:** `schema_version` dinaikkan saat struktur berubah; engine punya `migrations: dict[versi_lama → fungsi]`. **Backfill wajib:** saat load, untuk setiap quest di `quests.done` yang belum punya flag `quest<id>_done`, set flag itu (pelajaran dari proyek sebelumnya — mencegah event gate mati di save lama).
+* **Migrasi v1 → v2 (toko):** field `shop_sold` (stok toko terjual) ditambahkan dengan default kosong = seluruh toko stok penuh; save v1 dimigrasi otomatis tanpa kehilangan data lain.
 * **Validasi:** sebelum dimuat, cek JSON valid + referensi (item, quest, peta) ter-resolve. Gagal → coba backup `.bak`; tetap gagal → pesan jelas + kembali ke menu (tanpa crash).
 * **Atomic write:** tulis `save.json.tmp` lalu `os.replace` → tidak ada save setengah rusak.
 * **Anti-cheat ringan:** tidak ada enkripsi; data bisa diedit manual oleh pemain (konsekuensi ditanggung pemain).
@@ -810,9 +817,13 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 ### 24.2 Belum Diputuskan (terbuka untuk produksi)
 
 * Detail flavor nama sekte sekunder, kota gilda, dan karakter pendukung (bukan inti) — bebas dikembangkan penulis konten selama konsisten nada gelap.
-* Angka halus keseimbangan (damage per skill, harga toko) — disetel saat playtest Fase 5, mengikuti kerangka formula §6.4/§17.
+* Angka halus keseimbangan (damage per skill, harga jual kembali toko) — disetel saat playtest Fase 5. Harga beli toko hidup di `price` data/items; jual kembali sementara 40% (§7).
 
 ### 24.3 Changelog
+
+**v1.1 (2026-08-06)** — Sistem toko:
+
+* §7: baris **Toko & Ekonomi**; §14.2: folder `data/shops/`; §18.2: perintah `shop`/`buy`/`sell`; §19.2–19.3: schema save **v2** (`shop_sold`) + migrasi v1→2; §24.2: harga jual kembali 40% (sementara).
 
 **v1.0 (2026-08-05)** — Naik status dari draf 0.1 menjadi **dokumen kunci pembangunan**:
 
