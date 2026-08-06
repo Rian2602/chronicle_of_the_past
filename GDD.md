@@ -260,6 +260,25 @@ Metal → Kayu → Tanah → Air → Api → Metal
 
 **Gating peta:** flag `map_<id>_unlocked` diset lewat event engine (`unlock_map`, §15) — mencegah lompat konten. Peta awal (`village_emberfall`) terbuka sejak awal.
 
+**Skema peta (data-driven):**
+```json
+{
+  "id": "ruin_shrine",
+  "name": "Reruntuhan Kuil",
+  "description": "...",
+  "tier": 1,
+  "enemies": [
+    {"enemy": "zombie_temple", "requires_flag": "quest102_done"},
+    {"enemy": "penjaga_makam", "requires_flag": "ruin_shrine_cleared"}
+  ]
+}
+```
+* `enemies` (opsional): daftar musuh; saat `look`, musuh pertama yang
+  `requires_flag`-nya terpenuhi dan belum dikalahkan (`kills >= 1`) memicu
+  pertarungan. Ini mekanisme gating kemunculan bos (§11). Gating diletakkan
+  di level peta, bukan field `Enemy.requires_flag`, agar satu musuh bisa
+  muncul di beberapa peta dengan syarat berbeda.
+
 ---
 
 ## 10. NPC & Karakter (final default)

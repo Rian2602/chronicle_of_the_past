@@ -150,7 +150,7 @@ def test_go_lokasi_terbuka_dan_tertutup(tmp_path):
 
 
 def test_look_di_hutan_memicu_pertarungan(tmp_path):
-    """Melihat di hutan memicu pertarungan melawan Serigala Qi."""
+    """Melihat di hutan memicu pertarungan melawan Bandit Perbatasan."""
     session = _session(tmp_path)
     session.new_game("Akar")
     _dispatch(session, "go ashfall_forest")
