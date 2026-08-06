@@ -369,13 +369,13 @@ def test_quest101_dimulai_oleh_event_hari_pertama(tmp_path):
     assert session.state.flags["event_quest101_intro_done"] is True
 
 
-def test_talk_ke_tuan_shi_memberi_flag_dan_dialog(tmp_path):
-    """Talk ke Tuan Shi di desa: flag talked_tuan_shi + baris dialog."""
+def test_talk_ke_elder_mao_memberi_flag_dan_dialog(tmp_path):
+    """Talk ke Sesepuh Mao di desa: flag talked_elder_mao + baris dialog."""
     session = _session(tmp_path)
     session.new_game("Akar")
-    lines = _dispatch(session, "talk tuan_shi")
-    assert session.state.flags["talked_tuan_shi"] is True
-    assert any("Tuan Shi" in line for line in lines)
+    lines = _dispatch(session, "talk elder_mao")
+    assert session.state.flags["talked_elder_mao"] is True
+    assert any("Sesepuh Mao" in line for line in lines)
 
 
 def test_talk_tanpa_argumen_memberi_petunjuk(tmp_path):
@@ -392,9 +392,9 @@ def test_talk_sadar_lokasi(tmp_path):
     session = _session(tmp_path)
     session.new_game("Akar")
     _dispatch(session, "go ashfall_forest")
-    lines = _dispatch(session, "talk tuan_shi")
-    assert any("Tuan Shi tidak ada di sini" in line for line in lines)
-    assert "talked_tuan_shi" not in session.state.flags
+    lines = _dispatch(session, "talk elder_mao")
+    assert any("Sesepuh Mao tidak ada di sini" in line for line in lines)
+    assert "talked_elder_mao" not in session.state.flags
 
 
 def test_quests_menampilkan_title_dan_progres(tmp_path):
@@ -405,11 +405,11 @@ def test_quests_menampilkan_title_dan_progres(tmp_path):
     lines = _dispatch(session, "quests")
     joined = "\n".join(lines)
     assert "Qi Pertama" in joined
-    assert "Bicaralah dengan tuan_shi" in joined
+    assert "Bicaralah dengan elder_mao" in joined
     assert "[ ]" in joined
-    _dispatch(session, "talk tuan_shi")
+    _dispatch(session, "talk elder_mao")
     joined = "\n".join(_dispatch(session, "quests"))
-    assert "[x] Bicaralah dengan tuan_shi" in joined
+    assert "[x] Bicaralah dengan elder_mao" in joined
 
 
 def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
@@ -417,7 +417,7 @@ def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
     session = _session(tmp_path)
     session.new_game("Akar")
     _dispatch(session, "cultivate")  # quest101 dimulai via event intro
-    _dispatch(session, "talk tuan_shi")
+    _dispatch(session, "talk elder_mao")
     session.state.player.add_insight(100)
     lines = _dispatch(session, "breakthrough")
     state = session.state
@@ -428,11 +428,11 @@ def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
     assert state.flags["path_unlocked_sword"] is True
     assert state.player.insight >= 150  # 10 + 100 + reward 50
     assert state.player.gold == 20
-    assert state.reputation["ancient_order"] == 5
+    assert state.reputation["rebels"] == 5
     assert any("Quest selesai: Qi Pertama" in line for line in lines)
     # Cascade quest -> event: event quest_done menyala di pass yang sama.
     assert state.flags["event_quest101_done_done"] is True
-    assert any("Tuan Shi" in line for line in lines)
+    assert any("Sesepuh Mao" in line for line in lines)
 
 
 def test_quests_menampilkan_deskripsi_quest(tmp_path):
@@ -441,7 +441,7 @@ def test_quests_menampilkan_deskripsi_quest(tmp_path):
     session.new_game("Akar")
     _dispatch(session, "cultivate")  # quest101 dimulai via event intro
     joined = "\n".join(_dispatch(session, "quests"))
-    assert "Tuan Shi telah menunggu" in joined
+    assert "Sesepuh Mao mengajarkanmu menghirup qi langit-bumi" in joined
 
 
 def test_quest_selesai_saat_talk_setelah_breakthrough(tmp_path):
@@ -453,7 +453,7 @@ def test_quest_selesai_saat_talk_setelah_breakthrough(tmp_path):
     _dispatch(session, "breakthrough")  # objektif breakthrough terpenuhi
     assert session.state.player.tier_id == "qi_condensation"
     assert "quest101" in session.state.quests.started  # belum selesai
-    lines = _dispatch(session, "talk tuan_shi")
+    lines = _dispatch(session, "talk elder_mao")
     state = session.state
     assert state.quests.done == ["quest101"]
     assert state.flags["quest101_done"] is True

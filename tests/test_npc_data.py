@@ -4,14 +4,14 @@ import json
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "npc"
-EXPECTED_NPCS = {"tuan_shi"}
+EXPECTED_NPCS = {"elder_mao"}
 REQUIRED_KEYS = {"id", "name", "location", "greeting", "dialog"}
 # Lokasi yang dikenal sampai data maps masuk; diperluas bersamanya.
 KNOWN_LOCATIONS = {"village_emberfall", "ashfall_forest", "ruin_shrine"}
 
 
 def test_terdapat_file_npc_yang_diharapkan():
-    """Harus ada NPC awal Arc 1 sesuai rencana (tuan_shi)."""
+    """Harus ada NPC awal Arc 1 sesuai rencana (elder_mao)."""
     files = sorted(path.name for path in DATA_DIR.glob("*.json"))
     expected = sorted(f"{npc_id}.json" for npc_id in EXPECTED_NPCS)
     assert files == expected

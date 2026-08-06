@@ -84,7 +84,7 @@ def test_load_quests_urut_berdasarkan_id(tmp_path):
                 "type": "main",
                 "description": "d",
                 "objectives": [
-                    {"kind": "talk", "target": "tuan_shi"},
+                    {"kind": "talk", "target": "elder_mao"},
                     {"kind": "breakthrough", "target": "qi_condensation"},
                 ],
                 "rewards": {"insight": 50},
@@ -98,7 +98,7 @@ def test_load_quests_urut_berdasarkan_id(tmp_path):
     quests = load_quests(tmp_path)
     assert [quest.id for quest in quests] == ["quest101", "quest102"]
     assert quests[0].objectives == [
-        QuestObjective(kind="talk", target="tuan_shi"),
+        QuestObjective(kind="talk", target="elder_mao"),
         QuestObjective(kind="breakthrough", target="qi_condensation"),
     ]
     assert quests[0].next == "quest102"
@@ -126,9 +126,9 @@ def test_quest_kinds_memuat_delapan_kind():
 def test_objective_talk_memakai_flag_talked():
     """talk: terpenuhi bila flag talked_<target> diset."""
     state = _state()
-    objective = _obj("talk", "tuan_shi")
+    objective = _obj("talk", "elder_mao")
     assert not check_objective(state, _quest([objective]), 0)
-    state.flags["talked_tuan_shi"] = True
+    state.flags["talked_elder_mao"] = True
     assert check_objective(state, _quest([objective]), 0)
 
 
@@ -209,11 +209,11 @@ def test_kind_objective_tidak_dikenal_memunculkan_error():
 def test_advance_quest_all_objectives_done():
     """advance_quest memanggil complete_quest saat semua objektif selesai."""
     state = _state()
-    state.flags["talked_tuan_shi"] = True
+    state.flags["talked_elder_mao"] = True
     state.player.tier_id = "qi_condensation"
     quest = _quest(
         [
-            _obj("talk", "tuan_shi"),
+            _obj("talk", "elder_mao"),
             _obj("breakthrough", "qi_condensation"),
         ],
         quest_id="quest101",
@@ -253,10 +253,10 @@ def test_quest_rewards_applied():
 def test_advance_quest_belum_semua_tidak_menyelesaikan():
     """advance_quest tanpa semua objektif selesai: tidak menyelesaikan."""
     state = _state()
-    state.flags["talked_tuan_shi"] = True  # breakthrough belum
+    state.flags["talked_elder_mao"] = True  # breakthrough belum
     quest = _quest(
         [
-            _obj("talk", "tuan_shi"),
+            _obj("talk", "elder_mao"),
             _obj("breakthrough", "qi_condensation"),
         ],
         quest_id="quest101",
@@ -271,10 +271,10 @@ def test_advance_quest_belum_semua_tidak_menyelesaikan():
 def test_advance_quest_set_flag_quest_done_sendiri():
     """advance_quest men-set quest<id>_done walau tak di flags_on_complete."""
     state = _state()
-    state.flags["talked_tuan_shi"] = True
+    state.flags["talked_elder_mao"] = True
     state.player.tier_id = "qi_condensation"
     quest = _quest(
-        [_obj("talk", "tuan_shi"), _obj("breakthrough", "qi_condensation")],
+        [_obj("talk", "elder_mao"), _obj("breakthrough", "qi_condensation")],
         quest_id="quest101",
     )
     state.quests.started.append("quest101")
@@ -328,6 +328,6 @@ def test_active_quests_menghormati_requires_flag():
 
 def test_objective_label_menghasilkan_teks_pemain():
     """objective_label memberi label naratif untuk tampilan pemain."""
-    assert "tuan_shi" in objective_label(_obj("talk", "tuan_shi"))
+    assert "elder_mao" in objective_label(_obj("talk", "elder_mao"))
     label = objective_label(_obj("kill_count", "bandit_perbatasan", count=3))
     assert label == "Kalahkan bandit_perbatasan (3x)"
