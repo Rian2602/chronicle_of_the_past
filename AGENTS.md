@@ -60,7 +60,7 @@ jangan menebak** (lihat §11).
 pytest -q                                          # semua test harus lulus
 ruff check src launcher.py tools tests             # lint
 ruff format --check src launcher.py tools tests    # format check
-python tools/validate.py                           # validator aset — BELUM ADA, prioritas Fase 1 (GDD §25.3)
+python tools/validate.py                           # validator aset data (GDD §25.3)
 graphify update .                                   # perbarui knowledge graph setelah ubah kode
 graphify query "<pertanyaan>"                       # tanya graph sebelum grep manual
 ```
@@ -358,8 +358,8 @@ semua pesan yang tampil ke pemain.
 * Setiap file JSON valid (cek dengan parser); satu entitas per file
 kecuali koleksi (events, memories, scenes).
 * Referensi antar data (NPC di peta, item di loot, skill di musuh, quest
-di event) **wajib valid** — jalankan validator data sebelum commit
-(§1, sekali `tools/validate.py` ada — lihat GDD §25.3).
+di event) **wajib valid** — jalankan `python tools/validate.py` sebelum
+commit (§1, lihat GDD §25.3).
 * Nada narasi **grimdark** (GDD §3.6): tidak ada kemenangan bersih, musuh
 punya alasan yang konsisten secara internal, kematian scripted tidak
 bisa di-undo. Baca GDD §3.6 sebelum menulis dialog/quest/event apa pun.
