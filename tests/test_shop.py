@@ -64,17 +64,15 @@ def _dispatch(session: GameSession, raw: str) -> list[str]:
 
 
 def _di_toko(session: GameSession) -> None:
-    """Bawa pemain ke Hutan Kelabu (lokasi Pedagang Kelana)."""
+    """Bawa pemain ke lokasi pedagang (sekarang di village_emberfall)."""
     session.new_game("Akar")
-    session.state.flags["map_hutan_kelabu_unlocked"] = True
-    session.state.map_unlocks.append("hutan_kelabu")
-    _dispatch(session, "go hutan_kelabu")
 
 
 def test_shop_tanpa_pedagang_di_lokasi(tmp_path):
-    """Shop di desa: tidak ada pedagang, pesan jelas."""
+    """Shop di hutan: tidak ada pedagang, pesan jelas."""
     session = _session(tmp_path)
     session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
     lines = _dispatch(session, "shop")
     assert any("Tidak ada pedagang" in line for line in lines)
 
@@ -153,6 +151,7 @@ def test_buy_di_lokasi_tanpa_pedagang_ditolak(tmp_path):
     """Buy di lokasi tanpa toko: ditolak."""
     session = _session(tmp_path)
     session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
     lines = _dispatch(session, "buy esensi_api")
     assert any("Tidak ada pedagang" in line for line in lines)
 
