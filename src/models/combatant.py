@@ -9,6 +9,7 @@ from src.models.party import Companion
 from src.models.player import Player
 
 ENEMY_QI_REGEN = 2
+# ponytail: nilai keseimbangan sementara (§24.2) — disetel saat playtest.
 COMPANION_QI_REGEN = 2
 
 

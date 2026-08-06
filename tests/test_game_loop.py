@@ -2,7 +2,7 @@
 
 import random
 
-from src.core.game_loop import GameSession, make_bar
+from src.core.game_loop import BattleFrame, GameSession, make_bar
 from src.core.input import Command
 from src.core.save import slot_exists
 from src.core.state import FACTIONS
@@ -17,6 +17,21 @@ def _dispatch(session: GameSession, raw: str) -> list[str]:
     """Parse + kirim perintah; kembalikan pesan."""
     command = Command(name=raw.split()[0], args=tuple(raw.split()[1:]), raw=raw)
     return session.dispatch(command)
+
+
+def _bertarung(session: GameSession) -> BattleFrame:
+    """Jalankan battle sampai tuntas: flame_strike hanya giliran protagonis.
+
+    Rekan (Lin Wei) tidak menguasai flame_strike — aksi invalid = error
+    frame tanpa advance = infinite loop (regresi multi-ally).
+    """
+    frame = session.battle_frame()
+    while not frame.over:
+        if session.battle.current is session._ally and session._ally.qi >= 8:
+            frame = session.battle_step("technique:flame_strike")
+        else:
+            frame = session.battle_step("attack")
+    return frame
 
 
 def test_new_game_membuat_state_awal(tmp_path):
@@ -1017,21 +1032,11 @@ def test_arc1_full_playthrough(tmp_path):
 
     # === Quest 103: Ujian Orde Kuno (combat) ===
     _dispatch(session, "look")  # zombie_temple
-    frame = session.battle_frame()
-    while not frame.over:
-        frame = session.battle_step("attack")
+    frame = _bertarung(session)
     assert frame.victory is True
 
     _dispatch(session, "look")  # penjaga_makam (bos)
-    frame = session.battle_frame()
-    while not frame.over:
-        # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
-        # tidak menguasai teknik itu — aksi invalid = error frame tanpa
-        # advance = infinite loop (regresi multi-ally Task 3).
-        if session.battle.current is session._ally and session._ally.qi >= 8:
-            frame = session.battle_step("technique:flame_strike")
-        else:
-            frame = session.battle_step("attack")
+    frame = _bertarung(session)
     assert frame.victory is True
     assert "quest103_done" in session.state.flags
     assert "memory_shrine_trial" in session.state.memories
@@ -1075,15 +1080,7 @@ def test_arc1_full_playthrough(tmp_path):
     _dispatch(session, "go ruin_shrine")
     _dispatch(session, "rest")  # recover HP/qi before boss
     _dispatch(session, "look")  # trigger penjaga_arsip
-    frame = session.battle_frame()
-    while not frame.over:
-        # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
-        # tidak menguasai teknik itu — aksi invalid = error frame tanpa
-        # advance = infinite loop (regresi multi-ally Task 3).
-        if session.battle.current is session._ally and session._ally.qi >= 8:
-            frame = session.battle_step("technique:flame_strike")
-        else:
-            frame = session.battle_step("attack")
+    frame = _bertarung(session)
     assert frame.victory is True
     _dispatch(session, "look")  # trigger quest/event cascade
     assert "quest106_done" in session.state.flags
@@ -1118,17 +1115,7 @@ def test_arc1_full_playthrough(tmp_path):
         assert session.in_battle is True
         frame = session.battle_frame()
         assert frame.enemies[0]["name"] == expected
-        while not frame.over:
-            # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
-            # tidak menguasai teknik itu — aksi invalid = error frame tanpa
-            # advance = infinite loop (regresi multi-ally Task 3).
-            if (
-                session.battle.current is session._ally
-                and session._ally.qi >= 8
-            ):
-                frame = session.battle_step("technique:flame_strike")
-            else:
-                frame = session.battle_step("attack")
+        frame = _bertarung(session)
         assert frame.victory is True
         _dispatch(session, "rest")  # recover sebelum pertarungan berikutnya
     # Quest selesai via cascade setelah kill terakhir (tanpa workaround).
@@ -1328,3 +1315,86 @@ def test_party_lines_menampilkan_tier_dan_bond_rekan(tmp_path):
     assert "PARTY (2/4)" in joined
     assert "qi_condensation" in joined  # tier rekan
     assert "bond 25" in joined
+
+
+def test_party_lines_hp_live_saat_battle(tmp_path):
+    """Panel party memakai HP combatan live selama battle (regresi Bug 1).
+
+    Sebelumnya panel membaca state.party (stale) — HUD pemain pakai
+    _ally.hp live, jadi panel rekan menyesatkan saat bertarung.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    session.battle.allies[1].hp = 5  # lukai combatant live Lin Wei
+    joined = "\n".join(session.party_lines())
+    assert "5/30" in joined
+    assert "30/30" not in joined
+
+
+def test_start_battle_clamp_maksimal_tiga_rekan(tmp_path):
+    """Save korup party_active>3 tetap dibatasi 3 rekan (GDD §24.1)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    from src.models.party import Companion
+
+    for i in range(4):
+        session.state.party.append(
+            Companion(
+                id=f"r{i}",
+                name=f"Rekan {i}",
+                tier="qi_condensation",
+                element="wood",
+                stats={
+                    "attack": 5,
+                    "defense": 3,
+                    "agility": 4,
+                    "intelligence": 3,
+                    "vitality": 5,
+                    "spirit": 3,
+                    "hp": 30,
+                    "qi": 8,
+                },
+                skills=["qi_slash"],
+            ).to_dict()
+        )
+    session.state.party_active = ["r0", "r1", "r2", "r3"]
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    assert len(session.battle.allies) == 4  # protagonis + maks 3 rekan
+
+
+def test_party_menampilkan_roster_cadangan(tmp_path):
+    """Rekan di roster tapi tidak aktif tampil sebagai cadangan (Bug 3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)  # lin_wei aktif
+    from src.models.party import Companion
+
+    session.state.party.append(
+        Companion(
+            id="mira",
+            name="Mira",
+            tier="qi_condensation",
+            element="fire",
+            stats={
+                "attack": 5,
+                "defense": 3,
+                "agility": 4,
+                "intelligence": 3,
+                "vitality": 5,
+                "spirit": 3,
+                "hp": 30,
+                "qi": 8,
+            },
+            skills=["qi_slash"],
+        ).to_dict()
+    )
+    joined = "\n".join(session.party_lines())
+    assert "Mira" in joined
+    assert "Cadangan" in joined

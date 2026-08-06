@@ -58,6 +58,7 @@ START_LOCATION = "village_emberfall"
 NPC_DIR = Path(__file__).resolve().parents[2] / "data" / "npc"
 UNAVAILABLE = "Belum tersedia (Fase 1)."
 # Bond XP per kemenangan untuk tiap rekan yang masih hidup (GDD §20.3).
+# ponytail: nilai keseimbangan sementara (§24.2) — disetel saat playtest.
 BOND_XP_VICTORY = 10
 
 # Warna semantik item di inventory (GDD §14.2): material, resep, alat.
@@ -581,25 +582,41 @@ class GameSession:
         """Tampilkan tim: protagonis + rekan aktif dengan bond (GDD §20)."""
         player = self.state.player
         active = set(self.state.party_active)
-        members: list[Companion] = []
-        for raw in self.state.party:
-            companion = Companion.from_dict(raw)
-            if companion.id in active:
-                members.append(companion)
+        all_members = [Companion.from_dict(raw) for raw in self.state.party]
+        members = [member for member in all_members if member.id in active]
         lines = [f"[bold gold3]PARTY ({1 + len(members)}/4)[/]"]
         lines.append(f"  {player.name} (protagonis)")
         for companion in members:
-            hp = companion.hp if companion.hp is not None else companion.hp_max
-            bar = make_bar(hp, companion.hp_max, 10)
+            # HP live dari combatan saat battle (konsisten dgn HUD, Bug 1);
+            # di luar battle, HP/qi tersimpan di state.party.
+            combatant = (
+                self._ally_map.get(companion.id) if self.in_battle else None
+            )
+            if combatant is not None:
+                hp, hp_max = combatant.hp, combatant.hp_max
+            else:
+                hp = (
+                    companion.hp
+                    if companion.hp is not None
+                    else companion.hp_max
+                )
+                hp_max = companion.hp_max
+            bar = make_bar(hp, hp_max, 10)
             lines.append(
                 f"  [cyan]{companion.name}[/] · {companion.tier} · "
-                f"{companion.element} · HP {bar} {hp}/{companion.hp_max} · "
+                f"{companion.element} · HP {bar} {hp}/{hp_max} · "
                 f"bond {companion.bond_xp} (peringkat {companion.rank})"
             )
         # Clamp defensif: cap aktif (3) dijaga event/swap, tapi panel tak
         # boleh crash walau state korup (ponytail: len > 3 tak mungkin).
         for _ in range(max(0, 3 - len(members))):
             lines.append("  (kosong)")
+        # Roster cadangan (Bug 3): rekan direkrut tapi belum aktif tampil
+        # agar pemain tahu id-nya untuk `swap <id>`.
+        inactive = [member for member in all_members if member.id not in active]
+        if inactive:
+            names = ", ".join(member.name for member in inactive)
+            lines.append(f"  Cadangan: {names}")
         return lines
 
     def _cmd_swap(self, command: Command) -> list[str]:
@@ -925,6 +942,10 @@ class GameSession:
         # Rekan aktif ikut bertarung (GDD §20.1: protagonis + max 3 slot).
         active = set(self.state.party_active)
         for raw in self.state.party:
+            if len(allies) >= 4:
+                # GDD §24.1 poin 2: tim combat maks 4 (1 protagonis + 3
+                # rekan). Clamp pertahanan untuk save yang diedit manual.
+                break
             companion = Companion.from_dict(raw)
             if companion.id not in active:
                 continue
