@@ -188,6 +188,32 @@ def test_sell_tanpa_item_ditolak(tmp_path):
     assert any("tidak punya" in line for line in lines)
 
 
+def test_pesan_buy_satu_baris(tmp_path):
+    """Pesan buy utuh dalam satu baris (regresi polish review).
+
+    Sebelumnya pesan terbelah dua baris ("Kamu membeli ..." lalu
+    "seharga ... emas."); harus kembali sebagai satu kalimat utuh.
+    """
+    session = _session(tmp_path)
+    _di_toko(session)
+    session.state.player.gold = 200
+    lines = _dispatch(session, "buy esensi_api 2")
+    buy_lines = [line for line in lines if "Kamu membeli" in line]
+    assert len(buy_lines) == 1
+    assert "Esensi Api x2 seharga 100 emas." in buy_lines[0]
+
+
+def test_pesan_sell_satu_baris(tmp_path):
+    """Pesan sell utuh dalam satu baris (regresi polish review)."""
+    session = _session(tmp_path)
+    _di_toko(session)
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 2
+    lines = _dispatch(session, "sell esensi_api 2")
+    sell_lines = [line for line in lines if "Kamu menjual" in line]
+    assert len(sell_lines) == 1
+    assert "Esensi Api x2 seharga 40 emas." in sell_lines[0]
+
+
 def test_rest_merestock_toko(tmp_path):
     """Rest mengisi ulang stok toko (shop_sold dibersihkan)."""
     session = _session(tmp_path)
