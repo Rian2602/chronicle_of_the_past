@@ -543,6 +543,10 @@ class Battle:
         Backward-compatible: 1 lawan ⇒ hasil identik dengan perilaku lama.
         Implementasi memakai indexing rng.random() agar kompatibel dengan
         RNG uji bertipe _FixedRng yang hanya menyediakan random().
+
+        Note:
+            # ponytail: target acak mengabaikan status charm (§16);
+            upgrade saat charm memengaruhi penargetan musuh.
         """
         opponents = self._alive(self._opponents(unit))
         if not opponents:

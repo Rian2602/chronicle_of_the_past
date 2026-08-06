@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from src.core.state import GameState
-from src.models.party import Companion, load_companion
+from src.models.party import load_companion
 
 EVENT_DIR = Path(__file__).resolve().parents[2] / "data" / "events"
 
@@ -149,13 +149,20 @@ def _apply_action(
         result.logs.append(f"Sebuah dialog dimulai: {action['dialog_id']}.")
     elif kind == "add_companion":
         companion_id = action["id"]
-        if not any(m.get("id") == companion_id for m in state.party):
+        known = any(m.get("id") == companion_id for m in state.party)
+        if not known:
             raw = load_companion(companion_id)  # loader di models/party.py
-            state.party.append(Companion.from_dict(raw.to_dict()).to_dict())
-            # GDD §20.1/§24.1: maks 3 slot rekan aktif. Saat penuh, rekan
-            # tetap masuk roster tapi tidak aktif (swap bisa mengaktifkan).
-            if len(state.party_active) < 3:
-                state.party_active.append(companion_id)
+            state.party.append(raw.to_dict())  # skema penuh utk save
+        # GDD §20.1/§24.1: maks 3 slot rekan aktif. Saat penuh, rekan tetap
+        # masuk roster (inaktif) — swap bisa mengaktifkan; refire event
+        # mengaktifkan rekan roster yang belum aktif bila slot kosong.
+        if (
+            companion_id not in state.party_active
+            and len(state.party_active) < 3
+        ):
+            state.party_active.append(companion_id)
+        if not known:
+            if companion_id in state.party_active:
                 result.logs.append(f"{raw.name} kini bersamamu.")
             else:
                 result.logs.append(

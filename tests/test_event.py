@@ -588,3 +588,25 @@ def test_action_add_companion_slot_aktif_maksimal_tiga():
     assert any(m["id"] == "lin_wei" for m in state.party)
     assert "lin_wei" not in state.party_active
     assert len(state.party_active) == 3
+
+
+def test_action_add_companion_mengaktifkan_rekan_roster_yang_belum_aktif():
+    """Refire add_companion mengaktifkan rekan roster yang belum aktif."""
+    state = _state()
+    state.flags["quest103_done"] = True
+    state.party = [{"id": "lin_wei", "name": "Lin Wei"}]  # roster saja
+    state.party_active = []  # slot kosong tersedia
+    event = _event(
+        trigger=[
+            {
+                "kind": "flag",
+                "flag": "quest103_done",
+                "operator": "EQUALS",
+                "value": True,
+            }
+        ],
+        actions=[{"kind": "add_companion", "id": "lin_wei"}],
+    )
+    _fire(event, state)
+    assert len(state.party) == 1  # tidak duplikasi roster
+    assert "lin_wei" in state.party_active
