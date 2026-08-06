@@ -105,6 +105,9 @@ class GameState:
     # Stok toko yang terjual: shop_id -> item_id -> jumlah (GDD §19.2).
     # Sisa stok = count di data/shops dikurangi angka ini; kosong = penuh.
     shop_sold: dict[str, dict[str, int]] = field(default_factory=dict)
+    # Buff combat dari item (GDD §7): stat -> nilai; diterapkan ke
+    # combatant protagonis saat battle dimulai, lalu dikonsumsi.
+    buffs: dict[str, int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Normalisasi reputasi 5 faksi (§8) dan hp/qi konkret.
@@ -160,6 +163,7 @@ class GameState:
             "shop_sold": {
                 shop_id: dict(sold) for shop_id, sold in self.shop_sold.items()
             },
+            "buffs": dict(self.buffs),
         }
 
     @classmethod
@@ -212,4 +216,5 @@ class GameState:
             time=GameTime.from_dict(data.get("time", {})),
             settings=dict(data.get("settings", {})),
             shop_sold=normalized_sold,
+            buffs=dict(data.get("buffs", {})),
         )

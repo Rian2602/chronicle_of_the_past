@@ -36,7 +36,12 @@ from src.engine.dialog import (
     load_dialogs,
     visible_choices,
 )
-from src.engine.event import EventResult, load_events, process_events
+from src.engine.event import (
+    EventResult,
+    apply_action,
+    load_events,
+    process_events,
+)
 from src.engine.items import load_items
 from src.engine.maps import load_maps
 from src.engine.quest import (
@@ -328,8 +333,24 @@ class GameSession:
                     8, player.meridian_buka + effect["add_meridian"]
                 )
                 lines.append(f"Meridian terbuka ({player.meridian_buka}/8).")
-            # ponytail: effect combat (buff_*/resist_*) diparse tapi tak
-            # dieksekusi; eksekusi saat engine combat diperluas (Fase 2).
+            # Efek combat-ready (buff_*/resist_*): catat ke state.buffs
+            # (GDD §7); diterapkan ke combatant di _start_battle, lalu
+            # dikonsumsi sekali pakai. buff_<stat> dinormalisasi jadi
+            # <stat> (cocok dengan Combatant.stats); resist_<x> tetap
+            # utuh — siap dibaca engine combat Fase 2 (GDD §17.2).
+            for key, value in effect.items():
+                if key.startswith("buff_"):
+                    stat = key[len("buff_") :]
+                    self.state.buffs[stat] = (
+                        self.state.buffs.get(stat, 0) + value
+                    )
+                elif key.startswith("resist_"):
+                    self.state.buffs[key] = self.state.buffs.get(key, 0) + value
+            if any(
+                key.startswith("buff_") or key.startswith("resist_")
+                for key in effect
+            ):
+                lines.append("Efek combat aktif untuk pertarungan berikutnya.")
         lines += self._run_quests()
         lines += self._run_events()
         return lines
@@ -880,8 +901,17 @@ class GameSession:
         if chosen is None:
             valid = ", ".join(opt["key"] for opt in options)
             return [f"Opsi '{key}' tidak valid. Pilihan: {valid}"]
-        # Terapkan opsi yang dipilih
+        # Terapkan opsi yang dipilih. Format baru: daftar aksi penuh
+        # (GDD §15.3: grant_item, grant_gold, start_quest, dll) via
+        # apply_action — satu sumber kebenaran aksi. Format lama
+        # (set_flag/change_reputation/log) tetap didukung.
         lines: list[str] = []
+        for action in chosen.get("actions", []):
+            result = EventResult()
+            apply_action(
+                action, self.state, result, pending.get("event_id", "choose")
+            )
+            lines.extend(result.logs)
         if "set_flag" in chosen:
             self.state.flags[chosen["set_flag"]] = True
         if "change_reputation" in chosen:
@@ -1036,6 +1066,11 @@ class GameSession:
         if enemy is None:
             raise ValueError(f"musuh tidak dikenal: {enemy_id}")
         ally = combatant_from_player(player, skills=self.player_skills)
+        # Terapkan buff item (GDD §7): buff_<stat> menambah stat langsung;
+        # resist_<x> tercatat di stats (dibaca engine combat Fase 2).
+        # Buff dikonsumsi setelah battle (sekali pakai).
+        for key, value in self.state.buffs.items():
+            ally.stats[key] = ally.stats.get(key, 0) + value
         allies = [ally]
         self._ally_map = {}
         # Rekan aktif ikut bertarung (GDD §20.1: protagonis + max 3 slot).
@@ -1180,6 +1215,9 @@ class GameSession:
         player = self.state.player
         enemy = self._enemy
         self._write_back_allies()
+        # Buff item sekali pakai: dikonsumsi setelah pertarungan selesai
+        # (menang/kalah/kabur), GDD §7.
+        self.state.buffs.clear()
         if battle.winner == "allies":
             rewards = enemy.rewards if enemy is not None else {}
             player.add_insight(rewards.get("insight", 0))

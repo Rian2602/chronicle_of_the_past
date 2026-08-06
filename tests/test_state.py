@@ -22,6 +22,7 @@ REQUIRED_KEYS = {
     "player",
     "party",
     "party_active",
+    "buffs",
     "inventory",
     "quests",
     "flags",

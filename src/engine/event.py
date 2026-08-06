@@ -23,6 +23,7 @@ TRIGGER_KINDS = {
     "tier_reached",
     "location_entered",
     "day_passed",
+    "reputation_reached",
 }
 FLAG_OPERATORS = {"EQUALS", "NOT_EQUALS", "MISSING"}
 ACTION_KINDS = {
@@ -99,6 +100,9 @@ def _match_trigger(condition: dict[str, Any], state: GameState) -> bool:
         return state.location == condition["map"]
     if kind == "day_passed":
         return state.time.day >= condition["day"]
+    if kind == "reputation_reached":
+        faction = condition["faction"]
+        return state.reputation.get(faction, 0) >= condition["threshold"]
     # Jaring pengaman: kind ada di daftar tetapi belum ada cabangnya.
     raise ValueError(f"kind trigger tidak dikenal: {kind}")
 
@@ -175,8 +179,8 @@ def apply_action(
     elif kind == "log":
         result.logs.append(action["text"])
     elif kind == "prompt_choice":
-        # ponytail: opsi limited to set_flag/change_reputation/log;
-        # upgrade saat butuh grant_item/start_quest
+        # Opsi mendukung daftar aksi penuh (§15.3): _cmd_choose mengeksekusi
+        # lewat apply_action — satu sumber kebenaran untuk semua aksi.
         options = action.get("options", [])
         if not options:
             raise ValueError("prompt_choice butuh minimal 1 opsi")

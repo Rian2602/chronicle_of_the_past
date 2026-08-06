@@ -473,7 +473,6 @@ chronicle_of_the_past/
 │   ├── maps/
 │   ├── npc/
 │   ├── companions/          # rekan & binatang roh (§20)
-│   ├── factions/
 │   └── story/              # memories, scenes, epilog
 └── tests/
 ```
@@ -570,6 +569,7 @@ Event adalah **mesin naratif data-driven**: pemicu kondisi (flag/quest/tier) →
 |`tier_reached`|Tingkatan kultivasi tercapai|`{"kind": "tier_reached", "tier": "golden_core"}`|
 |`location_entered`|Pemain masuk peta|`{"kind": "location_entered", "map": "ancient_vault"}`|
 |`day_passed`|Waktu game mencapai hari ke-N|`{"kind": "day_passed", "day": 7}`|
+|`reputation_reached`|Reputasi faksi mencapai ambang (≥)|`{"kind": "reputation_reached", "faction": "court", "threshold": 30}`|
 
 ### 15.3 Kind Action
 
@@ -582,6 +582,7 @@ Event adalah **mesin naratif data-driven**: pemicu kondisi (flag/quest/tier) →
 |`grant_item` / `grant_gold`|Beri item / emas|
 |`change_reputation`|Ubah reputasi faksi (`{faction, delta}`)|
 |`start_dialog`|Paksa dialog (`{dialog_id}`)|
+|`prompt_choice`|Pilihan pemain; tiap opsi bisa membawa `actions` (daftar aksi penuh, format kolom ini)|
 |`log`|Teks narasi singkat|
 
 ### 15.4 Aturan Proses
@@ -877,6 +878,22 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 * Angka halus keseimbangan (damage per skill, harga jual kembali toko) — disetel saat playtest Fase 5. Harga beli toko hidup di `price` data/items; jual kembali sementara 40% (§7).
 
 ### 24.3 Changelog
+
+**v1.6 (2026-08-07)** — Pelunasan utang teknis + trigger reputasi:
+
+* §15.2: trigger baru `reputation_reached` (`{faction, threshold}`, memicu
+  saat reputasi ≥ ambang) — membuka gating konten berbasis reputasi faksi
+  (§8) untuk Fase 2.
+* §15.3: `prompt_choice` diperluas — tiap opsi bisa membawa `actions`
+  (daftar aksi penuh: `grant_item`, `start_quest`, `start_dialog`, dll),
+  dieksekusi lewat `apply_action` yang sama dengan event/dialog.
+* §7: efek item combat (`buff_<stat>` / `resist_<x>`) kini dieksekusi —
+  tercatat di `state.buffs`, diterapkan ke combatant protagonis saat
+  battle dimulai, dikonsumsi sekali pakai (utang teknis `ponytail:`
+  lunas).
+* §14.2: folder `data/factions/` dihapus dari struktur — reputasi hidup
+  murni di Save State (`state.reputation`) dan logika event, tanpa file
+  JSON faksi terpisah (anti over-engineering).
 
 **v1.5 (2026-08-07)** — Sistem Dialog (Dialogue Engine):
 

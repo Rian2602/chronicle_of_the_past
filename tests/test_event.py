@@ -145,6 +145,42 @@ def test_trigger_location_entered():
     assert _fire(event, state).fired == ["evt_test"]
 
 
+def test_trigger_reputation_reached_mencapai():
+    """reputation_reached: memicu bila reputasi faksi >= ambang (§15.2)."""
+    state = _state()
+    state.add_reputation("rebels", 35)
+    event = _event(
+        trigger=[
+            {"kind": "reputation_reached", "faction": "rebels", "threshold": 30}
+        ]
+    )
+    assert _fire(event, state).fired == ["evt_test"]
+
+
+def test_trigger_reputation_reached_belum_mencapai():
+    """reputation_reached: belum mencapai ambang tidak memicu."""
+    state = _state()
+    state.add_reputation("rebels", 25)
+    event = _event(
+        trigger=[
+            {"kind": "reputation_reached", "faction": "rebels", "threshold": 30}
+        ]
+    )
+    assert _fire(event, state).fired == []
+
+
+def test_trigger_reputation_reached_titik_ambang():
+    """reputation_reached: tepat di ambang tetap memicu (>=)."""
+    state = _state()
+    state.add_reputation("rebels", 30)
+    event = _event(
+        trigger=[
+            {"kind": "reputation_reached", "faction": "rebels", "threshold": 30}
+        ]
+    )
+    assert _fire(event, state).fired == ["evt_test"]
+
+
 def test_trigger_day_passed_mencapai():
     """day_passed: memicu bila hari game mencapai (>=) hari target."""
     state = _state()

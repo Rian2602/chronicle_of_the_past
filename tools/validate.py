@@ -139,6 +139,12 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"{event.id}: trigger tier -> {condition['tier']}"
                 )
+            elif kind == "reputation_reached" and (
+                condition["faction"] not in FACTIONS
+            ):
+                errors.append(
+                    f"{event.id}: trigger reputation -> {condition['faction']}"
+                )
         for action in event.actions:
             kind = action["kind"]
             if kind == "start_quest" and action["id"] not in quests:
@@ -223,6 +229,64 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                         errors.append(
                             f"{dialog_id}: add_companion -> "
                             f"{action['id']} tidak ada"
+                        )
+
+    # Aksi dalam option prompt_choice (GDD §15.3): referensi wajib
+    # ter-resolve — format aksi sama dengan event/dialog (apply_action).
+    for event in events:
+        for action in event.actions:
+            if action.get("kind") != "prompt_choice":
+                continue
+            for opt in action.get("options", []):
+                for opt_action in opt.get("actions", []):
+                    kind = opt_action.get("kind")
+                    if kind not in ACTION_KINDS:
+                        errors.append(
+                            f"{event.id}: prompt_choice -> kind "
+                            f"'{kind}' tak dikenal"
+                        )
+                        continue
+                    if kind == "start_quest" and (
+                        opt_action["id"] not in quests
+                    ):
+                        errors.append(
+                            f"{event.id}: prompt_choice start_quest -> "
+                            f"{opt_action['id']}"
+                        )
+                    elif kind == "unlock_map" and (
+                        opt_action["target"] not in map_ids
+                    ):
+                        errors.append(
+                            f"{event.id}: prompt_choice unlock_map -> "
+                            f"{opt_action['target']}"
+                        )
+                    elif kind == "grant_memory" and (
+                        opt_action["memory_id"] not in memories
+                    ):
+                        errors.append(
+                            f"{event.id}: prompt_choice grant_memory -> "
+                            f"{opt_action['memory_id']}"
+                        )
+                    elif kind == "change_reputation" and (
+                        opt_action["faction"] not in FACTIONS
+                    ):
+                        errors.append(
+                            f"{event.id}: prompt_choice reputation -> "
+                            f"{opt_action['faction']}"
+                        )
+                    elif kind == "grant_item" and (
+                        opt_action["id"] not in items
+                    ):
+                        errors.append(
+                            f"{event.id}: prompt_choice grant_item -> "
+                            f"{opt_action['id']} tidak ada"
+                        )
+                    elif kind == "add_companion" and opt_action["id"] not in {
+                        companion.id for companion in companions
+                    }:
+                        errors.append(
+                            f"{event.id}: prompt_choice companion -> "
+                            f"{opt_action['id']} tidak ada"
                         )
 
     for npc_id, npc in npcs.items():

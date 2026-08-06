@@ -56,6 +56,70 @@ def test_validator_menangkap_referensi_gantung(tmp_path):
     assert any("npc_hantu" in error for error in errors)
 
 
+def test_validator_menangkap_trigger_reputation_reached_faksi_tak_ada(tmp_path):
+    """Trigger reputation_reached ke faksi tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "events" / "ev_rep.json").write_text(
+        json.dumps(
+            {
+                "id": "ev_rep",
+                "trigger": [
+                    {
+                        "kind": "reputation_reached",
+                        "faction": "sekte_gelap",
+                        "threshold": 30,
+                    }
+                ],
+                "actions": [{"kind": "log", "text": "x"}],
+                "once": True,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("sekte_gelap" in error for error in errors)
+
+
+def test_validator_menangkap_prompt_choice_action_ref_tak_ada(tmp_path):
+    """Aksi dalam option prompt_choice ke item tak dikenal dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "events" / "ev_choice.json").write_text(
+        json.dumps(
+            {
+                "id": "ev_choice",
+                "trigger": [
+                    {
+                        "kind": "flag",
+                        "flag": "x",
+                        "operator": "EQUALS",
+                        "value": True,
+                    }
+                ],
+                "actions": [
+                    {
+                        "kind": "prompt_choice",
+                        "options": [
+                            {
+                                "key": "a",
+                                "text": "Ambil",
+                                "actions": [
+                                    {"kind": "grant_item", "id": "pil_hantu"}
+                                ],
+                            }
+                        ],
+                    }
+                ],
+                "once": True,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("pil_hantu" in error for error in errors)
+
+
 def test_validator_pohon_valid_lolos(tmp_path):
     """Pohon data yang referensinya lengkap tidak menghasilkan temuan."""
     data = _pohon_data(tmp_path)

@@ -690,6 +690,55 @@ def test_cmd_choose_valid_menerapkan_opsi_dan_bersihkan_pending(tmp_path):
     # - tidak crash
 
 
+def test_cmd_choose_option_actions_mendukung_grant_item(tmp_path):
+    """Choose dengan option ber-actions: grant_item dieksekusi.
+
+    Perluasan prompt_choice (GDD §15.3): opsi bisa membawa daftar aksi
+    penuh (grant_item, start_quest, dll) — bukan hanya set_flag/log.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["pending_choice"] = {
+        "event_id": "evt_choice_test",
+        "options": [
+            {
+                "key": "a",
+                "text": "Terima hadiah",
+                "actions": [
+                    {"kind": "grant_item", "id": "pil_uji_heal", "count": 2},
+                    {"kind": "grant_gold", "amount": 50},
+                ],
+            },
+            {"key": "b", "text": "Tolak"},
+        ],
+    }
+    lines = _dispatch(session, "choose a")
+    state = session.state
+    # Aksi penuh dieksekusi via apply_action (satu sumber kebenaran).
+    assert state.inventory["items"].get("pil_uji_heal") == 2
+    assert state.player.gold == 50
+    assert "pending_choice" not in state.flags
+    assert isinstance(lines, list) and lines is not None
+
+
+def test_cmd_choose_option_actions_mendukung_start_quest(tmp_path):
+    """Choose dengan action start_quest: quest dimulai (GDD §15.3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["pending_choice"] = {
+        "event_id": "evt_choice_test",
+        "options": [
+            {
+                "key": "a",
+                "text": "Bergabung",
+                "actions": [{"kind": "start_quest", "id": "quest101"}],
+            }
+        ],
+    }
+    _dispatch(session, "choose a")
+    assert "quest101" in session.state.quests.started
+
+
 def test_cmd_choose_invalid_key_memberi_error_pending_tetap(tmp_path):
     """Choose key salah: error, pending_choice tidak dibersihkan."""
     session = _session(tmp_path)
@@ -761,17 +810,64 @@ def test_use_pil_pemulih_memulihkan_hp(tmp_path):
     assert any("Pil Uji Heal" in line for line in lines)
 
 
-def test_use_item_tanpa_efek_eksekusi_tetap_mengonsumsi(tmp_path):
-    """Item effect combat-ready: konsumsi tapi tak ubah stat (YAGNI combat)."""
+def test_use_item_buff_attack_mencatat_buff(tmp_path):
+    """Use item buff_attack: tercatat di state.buffs (GDD §7).
+
+    Efek combat-ready kini dieksekusi — buff disimpan untuk pertarungan
+    berikutnya (diterapkan di _start_battle), bukan diabaikan.
+    """
     session = _session(tmp_path)
     session.new_game("Akar")
     player = session.state.player
     before = (player.hp, player.qi, player.insight, player.meridian_buka)
     session.state.inventory.setdefault("items", {})["pil_uji_buff"] = 1
-    _dispatch(session, "use pil_uji_buff")
+    lines = _dispatch(session, "use pil_uji_buff")
     after = (player.hp, player.qi, player.insight, player.meridian_buka)
+    # Efek non-combat tidak berubah; buff combat tercatat.
     assert after == before
+    assert session.state.buffs.get("attack") == 5
     assert session.state.inventory["items"].get("pil_uji_buff", 0) == 0
+    assert any("buff" in line.lower() for line in lines)
+
+
+def test_use_item_buff_defense_dan_resist_mencatat(tmp_path):
+    """Use item buff_defense/resist_*: tercatat sesuai kunci efek."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["pil_besi_hitam"] = 1
+    session.state.inventory.setdefault("items", {})["elixir_empedu_api"] = 1
+    _dispatch(session, "use pil_besi_hitam")
+    _dispatch(session, "use elixir_empedu_api")
+    assert session.state.buffs.get("defense") == 30
+    assert session.state.buffs.get("resist_poison") == 30
+
+
+def test_start_battle_menerapkan_buff_ke_combatant(tmp_path):
+    """Buff tercatat diterapkan ke combatant protagonis saat battle."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.buffs = {"attack": 5, "resist_poison": 30}
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    ally = session.battle.allies[0]
+    base_attack = 5  # Player base attack (data player)
+    assert ally.stats["attack"] == base_attack + 5
+    assert ally.stats.get("resist_poison") == 30
+
+
+def test_buff_kosong_setelah_battle_selesai(tmp_path):
+    """Buff dipakai sekali: kosong setelah battle selesai (sekali pakai)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.buffs = {"attack": 5}
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    frame = session.battle_frame()
+    while not frame.over:
+        frame = session.battle_step("attack")
+    assert session.state.buffs == {}
 
 
 def test_use_item_tidak_ada_di_tas_memberi_error(tmp_path):
