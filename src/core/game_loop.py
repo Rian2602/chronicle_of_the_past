@@ -88,6 +88,7 @@ AVAILABLE = {
     "buy",
     "sell",
     "refine",
+    "swap",
 }
 
 
@@ -576,7 +577,67 @@ class GameSession:
         return lines
 
     def _cmd_party(self, _command: Command) -> list[str]:
-        return [f"Timmu hanya {self.state.player.name} (rekan: Fase 1)."]
+        """Tampilkan tim: protagonis + rekan aktif dengan bond (GDD §20)."""
+        player = self.state.player
+        lines = [
+            f"Tim: {player.name} (protagonis)",
+        ]
+        active = set(self.state.party_active)
+        shown = 0
+        for raw in self.state.party:
+            companion = Companion.from_dict(raw)
+            if companion.id not in active:
+                continue
+            shown += 1
+            hp = companion.hp if companion.hp is not None else companion.hp_max
+            bar = make_bar(hp, companion.hp_max, 10)
+            lines.append(
+                f"  [cyan]{companion.name}[/] · {companion.element} · "
+                f"HP {bar} {hp}/{companion.hp_max} · "
+                f"bond {companion.bond_xp} (peringkat {companion.rank})"
+            )
+        if shown == 0:
+            lines.append("  (belum ada rekan — 3 slot kosong, GDD §20.1)")
+        return lines
+
+    def _cmd_swap(self, command: Command) -> list[str]:
+        """Tukar komposisi tim, hanya di lokasi aman (GDD §20.1).
+
+        Lokasi aman = peta tanpa musuh (desa/kota). Swap di combat
+        ditunda (ponytail: butuh roster cadangan > 3 anggota).
+        """
+        if self.in_battle:
+            return [
+                "Tidak bisa mengganti tim saat bertarung "
+                "(swap combat ditunda — Fase 2 lanjutan)."
+            ]
+        location_data = load_maps().get(self.state.location, {})
+        if location_data.get("enemies"):
+            return [
+                "Area ini tidak aman untuk mengatur tim. "
+                "Kembali ke desa atau kota dulu."
+            ]
+        if not command.args:
+            return ["Tukar siapa? Contoh: swap <id_rekan>"]
+        companion_id = command.args[0]
+        ids = [raw["id"] for raw in self.state.party]
+        if companion_id not in ids:
+            return [f"Rekan '{companion_id}' tidak ada di timmu."]
+        active = list(self.state.party_active)
+        if companion_id in active:
+            active.remove(companion_id)
+        else:
+            if len(active) >= 3:
+                return ["Tim sudah penuh (maksimal 3 rekan aktif)."]
+            active.append(companion_id)
+        self.state.party_active = active
+        name = next(
+            Companion.from_dict(raw).name
+            for raw in self.state.party
+            if raw["id"] == companion_id
+        )
+        state = "aktif" if companion_id in active else "cadangan"
+        return [f"{name} kini {state}."]
 
     def quest_lines(self) -> list[str]:
         """Ringkasan quest aktif untuk panel UI (read-only, tanpa efek).

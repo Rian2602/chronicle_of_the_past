@@ -576,12 +576,12 @@ def test_quest_lines_menampilkan_quest_aktif(tmp_path):
     assert "Qi Pertama" in joined
 
 
-def test_party_lines_memakai_pesan_stub(tmp_path):
-    """Panel party read-only (stub Fase 1) tanpa efek samping."""
+def test_party_lines_read_only_tanpa_efek_samping(tmp_path):
+    """Panel party read-only tanpa efek samping (GDD §20)."""
     session = _session(tmp_path)
     session.new_game("Akar")
     joined = "\n".join(session.party_lines())
-    assert "Timmu hanya" in joined
+    assert "protagonis" in joined
     assert session.state.quests.started == []  # tidak memicu event
 
 
@@ -1227,3 +1227,24 @@ def test_rekan_ko_pulih_setelah_pertarungan(tmp_path):
         session.battle_step("attack")
     member = next(m for m in session.state.party if m["id"] == "lin_wei")
     assert member["hp"] == member["stats"]["hp"]  # pulih penuh
+
+
+def test_swap_hanya_di_lokasi_aman(tmp_path):
+    """Swap komposisi dilarang di area berbahaya (GDD §20.1)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    _dispatch(session, "go ashfall_forest")  # peta dengan musuh
+    lines = _dispatch(session, "swap lin_wei")
+    assert any("aman" in line.lower() for line in lines)
+
+
+def test_party_menampilkan_rekan_dan_bond(tmp_path):
+    """Perintah party menampilkan anggota aktif + bond XP (GDD §20.3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    session.state.party[0]["bond_xp"] = 25
+    lines = _dispatch(session, "party")
+    assert any("Lin Wei" in line for line in lines)
+    assert any("bond" in line.lower() for line in lines)
