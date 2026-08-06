@@ -1,0 +1,51 @@
+{
+  "id": "dialog_penjaga_makam_1",
+  "npc": "penjaga_makam",
+  "nodes": {
+    "start": {
+      "text": "Dari celah batu, sosok itu bangkit — baju besi tua bernapas seperti paru-paru yang lupa cara berhenti. Dua api biru menyala di balik helmnya. 'Yang ditunggu. Akhirnya kau datang. Aku sudah menjaga pintu ini selama seratus tahun, menunggu nama di dinding itu menjadi kenyataan. Di balikku, entitas kuno itu masih tidur — dan ia lapar.'",
+      "choices": [
+        {
+          "text": "Apa yang kau jaga di sini?",
+          "next": "lore_entitas"
+        },
+        {
+          "text": "Aku bukan siapa-siapa. Biarkan aku lewat.",
+          "next": "tantangan"
+        }
+      ]
+    },
+    "lore_entitas": {
+      "text": "'Bukan harta. Bukan rahasia. Di balikku ada sesuatu yang tidur — lebih tua dari langit yang kau kenal. Mereka menyebutnya yang diam di balik awan. Dan setiap nama di dinding ini adalah orang yang mencoba membangunkannya... lalu gagal.' Api biru itu membesar. 'Kau akan menjadi nama terakhir di dinding itu, atau yang pertama yang berhasil. Tunjukkan padaku mana dirimu.'",
+      "choices": [
+        {
+          "text": "[Bersiap bertarung]",
+          "next": null,
+          "actions": [
+            {
+              "kind": "set_flag",
+              "flag": "penjaga_makam_ditantang",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    "tantangan": {
+      "text": "'Kau tidak perlu menjadi siapa-siapa untuk mati di sini. Tapi dengarkan ini, anak kecil: namamu tertulis di dinding itu jauh sebelum desa ini berdiri. Entah kau mengakuinya atau tidak, sesuatu di balik pintu ini sudah menunggumu sejak lahir. Sekarang — buktikan bahwa kau layak hidup.'",
+      "choices": [
+        {
+          "text": "[Bersiap bertarung]",
+          "next": null,
+          "actions": [
+            {
+              "kind": "set_flag",
+              "flag": "penjaga_makam_ditantang",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

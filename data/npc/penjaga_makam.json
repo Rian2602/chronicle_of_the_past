@@ -1,0 +1,10 @@
+{
+  "id": "penjaga_makam",
+  "name": "Penjaga Makam",
+  "location": "ruin_shrine",
+  "greeting": "Penjaga Makam menatapmu dari dalam helmnya. 'Yang ditunggu. Kau datang juga.'",
+  "dialog": [
+    "'Namamu tertulis di dinding ini sejak sebelum kau lahir. Setiap nama sebelumnya gagal — dan setiap kegagalan memperkuat kunci di belakangku.'",
+    "'Tunjukkan padaku, anak kecil: apakah kau nama berikutnya di dinding ini, atau yang pertama yang berhasil.'"
+  ]
+}

@@ -18,6 +18,7 @@ EXPECTED_NPCS = {
     "kultisi_merah",
     "penjaga_abyss",
     "pedagang_kelana",
+    "penjaga_makam",
 }
 REQUIRED_KEYS = {"id", "name", "location", "greeting", "dialog"}
 

@@ -182,15 +182,22 @@ def test_choose_mengakhiri_dialog_dan_set_flag_once(tmp_path):
 
 
 def test_dialog_selesai_tidak_terulang_saat_talk_lagi(tmp_path):
-    """Dialog sekali jalan: talk berikutnya tidak memulai ulang dialog."""
+    """Dialog 1 sekali jalan: talk berikutnya lanjut ke dialog 2 (Arc 1).
+
+    Setelah `dialog_elder_mao_1` selesai, `find_dialog` memilih dialog
+    berikutnya yang belum selesai (`dialog_elder_mao_2`) — bukan mengulang
+    dialog 1, bukan fallback statis.
+    """
     session = _session(tmp_path)
     session.new_game("Akar")
     _dispatch(session, "talk elder_mao")
     _dispatch(session, "choose 1")
     _dispatch(session, "choose 1")
     lines = _dispatch(session, "talk elder_mao")
-    assert "pending_dialog" not in session.state.flags
-    # Fallback: dialog statis NPC lama (greeting) tetap tampil.
+    # Dialog 1 tidak terulang (flag once sudah diset), lanjut dialog 2.
+    pending = session.state.flags.get("pending_dialog")
+    assert pending is not None
+    assert pending["dialog_id"] == "dialog_elder_mao_2"
     assert any("Sesepuh Mao" in line for line in lines)
 
 
@@ -202,3 +209,72 @@ def test_choose_validasi_nomor(tmp_path):
     lines = _dispatch(session, "choose 9")
     assert any("tidak valid" in line for line in lines)
     assert session.state.flags["pending_dialog"]["node"] == "start"
+
+
+# ---------------------------------------------------------------------------
+# Data Dialog Arc 1 (TASK Arc 1) — konten data-driven di data/dialogues/
+# ---------------------------------------------------------------------------
+
+DIALOGUE_DIR = Path(__file__).resolve().parents[1] / "data" / "dialogues"
+
+REQUIRED_ARC1_DIALOGS = {
+    "dialog_elder_mao_2",
+    "dialog_lin_wei_1",
+    "dialog_penjaga_makam_1",
+}
+
+
+def test_arc1_dialog_lengkap_di_data():
+    """Dialog kunci Arc 1 tersedia di data/dialogues/ (TASK Arc 1)."""
+    dialogs = load_dialogs(DIALOGUE_DIR)
+    missing = REQUIRED_ARC1_DIALOGS - set(dialogs)
+    assert not missing, f"dialog Arc 1 belum ada: {sorted(missing)}"
+
+
+def test_dialog_elder_mao_2_terikat_quest101():
+    """Dialog lanjutan Mao memakai requires_flag quest101_done (TASK)."""
+    dialog = load_dialogs(DIALOGUE_DIR)["dialog_elder_mao_2"]
+    start = get_node(dialog, "start")
+    required = [
+        c.get("requires_flag")
+        for c in start["choices"]
+        if c.get("requires_flag")
+    ]
+    assert "quest101_done" in required
+    # Setidaknya satu aksi nyata terpasang pada pilihan lanjutan.
+    all_actions = [
+        a
+        for node in dialog["nodes"].values()
+        for c in node.get("choices", [])
+        for a in c.get("actions", [])
+    ]
+    assert all_actions, "dialog_elder_mao_2 tanpa aksi event"
+
+
+def test_talk_lin_wei_memulai_dialog_lore(tmp_path):
+    """Talk ke Lin Wei memulai dialog lore (bukan fallback statis)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    lines = _dispatch(session, "talk lin_wei")
+    pending = session.state.flags.get("pending_dialog")
+    assert pending is not None
+    assert pending["dialog_id"] == "dialog_lin_wei_1"
+    assert any("Lin Wei" in line for line in lines)
+
+
+def test_penjaga_makam_dialog_ada_dan_grimdark():
+    """Dialog bos pra-pertarungan memakai nada grimdark (AGENTS §8)."""
+    dialog = load_dialogs(DIALOGUE_DIR)["dialog_penjaga_makam_1"]
+    start = get_node(dialog, "start")
+    assert start["text"]
+    # Lore entitas kuno tersebar di graf (start atau node lanjutan).
+    all_text = " ".join(
+        node["text"] for node in dialog["nodes"].values()
+    ).lower()
+    assert "entitas" in all_text or "kuno" in all_text
+    # Ujung dialog (next: null) ada — tidak ada jalan keluar mudah.
+    assert any(
+        c.get("next") is None
+        for node in dialog["nodes"].values()
+        for c in node.get("choices", [])
+    )

@@ -1,0 +1,65 @@
+{
+  "id": "dialog_elder_mao_2",
+  "npc": "elder_mao",
+  "nodes": {
+    "start": {
+      "text": "Sesepuh Mao menatapmu lama. Di matanya, api kecil — bukan kehangatan, melainkan pengakuan. 'Kau sudah berubah. Aura Pengumpul Qi yang mengalir di meridianmu... jujur kau dulu, anak ini bertanya: apakah kau sudah melakukannya?'",
+      "choices": [
+        {
+          "text": "Ya, Guru. Aku sudah menembus Pengumpul Qi.",
+          "next": "panduan_kuil",
+          "requires_flag": "quest101_done",
+          "actions": [
+            {
+              "kind": "set_flag",
+              "flag": "elder_mao_mengakui_kekuatan",
+              "value": true
+            }
+          ]
+        },
+        {
+          "text": "Belum. Aku masih berjuang.",
+          "next": null
+        }
+      ]
+    },
+    "panduan_kuil": {
+      "text": "Sesepuh Mao menghela napas — suara seperti kayu lapuk. 'Kalau begitu, dengarkan baik-baik. Di Reruntuhan Kuil, di balik hutan, ada sesuatu yang menunggumu. Bukan harta. Bukan kekuatan. Sesuatu yang lebih tua dari desa ini — dan lebih tua dari namamu sendiri.'",
+      "choices": [
+        {
+          "text": "Apa yang menungguku di sana?",
+          "next": "rahasia_kuil"
+        },
+        {
+          "text": "Aku akan pergi sendiri.",
+          "next": "peringatan"
+        }
+      ]
+    },
+    "rahasia_kuil": {
+      "text": "'Namamu sudah tertulis di dinding kuil itu sejak sebelum kau lahir. Aku tidak tahu siapa penulisnya. Aku hanya tahu: setiap nama di sana sebelumnya... gagal. Pergi. Tapi jangan percaya apa pun yang berbisik di sana.'",
+      "choices": [
+        {
+          "text": "[Tinggalkan ruangan]",
+          "next": null,
+          "actions": [
+            {
+              "kind": "change_reputation",
+              "faction": "rebels",
+              "delta": 5
+            }
+          ]
+        }
+      ]
+    },
+    "peringatan": {
+      "text": "'Sendiri? Hah. Muda memang selalu berani — dan berani selalu mati muda. Lin Wei mengenal jalan itu lebih baik darimu. Bicaralah dengannya sebelum kau pergi. Atau jangan. Pilihan itu milikmu, sama seperti tulisan di dinding itu.'",
+      "choices": [
+        {
+          "text": "[Tinggalkan ruangan]",
+          "next": null
+        }
+      ]
+    }
+  }
+}
