@@ -120,6 +120,7 @@ class BattleFrame:
     player_turn: bool
     enemies: list[dict[str, Any]]
     error: str | None = None
+    active_ally_name: str | None = None
 
 
 class GameSession:
@@ -955,14 +956,29 @@ class GameSession:
             victory = True
         elif battle.winner == "enemies":
             victory = False
+        active_name = (
+            battle.current.name
+            if not battle.over and self._is_player_turn()
+            else None
+        )
+        log = list(battle.log)
+        if active_name is not None:
+            # Penanda giliran: pemain (atau AI tester) tahu siapa yang
+            # sedang menunggu perintah — aksi invalid untuk rekan lain
+            # berujung error frame tanpa advance (regresi multi-ally).
+            log.append(
+                f"[Giliran {active_name}] Gunakan attack / defend / "
+                "technique / observe / escape."
+            )
         return BattleFrame(
-            log=list(battle.log),
+            log=log,
             over=battle.over,
             victory=victory,
             escaped=battle.escaped,
             player_turn=not battle.over and self._is_player_turn(),
             enemies=battle.observe(),
             error=error,
+            active_ally_name=active_name,
         )
 
     def battle_step(self, action: str) -> BattleFrame:

@@ -451,7 +451,10 @@ def test_slice_kuil_lengkap_quest103_dan_rahasia(tmp_path):
     assert session.in_battle is True
     frame = session.battle_frame()
     while not frame.over:
-        if session._ally.qi >= 8:
+        # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
+        # tidak menguasai teknik itu — aksi invalid = error frame tanpa
+        # advance = infinite loop (regresi multi-ally Task 3).
+        if session.battle.current is session._ally and session._ally.qi >= 8:
             frame = session.battle_step("technique:flame_strike")
         else:
             frame = session.battle_step("attack")
@@ -1022,7 +1025,10 @@ def test_arc1_full_playthrough(tmp_path):
     _dispatch(session, "look")  # penjaga_makam (bos)
     frame = session.battle_frame()
     while not frame.over:
-        if session._ally.qi >= 8:
+        # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
+        # tidak menguasai teknik itu — aksi invalid = error frame tanpa
+        # advance = infinite loop (regresi multi-ally Task 3).
+        if session.battle.current is session._ally and session._ally.qi >= 8:
             frame = session.battle_step("technique:flame_strike")
         else:
             frame = session.battle_step("attack")
@@ -1071,7 +1077,10 @@ def test_arc1_full_playthrough(tmp_path):
     _dispatch(session, "look")  # trigger penjaga_arsip
     frame = session.battle_frame()
     while not frame.over:
-        if session._ally.qi >= 8:
+        # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
+        # tidak menguasai teknik itu — aksi invalid = error frame tanpa
+        # advance = infinite loop (regresi multi-ally Task 3).
+        if session.battle.current is session._ally and session._ally.qi >= 8:
             frame = session.battle_step("technique:flame_strike")
         else:
             frame = session.battle_step("attack")
@@ -1110,7 +1119,13 @@ def test_arc1_full_playthrough(tmp_path):
         frame = session.battle_frame()
         assert frame.enemies[0]["name"] == expected
         while not frame.over:
-            if session._ally.qi >= 8:
+            # Flame strike hanya untuk giliran protagonis; rekan (Lin Wei)
+            # tidak menguasai teknik itu — aksi invalid = error frame tanpa
+            # advance = infinite loop (regresi multi-ally Task 3).
+            if (
+                session.battle.current is session._ally
+                and session._ally.qi >= 8
+            ):
                 frame = session.battle_step("technique:flame_strike")
             else:
                 frame = session.battle_step("attack")
@@ -1248,3 +1263,47 @@ def test_party_menampilkan_rekan_dan_bond(tmp_path):
     lines = _dispatch(session, "party")
     assert any("Lin Wei" in line for line in lines)
     assert any("bond" in line.lower() for line in lines)
+
+
+def test_battleframe_mengumumkan_giliran_rekan(tmp_path):
+    """BattleFrame menyebut nama sekutu yang menunggu perintah (GDD §6).
+
+    Regresi multi-ally: pemain (dan AI tester) harus tahu giliran siapa
+    yang aktif — aksi invalid untuk rekan = error frame tanpa advance.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    assert len(session.battle.allies) == 2
+    frame = session.battle_frame()
+    # Musuh berinisiatif duluan mungkin; maju sampai giliran sekutu.
+    while not frame.player_turn and not frame.over:
+        frame = session.battle_step("attack")
+    assert frame.player_turn is True
+    assert frame.active_ally_name in {"Akar", "Lin Wei"}
+    assert any(
+        line.startswith(f"[Giliran {frame.active_ally_name}]")
+        for line in frame.log
+    )
+
+
+def test_battleframe_giliran_kosong_saat_pertarungan_selesai(tmp_path):
+    """Pasca pertarungan, tidak ada penanda giliran (GDD §6)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    while not session.battle_frame().over:
+        session.battle_step("attack")
+    frame = session.battle_frame()
+    assert frame.active_ally_name is None
+    assert not any(line.startswith("[Giliran ") for line in frame.log)
