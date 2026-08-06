@@ -55,6 +55,7 @@ AVAILABLE = {
     "map",
     "inventory",
     "quests",
+    "memories",
     "party",
     "go",
     "look",
@@ -143,7 +144,7 @@ class GameSession:
     def _cmd_help(self, _command: Command) -> list[str]:
         return [
             "Perintah tersedia:",
-            "  help status map inventory quests party",
+            "  help status map inventory quests memories party",
             "  go <lokasi> look cultivate breakthrough rest",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
@@ -201,6 +202,14 @@ class GameSession:
             ]
         return ["Tidak ada quest aktif."]
 
+    def _cmd_memories(self, _command: Command) -> list[str]:
+        """Tampilkan echo memori yang terkumpul (GDD §15.3 grant_memory)."""
+        if not self.state.memories:
+            return ["Tidak ada memori."]
+        return ["Echo memori:"] + [
+            f"  - {memory_id}" for memory_id in self.state.memories
+        ]
+
     def _cmd_party(self, _command: Command) -> list[str]:
         return [f"Timmu hanya {self.state.player.name} (rekan: Fase 1)."]
 
@@ -223,9 +232,15 @@ class GameSession:
             if self.state.flags.get("ashfall_forest_cleared"):
                 return ["Hutan sunyi. Tidak ada musuh lagi."]
             return self._start_battle(FOREST_ENEMY)
+        if location == START_LOCATION:
+            return [
+                "Desa Emberfall yang tenang di pagi hari.",
+                "Hutan Perbatasan (ashfall_forest) tampak di kejauhan.",
+            ]
+        # Lokasi lain (mis. ruin_shrine hasil event unlock): deskripsi jujur
+        # tanpa meniru desa; konten per-lokasi menyusul bersama data maps.
         return [
-            "Desa Emberfall yang tenang di pagi hari.",
-            "Hutan Perbatasan (ashfall_forest) tampak di kejauhan.",
+            f"Kamu di {location}. Tempat ini sunyi; tidak ada yang menonjol.",
         ]
 
     def _cmd_cultivate(self, _command: Command) -> list[str]:

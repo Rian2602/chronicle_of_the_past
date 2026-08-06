@@ -13,6 +13,8 @@ ALIASES: dict[str, str] = {
     "tas": "inventory",
     "quests": "quests",
     "misi": "quests",
+    "memories": "memories",
+    "memori": "memories",
     "map": "map",
     "party": "party",
     "tim": "party",

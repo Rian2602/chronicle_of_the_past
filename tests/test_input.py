@@ -24,6 +24,7 @@ def test_alias_indonesia():
     assert parse_command("bicara elder_mao").name == "talk"
     assert parse_command("tas").name == "inventory"
     assert parse_command("misi").name == "quests"
+    assert parse_command("memori").name == "memories"
     assert parse_command("tim").name == "party"
     assert parse_command("amat").name == "look"
     assert parse_command("rampas").name == "loot"

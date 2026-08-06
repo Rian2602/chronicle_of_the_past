@@ -325,3 +325,32 @@ def test_event_unlock_peta_tersimpan_di_autosave(tmp_path):
     _dispatch(fresh, "load autosave")
     assert fresh.state.flags["map_ruin_shrine_unlocked"] is True
     assert fresh.state.flags["event_unlock_ruin_shrine_done"] is True
+
+
+def test_memories_menampilkan_echo_dari_event(tmp_path):
+    """Perintah memories menampilkan echo memori yang diberikan event."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    lines = _dispatch(session, "memories")
+    assert any("memory_ashfall_first_echo" in line for line in lines)
+
+
+def test_memories_kosong_memberi_pesan(tmp_path):
+    """Tanpa memori, perintah memories memberi pesan jelas."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    lines = _dispatch(session, "memories")
+    assert any("Tidak ada memori" in line for line in lines)
+
+
+def test_look_di_lokasi_baru_tidak_menipu(tmp_path):
+    """Look di lokasi non-desa tidak menampilkan deskripsi desa."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ruin_shrine")
+    lines = _dispatch(session, "look")
+    assert any("ruin_shrine" in line for line in lines)
+    assert not any("Desa Emberfall" in line for line in lines)
