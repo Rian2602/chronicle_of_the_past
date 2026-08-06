@@ -221,6 +221,7 @@ class GameSession:
             lines.append("Quest aktif:")
             for quest in active:
                 lines.append(f"  {quest.title}")
+                lines.append(f"    {quest.description}")
                 for index, objective in enumerate(quest.objectives):
                     mark = (
                         "[x]"

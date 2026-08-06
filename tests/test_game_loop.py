@@ -435,6 +435,32 @@ def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
     assert any("Tuan Shi" in line for line in lines)
 
 
+def test_quests_menampilkan_deskripsi_quest(tmp_path):
+    """Quest aktif menampilkan deskripsi naratif dari data (GDD §12.3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")  # quest101 dimulai via event intro
+    joined = "\n".join(_dispatch(session, "quests"))
+    assert "Tuan Shi telah menunggu" in joined
+
+
+def test_quest_selesai_saat_talk_setelah_breakthrough(tmp_path):
+    """Breakthrough dulu, talk kemudian: quest selesai di momen talk."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")  # quest101 dimulai via event intro
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")  # objektif breakthrough terpenuhi
+    assert session.state.player.tier_id == "qi_condensation"
+    assert "quest101" in session.state.quests.started  # belum selesai
+    lines = _dispatch(session, "talk tuan_shi")
+    state = session.state
+    assert state.quests.done == ["quest101"]
+    assert state.flags["quest101_done"] is True
+    assert state.flags["event_quest101_done_done"] is True
+    assert any("Quest selesai: Qi Pertama" in line for line in lines)
+
+
 def test_kills_tercatat_saat_menang(tmp_path):
     """Menang pertarungan mencatat kill musuh di state.kills."""
     session = _session(tmp_path)
