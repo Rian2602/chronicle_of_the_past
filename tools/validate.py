@@ -200,6 +200,13 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                         f"items: {item_id} -> resep butuh "
                         f"'{ingredient}' yang tidak ada"
                     )
+                elif ingredient is not None and (
+                    items.get(ingredient, {}).get("type") != "material"
+                ):
+                    errors.append(
+                        f"items: {item_id} -> resep butuh "
+                        f"'{ingredient}' yang bukan material"
+                    )
 
     # Toko (GDD §7): stok wajib merujuk item yang ada dan berharga.
     for shop_id, shop in shops.items():

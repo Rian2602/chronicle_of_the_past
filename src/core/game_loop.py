@@ -244,6 +244,9 @@ class GameSession:
                 f"{item['name']} adalah bahan — tidak bisa dipakai "
                 "langsung. Racik dulu dengan refine."
             ]
+        learned = (item.get("effect") or {}).get("learn_recipe")
+        if learned and self.state.flags.get(f"recipe_{learned}_known"):
+            return [f"Kamu sudah mempelajari resep {item['name']}."]
         items[item_id] -= 1
         if items[item_id] == 0:
             del items[item_id]

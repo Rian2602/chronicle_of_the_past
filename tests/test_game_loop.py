@@ -735,6 +735,17 @@ def test_use_resep_mempelajari_resep(tmp_path):
     assert any("Resep Pil Pemulih" in line for line in lines)
 
 
+def test_use_resep_sudah_dipelajari_ditolak(tmp_path):
+    """Use item resep yang sudah dipelajari: ditolak, item tidak terbuang."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["recipe_pil_pemulih_known"] = True
+    session.state.inventory.setdefault("items", {})["resep_pemulih"] = 1
+    lines = _dispatch(session, "use resep_pemulih")
+    assert any("sudah mempelajari" in line.lower() for line in lines)
+    assert session.state.inventory["items"]["resep_pemulih"] == 1
+
+
 def test_refine_tanpa_resep_dipelajari_ditolak(tmp_path):
     """Refine butuh resep dipelajari dulu (keputusan desain)."""
     session = _session(tmp_path)

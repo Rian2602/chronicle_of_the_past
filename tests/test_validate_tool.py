@@ -368,6 +368,37 @@ def test_validator_menangkap_ref_resep_ingredient(tmp_path):
     assert any("bahan_hantu" in e for e in errors)
 
 
+def test_validator_menangkap_resep_ingredient_bukan_material(tmp_path):
+    """Recipe dengan ingredient non-material wajib ditolak validator."""
+    data = _pohon_data(tmp_path)
+    items_dir = data / "items"
+    items_dir.mkdir(exist_ok=True)
+    (items_dir / "pil_dasar.json").write_text(
+        json.dumps(
+            {
+                "id": "pil_dasar",
+                "name": "Pil Dasar",
+                "type": "consumable",
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (items_dir / "pil_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "pil_uji",
+                "name": "Pil Uji",
+                "recipe": [{"item": "pil_dasar", "qty": 1}],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("bukan material" in e for e in errors)
+
+
 def test_validator_menangkap_ref_learn_recipe_target(tmp_path):
     """Item resep dengan learn_recipe ke item tak dikenal wajib dilaporkan."""
     data = _pohon_data(tmp_path)
