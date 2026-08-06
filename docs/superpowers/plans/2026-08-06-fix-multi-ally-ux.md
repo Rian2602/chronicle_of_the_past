@@ -24,7 +24,9 @@ Implementasi Party System (GDD §20) oleh Freebuff berhasil menambah Companion k
 - Ubah *dataclass* `BattleFrame` dengan menambah *field* `active_ally_name: str | None = None`.
 - Di dalam metode `battle_frame()`, set nilai properti tersebut:
   ```python
-  active_ally_name = battle.current.name if not battle.over and self._is_player_turn() else None
+  active_ally_name = (
+      battle.current.name if not battle.over and self._is_player_turn() else None
+  )
   ```
 
 ### Task 3: Injeksi Penanda Giliran pada UI / Battle Log

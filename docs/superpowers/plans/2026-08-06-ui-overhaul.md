@@ -201,20 +201,21 @@ def quest_lines(self) -> list[str]:
     """Ringkasan quest aktif untuk panel UI (read-only, tanpa efek)."""
     return self._cmd_quests(Command(name="quests", args=(), raw="quests"))
 
+
 def party_lines(self) -> list[str]:
     """Ringkasan tim untuk panel UI (read-only, tanpa efek)."""
     return self._cmd_party(Command(name="party", args=(), raw="party"))
 ```
 `app.py` — `compose()` menjadi 2 kolom:
 ```python
-    with Horizontal():
-        with Vertical(id="main-col"):
-            yield RichLog(id="game-log", markup=True)
-        with Vertical(id="side-col"):
-            yield Static("", id="panel-quest")
-            yield Static("", id="panel-party")
-    yield Static("", id="hud")      # HUD pindah ke atas lewat CSS order
-    yield Input(..., id="cmd")
+with Horizontal():
+    with Vertical(id="main-col"):
+        yield RichLog(id="game-log", markup=True)
+    with Vertical(id="side-col"):
+        yield Static("", id="panel-quest")
+        yield Static("", id="panel-party")
+yield Static("", id="hud")  # HUD pindah ke atas lewat CSS order
+yield Input(..., id="cmd")
 ```
   (susun order visual via CSS: HUD di atas, main-col kiri, side-col kanan,
   input di bawah; `_refresh()` mengisi `#panel-quest`/`#panel-party` dari
@@ -300,7 +301,7 @@ def test_inventory_mewarnai_per_tipe(tmp_path):
     session.state.inventory.setdefault("items", {})["esensi_api"] = 2
     session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
     joined = "\n".join(_dispatch(session, "inventory"))
-    assert "[cyan]" in joined   # material
+    assert "[cyan]" in joined  # material
     assert "[gold3]" in joined  # tool
 ```
 - [ ] **Step 2: Run test — GAGAL.**
@@ -347,6 +348,7 @@ def test_typo_jauh_tetap_error():
 def test_complete_command_menyarankan():
     """Autocomplete mengembalikan perintah terdekat untuk awalan/typo."""
     from src.core.input import complete_command
+
     assert complete_command("bre") == "breakthrough"
     assert complete_command("invent") == "inventory"
 ```
@@ -357,9 +359,11 @@ def _kanonik() -> list[str]:
     """Daftar nama kanonik untuk koreksi & autocomplete."""
     return sorted({v for v in ALIASES.values()})
 
+
 def _close_match(token: str, cutoff: float = 0.82) -> str | None:
     matches = difflib.get_close_matches(token, _kanonik(), n=1, cutoff=cutoff)
     return matches[0] if matches else None
+
 
 def complete_command(raw: str) -> str | None:
     """Kata pertama input: nama kanonik terdekat, atau None."""

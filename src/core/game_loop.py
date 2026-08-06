@@ -943,7 +943,7 @@ class GameSession:
         active = set(self.state.party_active)
         for raw in self.state.party:
             if len(allies) >= 4:
-                # GDD §24.1 poin 2: tim combat maks 4 (1 protagonis + 3
+                # GDD §24.1 poin 3: tim combat maks 4 (1 protagonis + 3
                 # rekan). Clamp pertahanan untuk save yang diedit manual.
                 break
             companion = Companion.from_dict(raw)

@@ -23,3 +23,6 @@ graphify-out/
 
 # Tooling (uv)
 uv.lock
+
+# Agent relay sync (AGENTS.md kolaborasi Freebuff↔Antigravity)
+.agent-sync/

@@ -47,6 +47,7 @@
 def test_data_rekan_semua_valid():
     """Rekan: skema wajib + ref teknik/element valid (GDD §20)."""
     from src.engine.combat import load_techniques
+
     techniques = {t.id for t in load_techniques()}
     elements = {"metal", "wood", "earth", "water", "fire", "netral"}
     data_dir = Path(__file__).resolve().parents[1] / "data" / "companions"
@@ -57,7 +58,16 @@ def test_data_rekan_semua_valid():
         assert data["id"] == path.stem
         assert data["element"] in elements
         assert all(s in techniques for s in data["skills"])
-        assert {"attack", "defense", "agility", "intelligence", "vitality", "spirit", "hp", "qi"} <= set(data["stats"])
+        assert {
+            "attack",
+            "defense",
+            "agility",
+            "intelligence",
+            "vitality",
+            "spirit",
+            "hp",
+            "qi",
+        } <= set(data["stats"])
 ```
 Tambahkan ke `tests/test_validate_tool.py` atau file test data baru `tests/test_companion_data.py`.
 
@@ -177,10 +187,17 @@ _(Catatan: `rank_bond_thresholds` **tidak dipakai** — model `Companion.rank` a
 def test_save_roundtrip_party(tmp_path):
     """Field party (schema v2) tersimpan & termuat utuh (GDD §19.2)."""
     from src.models.party import Companion
+
     state = _state()
-    companion = Companion(id="lin_wei", name="Lin Wei", tier="qi_condensation",
-                          element="wood", stats={"hp": 30, "qi": 8},
-                          skills=["qi_slash"], bond_xp=25)
+    companion = Companion(
+        id="lin_wei",
+        name="Lin Wei",
+        tier="qi_condensation",
+        element="wood",
+        stats={"hp": 30, "qi": 8},
+        skills=["qi_slash"],
+        bond_xp=25,
+    )
     state.party = [companion.to_dict()]
     save_game(state, "save1", tmp_path)
     loaded = load_game("save1", tmp_path)
@@ -198,9 +215,19 @@ def test_validator_menangkap_ref_skill_rekan(tmp_path):
     data = _pohon_data(tmp_path)
     (data / "companions").mkdir()
     (data / "companions" / "rekan_test.json").write_text(
-        json.dumps({"id": "rekan_test", "name": "Rekan Uji", "tier": "qi_condensation",
-                    "element": "fire", "stats": {"hp": 20, "qi": 5}, "skills": ["hantu_kuno"]},
-                   ensure_ascii=False), encoding="utf-8")
+        json.dumps(
+            {
+                "id": "rekan_test",
+                "name": "Rekan Uji",
+                "tier": "qi_condensation",
+                "element": "fire",
+                "stats": {"hp": 20, "qi": 5},
+                "skills": ["hantu_kuno"],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
     assert any("hantu_kuno" in e for e in collect_errors(data))
 ```
 
@@ -233,10 +260,20 @@ from src.models.party import Companion
 def _companion_uji() -> Companion:
     """Companion uji standar (stat Lin Wei data Task 1)."""
     return Companion(
-        id="lin_wei", name="Lin Wei", tier="qi_condensation",
+        id="lin_wei",
+        name="Lin Wei",
+        tier="qi_condensation",
         element="wood",
-        stats={"attack": 5, "defense": 3, "agility": 4, "intelligence": 3,
-               "vitality": 5, "spirit": 3, "hp": 30, "qi": 8},
+        stats={
+            "attack": 5,
+            "defense": 3,
+            "agility": 4,
+            "intelligence": 3,
+            "vitality": 5,
+            "spirit": 3,
+            "hp": 30,
+            "qi": 8,
+        },
         skills=["qi_slash"],
     )
 
@@ -331,8 +368,12 @@ def combatant_from_companion(companion: Companion) -> Combatant:
         qi_regen=COMPANION_QI_REGEN,  # konstanta baru, default 2
         skills=list(companion.skills),
     )
-    combatant.hp = companion.hp if companion.hp is not None else combatant.hp_max
-    combatant.qi = companion.qi if companion.qi is not None else combatant.qi_max
+    combatant.hp = (
+        companion.hp if companion.hp is not None else combatant.hp_max
+    )
+    combatant.qi = (
+        companion.qi if companion.qi is not None else combatant.qi_max
+    )
     return combatant
 ```
 
@@ -363,12 +404,25 @@ git commit -m "combat: target musuh acak multi-sekutu + factory rekan (GDD 6.1)"
 def _rekrut_lin_wei(session) -> None:
     """Suntik rekan Lin Wei langsung ke state (bukan via event)."""
     from src.models.party import Companion
+
     session.state.party = [
-        Companion(id="lin_wei", name="Lin Wei", tier="qi_condensation",
-                  element="wood", stats={"attack": 5, "defense": 3,
-                  "agility": 4, "intelligence": 3, "vitality": 5,
-                  "spirit": 3, "hp": 30, "qi": 8},
-                  skills=["qi_slash"]).to_dict()
+        Companion(
+            id="lin_wei",
+            name="Lin Wei",
+            tier="qi_condensation",
+            element="wood",
+            stats={
+                "attack": 5,
+                "defense": 3,
+                "agility": 4,
+                "intelligence": 3,
+                "vitality": 5,
+                "spirit": 3,
+                "hp": 30,
+                "qi": 8,
+            },
+            skills=["qi_slash"],
+        ).to_dict()
     ]
     session.state.party_active = ["lin_wei"]
 
@@ -513,8 +567,14 @@ def test_action_add_companion_menambah_party():
     state = _state()
     state.flags["quest103_done"] = True
     event = _event(
-        trigger=[{"kind": "flag", "flag": "quest103_done",
-                  "operator": "EQUALS", "value": True}],
+        trigger=[
+            {
+                "kind": "flag",
+                "flag": "quest103_done",
+                "operator": "EQUALS",
+                "value": True,
+            }
+        ],
         actions=[{"kind": "add_companion", "id": "lin_wei"}],
     )
     _fire(event, state)
