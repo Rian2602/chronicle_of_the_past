@@ -322,17 +322,32 @@ Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan 
   "title": "Qi Pertama",
   "type": "main",
   "description": "Sesepuh Mao mengajarkanmu menghirup qi langit-bumi.",
-  "objectives": ["Bicaralah dengan Sesepuh Mao.", "Lakukan breakthrough ke Pengumpul Qi."],
-  "requirements": [
+  "objectives": [
     {"kind": "talk", "target": "elder_mao"},
     {"kind": "breakthrough", "target": "qi_condensation"}
   ],
   "rewards": {"insight": 50, "gold": 20, "reputation": {"rebels": 5}},
   "flags_on_complete": ["quest101_done", "path_unlocked_sword"],
   "next": "quest102",
-  "category": "main"
+  "category": "main",
+  "requires_flag": null
 }
 ```
+
+> **Catatan:** `objectives` adalah array **objek** (mekanik) — label naratif untuk
+> pemain dihasilkan engine dari `objective_label`, bukan disimpan sebagai
+> string. `requires_flag` opsional: quest menunggu flag terbuka bila diisi.
+
+### 12.4 Quest Engine (interface)
+
+* `QuestObjective`: `kind` + `target` + `count` (default 1).
+* Kind requirement (8): `talk`, `enemy`, `map`, `flag`, `collect`,
+  `kill_count`, `escort`, `breakthrough`.
+* Fungsi engine: `load_quests` (muat dari `data/quests/`), `active_quests`
+  (started & belum done & `requires_flag` terpenuhi), `check_objective`
+  (satu objektif terpenuhi?), `advance_quest` (maju ke objektif berikutnya),
+  `complete_quest` (selesai + set flag `quest<id>_done` + reward),
+  `objective_label` (teks pemain dari objek mekanik).
 
 > **Catatan naming flag:** wajib `quest<id>_done` (mis. `quest101_done`) — **bukan** `q101_done`. Berlaku konsisten di quest, event, dan musuh (`requires_flag`).
 
