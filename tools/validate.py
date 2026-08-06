@@ -81,6 +81,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         "restore_qi",
         "add_insight",
         "add_meridian",
+        "learn_recipe",
         "buff_hp",
         "buff_defense",
         "buff_attack",

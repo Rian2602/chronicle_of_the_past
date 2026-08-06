@@ -6,5 +6,15 @@
   "effect": {
     "restore_qi": 30
   },
-  "price": 25
+  "price": 25,
+  "recipe": [
+    {
+      "item": "esensi_air",
+      "qty": 2
+    },
+    {
+      "item": "esensi_kayu",
+      "qty": 1
+    }
+  ]
 }

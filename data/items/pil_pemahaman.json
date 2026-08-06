@@ -6,5 +6,15 @@
   "effect": {
     "add_insight": 50
   },
-  "price": 40
+  "price": 40,
+  "recipe": [
+    {
+      "item": "esensi_kayu",
+      "qty": 2
+    },
+    {
+      "item": "batu_qi",
+      "qty": 1
+    }
+  ]
 }

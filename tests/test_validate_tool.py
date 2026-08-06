@@ -323,6 +323,27 @@ def test_validator_menangkap_item_effect_tidak_dikenal(tmp_path):
     assert any("pil_broken" in e and "kunci_gila" in e for e in errors)
 
 
+def test_validator_menerima_efek_learn_recipe(tmp_path):
+    """Efek learn_recipe (item resep) wajib diterima validator (GDD 25.3)."""
+    data = _pohon_data(tmp_path)
+    items_dir = data / "items"
+    items_dir.mkdir(exist_ok=True)
+    (items_dir / "resep_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "resep_uji",
+                "name": "Resep Uji",
+                "type": "recipe",
+                "effect": {"learn_recipe": "pil_uji"},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert not any("learn_recipe" in e for e in errors)
+
+
 def test_validator_data_lulus(tmp_path):
     """Validator berjalan tanpa temuan dan keluar kode 0 (AGENTS.md §1)."""
     result = subprocess.run(

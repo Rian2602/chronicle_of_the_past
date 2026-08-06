@@ -29,6 +29,22 @@
     {
       "item": "batu_qi",
       "count": 2
+    },
+    {
+      "item": "kuali_roh",
+      "count": 1
+    },
+    {
+      "item": "resep_pemulih",
+      "count": 1
+    },
+    {
+      "item": "resep_qi",
+      "count": 1
+    },
+    {
+      "item": "resep_pemahaman",
+      "count": 1
     }
   ]
 }

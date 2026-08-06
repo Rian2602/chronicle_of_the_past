@@ -82,6 +82,19 @@ def test_toko_pedagang_kelana_ada_dan_lengkap():
     } <= stocked
 
 
+def test_stok_toko_memiliki_alat_dan_resep():
+    """Toko menjual kuali roh + 3 item resep (sumber belajar alkimia)."""
+    path = SHOP_DIR / "pedagang_kelana.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    stocked = {entry["item"] for entry in data["stock"]}
+    assert {
+        "kuali_roh",
+        "resep_pemulih",
+        "resep_qi",
+        "resep_pemahaman",
+    } <= stocked
+
+
 def test_item_dagangan_pedagang_memiliki_harga():
     """Semua item dagangan pedagang kelana punya harga beli (50/esensi)."""
     items = load_items()

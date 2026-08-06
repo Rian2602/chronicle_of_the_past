@@ -83,3 +83,38 @@ def test_load_items_item_tanpa_price_tetap_lolos(tmp_path):
     )
     items = load_items(item_dir)
     assert items["pil_lama"].get("price") is None
+
+
+def test_item_alkimia_alat_dan_resep_ada():
+    """Kuali roh + 3 item resep Arc 1 wajib ada di data (GDD §22)."""
+    data_dir = Path(__file__).resolve().parents[1] / "data" / "items"
+    files = {path.stem for path in data_dir.glob("*.json")}
+    expected = {"kuali_roh", "resep_pemulih", "resep_qi", "resep_pemahaman"}
+    assert expected <= files, f"kurang: {expected - files}"
+
+
+def test_resep_pil_merujuk_bahan_yang_valid():
+    """Recipe tiap pil: ingredient ada di data dan bertype material."""
+    data_dir = Path(__file__).resolve().parents[1] / "data" / "items"
+    items = {}
+    for path in data_dir.glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        items[data["id"]] = data
+    ber_resep = 0
+    for item_id, data in items.items():
+        recipe = data.get("recipe")
+        if recipe is None:
+            continue
+        ber_resep += 1
+        for req in recipe:
+            ingredient = items.get(req["item"])
+            assert ingredient is not None, (
+                f"{item_id}: ingredient {req['item']} tidak ada di data"
+            )
+            assert ingredient.get("type") == "material", (
+                f"{item_id}: {req['item']} harus bertype material"
+            )
+            assert isinstance(req.get("qty"), int) and req["qty"] >= 1, (
+                f"{item_id}: qty resep {req['item']} tidak valid"
+            )
+    assert ber_resep >= 3, "target Arc 1: minimal 3 resep (GDD §22)"
