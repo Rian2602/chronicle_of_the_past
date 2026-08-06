@@ -15,6 +15,8 @@ EXPECTED_EVENTS = {
     "quest101_intro",
     "quest101_done",
     "quest102_intro",
+    "shrine_trial_start",
+    "shrine_reveal",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

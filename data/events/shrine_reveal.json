@@ -1,0 +1,12 @@
+{
+  "id": "shrine_reveal",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest103"}
+  ],
+  "actions": [
+    {"kind": "grant_memory", "memory_id": "memory_shrine_trial"},
+    {"kind": "grant_item", "id": "pil_peneguh_fondasi", "count": 1},
+    {"kind": "log", "text": "Di balik singgasana batu, pil peneguh fondasi menanti — hadiah bagi yang lulus ujian. Sebuah gema memori tertangkap."}
+  ],
+  "once": true
+}

@@ -86,6 +86,43 @@ def test_validator_pohon_valid_lolos(tmp_path):
     assert collect_errors(data) == []
 
 
+def test_validator_menangkap_ref_map_enemy(tmp_path):
+    """Map dengan enemies merujuk musuh tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "maps" / "map_test.json").write_text(
+        json.dumps(
+            {
+                "id": "map_test",
+                "name": "Peta Uji",
+                "description": "Tempat uji.",
+                "tier": 1,
+                "enemies": [{"enemy": "hantu_kuno"}],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("hantu_kuno" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_item(tmp_path):
+    """Event grant_item ke item tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "events" / "ev_test.json").write_text(
+        json.dumps(
+            {
+                "id": "ev_test",
+                "trigger": [],
+                "actions": [{"kind": "grant_item", "id": "pil_hantu"}],
+                "once": True,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("pil_hantu" in e for e in collect_errors(data))
+
+
 def test_validator_data_lulus(tmp_path):
     """Validator berjalan tanpa temuan dan keluar kode 0 (AGENTS.md §1)."""
     result = subprocess.run(

@@ -23,6 +23,7 @@ from src.core.state import FACTIONS  # noqa: E402
 from src.engine.combat import load_enemies, load_techniques  # noqa: E402
 from src.engine.cultivation import load_tiers  # noqa: E402
 from src.engine.event import load_events  # noqa: E402
+from src.engine.items import load_items  # noqa: E402
 from src.engine.maps import load_maps  # noqa: E402
 from src.engine.quest import load_quests  # noqa: E402
 from src.engine.story import load_memories  # noqa: E402
@@ -65,7 +66,11 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     quests = {quest.id: quest for quest in load_quests(data_dir / "quests")}
     events = load_events(data_dir / "events")
     memories = set(load_memories(data_dir / "story"))
-    maps = set(load_maps(data_dir / "maps"))
+    maps = load_maps(data_dir / "maps")
+    map_ids = set(maps)
+    enemies = load_enemies(data_dir / "enemies")
+    enemy_ids = {enemy.id for enemy in enemies}
+    items = load_items(data_dir / "items")
     npcs = _npc_records(data_dir / "npc")
     tiers = {tier.id for tier in load_tiers(data_dir / "cultivation")}
     techniques = {
@@ -79,7 +84,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
             target = objective.target
             if objective.kind == "talk" and target not in npcs:
                 errors.append(f"{quest.id}: talk -> NPC {target} tidak ada")
-            elif objective.kind == "map" and target not in maps:
+            elif objective.kind == "map" and target not in map_ids:
                 errors.append(f"{quest.id}: map -> peta {target} tidak ada")
 
     for event in events:
@@ -89,7 +94,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"{event.id}: trigger quest_done -> {condition['quest']}"
                 )
-            elif kind == "location_entered" and condition["map"] not in maps:
+            elif kind == "location_entered" and condition["map"] not in map_ids:
                 errors.append(
                     f"{event.id}: trigger location -> {condition['map']}"
                 )
@@ -101,7 +106,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
             kind = action["kind"]
             if kind == "start_quest" and action["id"] not in quests:
                 errors.append(f"{event.id}: start_quest -> {action['id']}")
-            elif kind == "unlock_map" and action["target"] not in maps:
+            elif kind == "unlock_map" and action["target"] not in map_ids:
                 errors.append(f"{event.id}: unlock_map -> {action['target']}")
             elif kind == "grant_memory" and action["memory_id"] not in memories:
                 errors.append(
@@ -113,9 +118,13 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"{event.id}: change_reputation -> {action['faction']}"
                 )
+            elif kind == "grant_item" and action["id"] not in items:
+                errors.append(
+                    f"{event.id}: grant_item -> {action['id']} tidak ada"
+                )
 
     for npc_id, npc in npcs.items():
-        if npc["location"] not in maps:
+        if npc["location"] not in map_ids:
             errors.append(f"{npc_id}: lokasi {npc['location']} bukan peta")
 
     for enemy in enemies:
@@ -124,6 +133,13 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         for skill in enemy.skills:
             if skill not in techniques:
                 errors.append(f"{enemy.id}: skill {skill} tidak ada")
+
+    for map_id, raw in maps.items():
+        for entry in raw.get("enemies", []):
+            if entry["enemy"] not in enemy_ids:
+                errors.append(
+                    f"{map_id}: enemies -> musuh {entry['enemy']} tidak ada"
+                )
 
     return sorted(errors)
 
