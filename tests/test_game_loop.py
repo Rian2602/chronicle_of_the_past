@@ -2,8 +2,6 @@
 
 import random
 
-import pytest
-
 from src.core.game_loop import GameSession
 from src.core.input import Command
 from src.core.save import slot_exists
@@ -720,44 +718,36 @@ def test_use_item_flow_grant_via_event(tmp_path):
 
 
 def test_quest_faksi_flow_start_complete_reward(tmp_path):
-    """Alur: start fquest via event -> complete objectives -> reward + event."""
+    """Alur nyata: event intro -> start fquest -> objektif -> reward + event."""
     session = _session(tmp_path)
     session.new_game("Akar")
 
-    # Setup flags untuk fquest_hutan_ember
+    # Prasyarat quest103_done dipenuhi: event intro faksi menyala di
+    # cascade berikutnya (start quest + set flag aktif + unlock peta).
     session.state.flags["quest103_done"] = True
-    session.state.flags["fquest_hutan_ember"] = True  # manually start
+    _dispatch(session, "rest")
+    assert "fquest_hutan_ember" in session.state.quests.started
+    assert session.state.flags.get("fquest_hutan_ember_active") is True
+    assert session.state.flags["map_hutan_kelabu_unlocked"] is True
 
-    # Talk Jati (objective 1)
+    # Objektif 1: talk Jati di Hutan Perbatasan.
     _dispatch(session, "go ashfall_forest")
     _dispatch(session, "talk jati")
+    assert session.state.flags["talked_jati"] is True
 
-    # Kill hantu_laut (objective 2)
-    session.state.flags["fquest_hutan_ember_babi_dead"] = True
+    # Objektif 2-3: kalahkan hantu laut dan serigala ember.
     session.state.kills["hantu_laut"] = 1
-
-    # Kill serigala_ember (objective 3)
     session.state.kills["serigala_ember"] = 1
+    _dispatch(session, "rest")  # evaluasi quest + event done
 
-    # Trigger quest completion via advance_quest
-    from src.engine.event import load_events, process_events
-    from src.engine.quest import advance_quest, load_quests
-
-    quests = load_quests()
-    fquest = next(q for q in quests if q.id == "fquest_hutan_ember")
-    advance_quest(session.state, fquest)
-
-    # Trigger event cascade (quest_done triggers fquest_hutan_ember_done event)
-    events = load_events()
-    process_events(session.state, events)
-
-    # Verify completion
-    assert "fquest_hutan_ember_done" in session.state.flags
     assert "fquest_hutan_ember" in session.state.quests.done
-    assert session.state.reputation["rebels"] >= 20  # 5 + 15 from event
+    assert "fquest_hutan_ember_done" in session.state.flags
+    assert session.state.flags["event_fquest_hutan_ember_done_done"] is True
+    assert session.state.reputation["rebels"] >= 20
     assert session.state.player.insight >= 50
     assert session.state.player.gold >= 40
-    assert "pil_pemulih" in session.state.inventory.get("items", {})
+    # Reward grant_item quest + grant_item event done.
+    assert session.state.inventory["items"].get("pil_pemulih") == 1
 
 
 def test_new_enemy_spawn_map_requires_flag(tmp_path):
@@ -773,9 +763,9 @@ def test_new_enemy_spawn_map_requires_flag(tmp_path):
     _dispatch(session, "go hutan_kelabu")
     assert session.state.location == "hutan_kelabu"
 
-    # Look - should trigger penunggu_hutan (requires fquest_abyssal)
+    # Look - should trigger penunggu_hutan (requires fquest_abyssal_active)
     # First, set the required flag
-    session.state.flags["fquest_abyssal"] = True
+    session.state.flags["fquest_abyssal_active"] = True
     _dispatch(session, "look")
 
     # Should spawn penunggu_hutan
@@ -805,16 +795,8 @@ def test_new_technique_available_after_breakthrough(tmp_path):
 # ----------------------------------------------------------------------
 
 
-@pytest.mark.skip(
-    reason=(
-        "Quest engine bug: faction quest completion not working - known issue"
-    )
-)
 def test_arc1_full_playthrough(tmp_path):
-    """Full playthrough Arc 1: quest101→108 + 2 faksi.
-
-    all NPC/enemy/technique.
-    """
+    """Full playthrough Arc 1: quest101→108 + 2 faksi (tanpa workaround)."""
     session = _session(tmp_path)
     session.new_game("Akar")
 
@@ -878,6 +860,12 @@ def test_arc1_full_playthrough(tmp_path):
     )  # 20 from previous quests - 10 choice
     assert "quest105_done" in session.state.flags
     assert "quest106" in session.state.quests.started
+    # Cascade: quest faksi holy order ikut selesai di pass yang sama, dan
+    # pilihan orde muncul — jawab sekarang sebelum choice ending menimpanya.
+    assert "fquest_holyorder_mata" in session.state.quests.done
+    _dispatch(session, "choose a")  # orde: lapor jujur
+    assert session.state.flags["lapor_jujur_orde"] is True
+    assert session.state.reputation["holy_order"] == 30
 
     # === Quest 106: Arsip yang Terbakar (combat) ===
     _dispatch(session, "talk guntur")
@@ -912,79 +900,29 @@ def test_arc1_full_playthrough(tmp_path):
     _dispatch(session, "go ashfall_forest")
     _dispatch(session, "rest")  # recover HP/qi before faction battles
     _dispatch(session, "talk jati")
-    _dispatch(session, "look")  # babi_hutan_qi
-    frame = session.battle_frame()
-    while not frame.over:
-        if session._ally.qi >= 8:
-            frame = session.battle_step("technique:flame_strike")
-        else:
-            frame = session.battle_step("attack")
-    assert frame.victory is True
-
-    # Manually set flag for second enemy spawn
-    # (workaround for map enemy system limitation)
-    session.state.flags["fquest_rebels_kiriman_babi_dead"] = True
-    _dispatch(session, "look")  # pembelot_pemberontak
-    frame = session.battle_frame()
-    while not frame.over:
-        if session._ally.qi >= 8:
-            frame = session.battle_step("technique:flame_strike")
-        else:
-            frame = session.battle_step("attack")
-    assert frame.victory is True
-
-    # Ensure quest is started (workaround for missing auto-start event)
-    if "fquest_rebels_kiriman" not in session.state.quests.started:
-        session.state.quests.started.append("fquest_rebels_kiriman")
-
-    _dispatch(session, "rest")  # trigger quest cascade
-    _dispatch(session, "look")  # trigger quest/event cascade
-    _dispatch(session, "rest")  # extra pass for quest engine
-    _dispatch(session, "look")  # extra pass for event engine
-    _dispatch(session, "rest")  # third pass
-    _dispatch(session, "look")  # third pass
-    _dispatch(session, "rest")  # fourth pass
-    _dispatch(session, "look")  # fourth pass
-    _dispatch(session, "rest")  # fifth pass
-    _dispatch(session, "look")  # fifth pass
-    _dispatch(session, "rest")  # sixth pass
-    _dispatch(session, "look")  # sixth pass
-    _dispatch(session, "rest")  # seventh pass
-    _dispatch(session, "look")  # seventh pass
-    _dispatch(session, "rest")  # eighth pass
-    _dispatch(session, "look")  # eighth pass
-    _dispatch(session, "rest")  # ninth pass
-    _dispatch(session, "look")  # ninth pass
-    _dispatch(session, "rest")  # tenth pass
-    _dispatch(session, "look")  # tenth pass
-    # Manually complete the quest (workaround for quest engine bug)
-    session.state.flags["fquest_rebels_kiriman_done"] = True
-    if "fquest_rebels_kiriman" in session.state.quests.started:
-        session.state.quests.started.remove("fquest_rebels_kiriman")
-    session.state.quests.done.append("fquest_rebels_kiriman")
-    session.state.player.add_insight(40)
-    session.state.player.gold += 30
-    session.state.add_reputation("rebels", 15)
-    # Trigger the done event manually
-    from src.engine.event import load_events, process_events
-
-    events = load_events()
-    for event in events:
-        if event.id == "fquest_rebels_kiriman_done":
-            process_events(session.state, [event])
-            break
-    _dispatch(session, "rest")  # trigger quest cascade
-    _dispatch(session, "look")  # trigger quest/event cascade
+    # 3 pertarungan berurutan: bandit -> babi_hutan_qi -> pembelot.
+    # Nama musuh bergantung pada urutan spawn di data/maps/ashfall_forest.json
+    # (musuh pertama yang flag-nya terpenuhi & belum dikalahkan).
+    for expected in (
+        "Bandit Perbatasan",
+        "Babi Hutan Qi",
+        "Pembelot Pemberontak",
+    ):
+        _dispatch(session, "look")
+        assert session.in_battle is True
+        frame = session.battle_frame()
+        assert frame.enemies[0]["name"] == expected
+        while not frame.over:
+            if session._ally.qi >= 8:
+                frame = session.battle_step("technique:flame_strike")
+            else:
+                frame = session.battle_step("attack")
+        assert frame.victory is True
+        _dispatch(session, "rest")  # recover sebelum pertarungan berikutnya
+    # Quest selesai via cascade setelah kill terakhir (tanpa workaround).
     assert "fquest_rebels_kiriman_done" in session.state.flags
+    assert "fquest_rebels_kiriman" in session.state.quests.done
     assert session.state.reputation["rebels"] >= 15
-
-    # === Faction Quest: Holy Order (CHOICE) ===
-    _dispatch(session, "talk diakon_soren")
-    # Pilih: lapor jujur (holy_order +15, rebels -15)
-    _dispatch(session, "choose a")
-    assert session.state.flags["lapor_jujur_orde"] is True
-    assert session.state.reputation["holy_order"] >= 15
-    assert "fquest_holyorder_mata_done" in session.state.flags
 
     # === Verifikasi Final ===
     # 8 quest utama done
