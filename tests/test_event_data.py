@@ -38,6 +38,7 @@ EXPECTED_EVENTS = {
     "fquest_holyorder_mata_intro",
     "fquest_abyssal_intro",
     "fquest_fondasi_intro",
+    "lin_wei_recruit",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

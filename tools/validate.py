@@ -157,6 +157,12 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"{event.id}: grant_item -> {action['id']} tidak ada"
                 )
+            elif kind == "add_companion" and action["id"] not in {
+                companion.id for companion in companions
+            }:
+                errors.append(
+                    f"{event.id}: add_companion -> {action['id']} tidak ada"
+                )
 
     for npc_id, npc in npcs.items():
         if npc["location"] not in map_ids:

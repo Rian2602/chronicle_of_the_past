@@ -1,0 +1,14 @@
+{
+  "id": "lin_wei_recruit",
+  "trigger": [
+    {"kind": "flag", "flag": "quest103_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "add_companion", "id": "lin_wei"},
+    {
+      "kind": "log",
+      "text": "Di gerbang desa, Lin Wei menunggumu — bukan sebagai orang yang dikirim, tapi sebagai orang yang memilih. 'Kuil itu tidak membunuhmu. Itu artinya aku salah tentang takdirmu.' Ia mencabut pedangnya dan bersumpah di bawah abu."
+    }
+  ],
+  "once": true
+}

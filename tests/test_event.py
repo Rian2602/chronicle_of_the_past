@@ -544,3 +544,23 @@ def test_event_quest104_done_unlocks_quest105(tmp_path):
     assert "quest105" in state.quests.started
     # Log narrative
     assert any("Lin Wei" in line for line in result.logs)
+
+
+def test_action_add_companion_menambah_party():
+    """Event add_companion memasukkan rekan ke state.party (GDD §20.2)."""
+    state = _state()
+    state.flags["quest103_done"] = True
+    event = _event(
+        trigger=[
+            {
+                "kind": "flag",
+                "flag": "quest103_done",
+                "operator": "EQUALS",
+                "value": True,
+            }
+        ],
+        actions=[{"kind": "add_companion", "id": "lin_wei"}],
+    )
+    _fire(event, state)
+    assert any(m["id"] == "lin_wei" for m in state.party)
+    assert "lin_wei" in state.party_active

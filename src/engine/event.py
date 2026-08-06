@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from src.core.state import GameState
+from src.models.party import Companion, load_companion
 
 EVENT_DIR = Path(__file__).resolve().parents[2] / "data" / "events"
 
@@ -34,6 +35,7 @@ ACTION_KINDS = {
     "grant_gold",
     "change_reputation",
     "start_dialog",
+    "add_companion",
     "log",
     "prompt_choice",
 }
@@ -145,6 +147,13 @@ def _apply_action(
     elif kind == "start_dialog":
         result.dialogs.append(action["dialog_id"])
         result.logs.append(f"Sebuah dialog dimulai: {action['dialog_id']}.")
+    elif kind == "add_companion":
+        companion_id = action["id"]
+        if not any(m.get("id") == companion_id for m in state.party):
+            raw = load_companion(companion_id)  # loader di models/party.py
+            state.party.append(Companion.from_dict(raw.to_dict()).to_dict())
+            state.party_active.append(companion_id)
+            result.logs.append(f"{raw.name} kini bersamamu.")
     elif kind == "log":
         result.logs.append(action["text"])
     elif kind == "prompt_choice":

@@ -420,6 +420,24 @@ def test_validator_menangkap_ref_learn_recipe_target(tmp_path):
     assert any("pil_hantu" in e for e in errors)
 
 
+def test_validator_menangkap_ref_add_companion(tmp_path):
+    """Event add_companion ke rekan tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "events" / "ev_rekrut.json").write_text(
+        json.dumps(
+            {
+                "id": "ev_rekrut",
+                "trigger": [],
+                "actions": [{"kind": "add_companion", "id": "lin_wei_hantu"}],
+                "once": True,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("lin_wei_hantu" in e for e in collect_errors(data))
+
+
 def test_validator_menangkap_ref_skill_rekan(tmp_path):
     """Rekan dengan skill tak dikenal wajib dilaporkan (GDD §20.3)."""
     data = _pohon_data(tmp_path)
