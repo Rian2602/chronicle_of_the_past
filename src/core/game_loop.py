@@ -30,6 +30,7 @@ from src.engine.cultivation import (
     next_tier,
 )
 from src.engine.event import load_events, process_events
+from src.engine.maps import load_maps
 from src.engine.quest import (
     active_quests,
     advance_quest,
@@ -37,6 +38,7 @@ from src.engine.quest import (
     load_quests,
     objective_label,
 )
+from src.engine.story import load_memories
 from src.models.combatant import (
     Combatant,
     combatant_from_enemy,
@@ -258,9 +260,19 @@ class GameSession:
         """Tampilkan echo memori yang terkumpul (GDD §15.3 grant_memory)."""
         if not self.state.memories:
             return ["Tidak ada memori."]
-        return ["Echo memori:"] + [
-            f"  - {memory_id}" for memory_id in self.state.memories
-        ]
+        contents = load_memories()
+        lines = ["Echo memori:"]
+        for memory_id in self.state.memories:
+            data = contents.get(memory_id)
+            if data is None:
+                # ponytail: memori tak ada di data/story (save lama) ->
+                # tampil id mentah; validator §25.3 sudah menjamin
+                # event->memory ter-resolve.
+                lines.append(f"  - {memory_id}")
+                continue
+            lines.append(f"  - {data['title']}")
+            lines.append(f"    {data['text']}")
+        return lines
 
     def _cmd_party(self, _command: Command) -> list[str]:
         return [f"Timmu hanya {self.state.player.name} (rekan: Fase 1)."]
@@ -287,21 +299,20 @@ class GameSession:
         return [f"Lokasi belum terbuka: {location}."]
 
     def _cmd_look(self, _command: Command) -> list[str]:
+        """Amati lokasi saat ini: deskripsi dari data/maps (GDD §9)."""
         location = self.state.location
-        if location == FOREST_ID:
-            if self.state.flags.get("ashfall_forest_cleared"):
-                return ["Hutan sunyi. Tidak ada musuh lagi."]
+        if location == FOREST_ID and not self.state.flags.get(
+            "ashfall_forest_cleared"
+        ):
             return self._start_battle(FOREST_ENEMY)
-        if location == START_LOCATION:
+        data = load_maps().get(location)
+        if data is None:
+            # ponytail: peta tanpa data -> teks netral; hilang begitu semua
+            # peta punya file JSON di data/maps.
             return [
-                "Desa Emberfall yang tenang di pagi hari.",
-                "Hutan Perbatasan (ashfall_forest) tampak di kejauhan.",
+                f"Kamu di {location}. Tempat ini sunyi.",
             ]
-        # Lokasi lain (mis. ruin_shrine hasil event unlock): deskripsi jujur
-        # tanpa meniru desa; konten per-lokasi menyusul bersama data maps.
-        return [
-            f"Kamu di {location}. Tempat ini sunyi; tidak ada yang menonjol.",
-        ]
+        return [f"{data['name']}: {data['description']}"]
 
     def _cmd_cultivate(self, _command: Command) -> list[str]:
         player = self.state.player

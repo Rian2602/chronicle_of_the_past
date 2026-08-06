@@ -190,6 +190,21 @@ def test_pertarungan_menang_memberi_reward(tmp_path):
     assert session.state.flags["ashfall_forest_cleared"] is True
 
 
+def test_look_setelah_hutan_bersih_menampilkan_deskripsi_peta(tmp_path):
+    """Setelah hutan dibersihkan, look memakai deskripsi dari data maps (§9)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    frame = session.battle_frame()
+    while not frame.over:
+        frame = session.battle_step("attack")
+    lines = _dispatch(session, "look")
+    assert session.in_battle is False
+    assert any("Hutan Perbatasan" in line for line in lines)
+    assert any("abu" in line for line in lines)
+
+
 def test_pertarungan_kalah_ko_pulih(tmp_path):
     """Kalah (KO) pulih otomatis setelah pertarungan (§20.4)."""
     session = _session(tmp_path)
@@ -326,13 +341,15 @@ def test_event_unlock_peta_tersimpan_di_autosave(tmp_path):
     assert fresh.state.flags["event_unlock_ruin_shrine_done"] is True
 
 
-def test_memories_menampilkan_echo_dari_event(tmp_path):
-    """Perintah memories menampilkan echo memori yang diberikan event."""
+def test_memories_menampilkan_judul_dan_isi_echo(tmp_path):
+    """Perintah memories menampilkan judul+isi memori dari data (GDD §15.3)."""
     session = _session(tmp_path)
     session.new_game("Akar")
     _dispatch(session, "go ashfall_forest")
     lines = _dispatch(session, "memories")
-    assert any("memory_ashfall_first_echo" in line for line in lines)
+    joined = "\n".join(lines)
+    assert "Hujan Abu" in joined
+    assert "memory_ashfall_first_echo" not in joined
 
 
 def test_memories_kosong_memberi_pesan(tmp_path):
@@ -344,14 +361,14 @@ def test_memories_kosong_memberi_pesan(tmp_path):
 
 
 def test_look_di_lokasi_baru_tidak_menipu(tmp_path):
-    """Look di lokasi non-desa tidak menampilkan deskripsi desa."""
+    """Look di lokasi non-desa menampilkan deskripsi dari data maps (§9)."""
     session = _session(tmp_path)
     session.new_game("Akar")
     session.state.player.add_insight(100)
     _dispatch(session, "breakthrough")
     _dispatch(session, "go ruin_shrine")
     lines = _dispatch(session, "look")
-    assert any("ruin_shrine" in line for line in lines)
+    assert any("Reruntuhan Kuil" in line for line in lines)
     assert not any("Desa Emberfall" in line for line in lines)
 
 
@@ -423,7 +440,8 @@ def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
     state = session.state
     assert state.player.tier_id == "qi_condensation"
     assert state.quests.done == ["quest101"]
-    assert state.quests.started == []
+    # Kontrak quest lanjutan: quest102 dimulai otomatis di pass yang sama.
+    assert state.quests.started == ["quest102"]
     assert state.flags["quest101_done"] is True
     assert state.flags["path_unlocked_sword"] is True
     assert state.player.insight >= 150  # 10 + 100 + reward 50
@@ -433,6 +451,29 @@ def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
     # Cascade quest -> event: event quest_done menyala di pass yang sama.
     assert state.flags["event_quest101_done_done"] is True
     assert any("Sesepuh Mao" in line for line in lines)
+
+
+def test_quest102_selesai_setelah_talk_lin_wei_dan_go_shrine(tmp_path):
+    """Quest lanjutan: dimulai otomatis, selesai di Reruntuhan Kuil.
+
+    Alur: quest101 selesai (breakthrough) -> quest102 dimulai seketika ->
+    bicara Lin Wei di desa -> masuk ruin_shrine -> quest102_done.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")  # quest101 dimulai via event intro
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")  # quest101 selesai -> quest102 mulai
+    state = session.state
+    assert state.quests.started == ["quest102"]
+    assert state.flags["event_quest102_intro_done"] is True
+    lines = _dispatch(session, "talk lin_wei")
+    assert state.flags["talked_lin_wei"] is True
+    assert any("Lin Wei" in line for line in lines)
+    _dispatch(session, "go ruin_shrine")
+    assert state.flags["quest102_done"] is True
+    assert "quest102" in state.quests.done
 
 
 def test_quests_menampilkan_deskripsi_quest(tmp_path):

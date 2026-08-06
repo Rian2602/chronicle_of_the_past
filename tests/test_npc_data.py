@@ -3,15 +3,15 @@
 import json
 from pathlib import Path
 
+from src.engine.maps import load_maps
+
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "npc"
-EXPECTED_NPCS = {"elder_mao"}
+EXPECTED_NPCS = {"elder_mao", "lin_wei"}
 REQUIRED_KEYS = {"id", "name", "location", "greeting", "dialog"}
-# Lokasi yang dikenal sampai data maps masuk; diperluas bersamanya.
-KNOWN_LOCATIONS = {"village_emberfall", "ashfall_forest", "ruin_shrine"}
 
 
 def test_terdapat_file_npc_yang_diharapkan():
-    """Harus ada NPC awal Arc 1 sesuai rencana (elder_mao)."""
+    """Harus ada NPC awal Arc 1 sesuai rencana (elder_mao, lin_wei)."""
     files = sorted(path.name for path in DATA_DIR.glob("*.json"))
     expected = sorted(f"{npc_id}.json" for npc_id in EXPECTED_NPCS)
     assert files == expected
@@ -19,12 +19,13 @@ def test_terdapat_file_npc_yang_diharapkan():
 
 def test_semua_npc_memenuhi_skema():
     """Setiap NPC memenuhi skema minimal: id/name/location/greeting/dialog."""
+    known_locations = set(load_maps())
     for path in DATA_DIR.glob("*.json"):
         data = json.loads(path.read_text(encoding="utf-8"))
         assert set(data) == REQUIRED_KEYS, f"{path.name}: kunci tidak sesuai"
         assert isinstance(data["id"], str) and data["id"] == path.stem
         assert isinstance(data["name"], str) and data["name"]
-        assert data["location"] in KNOWN_LOCATIONS, (
+        assert data["location"] in known_locations, (
             f"{path.name}: lokasi {data['location']} tidak dikenal"
         )
         assert isinstance(data["greeting"], str) and data["greeting"]

@@ -14,6 +14,7 @@ EXPECTED_EVENTS = {
     "day7_dawn",
     "quest101_intro",
     "quest101_done",
+    "quest102_intro",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 
