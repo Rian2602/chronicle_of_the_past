@@ -861,6 +861,7 @@ class GameSession:
         )
         return [
             f"{enemy.name} muncul dari bayangan!",
+            "Pertarungan dimulai! (Ketik 'escape' jika ingin melarikan diri)",
             "Gunakan attack / defend / technique / observe / escape.",
         ]
 
