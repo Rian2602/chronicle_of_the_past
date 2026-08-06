@@ -230,9 +230,8 @@ class GameScreen(Screen):
             f"[bold gold3]Quest[/]\n{quest_text}"
         )
         party_text = "\n".join(session.party_lines())
-        self.query_one("#panel-party", Static).update(
-            f"[bold cyan]Partai[/]\n{party_text}"
-        )
+        # Header PARTY (n/4) sudah ada di party_lines — jangan duplikasi.
+        self.query_one("#panel-party", Static).update(party_text)
         if session.in_battle:
             frame = session.battle_frame()
             panel = "\n".join(self._enemy_lines(frame))

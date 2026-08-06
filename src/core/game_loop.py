@@ -580,25 +580,24 @@ class GameSession:
     def _cmd_party(self, _command: Command) -> list[str]:
         """Tampilkan tim: protagonis + rekan aktif dengan bond (GDD §20)."""
         player = self.state.player
-        lines = [
-            f"Tim: {player.name} (protagonis)",
-        ]
         active = set(self.state.party_active)
-        shown = 0
+        members: list[Companion] = []
         for raw in self.state.party:
             companion = Companion.from_dict(raw)
-            if companion.id not in active:
-                continue
-            shown += 1
+            if companion.id in active:
+                members.append(companion)
+        lines = [f"[bold gold3]PARTY ({1 + len(members)}/4)[/]"]
+        lines.append(f"  {player.name} (protagonis)")
+        for companion in members:
             hp = companion.hp if companion.hp is not None else companion.hp_max
             bar = make_bar(hp, companion.hp_max, 10)
             lines.append(
-                f"  [cyan]{companion.name}[/] · {companion.element} · "
-                f"HP {bar} {hp}/{companion.hp_max} · "
+                f"  [cyan]{companion.name}[/] · {companion.tier} · "
+                f"{companion.element} · HP {bar} {hp}/{companion.hp_max} · "
                 f"bond {companion.bond_xp} (peringkat {companion.rank})"
             )
-        if shown == 0:
-            lines.append("  (belum ada rekan — 3 slot kosong, GDD §20.1)")
+        for _ in range(3 - len(members)):
+            lines.append("  (kosong)")
         return lines
 
     def _cmd_swap(self, command: Command) -> list[str]:

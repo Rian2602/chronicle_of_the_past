@@ -1307,3 +1307,24 @@ def test_battleframe_giliran_kosong_saat_pertarungan_selesai(tmp_path):
     frame = session.battle_frame()
     assert frame.active_ally_name is None
     assert not any(line.startswith("[Giliran ") for line in frame.log)
+
+
+def test_party_lines_menampilkan_header_dan_slot_kosong(tmp_path):
+    """Panel party: header PARTY (n/4) + slot rekan kosong (GDD §14.1)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    joined = "\n".join(session.party_lines())
+    assert "PARTY (1/4)" in joined
+    assert "(kosong)" in joined
+
+
+def test_party_lines_menampilkan_tier_dan_bond_rekan(tmp_path):
+    """Panel party menampilkan tier + bond rekan aktif (GDD §20.3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    session.state.party[0]["bond_xp"] = 25
+    joined = "\n".join(session.party_lines())
+    assert "PARTY (2/4)" in joined
+    assert "qi_condensation" in joined  # tier rekan
+    assert "bond 25" in joined
