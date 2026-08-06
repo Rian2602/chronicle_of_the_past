@@ -140,6 +140,28 @@ async def test_hud_menampilkan_stat_saat_battle(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_panel_musuh_memuat_bar_hp(tmp_path):
+    """Panel musuh saat bertarung menampilkan bar HP visual (GDD §6)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.press("n")
+        await pilot.pause()
+        app.screen.query_one("#name", Input).value = "Akar"
+        await pilot.press("enter")
+        await pilot.pause()
+        cmd = app.screen.query_one("#cmd", Input)
+        cmd.value = "go ashfall_forest"
+        await pilot.press("enter")
+        await pilot.pause()
+        cmd.value = "look"
+        await pilot.press("enter")
+        await pilot.pause()
+        enemy = app.screen.query_one("#enemy", Static).content
+        assert "█" in str(enemy)
+
+
+@pytest.mark.asyncio
 async def test_perintah_status_dari_layar_game(tmp_path):
     """Mengetik status di layar game menampilkan baris log."""
     app = _app(tmp_path)

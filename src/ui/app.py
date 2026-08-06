@@ -11,7 +11,7 @@ from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, Input, RichLog, Static
 
-from src.core.game_loop import BattleFrame, GameSession
+from src.core.game_loop import BattleFrame, GameSession, make_bar
 from src.core.input import Command, CommandError, parse_command
 
 
@@ -221,12 +221,16 @@ class GameScreen(Screen):
             self.query_one("#enemy", Static).update("")
 
     def _enemy_lines(self, frame: BattleFrame) -> list[str]:
-        """Baris info musuh untuk panel & amatan (satu sumber format)."""
-        return [
-            f"{enemy['name']}: HP {enemy['hp']}/{enemy['hp_max']} "
-            f"| Qi {enemy['qi']} | Elemen {enemy['element']}"
-            for enemy in frame.enemies
-        ]
+        """Baris info musuh dengan bar HP visual (GDD §6.1)."""
+        lines: list[str] = []
+        for enemy in frame.enemies:
+            bar = make_bar(enemy["hp"], enemy["hp_max"], 12)
+            lines.append(
+                f"[bold red]{enemy['name']}[/] HP [red]{bar}[/] "
+                f"{enemy['hp']}/{enemy['hp_max']} | Qi {enemy['qi']} "
+                f"| Elemen {enemy['element']}"
+            )
+        return lines
 
     def action_back_to_menu(self) -> None:
         """Kembali ke menu utama (konfirmasi simpan menyusul)."""
