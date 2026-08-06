@@ -1,13 +1,15 @@
-"""Pembungkus unit pertarungan: pemain & musuh (GDD §6)."""
+"""Pembungkus unit pertarungan: pemain, rekan & musuh (GDD §6)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
 from src.models.enemy import Enemy
+from src.models.party import Companion
 from src.models.player import Player
 
 ENEMY_QI_REGEN = 2
+COMPANION_QI_REGEN = 2
 
 
 @dataclass(eq=False)
@@ -69,6 +71,31 @@ def combatant_from_player(
     )
     combatant.hp = player.hp if player.hp is not None else combatant.hp_max
     combatant.qi = player.qi if player.qi is not None else combatant.qi_max
+    return combatant
+
+
+def combatant_from_companion(companion: Companion) -> Combatant:
+    """Buat Combatant dari Companion; luka di dunia ikut terbawa (§20.4).
+
+    HP/qi saat ini diwarisi dari Companion (None berarti penuh).
+    """
+    combatant = Combatant(
+        name=companion.name,
+        element=companion.element,
+        stats={
+            key: value
+            for key, value in companion.stats.items()
+            if key not in ("hp", "qi")
+        },
+        hp_max=companion.hp_max,
+        qi_max=companion.qi_max,
+        qi_regen=COMPANION_QI_REGEN,
+        skills=list(companion.skills),
+    )
+    if companion.hp is not None:
+        combatant.hp = companion.hp
+    if companion.qi is not None:
+        combatant.qi = companion.qi
     return combatant
 
 

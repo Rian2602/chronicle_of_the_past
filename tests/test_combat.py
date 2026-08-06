@@ -18,9 +18,11 @@ from src.engine.combat import (
 )
 from src.models.combatant import (
     Combatant,
+    combatant_from_companion,
     combatant_from_enemy,
     combatant_from_player,
 )
+from src.models.party import Companion
 from src.models.player import Player
 
 PLAYER_STATS = {
@@ -350,3 +352,67 @@ def test_serangan_dasar_mengisi_qi():
     battle = _battle(player=player, rng=_FixedRng(0.5))
     battle.step("attack")
     assert player.qi == 8  # regen 2 + bonus serangan 1
+
+
+def _companion_uji() -> Companion:
+    """Companion uji standar (stat Lin Wei data Task 1)."""
+    return Companion(
+        id="lin_wei",
+        name="Lin Wei",
+        tier="qi_condensation",
+        element="wood",
+        stats={
+            "attack": 5,
+            "defense": 3,
+            "agility": 4,
+            "intelligence": 3,
+            "vitality": 5,
+            "spirit": 3,
+            "hp": 30,
+            "qi": 8,
+        },
+        skills=["qi_slash"],
+    )
+
+
+def test_battle_dua_sekutu_keduanya_dapat_giliran_pemain():
+    """Dengan 2 sekutu, tiap sekutu mendapat giliran perintah (GDD §6.1)."""
+    player = _player()  # combatant_from_player, agility 5
+    ally = combatant_from_companion(_companion_uji())
+    enemy = _wolf()
+    battle = Battle(
+        allies=[player, ally],
+        enemies=[enemy],
+        techniques=load_techniques(),
+        rng=_FixedRng(0.5),
+    )
+    acted: set[str] = set()
+    while not battle.over and len(acted) < 6:
+        if battle.current in battle.allies:
+            acted.add(battle.current.name)
+            battle.step("attack")  # pemain mengendalikan tiap sekutu
+        else:
+            battle.step_enemy()
+    assert acted >= {"Akar", "Lin Wei"}
+
+
+def test_target_musuh_acak_dengan_banyak_sekutu():
+    """Musuh membidik sekutu hidup secara acak (bukan selalu slot 1)."""
+    player = _player()
+    ally = combatant_from_companion(_companion_uji())
+    enemy = _wolf()
+    battle = Battle(
+        allies=[player, ally],
+        enemies=[enemy],
+        techniques=load_techniques(),
+        rng=_FixedRng(0.5),
+    )
+    hit_targets: set[str] = set()
+    while not battle.over:
+        if battle.current in battle.allies:
+            battle.step("attack")
+        else:
+            result = battle.step_enemy()
+            if result is not None and result.target:
+                hit_targets.add(result.target)
+    assert "Lin Wei" in hit_targets

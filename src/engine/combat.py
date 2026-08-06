@@ -538,11 +538,19 @@ class Battle:
         return self._alive(self.allies)
 
     def _first_target(self, unit: Combatant) -> Combatant:
-        """Lawan pertama yang hidup (1v1: satu-satunya sasaran)."""
-        opponents = self._opponents(unit)
+        """Lawan pertama yang hidup; dengan banyak lawan dipilih acak.
+
+        Backward-compatible: 1 lawan ⇒ hasil identik dengan perilaku lama.
+        Implementasi memakai indexing rng.random() agar kompatibel dengan
+        RNG uji bertipe _FixedRng yang hanya menyediakan random().
+        """
+        opponents = self._alive(self._opponents(unit))
         if not opponents:
             raise RuntimeError("tidak ada lawan yang hidup")
-        return opponents[0]
+        if len(opponents) == 1:
+            return opponents[0]
+        index = int(self._rng.random() * len(opponents))
+        return opponents[index]
 
     def _alive(self, units: list[Combatant]) -> list[Combatant]:
         """Kembalikan unit yang belum KO."""
