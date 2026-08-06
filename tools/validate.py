@@ -76,7 +76,6 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     techniques = {
         technique.id for technique in load_techniques(data_dir / "techniques")
     }
-    enemies = load_enemies(data_dir / "enemies")
 
     errors: list[str] = []
     for quest in quests.values():
