@@ -1,7 +1,7 @@
 """Test tipis UI Textual: menu utama dan alur mulai baru (GDD §14.1)."""
 
 import pytest
-from textual.widgets import Input, Log, Static
+from textual.widgets import Input, Log, RichLog, Static
 
 from src.core.game_loop import GameSession
 from src.ui.app import ChronicleApp, GameScreen, MainMenuScreen, NameScreen
@@ -10,6 +10,14 @@ from src.ui.app import ChronicleApp, GameScreen, MainMenuScreen, NameScreen
 def _app(tmp_path) -> ChronicleApp:
     """App dengan sesi dan folder save sementara."""
     return ChronicleApp(session=GameSession(save_dir=tmp_path))
+
+
+def test_game_screen_menggunakan_richlog():
+    """Layar game memakai RichLog agar narasi bisa diberi markup warna."""
+    screen = GameScreen()
+    widgets = list(screen.compose())
+    assert any(isinstance(w, RichLog) for w in widgets)
+    assert not any(isinstance(w, Log) for w in widgets)
 
 
 @pytest.mark.asyncio
@@ -121,6 +129,6 @@ async def test_perintah_status_dari_layar_game(tmp_path):
         cmd.value = "status"
         await pilot.press("enter")
         await pilot.pause()
-        log = app.screen.query_one("#game-log", Log).lines
+        log = app.screen.query_one("#game-log", RichLog).lines
         joined = "\n".join(str(line) for line in log)
         assert "Insight" in joined

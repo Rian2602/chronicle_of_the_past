@@ -9,7 +9,7 @@ from __future__ import annotations
 from textual.app import App, ComposeResult
 from textual.containers import Vertical
 from textual.screen import Screen
-from textual.widgets import Button, Input, Log, Static
+from textual.widgets import Button, Input, RichLog, Static
 
 from src.core.game_loop import BattleFrame, GameSession
 from src.core.input import Command, CommandError, parse_command
@@ -121,14 +121,14 @@ class GameScreen(Screen):
         """Susun HUD, panel musuh, log, dan input perintah."""
         yield Static("", id="hud")
         yield Static("", id="enemy")
-        yield Log(id="game-log", highlight=True)
+        yield RichLog(id="game-log", markup=True)
         yield Input(placeholder="Ketik perintah (help untuk bantuan)", id="cmd")
 
     def on_mount(self) -> None:
         """Isi log awal, muat HUD, dan fokuskan input perintah."""
-        log = self.query_one("#game-log", Log)
+        log = self.query_one("#game-log", RichLog)
         for line in self._initial_log:
-            log.write_line(line)
+            log.write(line + "\n")
         self._refresh()
         self.query_one("#cmd", Input).focus()
 
@@ -141,7 +141,7 @@ class GameScreen(Screen):
         try:
             command = parse_command(raw)
         except CommandError as exc:
-            self.query_one("#game-log", Log).write_line(f"[red]{exc}[/]")
+            self.query_one("#game-log", RichLog).write(f"[red]{exc}[/]\n")
             return
         if command is None:
             return
@@ -154,7 +154,7 @@ class GameScreen(Screen):
         """Kirim perintah dunia; tangani keluar dan mulai pertarungan."""
         session = self.app.session
         for line in session.dispatch(command):
-            self.query_one("#game-log", Log).write_line(line)
+            self.query_one("#game-log", RichLog).write(line + "\n")
         self._refresh()
         if session.quit_requested:
             self.app.exit()
@@ -162,25 +162,25 @@ class GameScreen(Screen):
     def _battle_command(self, command: Command) -> None:
         """Satu langkah pertarungan dari input pemain (GDD §18.3)."""
         session = self.app.session
-        log = self.query_one("#game-log", Log)
+        log = self.query_one("#game-log", RichLog)
         if command.name == "quit":
             # Perintah global: pemain boleh keluar kapan pun (§18.1).
             for line in session.dispatch(command):
-                log.write_line(line)
+                log.write(line + "\n")
             self.app.exit()
             return
         if command.name == "observe":
             frame = session.battle_frame()
-            log.write_line("[cyan]Amatan:[/]")
+            log.write("[cyan]Amatan:[/]\n")
             for line in self._enemy_lines(frame):
-                log.write_line(line)
+                log.write(line + "\n")
         else:
             frame = session.battle_step(self._battle_action(command))
             log.clear()
             for line in frame.log:
-                log.write_line(line)
+                log.write(line + "\n")
             if frame.error:
-                log.write_line(f"[red]{frame.error}[/]")
+                log.write(f"[red]{frame.error}[/]\n")
         self._refresh()
 
     def _battle_action(self, command: Command) -> str:
@@ -225,17 +225,22 @@ class ChronicleApp(App):
 
     TITLE = "Chronicle of the Past"
     CSS = """
+    Screen { background: #0F0F0F; color: #E8E8E8; }
     #menu, #name-box {
         align: center middle;
         width: 60;
         padding: 1 2;
-        border: round $primary;
+        border: round #D4AF37;
     }
-    #title { text-align: center; text-style: bold; }
+    #title { text-align: center; text-style: bold; color: #D4AF37; }
     #tagline, #prompt { text-align: center; }
     Button { width: 100%; margin-top: 1; }
-    #hud, #enemy { background: $panel; padding: 0 1; }
-    #game-log { height: 1fr; border: round $primary; }
+    #hud { background: #1a1a1a; padding: 0 1; border-bottom: solid #303030; }
+    #enemy { background: #1a0000; padding: 0 1; border-bottom: solid #4a0000;
+             color: #ff5555; }
+    #game-log { height: 1fr; border: round #D4AF37; background: #0F0F0F; }
+    #cmd { border: tall #303030; background: #151515; }
+    #cmd:focus { border: tall #D4AF37; }
     """
 
     def __init__(self, session: GameSession | None = None) -> None:
