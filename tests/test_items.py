@@ -54,6 +54,25 @@ def test_load_items_item_tanpa_effect_tetap_lolos(tmp_path):
     assert items["pil_lama"].get("effect") is None
 
 
+def test_load_items_membaca_field_recipe(tmp_path):
+    """Loader item wajib membawa field recipe (GDD §14.3)."""
+    item_dir = tmp_path / "items"
+    item_dir.mkdir()
+    (item_dir / "pil_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "pil_uji",
+                "name": "Pil Uji",
+                "recipe": [{"item": "esensi_api", "qty": 2}],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    items = load_items(item_dir)
+    assert items["pil_uji"]["recipe"] == [{"item": "esensi_api", "qty": 2}]
+
+
 def test_load_items_membaca_field_price(tmp_path):
     """Loader item membawa field price (harga beli dasar, GDD §7)."""
     item_dir = tmp_path / "items"

@@ -720,6 +720,90 @@ def test_use_bahan_ditolak_tidak_konsumsi(tmp_path):
 
 
 # ----------------------------------------------------------------------
+# Sprint E: Sistem Alkimia — belajar resep & refine (GDD §7, §18.2)
+# ----------------------------------------------------------------------
+
+
+def test_use_resep_mempelajari_resep(tmp_path):
+    """Use item resep: flag recipe_<item>_known terset, item resep habis."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["resep_pemulih"] = 1
+    lines = _dispatch(session, "use resep_pemulih")
+    assert session.state.flags.get("recipe_pil_pemulih_known") is True
+    assert session.state.inventory["items"].get("resep_pemulih", 0) == 0
+    assert any("Resep Pil Pemulih" in line for line in lines)
+
+
+def test_refine_tanpa_resep_dipelajari_ditolak(tmp_path):
+    """Refine butuh resep dipelajari dulu (keputusan desain)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 2
+    session.state.inventory.setdefault("items", {})["esensi_tanah"] = 1
+    lines = _dispatch(session, "refine pil_pemulih")
+    assert any(
+        "pelajari" in line.lower() or "resep" in line.lower() for line in lines
+    )
+    assert session.state.inventory["items"]["esensi_api"] == 2
+
+
+def test_refine_tanpa_kuali_ditolak(tmp_path):
+    """Refine butuh alat Kuali Roh di tas (keputusan desain)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["recipe_pil_pemulih_known"] = True
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 2
+    session.state.inventory.setdefault("items", {})["esensi_tanah"] = 1
+    lines = _dispatch(session, "refine pil_pemulih")
+    assert any("kuali" in line.lower() for line in lines)
+    assert session.state.inventory["items"]["esensi_api"] == 2
+
+
+def test_refine_bahan_kurang_ditolak(tmp_path):
+    """Refine dengan bahan kurang: ditolak, bahan tidak berubah."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["recipe_pil_pemulih_known"] = True
+    session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 1
+    session.state.inventory.setdefault("items", {})["esensi_tanah"] = 1
+    lines = _dispatch(session, "refine pil_pemulih")
+    assert any("tidak cukup" in line.lower() for line in lines)
+    assert session.state.inventory["items"]["esensi_api"] == 1
+    assert session.state.inventory["items"].get("pil_pemulih", 0) == 0
+
+
+def test_refine_sukses_mengubah_bahan_menjadi_pil(tmp_path):
+    """Refine sukses: bahan berkurang sesuai resep, pil masuk x1."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["recipe_pil_pemulih_known"] = True
+    session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 2
+    session.state.inventory.setdefault("items", {})["esensi_tanah"] = 1
+    lines = _dispatch(session, "refine pil_pemulih")
+    assert any("meracik" in line.lower() for line in lines)
+    assert session.state.inventory["items"].get("esensi_api", 0) == 0
+    assert session.state.inventory["items"].get("esensi_tanah", 0) == 0
+    assert session.state.inventory["items"]["pil_pemulih"] == 1
+    # Alat tidak ikut habis.
+    assert session.state.inventory["items"]["kuali_roh"] == 1
+
+
+def test_refine_item_tanpa_resep_ditolak(tmp_path):
+    """Refine item tanpa recipe / tak dikenal: pesan jelas."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
+    lines = _dispatch(session, "refine pil_qi_tenang")
+    assert any("resep" in line.lower() for line in lines)
+    lines = _dispatch(session, "refine pil_hantu")
+    assert any("tidak dikenal" in line.lower() for line in lines)
+
+
+# ----------------------------------------------------------------------
 # Sprint D: E2E Integration Tests (Arc 1 Variasi)
 # ----------------------------------------------------------------------
 

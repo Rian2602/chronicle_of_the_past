@@ -80,6 +80,7 @@ AVAILABLE = {
     "shop",
     "buy",
     "sell",
+    "refine",
 }
 
 
@@ -161,7 +162,8 @@ class GameSession:
             "Perintah tersedia:",
             "  help status map inventory quests memories party",
             "  go <lokasi> look talk <nama> cultivate breakthrough rest",
-            "  shop buy <item> [jumlah] sell <item> [jumlah] use <item>",
+            "  shop buy <item> [jumlah] sell <item> [jumlah]",
+            "  use <item> refine <item>",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
@@ -249,6 +251,12 @@ class GameSession:
         effect = item.get("effect")
         player = self.state.player
         if effect:
+            learned = effect.get("learn_recipe")
+            if learned:
+                # Belajar resep: pengetahuan permanen di flags (GDD §7).
+                self.state.flags[f"recipe_{learned}_known"] = True
+                target = catalog.get(learned, {}).get("name", learned)
+                lines.append(f"Kamu mempelajari resep {target}.")
             if effect.get("heal_hp"):
                 player.hp = min(player.hp_max, player.hp + effect["heal_hp"])
                 lines.append(f"HP pulih {effect['heal_hp']}.")
@@ -407,6 +415,46 @@ class GameSession:
         self.state.player.gold += total
         name = item.get("name", item_id)
         lines = [f"Kamu menjual {name} x{count} seharga {total} emas."]
+        lines += self._run_quests()
+        lines += self._run_events()
+        return lines
+
+    def _cmd_refine(self, command: Command) -> list[str]:
+        """Racik pil dari bahan sesuai resep (GDD §18.2).
+
+        Syarat: resep sudah dipelajari (flag ``recipe_<item>_known``),
+        Kuali Roh ada di tas, dan semua bahan tersedia. Mengonsumsi
+        bahan sesuai resep lalu menambah pil hasil; cascade quest+event
+        (pola buy/sell).
+        """
+        if not command.args:
+            return ["Racik apa? Contoh: refine <nama_pil>."]
+        target_id = command.args[0]
+        catalog = load_items()
+        item = catalog.get(target_id)
+        if item is None:
+            return [f"Resep '{target_id}' tidak dikenal."]
+        recipe = item.get("recipe")
+        if not recipe:
+            return [f"{item['name']} tidak memiliki resep."]
+        if not self.state.flags.get(f"recipe_{target_id}_known"):
+            return [
+                f"Kamu belum mempelajari resep {item['name']}. ",
+                "Beli dan pakai item resepnya dulu.",
+            ]
+        items = self.state.inventory.setdefault("items", {})
+        if items.get("kuali_roh", 0) <= 0:
+            return ["Kamu butuh Kuali Roh untuk meracik."]
+        for req in recipe:
+            if items.get(req["item"], 0) < req["qty"]:
+                need = catalog.get(req["item"], {}).get("name", req["item"])
+                return [f"Bahan tidak cukup: butuh {req['qty']}x {need}."]
+        for req in recipe:
+            items[req["item"]] -= req["qty"]
+            if items[req["item"]] == 0:
+                del items[req["item"]]
+        items[target_id] = items.get(target_id, 0) + 1
+        lines = [f"Kamu meracik {item['name']} x1."]
         lines += self._run_quests()
         lines += self._run_events()
         return lines
