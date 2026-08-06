@@ -1,0 +1,7 @@
+{
+  "id": "pil_uji_heal",
+  "name": "Pil Uji Heal",
+  "type": "consumable",
+  "description": "Pil uji untuk test.",
+  "effect": {"heal_hp": 20}
+}

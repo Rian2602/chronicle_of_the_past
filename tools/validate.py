@@ -71,6 +71,19 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     enemies = load_enemies(data_dir / "enemies")
     enemy_ids = {enemy.id for enemy in enemies}
     items = load_items(data_dir / "items")
+
+    # Effek item yang dikenali (GDD §7 + §17). Efek tak dikenal = data
+    # rusak / typo — ditangkap di sini (trust boundary data JSON).
+    valid_item_effects = {
+        "heal_hp",
+        "restore_qi",
+        "add_insight",
+        "add_meridian",
+        "buff_hp",
+        "buff_defense",
+        "buff_attack",
+        "resist_poison",
+    }
     npcs = _npc_records(data_dir / "npc")
     tiers = {tier.id for tier in load_tiers(data_dir / "cultivation")}
     techniques = {
@@ -139,6 +152,15 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"{map_id}: enemies -> musuh {entry['enemy']} tidak ada"
                 )
+
+    for item_id, item in items.items():
+        effect = item.get("effect")
+        if isinstance(effect, dict):
+            for key in effect:
+                if key not in valid_item_effects:
+                    errors.append(
+                        f"items: {item_id} -> effect key '{key}' tak dikenal"
+                    )
 
     return sorted(errors)
 

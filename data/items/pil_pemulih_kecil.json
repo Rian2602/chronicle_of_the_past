@@ -1,0 +1,7 @@
+{
+  "id": "pil_pemulih_kecil",
+  "name": "Pil Pemulih Kecil",
+  "type": "consumable",
+  "description": "Remasan akar purba memulihkan luka ringan. Rasa pahit takdir.",
+  "effect": {"heal_hp": 25}
+}

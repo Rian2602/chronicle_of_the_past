@@ -123,6 +123,26 @@ def test_validator_menangkap_ref_item(tmp_path):
     assert any("pil_hantu" in e for e in collect_errors(data))
 
 
+def test_validator_menangkap_item_effect_tidak_dikenal(tmp_path):
+    """Item dengan effect key tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    items_dir = data / "items"
+    items_dir.mkdir(exist_ok=True)
+    (items_dir / "pil_broken.json").write_text(
+        json.dumps(
+            {
+                "id": "pil_broken",
+                "name": "Pil Rusak",
+                "effect": {"heal_hp": 5, "kunci_gila": 1},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("pil_broken" in e and "kunci_gila" in e for e in errors)
+
+
 def test_validator_data_lulus(tmp_path):
     """Validator berjalan tanpa temuan dan keluar kode 0 (AGENTS.md §1)."""
     result = subprocess.run(
