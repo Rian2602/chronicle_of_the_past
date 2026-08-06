@@ -31,6 +31,7 @@ REQUIRED_KEYS = {
     "location",
     "time",
     "settings",
+    "shop_sold",
 }
 
 
@@ -48,6 +49,28 @@ class _FixedRng:
 def _state() -> GameState:
     """State dasar untuk test serialisasi."""
     return GameState(player=Player(name="Akar"))
+
+
+def test_shop_sold_default_kosong():
+    """State baru: stok terjual toko kosong (seluruh stok penuh)."""
+    assert _state().shop_sold == {}
+
+
+def test_shop_sold_roundtrip():
+    """shop_sold ikut round-trip to_dict/from_dict identik."""
+    state = _state()
+    state.shop_sold = {"pedagang_kelana": {"esensi_api": 2}}
+    restored = GameState.from_dict(state.to_dict())
+    assert restored.shop_sold == state.shop_sold
+    assert restored.to_dict() == state.to_dict()
+
+
+def test_shop_sold_bentuk_salah_ditolak():
+    """shop_sold bukan dict (save korup) ditolak keras, tanpa crash."""
+    with pytest.raises(ValueError):
+        GameState.from_dict(
+            {"player": {"name": "Akar"}, "shop_sold": "rusak"}
+        )
 
 
 def test_to_dict_memiliki_semua_kunci_skema():

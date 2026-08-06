@@ -17,8 +17,12 @@ VALID_SLOTS = frozenset((*SLOTS, AUTOSAVE))
 CURRENT_VERSION = SCHEMA_VERSION
 
 # Migrasi versi lama: MIGRATIONS[versi_lama] -> fungsi yang menaikkan ke
-# versi_lama + 1. Kosong untuk v1; diisi saat struktur save berubah (§19.3).
-MIGRATIONS: dict[int, Callable[[dict[str, Any]], dict[str, Any]]] = {}
+# versi_lama + 1. Diisi saat struktur save berubah (§19.3).
+MIGRATIONS: dict[int, Callable[[dict[str, Any]], dict[str, Any]]] = {
+    # v1 -> v2: field stok toko terjual (shop_sold) diperkenalkan (GDD
+    # §19.2). Default kosong = seluruh toko stok penuh (belum terjual).
+    1: lambda raw: {**raw, "shop_sold": {}},
+}
 
 
 class SaveError(Exception):

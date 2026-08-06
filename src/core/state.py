@@ -8,7 +8,7 @@ from typing import Any
 from src.engine.cultivation import load_tiers, restore_tier
 from src.models.player import Player
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 DEFAULT_LOCATION = "village_emberfall"
 FACTIONS = ("court", "holy_order", "rebels", "guilds", "ancient_order")
 # Reputasi faksi dibatasi -100 s/d +100 (GDD §8).
@@ -100,6 +100,9 @@ class GameState:
     location: str = DEFAULT_LOCATION
     time: GameTime = field(default_factory=GameTime)
     settings: dict[str, Any] = field(default_factory=dict)
+    # Stok toko yang terjual: shop_id -> item_id -> jumlah (GDD §19.2).
+    # Sisa stok = count di data/shops dikurangi angka ini; kosong = penuh.
+    shop_sold: dict[str, dict[str, int]] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Normalisasi reputasi 5 faksi (§8) dan hp/qi konkret.
@@ -151,6 +154,10 @@ class GameState:
             "location": self.location,
             "time": self.time.to_dict(),
             "settings": dict(self.settings),
+            "shop_sold": {
+                shop_id: dict(sold)
+                for shop_id, sold in self.shop_sold.items()
+            },
         }
 
     @classmethod
@@ -170,6 +177,19 @@ class GameState:
         reputation = data.get("reputation", {})
         if not isinstance(reputation, dict):
             raise ValueError("reputasi harus berupa objek")
+        shop_sold = data.get("shop_sold", {})
+        if not isinstance(shop_sold, dict):
+            raise ValueError("shop_sold harus berupa objek")
+        normalized_sold: dict[str, dict[str, int]] = {}
+        for shop_id, sold in shop_sold.items():
+            if not isinstance(shop_id, str) or not isinstance(sold, dict):
+                raise ValueError("shop_sold: id toko/terjual tidak valid")
+            if not all(
+                isinstance(item_id, str) and isinstance(count, int)
+                for item_id, count in sold.items()
+            ):
+                raise ValueError("shop_sold: stok terjual harus item -> int")
+            normalized_sold[shop_id] = dict(sold)
         return cls(
             player=player,
             party=[dict(member) for member in data.get("party", [])],
@@ -188,4 +208,5 @@ class GameState:
             location=data.get("location", DEFAULT_LOCATION),
             time=GameTime.from_dict(data.get("time", {})),
             settings=dict(data.get("settings", {})),
+            shop_sold=normalized_sold,
         )

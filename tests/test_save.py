@@ -188,3 +188,42 @@ def test_slot_exists(tmp_path):
     assert not slot_exists("save1", tmp_path)
     save_game(_state(), "save1", tmp_path)
     assert slot_exists("save1", tmp_path)
+
+
+def test_save_roundtrip_menyimpan_shop_sold(tmp_path):
+    """Stok toko terjual tersimpan dan kembali identik (§19.2)."""
+    state = _state()
+    state.shop_sold = {"pedagang_kelana": {"esensi_api": 3}}
+    save_game(state, "save1", tmp_path)
+    loaded = load_game("save1", tmp_path)
+    assert loaded.shop_sold == {"pedagang_kelana": {"esensi_api": 3}}
+
+
+def test_migrasi_v1_ke_v2_menambah_shop_sold(tmp_path):
+    """Save v1 (tanpa shop_sold) dimigrasi: stok toko penuh (kosong)."""
+    raw = {
+        "schema_version": 1,
+        "player": {"name": "Akar", "gold": 10},
+        "inventory": {"items": {}, "equipped": {}, "artifacts": {}},
+        "quests": {"started": [], "done": [], "failed": []},
+        "flags": {},
+        "kills": {},
+        "reputation": {
+            "court": 0,
+            "holy_order": 0,
+            "rebels": 0,
+            "guilds": 0,
+            "ancient_order": 0,
+        },
+        "memories": [],
+        "map_unlocks": [],
+        "location": "village_emberfall",
+        "time": {"day": 1, "hour": 8},
+        "settings": {},
+    }
+    (tmp_path / "save1.json").write_text(
+        json.dumps(raw), encoding="utf-8"
+    )
+    loaded = load_game("save1", tmp_path)
+    assert loaded.shop_sold == {}
+    assert loaded.player.gold == 10
