@@ -30,7 +30,12 @@ STAT_KEYS = {
     "qi",
 }
 ELEMENTS = {"metal", "wood", "earth", "water", "fire"}
-EXPECTED_ENEMIES = {"serigala_qi", "bandit_perbatasan"}
+EXPECTED_ENEMIES = {
+    "serigala_qi",
+    "bandit_perbatasan",
+    "zombie_temple",
+    "penjaga_makam",
+}
 
 
 def test_terdapat_file_musuh_yang_diharapkan():

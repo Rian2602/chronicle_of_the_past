@@ -1,0 +1,20 @@
+{
+  "id": "penjaga_makam",
+  "name": "Penjaga Makam",
+  "tier": "qi_condensation",
+  "element": "metal",
+  "behavior": "defensive",
+  "stats": {
+    "attack": 10,
+    "defense": 7,
+    "agility": 4,
+    "intelligence": 5,
+    "vitality": 7,
+    "spirit": 4,
+    "hp": 55,
+    "qi": 15
+  },
+  "skills": ["qi_slash", "flame_strike"],
+  "tags": ["boss", "human"],
+  "rewards": {"insight": 80, "gold": 50}
+}

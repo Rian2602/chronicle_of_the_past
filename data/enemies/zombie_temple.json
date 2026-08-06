@@ -1,0 +1,20 @@
+{
+  "id": "zombie_temple",
+  "name": "Zombi Kuil",
+  "tier": "qi_condensation",
+  "element": "earth",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 6,
+    "defense": 3,
+    "agility": 2,
+    "intelligence": 1,
+    "vitality": 6,
+    "spirit": 2,
+    "hp": 28,
+    "qi": 6
+  },
+  "skills": ["qi_slash"],
+  "tags": ["undead"],
+  "rewards": {"insight": 20, "gold": 15}
+}
