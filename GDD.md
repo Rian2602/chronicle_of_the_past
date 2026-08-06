@@ -821,6 +821,16 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 
 ### 24.3 Changelog
 
+**v1.3 (2026-08-06)** — Textual UI overhaul (zero-dependency):
+
+* §14.1: tema grimdark (CSS #0F0F0F/#D4AF37/cyan/crimson), `RichLog`
+  menggantikan `Log`, layout panel (HUD atas + sidebar quest/party +
+  log + input), bar ASCII HP/Qi (`make_bar`) di HUD & panel musuh,
+  warna semantik item di inventory (material cyan, resep violet,
+  tool gold3). §18: koreksi ketik perintah via `difflib` (stdlib —
+  pengganti rapidfuzz) + autocomplete TAB. Tanpa satu pun dependency
+  baru (AGENTS §7, tangga Ponytail §3.1).
+
 **v1.2 (2026-08-06)** — Sistem alkimia:
 
 * §7: mekanik belajar resep (item `resep_*`, efek `learn_recipe` → flag `recipe_<item>_known`) + alat `kuali_roh`; §14.3: field `recipe` di item (contoh pil); §18.2: `refine` (butuh resep dipelajari + kuali + bahan); §22: 3 resep Arc 1 terpenuhi (pil_pemulih/pil_qi/pil_pemahaman memakai semua 5 bahan). Pengetahuan resep tersimpan di `flags` — tanpa bump schema save (v2 tetap).
