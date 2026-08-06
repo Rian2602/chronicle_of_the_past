@@ -42,6 +42,9 @@ EXPECTED_ENEMIES = {
     "golem_terbakar",
     "abyssal_worm",
     "penunggu_hutan",
+    "hantu_laut",
+    "serigala_ember",
+    "kultisi_merah",
 }
 
 
