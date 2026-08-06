@@ -1,7 +1,22 @@
-"""Test tipis UI Textual: menu utama dan alur mulai baru (GDD §14.1)."""
+"""Test UI Textual — navigasi panah ↑↓ + Enter + klik tanpa ketik (GDD §14.1).
+
+Layar game tidak lagi memakai Input perintah; semua aksi dipilih dari
+OptionList yang kontennya data-driven (menu_actions di GameSession).
+Pertarungan & dialog berjalan sebagai mode dalam GameScreen yang sama
+(satu layar, konten beralih) agar navigasi tetap satu jalur.
+"""
 
 import pytest
-from textual.widgets import Input, RichLog, Static
+from textual.widgets import (
+    Button,
+    Collapsible,
+    Input,
+    OptionList,
+    RichLog,
+    Static,
+    TabPane,
+    TabbedContent,
+)
 
 from src.core.game_loop import GameSession
 from src.ui.app import ChronicleApp, GameScreen, MainMenuScreen, NameScreen
@@ -12,56 +27,18 @@ def _app(tmp_path) -> ChronicleApp:
     return ChronicleApp(session=GameSession(save_dir=tmp_path))
 
 
-@pytest.mark.asyncio
-async def test_game_screen_menggunakan_richlog(tmp_path):
-    """Layar game memakai RichLog agar narasi bisa diberi markup warna."""
-    app = _app(tmp_path)
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
-        # RichLog ada di layout panel (§14.1); Log klasik tidak dipakai.
-        assert isinstance(app.screen.query_one("#game-log"), RichLog)
+async def _mulai(app, pilot, nama: str = "Akar") -> None:
+    """Alur mulai baru: n -> isi nama -> enter -> layar game."""
+    await pilot.press("n")
+    await pilot.pause()
+    app.screen.query_one("#name", Input).value = nama
+    await pilot.press("enter")
+    await pilot.pause()
 
 
-@pytest.mark.asyncio
-async def test_tab_melengkapi_perintah(tmp_path):
-    """TAB melengkapi input ke perintah terdekat (GDD §18)."""
-    app = _app(tmp_path)
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
-        cmd = app.screen.query_one("#cmd", Input)
-        cmd.value = "stat"
-        await pilot.press("tab")
-        await pilot.pause()
-        assert cmd.value == "status"
-
-
-@pytest.mark.asyncio
-async def test_tab_tidak_memotong_argumen(tmp_path):
-    """TAB pada input multi-kata tidak menghapus argumen (bug review)."""
-    app = _app(tmp_path)
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
-        cmd = app.screen.query_one("#cmd", Input)
-        cmd.value = "go ashfall_forest"
-        await pilot.press("tab")
-        await pilot.pause()
-        # Input multi-kata tidak disentuh TAB (hindari kehilangan argumen).
-        assert cmd.value == "go ashfall_forest"
+def _pilih(actions: OptionList, option_id: str, pilot) -> None:
+    """Highlight opsi lalu Enter (API nyata Textual 8.2.8)."""
+    actions.highlighted = actions.get_option_index(option_id)
 
 
 @pytest.mark.asyncio
@@ -87,41 +64,6 @@ async def test_mulai_baru_mengarah_ke_input_nama(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_alur_mulai_baru_sampai_layar_game(tmp_path):
-    """Isi nama -> Enter -> layar game menampilkan HUD pemain."""
-    app = _app(tmp_path)
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        name_input = app.screen.query_one("#name", Input)
-        name_input.value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
-        assert isinstance(app.screen, GameScreen)
-        hud = app.screen.query_one("#hud", Static).content
-        assert "Akar" in str(hud)
-
-
-@pytest.mark.asyncio
-async def test_layout_memiliki_panel_quest_dan_party(tmp_path):
-    """Layar game memuat panel quest & party di sidebar."""
-    app = _app(tmp_path)
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
-        assert app.screen.query_one("#panel-quest") is not None
-        assert app.screen.query_one("#panel-party") is not None
-        # Sidebar terisi data quest aktif (quest101 via event intro).
-        quest = app.screen.query_one("#panel-quest", Static).content
-        assert "Quest" in str(quest)
-
-
-@pytest.mark.asyncio
 async def test_escape_dari_layar_nama_kembali_ke_menu(tmp_path):
     """Escape dari layar nama kembali ke menu tanpa memulai permainan."""
     app = _app(tmp_path)
@@ -142,11 +84,7 @@ async def test_escape_dari_game_kembali_ke_menu(tmp_path):
     app = _app(tmp_path)
     async with app.run_test() as pilot:
         await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
+        await _mulai(app, pilot)
         assert isinstance(app.screen, GameScreen)
         await pilot.press("escape")
         await pilot.pause()
@@ -154,26 +92,139 @@ async def test_escape_dari_game_kembali_ke_menu(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_hud_menampilkan_stat_saat_battle(tmp_path):
-    """HUD tetap menampilkan HP/Qi selama pertarungan (bukan pesan guard)."""
+async def test_alur_mulai_baru_sampai_layar_game(tmp_path):
+    """Isi nama -> Enter -> layar game menampilkan HUD pemain."""
     app = _app(tmp_path)
     async with app.run_test() as pilot:
         await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
-        await pilot.press("enter")
-        await pilot.pause()
-        cmd = app.screen.query_one("#cmd", Input)
-        cmd.value = "go ashfall_forest"
-        await pilot.press("enter")
-        await pilot.pause()
-        cmd.value = "look"
-        await pilot.press("enter")
-        await pilot.pause()
+        await _mulai(app, pilot)
+        assert isinstance(app.screen, GameScreen)
         hud = app.screen.query_one("#hud", Static).content
-        assert "HP" in str(hud)
-        assert "bertarung" not in str(hud)
+        assert "Akar" in str(hud)
+
+
+@pytest.mark.asyncio
+async def test_layar_game_tidak_memiliki_input_perintah(tmp_path):
+    """Input #cmd dihapus total — navigasi lewat OptionList #actions."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        assert app.screen.query_one("#actions", OptionList) is not None
+        assert len(app.screen.query("#cmd")) == 0
+
+
+@pytest.mark.asyncio
+async def test_sidebar_kiri_memiliki_ikon_navigasi(tmp_path):
+    """Left icon sidebar memuat tombol navigasi (Tas/Quest/Tim/dll)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        assert app.screen.query_one("#nav-tas", Button) is not None
+        assert app.screen.query_one("#nav-quest", Button) is not None
+        assert app.screen.query_one("#nav-tim", Button) is not None
+
+
+@pytest.mark.asyncio
+async def test_tab_konten_memuat_story_memory_map(tmp_path):
+    """Tab konten dalam memuat Story/Memory/Map (TASK.md)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        tabs = app.screen.query_one(TabbedContent)
+        labels = [str(pane.label) for pane in tabs.query(TabPane)]
+        assert any("Story" in label for label in labels)
+        assert any("Memory" in label for label in labels)
+        assert any("Map" in label for label in labels)
+
+
+@pytest.mark.asyncio
+async def test_layout_memiliki_panel_quest_dan_party(tmp_path):
+    """Sidebar kanan memuat panel quest & party (Collapsible)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        assert app.screen.query_one("#col-quest", Collapsible) is not None
+        assert app.screen.query_one("#col-party", Collapsible) is not None
+        quest = app.screen.query_one("#panel-quest", Static).content
+        assert "Quest" in str(quest)
+
+
+@pytest.mark.asyncio
+async def test_hud_menampilkan_progress_bar_hp_qi(tmp_path):
+    """HUD memakai ProgressBar untuk HP/Qi (bukan ASCII saja)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        assert app.screen.query_one("#hp-bar") is not None
+        assert app.screen.query_one("#qi-bar") is not None
+
+
+@pytest.mark.asyncio
+async def test_pilih_option_status_menampilkan_log(tmp_path):
+    """Pilih Status di OptionList -> log menampilkan Insight."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        actions = app.screen.query_one("#actions", OptionList)
+        _pilih(actions, "status", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        log = app.screen.query_one("#game-log", RichLog).lines
+        joined = "\n".join(str(line) for line in log)
+        assert "Insight" in joined
+
+
+@pytest.mark.asyncio
+async def test_pilih_option_pergi_ke_hutan_memulai_battle(tmp_path):
+    """Pilih Pergi -> sub-menu -> ashfall_forest -> battle aktif."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        actions = app.screen.query_one("#actions", OptionList)
+        _pilih(actions, "pergi", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        _pilih(actions, "ashfall_forest", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        assert app.session.in_battle
+        # Mode battle: OptionList kini berisi aksi giliran.
+        ids = {
+            actions.get_option_at_index(i).id
+            for i in range(actions.option_count)
+        }
+        assert "serang" in ids
+
+
+@pytest.mark.asyncio
+async def test_pilih_option_serang_melakukan_battle_step(tmp_path):
+    """Di battle, pilih Serang -> log bertambah (battle_step jalan)."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        actions = app.screen.query_one("#actions", OptionList)
+        _pilih(actions, "pergi", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        _pilih(actions, "ashfall_forest", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        assert app.session.in_battle
+        log = app.screen.query_one("#game-log", RichLog).lines
+        before = len(log)
+        _pilih(actions, "serang", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        log = app.screen.query_one("#game-log", RichLog).lines
+        assert len(log) > before
 
 
 @pytest.mark.asyncio
@@ -182,16 +233,12 @@ async def test_panel_musuh_memuat_bar_hp(tmp_path):
     app = _app(tmp_path)
     async with app.run_test() as pilot:
         await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
+        await _mulai(app, pilot)
+        actions = app.screen.query_one("#actions", OptionList)
+        _pilih(actions, "pergi", pilot)
         await pilot.press("enter")
         await pilot.pause()
-        cmd = app.screen.query_one("#cmd", Input)
-        cmd.value = "go ashfall_forest"
-        await pilot.press("enter")
-        await pilot.pause()
-        cmd.value = "look"
+        _pilih(actions, "ashfall_forest", pilot)
         await pilot.press("enter")
         await pilot.pause()
         enemy = app.screen.query_one("#enemy", Static).content
@@ -199,20 +246,37 @@ async def test_panel_musuh_memuat_bar_hp(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_perintah_status_dari_layar_game(tmp_path):
-    """Mengetik status di layar game menampilkan baris log."""
+async def test_hud_menampilkan_stat_saat_battle(tmp_path):
+    """HUD tetap menampilkan HP/Qi selama pertarungan (bukan guard)."""
     app = _app(tmp_path)
     async with app.run_test() as pilot:
         await pilot.pause()
-        await pilot.press("n")
-        await pilot.pause()
-        app.screen.query_one("#name", Input).value = "Akar"
+        await _mulai(app, pilot)
+        actions = app.screen.query_one("#actions", OptionList)
+        _pilih(actions, "pergi", pilot)
         await pilot.press("enter")
         await pilot.pause()
-        cmd = app.screen.query_one("#cmd", Input)
-        cmd.value = "status"
+        _pilih(actions, "ashfall_forest", pilot)
         await pilot.press("enter")
         await pilot.pause()
-        log = app.screen.query_one("#game-log", RichLog).lines
-        joined = "\n".join(str(line) for line in log)
-        assert "Insight" in joined
+        hud = app.screen.query_one("#hud", Static).content
+        assert "HP" in str(hud)
+        assert "bertarung" not in str(hud)
+
+
+@pytest.mark.asyncio
+async def test_dialog_screen_menampilkan_pilihan_bernomor(tmp_path):
+    """Talk NPC -> pilihan dialog tampil di OptionList #dlg-choices."""
+    app = _app(tmp_path)
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await _mulai(app, pilot)
+        actions = app.screen.query_one("#actions", OptionList)
+        _pilih(actions, "bicara", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        _pilih(actions, "elder_mao", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        choices = app.screen.query_one("#dlg-choices", OptionList)
+        assert choices.option_count >= 1
