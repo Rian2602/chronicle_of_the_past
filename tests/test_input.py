@@ -34,6 +34,13 @@ def test_alias_indonesia():
     assert parse_command("pengaturan").name == "settings"
 
 
+def test_alias_toko_beli_jual():
+    """Alias toko: toko/beli/jual ke kanonik shop/buy/sell (§18.2)."""
+    assert parse_command("toko").name == "shop"
+    assert parse_command("beli esensi_api 2").name == "buy"
+    assert parse_command("jual esensi_api").name == "sell"
+
+
 def test_alias_combat():
     """Alias perintah pertarungan (§18.3)."""
     assert parse_command("serang").name == "attack"

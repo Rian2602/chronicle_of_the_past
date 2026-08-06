@@ -39,6 +39,7 @@ from src.engine.quest import (
     load_quests,
     objective_label,
 )
+from src.engine.shop import load_shops, sell_price
 from src.engine.story import load_memories
 from src.models.combatant import (
     Combatant,
@@ -76,6 +77,9 @@ AVAILABLE = {
     "quit",
     "choose",
     "use",
+    "shop",
+    "buy",
+    "sell",
 }
 
 
@@ -157,7 +161,7 @@ class GameSession:
             "Perintah tersedia:",
             "  help status map inventory quests memories party",
             "  go <lokasi> look talk <nama> cultivate breakthrough rest",
-            "  refine <resep> formation <nama> equip use <item>",
+            "  shop buy <item> [jumlah] sell <item> [jumlah] use <item>",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
@@ -254,6 +258,150 @@ class GameSession:
                 lines.append(f"Meridian terbuka ({player.meridian_buka}/8).")
             # ponytail: effect combat (buff_*/resist_*) diparse tapi tak
             # dieksekusi; eksekusi saat engine combat diperluas (Fase 2).
+        lines += self._run_quests()
+        lines += self._run_events()
+        return lines
+
+    def _shop_at_location(self) -> tuple[str, dict[str, Any]] | None:
+        """Temukan (shop_id, data toko) di lokasi pemain saat ini.
+
+        Toko dilampirkan ke NPC via field ``shop`` di data/npc; toko
+        pertama yang NPC-nya berada di lokasi ini yang dipakai.
+        """
+        if self.state is None:
+            return None
+        shops = load_shops()
+        for npc_path in sorted(NPC_DIR.glob("*.json")):
+            npc = json.loads(npc_path.read_text(encoding="utf-8"))
+            shop_id = npc.get("shop")
+            if shop_id and npc.get("location") == self.state.location:
+                shop = shops.get(shop_id)
+                if shop is not None:
+                    return shop_id, shop
+        return None
+
+    def _cmd_shop(self, _command: Command) -> list[str]:
+        """Tampilkan dagangan toko di lokasi saat ini (GDD §18.2).
+
+        Harga beli dari data/items (price); sisa stok = count di
+        data/shops dikurangi stok terjual (state.shop_sold); harga jual
+        kembali 40% dari harga beli.
+        """
+        found = self._shop_at_location()
+        if found is None:
+            return ["Tidak ada pedagang di sini."]
+        _, shop = found
+        items = load_items()
+        sold = self.state.shop_sold.get(shop["id"], {})
+        lines = [f"{shop['name']}:"]
+        for entry in shop["stock"]:
+            item_id = entry["item"]
+            item = items.get(item_id, {})
+            price = item.get("price")
+            remaining = entry["count"] - sold.get(item_id, 0)
+            label = item.get("name", item_id)
+            price_text = f"{price} emas" if price else "tak berharga"
+            lines.append(f"  {label} - {price_text} (sisa {remaining})")
+        lines.append("Jual kembali: 40% dari harga beli.")
+        return lines
+
+    def _cmd_buy(self, command: Command) -> list[str]:
+        """Beli item dari toko di lokasi saat ini (GDD §18.2).
+
+        Validasi: toko ada, item dijual, stok tersisa, jumlah valid, dan
+        emas cukup. Memperbarui gold, inventory, dan shop_sold, lalu
+        cascade quest+event (objektif collect).
+        """
+        if not command.args:
+            return ["Beli apa? Contoh: buy <item> [jumlah]"]
+        item_id = command.args[0]
+        count = 1
+        if len(command.args) > 1:
+            try:
+                count = int(command.args[1])
+            except ValueError:
+                return ["Jumlah tidak valid. Contoh: buy esensi_api 2"]
+            if count < 1:
+                return ["Jumlah harus minimal 1."]
+        found = self._shop_at_location()
+        if found is None:
+            return ["Tidak ada pedagang di sini."]
+        shop_id, shop = found
+        entry = next((e for e in shop["stock"] if e["item"] == item_id), None)
+        if entry is None:
+            return [f"{item_id} tidak dijual di sini."]
+        remaining = entry["count"] - self.state.shop_sold.get(shop_id, {}).get(
+            item_id, 0
+        )
+        if remaining <= 0:
+            return [
+                f"{item_id} sudah habis dijual. ",
+                "Istirahat untuk mengisi ulang dagangan.",
+            ]
+        if count > remaining:
+            return [f"Stok {item_id} tinggal {remaining}."]
+        item = load_items().get(item_id, {})
+        price = item.get("price")
+        if not price:
+            return [f"{item.get('name', item_id)} tak bernilai jual."]
+        total = price * count
+        if self.state.player.gold < total:
+            return [
+                f"Emasmu kurang: butuh {total} ",
+                f"(punya {self.state.player.gold}).",
+            ]
+        self.state.player.gold -= total
+        inventory = self.state.inventory.setdefault("items", {})
+        inventory[item_id] = inventory.get(item_id, 0) + count
+        sold = self.state.shop_sold.setdefault(shop_id, {})
+        sold[item_id] = sold.get(item_id, 0) + count
+        lines = [
+            f"Kamu membeli {item.get('name', item_id)} x{count} ",
+            f"seharga {total} emas.",
+        ]
+        lines += self._run_quests()
+        lines += self._run_events()
+        return lines
+
+    def _cmd_sell(self, command: Command) -> list[str]:
+        """Jual item milik pemain ke toko di lokasi saat ini (GDD §18.2).
+
+        Harga jual = 40% harga beli (sell_price). Item tanpa price tidak
+        bisa dijual. Memperbarui inventory dan gold, lalu cascade
+        quest+event.
+        """
+        if not command.args:
+            return ["Jual apa? Contoh: sell <item> [jumlah]"]
+        item_id = command.args[0]
+        count = 1
+        if len(command.args) > 1:
+            try:
+                count = int(command.args[1])
+            except ValueError:
+                return ["Jumlah tidak valid. Contoh: sell esensi_api 2"]
+            if count < 1:
+                return ["Jumlah harus minimal 1."]
+        if self._shop_at_location() is None:
+            return ["Tidak ada pedagang di sini."]
+        inventory = self.state.inventory.get("items", {})
+        owned = inventory.get(item_id, 0)
+        if owned <= 0:
+            return [f"Kamu tidak punya {item_id} di tas."]
+        if count > owned:
+            return [f"Kamu hanya punya {item_id} x{owned}."]
+        item = load_items().get(item_id, {})
+        price = item.get("price")
+        if not price:
+            return [f"{item.get('name', item_id)} tak bernilai jual."]
+        total = sell_price(price) * count
+        inventory[item_id] = owned - count
+        if inventory[item_id] == 0:
+            del inventory[item_id]
+        self.state.player.gold += total
+        lines = [
+            f"Kamu menjual {item.get('name', item_id)} x{count} ",
+            f"seharga {total} emas.",
+        ]
         lines += self._run_quests()
         lines += self._run_events()
         return lines
@@ -397,6 +545,13 @@ class GameSession:
         player.qi = player.qi_max
         healed = player.is_injured
         player.advance_day()
+        # Restock toko (GDD §7): dagangan diisi ulang saat pemain
+        # istirahat. Diproses sebelum autosave agar stok tersimpan ikut
+        # ter-reset.
+        restock_note = ""
+        if self.state.shop_sold:
+            self.state.shop_sold.clear()
+            restock_note = " Pedagang mengisi ulang dagangan mereka."
         # Quest lalu event diproses sebelum autosave agar efeknya ikut
         # tersimpan dan cascade quest->event menyala satu pass (§15.4).
         quest_lines = self._run_quests()
@@ -405,6 +560,7 @@ class GameSession:
         message = "Kamu beristirahat hingga pagi. HP dan qi pulih penuh."
         if healed:
             message += " Cedera membaik."
+        message += restock_note
         return (
             [message, "Permainan tersimpan otomatis."]
             + quest_lines

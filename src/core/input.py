@@ -50,6 +50,12 @@ ALIASES: dict[str, str] = {
     "unequip": "unequip",
     "use": "use",
     "recall": "recall",
+    "shop": "shop",
+    "toko": "shop",
+    "buy": "buy",
+    "beli": "buy",
+    "sell": "sell",
+    "jual": "sell",
     # Combat (§18.3)
     "attack": "attack",
     "serang": "attack",
