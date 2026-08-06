@@ -3,5 +3,8 @@
   "name": "Ramuan Meridian",
   "type": "consumable",
   "description": "Cairan berwarna emas. Meridian tersumbat pecah, tapi sakitnya luar biasa.",
-  "effect": {"add_meridian": 1}
+  "effect": {
+    "add_meridian": 1
+  },
+  "price": 90
 }

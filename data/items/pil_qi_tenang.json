@@ -3,5 +3,8 @@
   "name": "Pil Qi Tenang",
   "type": "consumable",
   "description": "Menenangkan aliran qi yang bergolak. Bisikan dalam darah mereda.",
-  "effect": {"restore_qi": 20}
+  "effect": {
+    "restore_qi": 20
+  },
+  "price": 20
 }

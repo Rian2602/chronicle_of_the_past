@@ -3,5 +3,6 @@
   "name": "Batu Qi",
   "type": "material",
   "description": "Kristal berisi qi murni. Bahan racik pil tingkat tinggi.",
-  "effect": {}
+  "effect": {},
+  "price": 80
 }

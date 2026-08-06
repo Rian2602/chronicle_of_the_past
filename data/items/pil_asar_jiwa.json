@@ -3,5 +3,8 @@
   "name": "Pil Asar Jiwa",
   "type": "consumable",
   "description": "Ditenun dari jiwa-jiwa yang padam. Memperkuat tekad — dipakai penjahat dan pahlawan.",
-  "effect": {"buff_attack": 20}
+  "effect": {
+    "buff_attack": 20
+  },
+  "price": 120
 }

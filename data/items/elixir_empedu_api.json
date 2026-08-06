@@ -3,5 +3,8 @@
   "name": "Eliksir Empedu Api",
   "type": "consumable",
   "description": "Cairan mendidih yang membuat tubuh muak terhadap racun. Siap untuk combat.",
-  "effect": {"resist_poison": 30}
+  "effect": {
+    "resist_poison": 30
+  },
+  "price": 60
 }

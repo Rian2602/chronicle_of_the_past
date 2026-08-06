@@ -3,5 +3,6 @@
   "name": "Esensi Kayu",
   "type": "material",
   "description": "Esensi kayu murni. Hidup berdenyut di dalam kristal, cocok untuk pil kayu.",
-  "effect": {}
+  "effect": {},
+  "price": 50
 }

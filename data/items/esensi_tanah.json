@@ -3,5 +3,6 @@
   "name": "Esensi Tanah",
   "type": "material",
   "description": "Esensi tanah murni. Berat dan kokoh, cocok untuk pil tanah.",
-  "effect": {}
+  "effect": {},
+  "price": 50
 }

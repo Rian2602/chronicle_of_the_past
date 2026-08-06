@@ -3,5 +3,6 @@
   "name": "Esensi Api",
   "type": "material",
   "description": "Esensi api murni. Hangat di telapak tangan, cocok untuk pil api.",
-  "effect": {}
+  "effect": {},
+  "price": 50
 }
