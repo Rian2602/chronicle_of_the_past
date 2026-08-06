@@ -228,17 +228,27 @@ class GameSession:
         return lines
 
     def _cmd_inventory(self, _command: Command) -> list[str]:
-        """Tampilkan isi tas dengan nama item dari data (GDD §14.2)."""
+        """Tampilkan isi tas dengan warna semantik per tipe (GDD §14.2).
+
+        Warna: material cyan, resep violet, alat (tool) gold3; item lain
+        tampil polos. Item tanpa data (save lama) memakai id mentah.
+        """
         items = self.state.inventory.get("items", {})
         if not items:
             return ["Tasmu kosong."]
         names = load_items()
+        type_colors = {"material": "cyan", "recipe": "violet", "tool": "gold3"}
         lines = ["Isi tas:"]
         for item_id, count in sorted(items.items()):
             # ponytail: item tanpa data (save lama) -> id mentah; validator
             # §25.3 menjamin event->item ter-resolve.
-            name = names.get(item_id, {}).get("name", item_id)
-            lines.append(f"  {name} x{count}")
+            item = names.get(item_id, {})
+            name = item.get("name", item_id)
+            color = type_colors.get(item.get("type", ""), "")
+            if color:
+                lines.append(f"  [{color}]{name}[/] x{count}")
+            else:
+                lines.append(f"  {name} x{count}")
         return lines
 
     def _cmd_use(self, command: Command) -> list[str]:

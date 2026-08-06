@@ -699,6 +699,19 @@ def test_cmd_choose_hanya_boleh_saat_tidak_battle(tmp_path):
 # ----------------------------------------------------------------------
 
 
+def test_inventory_mewarnai_per_tipe(tmp_path):
+    """Inventory menampilkan warna semantik sesuai tipe item (GDD §7)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory.setdefault("items", {})["esensi_api"] = 2
+    session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
+    session.state.inventory.setdefault("items", {})["resep_pemulih"] = 1
+    joined = "\n".join(_dispatch(session, "inventory"))
+    assert "[cyan]" in joined  # material
+    assert "[gold3]" in joined  # tool
+    assert "[violet]" in joined  # recipe
+
+
 def test_use_pil_pemulih_memulihkan_hp(tmp_path):
     """Use pil heal_hp menambah HP pemain dan mengonsumsi item."""
     session = _session(tmp_path)
