@@ -24,6 +24,7 @@ REQUIRED_KEYS = {
     "inventory",
     "quests",
     "flags",
+    "kills",
     "reputation",
     "memories",
     "map_unlocks",
@@ -160,3 +161,38 @@ def test_time_validasi_rentang():
     with pytest.raises(ValueError):
         GameTime(hour=24)
     assert GameTime(day=1, hour=23).to_dict() == {"day": 1, "hour": 23}
+
+
+def test_add_reputation_di_clamp():
+    """add_reputation mengubah reputasi dan di-clamp ke [-100, +100] (§8)."""
+    state = _state()
+    state.add_reputation("rebels", 30)
+    assert state.reputation["rebels"] == 30
+    state.add_reputation("rebels", 200)
+    assert state.reputation["rebels"] == 100
+    state.add_reputation("court", -500)
+    assert state.reputation["court"] == -100
+
+
+def test_add_reputation_menolak_faksi_tak_dikenal():
+    """Faksi di luar daftar kanonik ditolak, bukan ditambah diam-diam."""
+    state = _state()
+    with pytest.raises(ValueError):
+        state.add_reputation("bogus_faction", 5)
+    assert "bogus_faction" not in state.reputation
+
+
+def test_kills_roundtrip():
+    """Counter kill ikut tersimpan dan terbaca kembali (round-trip)."""
+    state = _state()
+    state.kills["bandit_perbatasan"] = 3
+    restored = GameState.from_dict(state.to_dict())
+    assert restored.kills == {"bandit_perbatasan": 3}
+
+
+def test_save_lama_tanpa_kills_jadi_kosong():
+    """Save lama tanpa field kills dimuat sebagai dict kosong (additive)."""
+    data = _state().to_dict()
+    del data["kills"]
+    restored = GameState.from_dict(data)
+    assert restored.kills == {}

@@ -1,0 +1,14 @@
+{
+  "id": "quest101_intro",
+  "trigger": [
+    {"kind": "day_passed", "day": 1}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest101"},
+    {
+      "kind": "log",
+      "text": "Pagi pertama di Desa Emberfall. Tuan Shi, penjaga gerbang kultivasi desa, tampak menunggumu di beranda rumah tuanya — sebuah tawaran yang tidak pernah dia sampaikan dengan kata-kata."
+    }
+  ],
+  "once": true
+}

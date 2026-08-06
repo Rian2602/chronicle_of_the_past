@@ -11,6 +11,8 @@ from src.models.player import Player
 SCHEMA_VERSION = 1
 DEFAULT_LOCATION = "village_emberfall"
 FACTIONS = ("court", "holy_order", "rebels", "guilds", "ancient_order")
+# Reputasi faksi dibatasi -100 s/d +100 (GDD §8).
+REPUTATION_CLAMP = 100
 
 
 @dataclass
@@ -89,6 +91,7 @@ class GameState:
     )
     quests: QuestProgress = field(default_factory=QuestProgress)
     flags: dict[str, bool] = field(default_factory=dict)
+    kills: dict[str, int] = field(default_factory=dict)
     reputation: dict[str, int] = field(
         default_factory=lambda: {faction: 0 for faction in FACTIONS}
     )
@@ -115,6 +118,20 @@ class GameState:
         self.player.hp = min(self.player.hp, self.player.hp_max)
         self.player.qi = min(self.player.qi, self.player.qi_max)
 
+    def add_reputation(self, faction: str, delta: int) -> None:
+        """Ubah reputasi faksi dengan batas -100 s/d +100 (GDD §8).
+
+        Satu-satunya jalur mutasi reputasi (dipakai event & quest).
+        Faksi di luar daftar kanonik ditolak keras, bukan ditambahkan
+        diam-diam (kunci ekstra akan dibuang saat round-trip save).
+        """
+        if faction not in FACTIONS:
+            raise ValueError(f"faksi tidak dikenal: {faction}")
+        current = self.reputation.get(faction, 0)
+        self.reputation[faction] = max(
+            -REPUTATION_CLAMP, min(REPUTATION_CLAMP, current + delta)
+        )
+
     def to_dict(self) -> dict[str, Any]:
         """Serialize state ke dict save lengkap (§19.2)."""
         return {
@@ -127,6 +144,7 @@ class GameState:
             },
             "quests": self.quests.to_dict(),
             "flags": dict(self.flags),
+            "kills": dict(self.kills),
             "reputation": dict(self.reputation),
             "memories": list(self.memories),
             "map_unlocks": list(self.map_unlocks),
@@ -163,6 +181,7 @@ class GameState:
             ),
             quests=QuestProgress.from_dict(data.get("quests", {})),
             flags=dict(data.get("flags", {})),
+            kills=dict(data.get("kills", {})),
             reputation=reputation,
             memories=list(data.get("memories", [])),
             map_unlocks=list(data.get("map_unlocks", [])),

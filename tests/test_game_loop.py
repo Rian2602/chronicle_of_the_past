@@ -135,7 +135,6 @@ def test_perintah_belum_tersedia(tmp_path):
     """Perintah tanpa sistem memberi jawaban jujur, bukan error."""
     session = _session(tmp_path)
     session.new_game("Akar")
-    assert any("Belum tersedia" in line for line in _dispatch(session, "talk"))
     assert any("Belum tersedia" in line for line in _dispatch(session, "racik"))
 
 
@@ -354,3 +353,96 @@ def test_look_di_lokasi_baru_tidak_menipu(tmp_path):
     lines = _dispatch(session, "look")
     assert any("ruin_shrine" in line for line in lines)
     assert not any("Desa Emberfall" in line for line in lines)
+
+
+# ----------------------------------------------------------------------
+# Quest engine (GDD §12): talk, progres, penyelesaian, kills
+# ----------------------------------------------------------------------
+
+
+def test_quest101_dimulai_oleh_event_hari_pertama(tmp_path):
+    """Aksi pertama memicu event intro: quest101 masuk daftar aktif."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")
+    assert "quest101" in session.state.quests.started
+    assert session.state.flags["event_quest101_intro_done"] is True
+
+
+def test_talk_ke_tuan_shi_memberi_flag_dan_dialog(tmp_path):
+    """Talk ke Tuan Shi di desa: flag talked_tuan_shi + baris dialog."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    lines = _dispatch(session, "talk tuan_shi")
+    assert session.state.flags["talked_tuan_shi"] is True
+    assert any("Tuan Shi" in line for line in lines)
+
+
+def test_talk_tanpa_argumen_memberi_petunjuk(tmp_path):
+    """Talk tanpa nama memberi pesan petunjuk, tanpa set flag."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    lines = _dispatch(session, "talk")
+    assert any("siapa" in line.lower() for line in lines)
+    assert "talked_" not in session.state.flags
+
+
+def test_talk_sadar_lokasi(tmp_path):
+    """Talk ke NPC yang tidak di lokasi saat ini ditolak."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    lines = _dispatch(session, "talk tuan_shi")
+    assert any("Tuan Shi tidak ada di sini" in line for line in lines)
+    assert "talked_tuan_shi" not in session.state.flags
+
+
+def test_quests_menampilkan_title_dan_progres(tmp_path):
+    """Quest aktif menampilkan title + status per objektif (reuse check)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")  # quest101 dimulai via event intro
+    lines = _dispatch(session, "quests")
+    joined = "\n".join(lines)
+    assert "Qi Pertama" in joined
+    assert "Bicaralah dengan tuan_shi" in joined
+    assert "[ ]" in joined
+    _dispatch(session, "talk tuan_shi")
+    joined = "\n".join(_dispatch(session, "quests"))
+    assert "[x] Bicaralah dengan tuan_shi" in joined
+
+
+def test_quest101_selesai_setelah_talk_dan_breakthrough(tmp_path):
+    """Quest selesai: reward + flag kelulusan otomatis engine (§12.2)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "cultivate")  # quest101 dimulai via event intro
+    _dispatch(session, "talk tuan_shi")
+    session.state.player.add_insight(100)
+    lines = _dispatch(session, "breakthrough")
+    state = session.state
+    assert state.player.tier_id == "qi_condensation"
+    assert state.quests.done == ["quest101"]
+    assert state.quests.started == []
+    assert state.flags["quest101_done"] is True
+    assert state.flags["path_unlocked_sword"] is True
+    assert state.player.insight >= 150  # 10 + 100 + reward 50
+    assert state.player.gold == 20
+    assert state.reputation["ancient_order"] == 5
+    assert any("Quest selesai: Qi Pertama" in line for line in lines)
+    # Cascade quest -> event: event quest_done menyala di pass yang sama.
+    assert state.flags["event_quest101_done_done"] is True
+    assert any("Tuan Shi" in line for line in lines)
+
+
+def test_kills_tercatat_saat_menang(tmp_path):
+    """Menang pertarungan mencatat kill musuh di state.kills."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    frame = session.battle_frame()
+    while not frame.over:
+        frame = session.battle_step("attack")
+    assert frame.victory is True
+    assert session.state.kills.get("bandit_perbatasan") == 1

@@ -16,9 +16,6 @@ from src.core.state import GameState
 
 EVENT_DIR = Path(__file__).resolve().parents[2] / "data" / "events"
 
-# Reputasi faksi dibatasi -100 s/d +100 (GDD §8).
-REPUTATION_CLAMP = 100
-
 TRIGGER_KINDS = {
     "flag",
     "quest_done",
@@ -143,11 +140,7 @@ def _apply_action(
     elif kind == "grant_gold":
         state.player.gold += action.get("amount", 0)
     elif kind == "change_reputation":
-        faction = action["faction"]
-        current = state.reputation.get(faction, 0)
-        state.reputation[faction] = max(
-            -REPUTATION_CLAMP, min(REPUTATION_CLAMP, current + action["delta"])
-        )
+        state.add_reputation(action["faction"], action["delta"])
     elif kind == "start_dialog":
         result.dialogs.append(action["dialog_id"])
         result.logs.append(f"Sebuah dialog dimulai: {action['dialog_id']}.")

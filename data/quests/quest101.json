@@ -1,0 +1,15 @@
+{
+  "id": "quest101",
+  "title": "Qi Pertama",
+  "type": "main",
+  "description": "Tuan Shi telah menunggu. Dia tidak pernah mengatakannya secara langsung, tapi cara dia memandang meridianmu setelah latihan pertama sudah cukup.",
+  "objectives": [
+    {"kind": "talk", "target": "tuan_shi"},
+    {"kind": "breakthrough", "target": "qi_condensation"}
+  ],
+  "rewards": {"insight": 50, "gold": 20, "reputation": {"ancient_order": 5}},
+  "flags_on_complete": ["quest101_done", "path_unlocked_sword"],
+  "next": "quest102",
+  "category": "main",
+  "requires_flag": null
+}

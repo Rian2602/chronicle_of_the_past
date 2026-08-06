@@ -12,15 +12,38 @@ EXPECTED_EVENTS = {
     "unlock_ruin_shrine",
     "ashfall_memory",
     "day7_dawn",
+    "quest101_intro",
+    "quest101_done",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 
 
 def test_terdapat_file_event_yang_diharapkan():
-    """Harus ada event Arc 1 sesuai rencana (unlock, memori, narasi hari 7)."""
+    """Harus ada event Arc 1 sesuai rencana (unlock, memori, quest, narasi)."""
     files = sorted(path.name for path in DATA_DIR.glob("*.json"))
     expected = sorted(f"{event_id}.json" for event_id in EXPECTED_EVENTS)
     assert files == expected
+
+
+def test_event_quest_memakai_trigger_dan_aksi_quest():
+    """Event quest: intro memakai start_quest, done memakai quest_done."""
+    quests_data = {}
+    for path in DATA_DIR.glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        quests_data[data["id"]] = data
+    intro = quests_data["quest101_intro"]
+    assert any(
+        condition["kind"] == "day_passed" for condition in intro["trigger"]
+    )
+    assert any(
+        action["kind"] == "start_quest" and action["id"] == "quest101"
+        for action in intro["actions"]
+    )
+    done = quests_data["quest101_done"]
+    assert any(
+        condition["kind"] == "quest_done" and condition["quest"] == "quest101"
+        for condition in done["trigger"]
+    )
 
 
 def _validate_trigger(condition: dict, path: Path) -> None:

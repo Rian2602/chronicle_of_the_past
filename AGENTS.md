@@ -1,215 +1,488 @@
 # AGENTS.md — Chronicle of the Past (RPG Kultivasi)
 
-Dokumen ini **wajib dibaca** oleh setiap agen AI yang ditugaskan mengerjakan proyek
-game ini — baik untuk menulis **script (kode Python)** maupun **data game (JSON)**.
-Tujuannya: perilaku yang konsisten, hasil yang bisa diverifikasi, dan konten yang
-selaras dengan visi desain.
+**Status: dokumen kontrol perilaku wajib.** Setiap agent AI yang menyentuh
+repo ini — Claude (chat/CLI/MCP), OpenCode dengan plugin **Superpowers**,
+**Ponytail**, dan **Graphify**, atau tool lain yang membaca `AGENTS.md` —
+**wajib mematuhi dokumen ini sebelum menulis satu baris kode atau data pun.**
+ini bukan saran, ini kontrak perilaku. Pelanggaran terhadap aturan bertanda
+**WAJIB**/**DILARANG**/**STOP** berarti pekerjaan belum boleh dianggap selesai.
 
----
+Format dokumen ini sengaja disusun setara dua standar sekaligus:
 
-## 1. Konteks Proyek (baca dulu sebelum apa pun)
+* **CLAUDE.md** (konvensi resmi Claude Code, Anthropic): ringkas, berbasis
+aksi, *command-first*, tidak menduplikasi konten yang sudah ada di tempat
+lain, tidak menempel blok kode besar, dan setiap aturan ditulis sebagai
+tindakan konkret — bukan imbauan samar seperti "tulis kode yang bersih".
+* **AGENTS.md** (standar terbuka lintas-tool, kini dinaungi Agentic AI
+Foundation di bawah Linux Foundation): markdown polos tanpa skema wajib,
+dibaca otomatis oleh berbagai agent — termasuk **OpenCode, yang membaca
+file ini secara native**.
 
-| Aspek | Nilai |
-|-------|-------|
-| Game | RPG teks berbasis cerita, CLI terminal |
-| Judul | Chronicle of the Past |
-| Tema | Fantasi gelap + sistem kultivasi (inspirasi *Against the Gods*) |
-| Nada | **Gelap & serius** — pengkhianatan, konsekuensi berat, pilihan sulit |
-| Bahasa konten | **Bahasa Indonesia** (semua teks, dialog, menu) |
-| Stack | Python 3.12+, **Rich + Textual**, stdlib |
-| Konten | **Data-driven JSON** (quest, dialog, musuh, item, teknik, peta, faksi) |
-| Test | pytest · lint/format: ruff (Google Python Style Guide, line ≤ 80) |
+\---
 
-**Sumber kebenaran desain: `GDD.md`** (di root proyek). Sebelum menulis kode
-atau data apa pun untuk fitur baru, baca bagian GDD yang relevan. Jangan
-menemukan ulang keputusan yang sudah dibuat di GDD. Perubahan desain yang
-bertentangan dengan GDD wajib didiskusikan dengan pengguna terlebih dahulu.
+## §1. Konteks Proyek \& Sumber Kebenaran
 
----
+|Aspek|Nilai|
+|-|-|
+|Game|RPG teks berbasis cerita, CLI terminal|
+|Judul|Chronicle of the Past|
+|Tema|Fantasi gelap + sistem kultivasi (inspirasi *Against the Gods*)|
+|Nada|**Grimdark** — pengkhianatan nyata, konsekuensi tak bisa dibatalkan|
+|Bahasa konten|**Bahasa Indonesia** (semua teks, dialog, menu, docstring)|
+|Stack|Python 3.12+, **Rich + Textual**, stdlib|
+|Konten|**Data-driven JSON** (quest, dialog, musuh, item, teknik, peta, faksi)|
+|Kualitas|pytest · ruff (Google Python Style Guide, line ≤ 80)|
+|Status|Fase 0 (MVP) selesai · **Fase 1 aktif** — lihat GDD §23|
 
-## 2. Aturan Perilaku — Superpowers (TDD & Disiplin)
+**Sumber kebenaran DESAIN: `GDD.md`.** Sumber kebenaran PERILAKU AGENT:
+dokumen ini. **Jangan menduplikasi isi GDD di sini** — rujuk nomor bagian
+(`GDD §12.3`, dst.). Sebelum menulis kode/data untuk fitur apa pun, baca
+bagian GDD yang relevan (lihat peta rujukan §5). Perubahan yang bertentangan
+dengan GDD **wajib didiskusikan dengan pemilik proyek dulu** — jangan
+menemukan ulang keputusan yang sudah dibuat.
 
-Prinsip dari plugin **Superpowers** (obra/superpowers):
+### Urutan Otoritas Bila Terjadi Konflik
 
-### 2.1 Hukum Besi: TDD
-- **TIDAK ADA KODE PRODUKSI TANPA TEST GAGAL TERLEBIH DAHULU.**
-- Urutan wajib: tulis test yang **gagal (RED)** → tulis kode minimal agar
-  lulus (**GREEN**) → refactor bila perlu.
-- Jika kode ditulis sebelum test, hapus dan mulai ulang dari test.
-- Berlaku juga untuk **data JSON**: tulis/validasi *schema check* atau test
-  konten (mis. referensi NPC/musuh/peta valid, requirement quest bisa
-  dipenuhi) sebelum menambah data massal.
+1. Instruksi eksplisit pengguna pada sesi berjalan.
+2. `AGENTS.md` bersarang yang lebih dekat ke file yang sedang diedit (bila
+ada — sesuai resolusi standar terbuka AGENTS.md).
+3. Dokumen ini (`AGENTS.md`, root proyek).
+4. `GDD.md` untuk keputusan desain/lore.
+5. Google Python Style Guide untuk hal teknis yang tak diatur di atas.
 
-### 2.2 Brainstorming & Desain Dulu
-- Sebelum fitur baru / konten besar / perubahan arah: **tanyakan pertanyaan
-  klarifikasi satu per satu**, eksplorasi 2–3 pendekatan, dan susun dokumen
-  desain ringkas di `docs/superpowers/specs/` bila dampaknya luas.
-- **Jangan sentuh kode/data sebelum desain disetujui pengguna.**
-- Kecuali tugas kecil dan jelas (bug 1 baris, tambah 1 entri data) — gunakan
-  akal sehat, bukan birokrasi.
+Jika dua sumber bertentangan dan bukan kasus sederhana (mis. GDD belum
+mencakup sebuah fitur yang sedang dikerjakan) — **STOP, laporkan konflik,
+jangan menebak** (lihat §11).
 
-### 2.3 Planning
-- Setelah desain disetujui, pecah pekerjaan menjadi **tugas kecil
-  (2–5 menit)** dengan path file yang tepat dan langkah verifikasi.
-- Kerjakan berurutan; jangan lompat-lompat.
+### Perintah Wajib (jalankan, jangan asumsikan hasilnya)
 
-### 2.4 Bukti, Bukan Klaim
-- **Verification-before-completion:** jangan menyatakan selesai sebelum
-  semua test lulus, lint bersih, dan data tervalidasi.
-- Klaim apa pun tentang perilaku game harus dibuktikan (test otomatis,
-  smoke test, atau output nyata) — bukan "seharusnya jalan".
+```bash
+pytest -q                                          # semua test harus lulus
+ruff check src launcher.py tools tests             # lint
+ruff format --check src launcher.py tools tests    # format check
+python tools/validate.py                           # validator aset — BELUM ADA, prioritas Fase 1 (GDD §25.3)
+graphify update .                                   # perbarui knowledge graph setelah ubah kode
+graphify query "<pertanyaan>"                       # tanya graph sebelum grep manual
+```
 
-### 2.5 Systematic Debugging
-- Dilarang "guess-and-check" atau menambal gejala.
-- Ikuti 4 fase: **Investigasi Akar Masalah → Analisis Pola → Hipotesis &
-  Uji → Implementasi**.
-- Telusuri alur data (siapa memanggil siapa) sebelum mengubah apa pun.
+\---
 
-### 2.6 Review Dua Tahap
-- Setelah perubahan signifikan: review dulu **kepatuhan terhadap
-  spesifikasi/desain**, lalu **kualitas kode**.
-- Temuan **Critical/Important** menghalangi penyelesaian; temuan Minor
-  dicatat.
+## §2. Hukum Superpowers — TDD \& Disiplin Proses
 
----
+Prinsip diverifikasi langsung dari **obra/superpowers** (Jesse Vincent,
+MIT) — "agentic skills framework \& software development methodology".
 
-## 3. Aturan Minimalisme — Ponytail (Tangga)
+### 2.1 Hukum Besi: RED → GREEN → REFACTOR → COMMIT
 
-Sebelum menulis kode/data, periksa tangga ini dari atas — **berhenti di anak
-tangga pertama yang terpenuhi**:
+* **TIDAK ADA KODE PRODUKSI TANPA TEST GAGAL LEBIH DULU.** Tidak ada
+pengecualian untuk "tugas kecil" pada hukum ini — pengecualian hanya
+berlaku untuk langkah brainstorming (§2.2), bukan untuk TDD.
+* Urutan wajib: tulis test yang **gagal (RED)** → tulis kode minimal agar
+lulus (**GREEN**) → **refactor** bila perlu (struktur, bukan perilaku) →
+**commit**. Jika kode ditulis sebelum test, hapus dan mulai ulang dari test.
+* Berlaku juga untuk **data JSON**: tulis/jalankan validator skema atau
+test konten (referensi NPC/musuh/peta valid, requirement quest bisa
+dipenuhi) sebelum menambah data massal.
 
-1. Apakah ini benar-benar perlu ada? Kalau tidak, lewati (YAGNI).
-2. Sudah ada di codebase ini? **Pakai ulang, jangan tulis ulang.**
-3. Bisa pakai stdlib Python? Pakai itu.
-4. Ada fitur native yang sudah menyediakan ini? Pakai itu.
+### 2.2 Brainstorming \& Desain Dulu
+
+* Sebelum fitur baru / konten besar / perubahan arah: **ajukan pertanyaan
+klarifikasi satu per satu**, eksplorasi 2–3 pendekatan, lalu susun
+dokumen desain ringkas (di `docs/superpowers/specs/` bila dampaknya
+luas) sebelum menulis kode.
+* **Jangan sentuh kode/data sebelum desain disetujui pengguna.**
+* Pengecualian: tugas kecil dan jelas (bug 1 baris, tambah 1 entri data) —
+pakai akal sehat, bukan birokrasi.
+
+### 2.3 Isolasi Workspace untuk Perubahan Besar
+
+* Untuk perubahan besar, eksperimental, atau berisiko (menyentuh file
+"stabil" §6, mengubah schema save, refactor lintas modul): buat branch
+atau git worktree terisolasi dulu sebelum mulai implementasi, supaya
+branch utama tetap bersih dan mudah dibatalkan bila gagal.
+* Tidak wajib untuk perbaikan kecil/lokal.
+
+### 2.4 Planning
+
+* Setelah desain disetujui, pecah pekerjaan jadi **tugas kecil (2–5 menit
+kerja)** dengan path file yang tepat dan langkah verifikasi eksplisit.
+* Kerjakan berurutan; jangan lompat-lompat antar tugas yang belum selesai.
+
+### 2.5 Bukti, Bukan Klaim
+
+* **Verification-before-completion:** jangan menyatakan selesai sebelum
+semua test lulus, lint bersih, dan data tervalidasi.
+* Klaim apa pun tentang perilaku game harus dibuktikan (test otomatis,
+smoke test, atau output nyata) — **"seharusnya jalan" bukan bukti.**
+
+### 2.6 Systematic Debugging
+
+* Dilarang *guess-and-check* atau menambal gejala tanpa memahami akar
+masalah.
+* Ikuti 4 fase: **Investigasi Akar Masalah → Analisis Pola → Hipotesis \&
+Uji → Implementasi.** Telusuri alur data (siapa memanggil siapa) —
+gunakan Graphify (§4) untuk ini — sebelum mengubah apa pun.
+
+### 2.7 Review Dua Tahap
+
+* Setelah perubahan signifikan: review dulu **kepatuhan terhadap
+spesifikasi/desain (GDD)**, baru kemudian **kualitas kode**.
+* Temuan **Critical/Important** menghalangi penyelesaian tugas; temuan
+Minor dicatat (mis. sebagai komentar `ponytail:`, lihat §3.3) tapi tidak
+memblokir.
+
+\---
+
+## §3. Hukum Ponytail — Tangga Minimalisme
+
+Prinsip diverifikasi langsung dari **DietrichGebert/ponytail** (MIT) —
+"makes your AI agent think like the laziest senior dev in the room."
+
+### 3.1 Tangga Keputusan
+
+Sebelum menulis kode/data, naiki tangga ini — **berhenti di anak tangga
+pertama yang terpenuhi**. Tangga ini dijalankan **setelah** memahami
+masalah dan menelusuri kode/data terkait (via Graphify, §4) — bukan
+pengganti pemahaman, hanya pengganti solusi berlebihan:
+
+1. Apakah ini benar-benar perlu ada? Kalau tidak → lewati (YAGNI).
+2. Sudah ada di codebase ini? → **Pakai ulang, jangan tulis ulang.**
+3. Bisa pakai stdlib Python? → Pakai itu.
+4. Ada fitur native platform yang sudah menyediakan ini? → Pakai itu.
 5. Ada dependency yang sudah terpasang (Rich/Textual) yang bisa menangani
-   ini? Pakai itu.
-6. Bisa selesai dalam satu baris? Tulis satu baris.
+ini? → Pakai itu.
+6. Bisa selesai dalam satu baris? → Tulis satu baris.
 7. Baru kalau semua di atas tidak berlaku: tulis **kode minimal yang
-   berfungsi**.
+berfungsi**.
 
-**Tangga ini dijalankan SETELAH memahami masalah dan menelusuri kode/data
-yang relevan** — bukan pengganti pemahaman, hanya pengganti solusi berlebihan.
+### 3.2 Lazy, Bukan Lalai
 
-**Lazy, bukan lalai.** Yang TIDAK BOLEH dikorbankan demi ringkas:
-- Validasi input di titik yang menerima data dari luar (save file, JSON).
-- Penanganan error yang mencegah kehilangan data (save rusak, data invalid).
-- Keamanan & integritas state.
-- Apa pun yang secara eksplisit diminta pengguna.
+Yang **TIDAK BOLEH** dikorbankan demi ringkas:
 
-**Gaya respons:** utamakan kode/data dulu, penjelasan maksimal 3 baris
-(`[kode] → dilewati: X, tambah saat Y`) untuk hal yang sengaja disederhanakan.
+* Validasi input di titik yang menerima data dari luar (save file, JSON).
+* Penanganan error yang mencegah kehilangan data (save rusak, data invalid).
+* Keamanan \& integritas state.
+* **Kompatibilitas terminal** — deteksi kapabilitas (mis. dukungan Unicode)
+sebelum memakai karakter/formatting yang bisa gagal di lingkungan lain;
+jangan hardcode asumsi tentang terminal pengguna.
+* Apa pun yang secara eksplisit diminta pengguna.
 
----
+### 3.3 Jejak Utang Teknis — Komentar `ponytail:`
 
-## 4. Aturan Navigasi Codebase — Graphify
+Setiap kali mengambil jalan pintas yang disengaja (rung tangga di atas
+rung 7, atau simplifikasi yang punya batas jelas), tandai di kode:
 
-Prinsip dari plugin **Graphify** (Graphify-Labs/graphify). Proyek ini punya
-knowledge graph di `graphify-out/` (bila sudah dibuat).
+```python
+# ponytail: pakai pencarian linear, upgrade ke dict kalau item > 50
+```
 
-- Untuk pertanyaan seputar codebase: **coba `graphify query "<pertanyaan>"`
-  dulu** bila `graphify-out/graph.json` ada. Gunakan `graphify path "<A>"
-  "<B>"` untuk relasi antar modul dan `graphify explain "<konsep>"` untuk
-  konsep fokus. Hasilnya subgraf terarah — jauh lebih kecil dari grep mentah.
-- Jika `graphify-out/wiki/index.md` ada, gunakan untuk navigasi luas.
-- Baca `graphify-out/GRAPH_REPORT.md` hanya untuk tinjauan arsitektur besar.
-- File `graphify-out/` yang kotor setelah update adalah hal wajar — bukan
-  alasan untuk melewati graphify. Lewati hanya jika tugasnya memang tentang
-  grafik yang basi, atau pengguna menyuruh tidak memakainya.
-- **Setelah mengubah kode, jalankan `graphify update .`** agar grafik tetap
-  mutakhir (AST-only, tanpa biaya API). Untuk perubahan murni data JSON,
-  update graph tidak wajib.
+Format: `# ponytail: <apa yang dilewati> → upgrade saat <kondisi>`. Ini
+membuat utang teknis eksplisit dan bisa dilacak — bukan hilang jadi
+"nanti" yang tidak pernah terjadi. Kumpulkan semua tanda ini sebelum
+merilis sebuah Fase (lihat GDD §23) untuk ditinjau ulang.
 
----
+### 3.4 Skala Proses sesuai Ukuran Tugas
 
-## 5. Konvensi Data Game (khusus proyek)
+|Ukuran tugas|Contoh|Proses|
+|-|-|-|
+|Kecil|bug 1 baris, 1 entri data, typo teks|TDD tetap wajib; brainstorming (§2.2) \& worktree (§2.3) boleh dilewati|
+|Sedang|1 quest/dialog/NPC baru, 1 sistem kecil|Alur penuh §10, tanpa perlu dokumen desain terpisah|
+|Besar|sistem baru (mis. combat baru), ubah schema save, refactor lintas modul|Alur penuh §10 + dokumen desain (§2.2) + worktree (§2.3) + review dua tahap (§2.7)|
 
-Semua konten game hidup di `data/` sebagai JSON. Ikuti skema yang sudah ada
-di GDD §14 dan contoh file yang sudah ada — **jangan membuat skema paralel**.
+### 3.5 Gaya Respons
 
-### 5.1 Aturan Umum Data
-- Bahasa Indonesia untuk `name`, `description`, `lore`, `text` dialog, dan
-  pesan apa pun yang tampil ke pemain.
-- ID dalam `snake_case`: `quest101`, `elder_mao`, `qi_slash`, `pill_insight`,
-  `map_guild_city`, `killed_grave_warden_3`.
-- Setiap file JSON: valid (cek dengan parser), satu entitas per file kecuali
-  koleksi (events, memories, scenes).
-- Referensi antar data (NPC di peta, item di loot, skill di musuh, quest di
-  event) **wajib valid** — selalu jalankan validator data sebelum commit.
+Utamakan kode/data dulu, penjelasan maksimal 3 baris untuk hal yang
+sengaja disederhanakan (gunakan format `ponytail:` di §3.3, bukan esai).
 
-### 5.2 Skema Inti (ringkas — detail di GDD §14)
-- **Quest:** `id`, `title`, `type`, `description`, `objectives`,
-  `requirements` (kind: `talk`/`enemy`/`map`/`flag`/`collect`/`kill_count`/
-  `escort`/`breakthrough`), `rewards`, `flags_on_complete`, `next`.
-- **Teknik:** `id`, `name`, `path` (sword/alchemy/formation/spirit),
-  `element` (metal/wood/water/fire/earth), `type`, `qi_cost`, `power`,
-  `effects`, `requires.tier`.
-- **Item/Pil:** `id`, `name`, `effect`, `recipe` (untuk pil).
-- **Musuh:** `id`, `name`, `tier`, `element`, `behavior`, `stats`,
-  `skills`, `tags` (termasuk `boss`), `requires_flag` (gate kemunculan).
-- **Tingkatan kultivasi:** `id`, `name`, `order`, `insight_required`,
-  `stat_bonus`, `unlocks` (urutan tetap: Pengumpul Qi → Pendirian Fondasi →
-  Kristal Emas → Jiwa Terpisah → Pemutus Kehampaan → Penantang Surga).
+\---
 
-### 5.3 Konsistensi Naratif
-- Nada **gelap & serius**: dialog deskriptif, gaya novel ringan, 2–5 baris
-  per beat; quest kunci boleh lebih panjang.
-- Siklus elemen **Metal→Kayu→Tanah→Air→Api→Metal** harus konsisten di semua
-  teknik, musuh, dan efek.
-- Tim combat **maksimal 4 anggota** (protagonis + 3 rekan/binatang roh).
-- Reputasi **5 faksi**: istana, orde suci, pemberontak, gilda, orde rahasia.
-- Quest yang selesai wajib men-set flag `quest<id>_done` (otomatis engine);
-  jangan menambah flag paralel tanpa alasan.
+## §4. Hukum Graphify — Navigasi Berbasis Graph
 
----
+Prinsip diverifikasi langsung dari **Graphify-Labs/graphify** (Apache
+2.0). Proyek ini **sudah punya knowledge graph aktif** di `graphify-out/`
+(`graph.json`, `GRAPH\_REPORT.md`, `graph.html`, snapshot harian) — bukan
+hipotetis, sudah dipakai.
 
-## 6. Konvensi Kode (Python)
+### 4.1 Kapan \& Bagaimana
 
-- Python 3.12+; gunakan stdlib dulu, lalu Rich/Textual bila perlu (lihat
-  tangga Ponytail §3).
-- **Google Python Style Guide**: line ≤ 80 karakter, docstring format Google,
-  import terurut (stdlib → third-party → lokal).
-- Struktur: `src/core/` (game loop, state, save), `src/engine/` (combat,
-  cultivation, quest, event, dialog), `src/systems/` (alkimia, artefak,
-  binatang roh, formasi, faksi), `src/models/`, `src/ui/`.
-- Jalur validasi: `ruff check src launcher.py tools tests` dan
-  `ruff format --check ...`; test: `pytest -q`.
-- Jangan perkenalkan dependency baru tanpa kebutuhan nyata (tangga Ponytail).
+* Untuk pertanyaan seputar codebase: **`graphify query "<pertanyaan>"`
+dulu**, sebelum grep mentah atau baca file satu-satu. Gunakan
+`graphify path "<A>" "<B>"` untuk relasi antar modul, dan
+`graphify explain "<konsep>"` untuk konsep fokus. Hasilnya subgraf
+terarah — jauh lebih kecil dari hasil grep.
+* Baca `graphify-out/GRAPH\_REPORT.md` hanya untuk tinjauan arsitektur besar
+(bukan untuk tugas kecil sehari-hari).
+* Graph yang kotor setelah kode diubah adalah hal wajar — bukan alasan
+melewati Graphify. Lewati hanya jika tugasnya memang tentang grafik yang
+basi, atau pengguna menyuruh tidak memakainya.
 
----
+### 4.2 EXTRACTED vs INFERRED
 
-## 7. Alur Kerja Standar untuk Tugas Baru
+Setiap edge di graph ditandai **EXTRACTED** (eksplisit dari source, mis.
+`import` langsung) atau **INFERRED** (disimpulkan Graphify). Perlakukan
+klaim EXTRACTED sebagai fakta; perlakukan klaim INFERRED sebagai hipotesis
+yang **masih perlu diverifikasi** dengan membaca kode sungguhan sebelum
+dipakai sebagai dasar keputusan besar.
 
-1. **Pahami** — baca `GDD.md` bagian relevan; pakai `graphify` untuk
-   menavigasi codebase; telusuri kode/data yang terkait.
-2. **Desain** (bila dampak luas) — pertanyaan klarifikasi → dokumen desain →
-   persetujuan pengguna.
-3. **Rencana** — pecah jadi tugas kecil dengan path file & langkah verifikasi.
-4. **TDD** — test gagal dulu (RED) → implementasi minimal (GREEN).
-5. **Data** — tambah/edit JSON sesuai skema; validasi referensi.
-6. **Verifikasi** — `pytest -q` + `ruff check` + validator data/smoke test.
-7. **Graphify** — `graphify update .` setelah perubahan kode.
-8. **Review** — dua tahap: kepatuhan desain, lalu kualitas kode.
-9. **Lapor ringkas** — apa yang diubah, bukti verifikasi, hal yang dilewati
-   dan kapan perlu ditambahkan.
+### 4.3 Update Graph
 
----
+* **Setelah mengubah kode, jalankan `graphify update .`** — parsing
+berjalan lokal (tree-sitter, deterministic, tanpa LLM, tidak ada data
+yang keluar dari mesin) sehingga murah dan aman dijalankan sering.
+* Untuk perubahan murni data JSON, update graph **tidak wajib**.
 
-## 8. Definisi Selesai (Definition of Done)
+\---
 
-Sebuah tugas dinyatakan selesai hanya jika **semua** terpenuhi:
+## §5. Peta Rujukan GDD — Jangan Duplikasi, Cukup Rujuk
 
-- [ ] Perilaku sesuai GDD dan spesifikasi yang disetujui.
-- [ ] Test baru ditulis dengan pola RED→GREEN; `pytest -q` lulus penuh.
-- [ ] `ruff check` dan `ruff format --check` bersih.
-- [ ] Data JSON valid; semua referensi antar data ter-resolve.
-- [ ] Alur utama terverifikasi (unit test dan/atau smoke test permainan).
-- [ ] Tidak ada kode mati, duplikasi, atau abstraksi tak terpakai.
-- [ ] `graphify update .` dijalankan (bila ada perubahan kode).
-- [ ] Ringkasan singkat diberikan: perubahan, bukti, dan yang dilewati.
+|Kalau mengerjakan...|Baca GDD §|
+|-|-|
+|Sistem kultivasi / breakthrough / meridian|§4|
+|Latar belakang / jalur kultivasi protagonis|§5|
+|Combat / formula damage / elemen|§6, §17|
+|Alkimia, pil, artefak, binatang roh, formasi|§7|
+|Faksi \& reputasi|§8|
+|Peta \& gating lokasi|§9|
+|NPC baru / eksisting|§10|
+|Musuh \& bos|§11|
+|Quest (engine \& data)|§12.2–§12.4|
+|Dialog NPC (engine \& data)|§12.5, §10|
+|Ending \& epilog|§13, §21|
+|Struktur folder / arsitektur|§14|
+|Event engine (trigger/action)|§15|
+|Status effect (buff/debuff/dot)|§16|
+|Stat baru — **STOP dulu, baca §24.1 poin 13**|§17, §24.1|
+|Perintah game baru|§18|
+|Save schema / migrasi|§19|
+|Rekrut/progresi anggota tim|§20|
+|Target konten per arc|§22|
+|Status Fase \& file mana yang stabil|§23|
+|Keputusan yang tidak boleh diubah diam-diam|§24.1|
+|DataCache / profiler / asset validator|§25|
 
----
+**Catatan gap yang ditemukan saat penyusunan dokumen ini:** GDD.md belum
+punya bagian bernomor untuk **sistem toko/shop** meski pekerjaan itu
+sedang berjalan. Sesuai §2.2, fitur besar yang belum terdokumentasi di GDD
+wajib melalui brainstorming + ringkasan desain dulu — pertimbangkan
+menambahkan bagian toko ke GDD.md (mis. sebagai §7a atau bagian baru)
+begitu desainnya stabil, supaya dokumen ini tetap bisa merujuk ke sana
+alih-alih menduplikasi aturannya di sini.
 
-*Dokumen ini disusun dari prinsip plugin **Superpowers** (TDD & disiplin
-desain), **Ponytail** (minimalisme tangga), dan **Graphify** (navigasi
-knowledge graph). Perbarui dokumen ini bila aturan proyek berubah.*
+\---
+
+## §6. Keputusan Terkunci \& File Stabil Fase 0
+
+* **GDD §24.1** berisi 23 keputusan desain terkunci (nama dunia, formula,
+siklus elemen, aturan flag, dll.). **DILARANG** mengubahnya secara diam-
+diam — kontradiksi dengan §24.1 wajib dihentikan dan didiskusikan (§11).
+* **File "tidak perlu diubah" (GDD §23):** `src/engine/combat.py`,
+`src/engine/cultivation.py`, `src/models/player.py` — Fase 0 selesai
+dan stabil. Sentuh hanya bila diminta eksplisit atau ada bug terbukti
+(dengan test yang membuktikannya, §2.1).
+* **File "stabil tapi bisa diperluas":** `src/engine/event.py` (tambah
+`start\_quest` action support), `src/core/game\_loop.py` (tambah handler
+`\_cmd\_talk()`), `src/core/save.py` (tambah migrasi bila schema berubah)
+— perluas tanpa merestrukturisasi tanpa alasan kuat.
+* **Data eksisting** (6 tier, 3 teknik, 2 musuh, 3 event) — **DILARANG**
+dihapus atau diganti; hanya ditambah.
+
+\---
+
+## §7. Konvensi Kode Python \& Docstring Google (WAJIB)
+
+* Python 3.12+; stdlib dulu, baru Rich/Textual bila perlu (tangga §3.1).
+* **Google Python Style Guide**: baris ≤ 80 karakter, import terurut
+(stdlib → third-party → lokal), 2 baris kosong antar fungsi top-level,
+double quotes.
+* Struktur folder: lihat GDD §14.2 — jangan duplikasikan di sini.
+* Validasi wajib sebelum commit: `ruff check`, `ruff format --check`,
+`pytest -q` (lihat §1).
+* **DILARANG** menambah dependency baru tanpa kebutuhan nyata (tangga §3.1
+rung 5 berarti dependency yang *sudah* terpasang boleh dipakai bebas —
+dependency *baru* tetap butuh justifikasi).
+
+### Template Docstring Wajib
+
+**Header section** (`Args`, `Returns`, `Raises`, `Yields`, `Attributes`,
+`Example(s)`, `Note`) **WAJIB dalam Bahasa Inggris persis seperti ini** —
+supaya dikenali tooling (ruff/pydocstyle convention Google) dan generator
+dokumentasi standar. **Isi/prosa** (ringkasan, deskripsi tiap parameter)
+**WAJIB Bahasa Indonesia**, konsisten dengan konten game.
+
+```python
+def hitung\_damage\_fisik(attack: int, defense: int, mult\_elemen: float) -> int:
+    """Hitung damage fisik akhir setelah defense dan multiplier elemen.
+
+    Rumus mengikuti GDD §6.4.
+
+    Args:
+        attack: Nilai attack penyerang.
+        defense: Nilai defense target.
+        mult\_elemen: Multiplier elemen (0.7 kalah, 1.0 netral, 1.5 unggul).
+
+    Returns:
+        Damage akhir, dibulatkan ke bawah, minimum 1.
+
+    Raises:
+        ValueError: Jika attack atau defense bernilai negatif.
+    """
+
+
+@dataclass(frozen=True)
+class Quest:
+    """Satu quest (main atau faksi). Skema lengkap di GDD §12.3.
+
+    Attributes:
+        id: ID unik quest, snake\_case (mis. "quest101").
+        title: Judul quest dalam Bahasa Indonesia.
+        objectives: Daftar syarat yang harus dipenuhi untuk selesai.
+    """
+```
+
+* Setiap fungsi/method publik (tidak diawali `\_`) **wajib** punya
+docstring. Fungsi privat kecil (<5 baris, logika trivial dari namanya)
+boleh tanpa docstring.
+* Docstring **bukan** tempat menaruh histori perubahan atau catatan
+TODO — pakai komentar `ponytail:` (§3.3) atau pesan commit (§9).
+
+\---
+
+## §8. Konvensi Data Game (JSON)
+
+Semua konten hidup di `data/` sebagai JSON. Ikuti skema di GDD §14 dan
+contoh file eksisting — **DILARANG membuat skema paralel.**
+
+* Bahasa Indonesia untuk `name`, `description`, `lore`, `text` dialog, dan
+semua pesan yang tampil ke pemain.
+* ID dalam `snake\_case` (`quest101`, `elder\_mao`, `qi\_slash`).
+* Setiap file JSON valid (cek dengan parser); satu entitas per file
+kecuali koleksi (events, memories, scenes).
+* Referensi antar data (NPC di peta, item di loot, skill di musuh, quest
+di event) **wajib valid** — jalankan validator data sebelum commit
+(§1, sekali `tools/validate.py` ada — lihat GDD §25.3).
+* Nada narasi **grimdark** (GDD §3.6): tidak ada kemenangan bersih, musuh
+punya alasan yang konsisten secara internal, kematian scripted tidak
+bisa di-undo. Baca GDD §3.6 sebelum menulis dialog/quest/event apa pun.
+* Quest yang selesai **wajib** men-set flag `quest<id>\_done` (otomatis via
+engine) — **DILARANG** menambah flag paralel tanpa alasan kuat.
+* Siklus elemen **Metal→Kayu→Tanah→Air→Api→Metal** harus konsisten di
+semua teknik, musuh, dan efek (GDD §6.2).
+
+\---
+
+## §9. Konvensi Git \& Commit
+
+* Satu commit = satu perubahan logis. Jangan campur perubahan data JSON
+besar-besaran dengan refactor engine dalam commit yang sama.
+* Pesan commit ringkas berformat `<lingkup>: <ringkasan>`, mis.
+`quest: tambah validasi requirement kind=escort`. Lingkup umum:
+`kultivasi`, `combat`, `quest`, `dialog`, `data`, `test`, `docs`.
+* Tandai jelas di pesan commit bila menyentuh file "stabil Fase 0" (§6).
+* Jangan commit `saves/`, `\_\_pycache\_\_/`, `.venv/`, `logs/`, atau isi
+cache `graphify-out/cache/` — cek `.gitignore` proyek sebelum commit.
+
+\---
+
+## §10. Alur Kerja Standar untuk Tugas Baru
+
+1. **Pahami** — baca `GDD.md` bagian relevan (§5); `graphify query` untuk
+navigasi codebase (§4); telusuri kode/data terkait.
+2. **Desain** (bila dampak sedang/besar, §3.4) — pertanyaan klarifikasi →
+2–3 pendekatan → dokumen desain ringkas → persetujuan pengguna.
+3. **Isolasi** (bila tugas besar/berisiko, §2.3) — branch/worktree baru.
+4. **Rencana** — pecah jadi tugas kecil dengan path file \& langkah
+verifikasi (§2.4).
+5. **Tangga Ponytail** (§3.1) — cek apakah solusi sudah tersedia sebelum
+menulis kode baru.
+6. **TDD** — test gagal dulu (RED) → implementasi minimal (GREEN) →
+refactor → commit (§2.1).
+7. **Data** — tambah/edit JSON sesuai skema GDD §14; validasi referensi.
+8. **Verifikasi** — `pytest -q` + `ruff check` + `ruff format --check` +
+validator data/smoke test (§1).
+9. **Graphify** — `graphify update .` setelah perubahan kode (§4.3).
+10. **Review** — dua tahap: kepatuhan desain dulu, lalu kualitas kode
+(§2.7).
+11. **Lapor ringkas** — apa yang diubah, bukti verifikasi, hal yang
+dilewati dan kapan perlu ditambahkan (rujuk komentar `ponytail:`).
+
+\---
+
+## §11. Kondisi STOP \& Larangan Eksplisit
+
+### STOP — berhenti dan tanyakan ke pengguna, jangan menebak
+
+* Perubahan bertentangan dengan **GDD §24.1** (keputusan terkunci).
+* Perlu mengubah file "tidak perlu diubah" di §6 tanpa instruksi eksplisit.
+* Schema save (`GDD §19.2`) perlu berubah — `schema\_version` naik +
+migrasi wajib ditulis, minta konfirmasi dulu.
+* Requirement ambigu yang berdampak pada >1 sistem/file.
+* Ditemukan kredensial, secret, atau permintaan mengakses hal di luar
+scope proyek ini.
+* Konflik terdeteksi antara `AGENTS.md` dan `GDD.md` (lihat contoh gap di
+§5) — laporkan gapnya, jangan mengarang keputusan desain sendiri.
+* Operasi destruktif di luar scope tugas (hapus massal, force-push, dst).
+
+### DILARANG — tidak perlu bertanya, memang tidak boleh
+
+* Menulis kode produksi sebelum test gagal (§2.1) — tanpa pengecualian.
+* Mengklaim tugas selesai tanpa bukti otomatis (§2.5).
+* *Guess-and-check* debugging (§2.6).
+* Menghapus atau melemahkan test yang ada supaya suite terlihat hijau.
+* Menambah stat atau mekanik baru di luar GDD §17/§24 tanpa diskusi.
+* Hardcode gating cerita/peta di luar event engine (GDD §24.1 poin 18).
+* Membuat flag penyelesaian quest paralel selain `quest<id>\_done`.
+* Mengubah nama/ID dunia yang sudah terkunci (GDD §24.1 poin 10–11).
+* Menghapus atau mengganti data eksisting di `data/` (§6).
+
+\---
+
+## §12. Definisi Selesai (Definition of Done)
+
+Tugas **TIDAK BOLEH** dilaporkan selesai kecuali **semua** berikut
+terpenuhi — ini adalah gerbang (gate), bukan saran:
+
+* \[ ] Perilaku sesuai GDD dan spesifikasi yang disetujui.
+* \[ ] Test baru ditulis dengan pola RED→GREEN→REFACTOR; `pytest -q` lulus
+penuh.
+* \[ ] `ruff check` dan `ruff format --check` bersih.
+* \[ ] Docstring Google-style lengkap untuk semua fungsi/method publik baru
+(§7).
+* \[ ] Data JSON valid; semua referensi antar data ter-resolve.
+* \[ ] Alur utama terverifikasi (unit test dan/atau smoke test permainan).
+* \[ ] Tidak ada kode mati, duplikasi, atau abstraksi tak terpakai.
+* \[ ] Semua komentar `ponytail:` yang ditambahkan punya kondisi upgrade
+yang jelas (§3.3).
+* \[ ] `graphify update .` dijalankan bila ada perubahan kode (§4.3).
+* \[ ] Tidak melanggar satu pun butir §11.
+* \[ ] Ringkasan singkat diberikan: perubahan, bukti verifikasi, dan hal
+yang sengaja dilewati.
+
+\---
+
+## §13. Interoperabilitas Lintas Tool \& Pemeliharaan Dokumen
+
+* **OpenCode** membaca `AGENTS.md` ini secara native (termasuk oleh plugin
+Superpowers, Ponytail, Graphify).
+* **Claude Code** secara native hanya membaca `CLAUDE.md`, bukan
+`AGENTS.md`. Root proyek ini punya `CLAUDE.md` berisi satu baris impor
+(`@AGENTS.md`) — sesuai pola resmi yang direkomendasikan tim Claude
+Code — supaya Claude Code ikut memuat dokumen ini secara utuh. **Jangan
+hapus `CLAUDE.md`**; bila perlu aturan khusus Claude Code saja,
+tambahkan di bawah baris impor tersebut, jangan duplikasi isi file ini.
+* Bila suatu saat ada `AGENTS.md` di subfolder (mis. `src/systems/`), file
+yang **paling dekat** ke lokasi yang diedit menang untuk hal spesifik
+subfolder itu — dokumen ini tetap berlaku untuk hal lintas-proyek.
+* **Rawat dokumen ini seperti kode**: setiap baris yang tidak lagi benar
+lebih berbahaya daripada baris yang hilang, karena agent akan
+mengikutinya dengan percaya diri. Jangan menduplikasi isi GDD.md di
+sini — perbarui rujukan §-nya saja bila GDD berubah.
+
+\---
+
+*Diperbarui: 6 Agustus 2026. Disusun dari riset langsung terhadap
+obra/superpowers, DietrichGebert/ponytail, dan Graphify-Labs/graphify
+(GitHub), konvensi resmi CLAUDE.md Claude Code (code.claude.com/docs/en/
+memory), dan standar terbuka AGENTS.md (agents.md, Agentic AI Foundation).
+Perbarui bagian ini bila prinsip proyek berubah — jangan biarkan dokumen
+basi.*
+

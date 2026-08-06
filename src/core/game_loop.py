@@ -6,6 +6,7 @@ App hanya memanggil metode ini dan menampilkan hasilnya.
 
 from __future__ import annotations
 
+import json
 import random
 from dataclasses import dataclass
 from pathlib import Path
@@ -29,6 +30,13 @@ from src.engine.cultivation import (
     next_tier,
 )
 from src.engine.event import load_events, process_events
+from src.engine.quest import (
+    active_quests,
+    advance_quest,
+    check_objective,
+    load_quests,
+    objective_label,
+)
 from src.models.combatant import (
     Combatant,
     combatant_from_enemy,
@@ -45,6 +53,7 @@ FOREST_ID = "ashfall_forest"
 # Pertarungan MVP: Bandit Perbatasan (kalahkan-able oleh pemain tier 0).
 # Serigala Qi tetap di data sebagai musuh lebih kuat untuk Fase 1.
 FOREST_ENEMY = "bandit_perbatasan"
+NPC_DIR = Path(__file__).resolve().parents[2] / "data" / "npc"
 UNAVAILABLE = "Belum tersedia (Fase 1)."
 
 # Perintah yang sistemnya sudah ada di MVP; sisanya menjawab "belum
@@ -59,6 +68,7 @@ AVAILABLE = {
     "party",
     "go",
     "look",
+    "talk",
     "cultivate",
     "breakthrough",
     "rest",
@@ -145,7 +155,7 @@ class GameSession:
         return [
             "Perintah tersedia:",
             "  help status map inventory quests memories party",
-            "  go <lokasi> look cultivate breakthrough rest",
+            "  go <lokasi> look talk <nama> cultivate breakthrough rest",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
@@ -195,12 +205,53 @@ class GameSession:
         return [f"Tas: {items}"]
 
     def _cmd_quests(self, _command: Command) -> list[str]:
-        if self.state.quests.started or self.state.quests.done:
-            return [
-                "Aktif: " + ", ".join(self.state.quests.started) or "-",
-                "Selesai: " + ", ".join(self.state.quests.done) or "-",
-            ]
-        return ["Tidak ada quest aktif."]
+        """Tampilkan quest aktif dengan progres per objektif (GDD §12)."""
+        quests = load_quests()
+        active = [
+            quest
+            for quest in quests
+            if quest.id in self.state.quests.started
+            and quest.id not in self.state.quests.done
+        ]
+        done = [quest for quest in quests if quest.id in self.state.quests.done]
+        if not active and not done:
+            return ["Tidak ada quest aktif."]
+        lines: list[str] = []
+        if active:
+            lines.append("Quest aktif:")
+            for quest in active:
+                lines.append(f"  {quest.title}")
+                for index, objective in enumerate(quest.objectives):
+                    mark = (
+                        "[x]"
+                        if check_objective(self.state, quest, index)
+                        else "[ ]"
+                    )
+                    lines.append(f"    {mark} {objective_label(objective)}")
+        if done:
+            lines.append("Selesai:")
+            for quest in done:
+                lines.append(f"  {quest.title}")
+        return lines
+
+    def _cmd_talk(self, command: Command) -> list[str]:
+        """Bicara dengan NPC di lokasi saat ini (GDD §18.2, flag talked_)."""
+        if not command.args:
+            return ["Bicara dengan siapa? Contoh: talk tuan_shi"]
+        npc_id = command.args[0]
+        npc_path = NPC_DIR / f"{npc_id}.json"
+        if not npc_path.is_file():
+            return [f"Kamu tidak mengenal siapa pun bernama {npc_id}."]
+        npc = json.loads(npc_path.read_text(encoding="utf-8"))
+        if npc["location"] != self.state.location:
+            return [f"{npc['name']} tidak ada di sini."]
+        self.state.flags[f"talked_{npc_id}"] = True
+        return (
+            [npc["greeting"]]
+            + list(npc["dialog"])
+            + self._run_quests()
+            + self._run_events()
+        )
 
     def _cmd_memories(self, _command: Command) -> list[str]:
         """Tampilkan echo memori yang terkumpul (GDD §15.3 grant_memory)."""
@@ -219,11 +270,19 @@ class GameSession:
         location = command.args[0]
         if location == START_LOCATION:
             self.state.location = location
-            return [f"Kamu kembali ke {location}."] + self._run_events()
+            return (
+                [f"Kamu kembali ke {location}."]
+                + self._run_quests()
+                + self._run_events()
+            )
         flag = f"map_{location}_unlocked"
         if self.state.flags.get(flag):
             self.state.location = location
-            return [f"Kamu tiba di {location}."] + self._run_events()
+            return (
+                [f"Kamu tiba di {location}."]
+                + self._run_quests()
+                + self._run_events()
+            )
         return [f"Lokasi belum terbuka: {location}."]
 
     def _cmd_look(self, _command: Command) -> list[str]:
@@ -247,10 +306,14 @@ class GameSession:
         player = self.state.player
         player.add_insight(CULTIVATE_INSIGHT)
         self._advance_hours(CULTIVATE_HOURS)
-        return [
-            "Kamu bermeditasi menyerap qi langit-bumi...",
-            f"Insight +{CULTIVATE_INSIGHT} (total {player.insight}).",
-        ] + self._run_events()
+        return (
+            [
+                "Kamu bermeditasi menyerap qi langit-bumi...",
+                f"Insight +{CULTIVATE_INSIGHT} (total {player.insight}).",
+            ]
+            + self._run_quests()
+            + self._run_events()
+        )
 
     def _cmd_rest(self, _command: Command) -> list[str]:
         player = self.state.player
@@ -260,13 +323,19 @@ class GameSession:
         player.qi = player.qi_max
         healed = player.is_injured
         player.advance_day()
-        # Event diproses sebelum autosave agar efeknya ikut tersimpan.
+        # Quest lalu event diproses sebelum autosave agar efeknya ikut
+        # tersimpan dan cascade quest->event menyala satu pass (§15.4).
+        quest_lines = self._run_quests()
         event_lines = self._run_events()
         autosave_save(self.state, self.save_dir)
         message = "Kamu beristirahat hingga pagi. HP dan qi pulih penuh."
         if healed:
             message += " Cedera membaik."
-        return [message, "Permainan tersimpan otomatis."] + event_lines
+        return (
+            [message, "Permainan tersimpan otomatis."]
+            + quest_lines
+            + event_lines
+        )
 
     def _cmd_breakthrough(self, _command: Command) -> list[str]:
         player = self.state.player
@@ -281,24 +350,34 @@ class GameSession:
                 "Kultivasi dulu untuk menambah pemahaman.",
             ]
         result = attempt_breakthrough(player, tiers, rng=self._rng)
-        # Event diproses sebelum autosave agar efeknya ikut tersimpan.
+        # Quest lalu event diproses sebelum autosave agar efeknya ikut
+        # tersimpan dan cascade quest->event menyala satu pass (§15.4).
+        quest_lines = self._run_quests()
         event_lines = self._run_events()
         autosave_save(self.state, self.save_dir)
         if result.success:
-            return [
-                f"BREAKTHROUGH SUKSES! Kamu kini {result.tier_id} "
-                f"({result.rate}%).",
-                "Permainan tersimpan otomatis.",
-            ] + event_lines
+            return (
+                [
+                    f"BREAKTHROUGH SUKSES! Kamu kini {result.tier_id} "
+                    f"({result.rate}%).",
+                    "Permainan tersimpan otomatis.",
+                ]
+                + quest_lines
+                + event_lines
+            )
         note = ""
         if result.inner_demon:
             note = " Bayangan batin mengintai (pertarungan inner demon "
             note += "menyusul Fase 1)."
-        return [
-            "Breakthrough GAGAL. Tubuhmu terluka "
-            f"({result.injury_days} hari cedera, stat -25%).{note}",
-            "Permainan tersimpan otomatis.",
-        ] + event_lines
+        return (
+            [
+                "Breakthrough GAGAL. Tubuhmu terluka "
+                f"({result.injury_days} hari cedera, stat -25%).{note}",
+                "Permainan tersimpan otomatis.",
+            ]
+            + quest_lines
+            + event_lines
+        )
 
     def _cmd_save(self, command: Command) -> list[str]:
         slot = self._slot_arg(command, default="save1")
@@ -325,11 +404,25 @@ class GameSession:
             self.state.time.hour -= 24
             self.state.time.day += 1
 
+    def _run_quests(self) -> list[str]:
+        """Evaluasi quest aktif setelah momen mutasi state (GDD §12.4).
+
+        Dipanggil sebelum _run_events agar flag quest<id>_done sudah diset
+        sebelum event dengan trigger quest_done dievaluasi (cascade satu
+        pass), dan setelah kemenangan pertarungan (kind enemy/kill_count).
+        """
+        if self.state is None:
+            return []
+        lines: list[str] = []
+        for quest in active_quests(self.state, load_quests()):
+            lines.extend(advance_quest(self.state, quest))
+        return lines
+
     def _run_events(self) -> list[str]:
         """Proses event data-driven setelah momen mutasi state (GDD §15.4).
 
-        Dipanggil setelah go / cultivate / rest / breakthrough — sekali
-        per momen. Kembalikan baris narasi event untuk ditampilkan UI.
+        Dipanggil setelah go / cultivate / rest / breakthrough / talk —
+        sekali per momen. Kembalikan baris narasi event untuk UI.
         """
         if self.state is None:
             return []
@@ -462,10 +555,19 @@ class GameSession:
             player.add_insight(rewards.get("insight", 0))
             player.gold += rewards.get("gold", 0)
             self.state.flags[f"{self.state.location}_cleared"] = True
+            if enemy is not None:
+                enemy_id = enemy.id
+                self.state.kills[enemy_id] = (
+                    self.state.kills.get(enemy_id, 0) + 1
+                )
             battle.log.append(
                 f"Menang! Insight +{rewards.get('insight', 0)}, "
                 f"Gold +{rewards.get('gold', 0)}."
             )
+            # Quest dievaluasi setelah kemenangan (GDD §12.4); narasi
+            # quest masuk log pertarungan agar terlihat UI.
+            for line in self._run_quests():
+                battle.log.append(line)
         elif battle.winner == "enemies":
             # KO: pulih otomatis setelah pertarungan (GDD §20.4).
             player.hp = player.hp_max
