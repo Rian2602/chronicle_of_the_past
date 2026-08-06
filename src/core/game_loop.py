@@ -203,14 +203,19 @@ class GameSession:
         injury = ""
         if player.is_injured:
             injury = f" | CEDERA ({player.injury_days_remaining} hari)"
-        hp_bar = make_bar(player.hp, player.hp_max, 12)
-        qi_bar = make_bar(player.qi, player.qi_max, 12)
+        # Selama battle, HP/qi live ada di combatan (_ally) — state.player
+        # baru disinkronkan saat _finish_battle; tanpa ini HUD menipu
+        # pemain yang sedang terluka (bar tetap penuh).
+        hp = self._ally.hp if self._ally is not None else player.hp
+        qi = self._ally.qi if self._ally is not None else player.qi
+        hp_bar = make_bar(hp, player.hp_max, 12)
+        qi_bar = make_bar(qi, player.qi_max, 12)
         return [
             f"[bold gold3]{player.name}[/] — {tier_name}",
             f"Lokasi: {self.state.location} | "
             f"Hari {self.state.time.day}, jam {self.state.time.hour:02d}",
-            f"HP [red]{hp_bar}[/] {player.hp}/{player.hp_max} | "
-            f"Qi [cyan]{qi_bar}[/] {player.qi}/{player.qi_max}",
+            f"HP [red]{hp_bar}[/] {hp}/{player.hp_max} | "
+            f"Qi [cyan]{qi_bar}[/] {qi}/{player.qi_max}",
             f"Insight [violet]{player.insight}[/] | "
             f"Gold [gold3]{player.gold}[/]"
             f" | Meridian {player.meridian_buka}/8{injury}",

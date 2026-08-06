@@ -103,6 +103,25 @@ def test_rest_menyembuhkan_menambah_hari_dan_autosave(tmp_path):
     assert slot_exists("autosave", tmp_path)
 
 
+def test_status_lines_menampilkan_hp_battle_live(tmp_path):
+    """HUD selama battle mencerminkan HP combatan asli, bukan player stale.
+
+    Regresi: status_lines membaca state.player.hp yang baru disinkronkan
+    saat _finish_battle; selama battle HUD harus memakai _ally.hp agar bar
+    tidak menipu pemain yang sedang terluka.
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    # Lukai ally langsung (simulasi beberapa giliran battle).
+    session._ally.hp = 40
+    lines = session.status_lines()
+    hp_line = next(line for line in lines if "HP" in line)
+    assert "40/80" in hp_line
+    assert "80/80" not in hp_line
+
+
 def test_breakthrough_sukses_naik_tier_dan_autosave(tmp_path):
     """Breakthrough sukses menaikkan tier dan memicu autosave (§19.1)."""
     session = _session(tmp_path)
