@@ -1,0 +1,35 @@
+{
+  "id": "quest108_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest108"}
+  ],
+  "actions": [
+    {
+      "kind": "prompt_choice",
+      "options": [
+        {
+          "key": "a",
+          "text": "Menentang Langit — bangkit melawan entitas kuno",
+          "set_flag": "ending_path_defy",
+          "change_reputation": {"ancient_order": 15, "holy_order": -10, "rebels": 5},
+          "log": "Kamu bersumpah menentang langit. Entitas kuno akan runtuh di tanganmu."
+        },
+        {
+          "key": "b",
+          "text": "Menyegel Diri — menarik diri dari konflik dunia",
+          "set_flag": "ending_path_seal",
+          "change_reputation": {"court": -10, "guilds": 10, "rebels": -5},
+          "log": "Kamu memilih menyegel diri. Dunia akan menentukan nasibnya sendiri."
+        },
+        {
+          "key": "c",
+          "text": "Rekonsiliasi — berdiri di antara faksi dan entitas",
+          "set_flag": "ending_path_reconcile",
+          "change_reputation": {"holy_order": 5, "rebels": 5, "ancient_order": 5},
+          "log": "Kamu memilih jalan tengah. Perdamaian butuh pengorbanan — dan kau siap membayarnya."
+        }
+      ]
+    }
+  ],
+  "once": true
+}

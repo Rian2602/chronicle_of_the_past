@@ -1,0 +1,15 @@
+{
+  "id": "fquest_pelipur",
+  "title": "Pelipur Lara Mira",
+  "type": "faction",
+  "description": "Mira meminta bantuan mencari batu qi untuk membuat ramuan pemulih anaknya yang sakit.",
+  "objectives": [
+    {"kind": "talk", "target": "mira"},
+    {"kind": "collect", "target": "batu_qi", "count": 3}
+  ],
+  "rewards": {"insight": 30, "gold": 20, "reputation": {"rebels": 10}, "grant_item": {"id": "pil_pemulih", "count": 2}},
+  "flags_on_complete": ["fquest_pelipur_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest104_done"
+}

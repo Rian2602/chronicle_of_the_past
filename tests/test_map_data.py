@@ -4,7 +4,15 @@ import json
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "maps"
-EXPECTED_MAPS = {"village_emberfall", "ashfall_forest", "ruin_shrine"}
+EXPECTED_MAPS = {
+    "village_emberfall",
+    "ashfall_forest",
+    "ruin_shrine",
+    "sect_azure",
+    "guild_city",
+    "hutan_kelabu",
+    "gua_abyss",
+}
 REQUIRED_KEYS = {"id", "name", "description", "tier"}  # + opsional "enemies"
 
 

@@ -1,0 +1,13 @@
+{
+  "id": "serbuan_akar",
+  "name": "Serbuan Akar",
+  "path": "alchemy",
+  "element": "wood",
+  "type": "physical",
+  "qi_cost": 8,
+  "power": 10,
+  "effects": [
+    {"status": "bleed", "duration": 2}
+  ],
+  "requires": {"tier": "qi_condensation"}
+}

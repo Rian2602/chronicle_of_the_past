@@ -35,6 +35,7 @@ ACTION_KINDS = {
     "change_reputation",
     "start_dialog",
     "log",
+    "prompt_choice",
 }
 
 
@@ -110,7 +111,7 @@ def check_trigger(event: GameEvent, state: GameState) -> bool:
 
 
 def _apply_action(
-    action: dict[str, Any], state: GameState, result: EventResult
+    action: dict[str, Any], state: GameState, result: EventResult, event_id: str
 ) -> None:
     """Terapkan satu aksi event ke state (GDD §15.3)."""
     kind = action["kind"]
@@ -146,6 +147,22 @@ def _apply_action(
         result.logs.append(f"Sebuah dialog dimulai: {action['dialog_id']}.")
     elif kind == "log":
         result.logs.append(action["text"])
+    elif kind == "prompt_choice":
+        # ponytail: opsi limited to set_flag/change_reputation/log;
+        # upgrade saat butuh grant_item/start_quest
+        options = action.get("options", [])
+        if not options:
+            raise ValueError("prompt_choice butuh minimal 1 opsi")
+        for opt in options:
+            if "key" not in opt or "text" not in opt:
+                raise ValueError("opsi prompt_choice wajib punya key dan text")
+        state.flags["pending_choice"] = {
+            "event_id": event_id,
+            "options": options,
+        }
+        # Tampilkan pilihan ke pemain via log
+        for opt in options:
+            result.logs.append(f"  [{opt['key']}] {opt['text']}")
 
 
 def process_events(state: GameState, events: list[GameEvent]) -> EventResult:
@@ -162,7 +179,7 @@ def process_events(state: GameState, events: list[GameEvent]) -> EventResult:
         if not check_trigger(event, state):
             continue
         for action in event.actions:
-            _apply_action(action, state, result)
+            _apply_action(action, state, result, event.id)
         result.fired.append(event.id)
         if event.once:
             state.flags[f"event_{event.id}_done"] = True

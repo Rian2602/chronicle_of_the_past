@@ -1,0 +1,16 @@
+{
+  "id": "fquest_rebels_kiriman",
+  "title": "Kiriman yang Hilang",
+  "type": "faction",
+  "description": "Jati meminta bantuan mengambil kiriman obat yang diseret pembelot. Babi hutan Qi dan pembelot pemberontak mengawasi jalur.",
+  "objectives": [
+    {"kind": "talk", "target": "jati"},
+    {"kind": "enemy", "target": "babi_hutan_qi"},
+    {"kind": "enemy", "target": "pembelot_pemberontak"}
+  ],
+  "rewards": {"insight": 40, "gold": 30, "reputation": {"rebels": 15}},
+  "flags_on_complete": ["fquest_rebels_kiriman_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest103_done"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "jati",
+  "name": "Jati",
+  "location": "ashfall_forest",
+  "greeting": "Lin Wei kirim aku. Pemberontak butuh bantuan.",
+  "dialog": [
+    "Jati menyalurkan napas: 'Kiriman obat untuk penderita di selatan diseret pembelot. Butuh seseorang yang bisa menembus hutan.'",
+    "'Babi hutan Qi mengganggu jalur. Dan ada pembelot pemberontak yang bergabung dengan bandit.'",
+    "'Bantu kami ambil kiriman itu. Rebels akan mengingat jasa ini.'"
+  ]
+}

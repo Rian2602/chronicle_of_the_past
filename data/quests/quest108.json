@@ -1,0 +1,14 @@
+{
+  "id": "quest108",
+  "title": "Jalan ke Kebenaran",
+  "type": "main",
+  "description": "Sesepuh Mao mengungkap kebenaran penuh tentang masa lalumu. Kau harus memutuskan jalanmu: menentang langit, menyegel diri, atau rekonsiliasi.",
+  "objectives": [
+    {"kind": "talk", "target": "elder_mao"}
+  ],
+  "rewards": {"insight": 100, "gold": 50, "reputation": {"ancient_order": 10}},
+  "flags_on_complete": ["quest108_done", "ending_path_set"],
+  "next": null,
+  "category": "main",
+  "requires_flag": "quest107_done"
+}

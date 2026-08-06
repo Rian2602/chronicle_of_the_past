@@ -369,3 +369,178 @@ def test_kind_aksi_tidak_dikenal_memunculkan_error():
     event = _event(actions=[{"kind": "bogus"}])
     with pytest.raises(ValueError):
         _fire(event, state)
+
+
+# ----------------------------------------------------------------------
+# Aksi prompt_choice (Sprint 1 - Choice Engine)
+# ----------------------------------------------------------------------
+
+
+def test_action_prompt_choice_sets_pending_choice():
+    """prompt_choice: menyimpan opsi ke state.flags[pending_choice].
+
+    dan log ke result.
+    """
+    state = _state()
+    event = _event(
+        actions=[
+            {
+                "kind": "prompt_choice",
+                "options": [
+                    {
+                        "key": "a",
+                        "text": "Lapor sungguhan",
+                        "set_flag": "lapor_jujur",
+                        "change_reputation": {"holy_order": 10, "rebels": -10},
+                        "log": "Kamu melaporkan apa yang kau lihat.",
+                    },
+                    {
+                        "key": "b",
+                        "text": "Menyesatkan",
+                        "set_flag": "lapor_bohong",
+                        "change_reputation": {"rebels": 10, "holy_order": -10},
+                        "log": "Kamu memutarbalikkan fakta.",
+                    },
+                ],
+            }
+        ]
+    )
+    result = _fire(event, state)
+    assert "pending_choice" in state.flags
+    pending = state.flags["pending_choice"]
+    assert pending["event_id"] == "evt_test"
+    assert len(pending["options"]) == 2
+    assert pending["options"][0]["key"] == "a"
+    assert pending["options"][1]["key"] == "b"
+    # Log berisi teks pilihan untuk ditampilkan ke pemain
+    assert any("Lapor sungguhan" in line for line in result.logs)
+    assert any("Menyesatkan" in line for line in result.logs)
+    assert result.fired == ["evt_test"]
+
+
+def test_action_prompt_choice_validasi_opsi_wajib():
+    """prompt_choice: opsi wajib punya key dan text.
+
+    set_flag/change_reputation/log opsional.
+    """
+    state = _state()
+    # Minimal valid: key + text saja
+    event = _event(
+        event_id="evt_minimal",
+        actions=[
+            {
+                "kind": "prompt_choice",
+                "options": [{"key": "x", "text": "Pilihan minimal"}],
+            }
+        ],
+    )
+    _fire(event, state)
+    assert "pending_choice" in state.flags
+    pending = state.flags["pending_choice"]
+    assert pending["options"][0]["key"] == "x"
+    assert pending["options"][0]["text"] == "Pilihan minimal"
+    # Field opsional tidak crash
+    assert "set_flag" not in pending["options"][0]
+    assert "change_reputation" not in pending["options"][0]
+    assert "log" not in pending["options"][0]
+
+
+def test_action_prompt_choice_overwrite_pending():
+    """prompt_choice kedua menimpa pending_choice sebelumnya.
+
+    (satu aktif saja).
+    """
+    state = _state()
+    first = _event(
+        event_id="evt_first",
+        actions=[
+            {
+                "kind": "prompt_choice",
+                "options": [{"key": "a", "text": "Pertama"}],
+            }
+        ],
+    )
+    second = _event(
+        event_id="evt_second",
+        actions=[
+            {
+                "kind": "prompt_choice",
+                "options": [{"key": "b", "text": "Kedua"}],
+            }
+        ],
+    )
+    _fire(first, state)
+    assert state.flags["pending_choice"]["event_id"] == "evt_first"
+    _fire(second, state)
+    assert state.flags["pending_choice"]["event_id"] == "evt_second"
+    assert state.flags["pending_choice"]["options"][0]["key"] == "b"
+
+
+# ----------------------------------------------------------------------
+# Transisi Arc 1→2 (Sprint 1.2): quest103_done event
+# ----------------------------------------------------------------------
+
+
+def test_event_quest103_done_unlock_maps(tmp_path):
+    """quest103_done: unlock sect_azure + guild_city.
+
+    grant memory, start quest201.
+    """
+    from src.core.state import GameState
+    from src.engine.event import load_events, process_events
+    from src.models.player import Player
+
+    state = GameState(player=Player(name="Akar"))
+    state.quests.done.append("quest103")
+    # Load all events (includes quest103_done if exists)
+    events = load_events()
+    result = process_events(state, events)
+    # Check event fired
+    assert "quest103_done" in result.fired
+    # Maps unlocked
+    assert state.flags.get("map_sect_azure_unlocked") is True
+    assert state.flags.get("map_guild_city_unlocked") is True
+    assert "sect_azure" in state.map_unlocks
+    assert "guild_city" in state.map_unlocks
+    # Memory granted
+    assert "memory_arc1_complete" in state.memories
+    # Quest201 started
+    assert "quest201" in state.quests.started
+    # Log contains narrative
+    assert any("Anak yang Ditunggu" in line for line in result.logs)
+    assert any("Lin Wei" in line for line in result.logs)
+
+
+# ----------------------------------------------------------------------
+# Arc 1 Quest Chain 104-108 (Sprint 2)
+# ----------------------------------------------------------------------
+
+
+def test_event_quest104_intro_starts_quest(tmp_path):
+    """quest104_intro: trigger quest103_done -> start_quest quest104."""
+    from src.core.state import GameState
+    from src.engine.event import load_events, process_events
+    from src.models.player import Player
+
+    state = GameState(player=Player(name="Akar"))
+    state.flags["quest103_done"] = True
+    events = load_events()
+    result = process_events(state, events)
+    assert "quest104_intro" in result.fired
+    assert "quest104" in state.quests.started
+
+
+def test_event_quest104_done_unlocks_quest105(tmp_path):
+    """quest104_done: trigger quest_done quest104 -> start_quest quest105."""
+    from src.core.state import GameState
+    from src.engine.event import load_events, process_events
+    from src.models.player import Player
+
+    state = GameState(player=Player(name="Akar"))
+    state.quests.done.append("quest104")
+    events = load_events()
+    result = process_events(state, events)
+    assert "quest104_done" in result.fired
+    assert "quest105" in state.quests.started
+    # Log narrative
+    assert any("Lin Wei" in line for line in result.logs)

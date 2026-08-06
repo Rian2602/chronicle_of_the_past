@@ -1,0 +1,11 @@
+{
+  "id": "fquest_fondasi_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_fondasi"}
+  ],
+  "actions": [
+    {"kind": "log", "text": "Golem terbakar runtuh. Penunggu hutan muncul: 'Kau lulus uji fondasi. Ini hadiah Orde Kuno: Pil Peneguh Fondasi.'"},
+    {"kind": "grant_item", "id": "pil_peneguh_fondasi", "count": 1}
+  ],
+  "once": true
+}

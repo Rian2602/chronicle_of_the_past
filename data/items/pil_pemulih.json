@@ -1,0 +1,7 @@
+{
+  "id": "pil_pemulih",
+  "name": "Pil Pemulih",
+  "type": "consumable",
+  "description": "Memulihkan HP dalam jumlah sedang. Rasa pahit tapi manjur.",
+  "effect": {"heal_hp": 40}
+}

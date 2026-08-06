@@ -17,6 +17,20 @@ EXPECTED_EVENTS = {
     "quest102_intro",
     "shrine_trial_start",
     "shrine_reveal",
+    "quest103_done",
+    "quest104_intro",
+    "quest104_done",
+    "quest105_done",
+    "quest106_done",
+    "quest107_done",
+    "quest108_done",
+    "fquest_rebels_kiriman_done",
+    "fquest_holyorder_mata_done",
+    "fquest_hutan_ember_done",
+    "fquest_abyssal_done",
+    "fquest_kultisi_done",
+    "fquest_pelipur_done",
+    "fquest_fondasi_done",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

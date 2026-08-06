@@ -1,0 +1,13 @@
+{
+  "id": "perisai_tanah",
+  "name": "Perisai Tanah",
+  "path": "formation",
+  "element": "earth",
+  "type": "technique",
+  "qi_cost": 6,
+  "power": 0,
+  "effects": [
+    {"status": "barrier", "duration": 3}
+  ],
+  "requires": {"tier": "qi_condensation"}
+}

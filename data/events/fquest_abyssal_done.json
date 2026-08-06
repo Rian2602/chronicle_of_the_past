@@ -1,0 +1,11 @@
+{
+  "id": "fquest_abyssal_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_abyssal"}
+  ],
+  "actions": [
+    {"kind": "log", "text": "Cacing abyss runtuh, tubuhnya hancur menjadi debu abu. Penunggu Hutan mengangguk: 'Keseimbangan pulih. Terima kasih, kultivator fondasi.'"},
+    {"kind": "grant_item", "id": "ramuan_meridian", "count": 1}
+  ],
+  "once": true
+}

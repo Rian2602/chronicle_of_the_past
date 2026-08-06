@@ -1,0 +1,7 @@
+{
+  "id": "pil_pemahaman",
+  "name": "Pil Pemahaman",
+  "type": "consumable",
+  "description": "Kecerdasan tertuang dalam pil. Pemahaman mengalir seperti air.",
+  "effect": {"add_insight": 50}
+}

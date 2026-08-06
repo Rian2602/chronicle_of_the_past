@@ -6,7 +6,19 @@ from pathlib import Path
 from src.engine.maps import load_maps
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "npc"
-EXPECTED_NPCS = {"elder_mao", "lin_wei"}
+EXPECTED_NPCS = {
+    "elder_mao",
+    "lin_wei",
+    "fang_yue",
+    "diakon_soren",
+    "guntur",
+    "jati",
+    "mira",
+    "penunggu_hutan",
+    "kultisi_merah",
+    "penjaga_abyss",
+    "pedagang_kelana",
+}
 REQUIRED_KEYS = {"id", "name", "location", "greeting", "dialog"}
 
 

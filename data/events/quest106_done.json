@@ -1,0 +1,14 @@
+{
+  "id": "quest106_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest106"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest107"},
+    {
+      "kind": "log",
+      "text": "Di antara debris arsip, kau menemukan gulungan tak terbakar sepenuhnya. Nama-nama terukir di dalamnya — dan di antaranya, nama Lin Wei berulang kali tercoret lalu ditulis kembali. Seperti seseorang mencoba menghapus jejaknya."
+    }
+  ],
+  "once": true
+}

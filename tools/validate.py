@@ -83,6 +83,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         "buff_defense",
         "buff_attack",
         "resist_poison",
+        "cure_poison",
     }
     npcs = _npc_records(data_dir / "npc")
     tiers = {tier.id for tier in load_tiers(data_dir / "cultivation")}

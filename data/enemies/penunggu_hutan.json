@@ -1,0 +1,20 @@
+{
+  "id": "penunggu_hutan",
+  "name": "Penunggu Hutan",
+  "tier": "foundation_establishment",
+  "element": "wood",
+  "behavior": "defensive",
+  "stats": {
+    "attack": 22,
+    "defense": 18,
+    "agility": 12,
+    "intelligence": 15,
+    "vitality": 20,
+    "spirit": 18,
+    "hp": 180,
+    "qi": 70
+  },
+  "skills": ["vine_grasp", "serbuan_akar"],
+  "tags": ["spirit", "guardian"],
+  "rewards": {"insight": 100, "gold": 60}
+}

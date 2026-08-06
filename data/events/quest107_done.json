@@ -1,0 +1,14 @@
+{
+  "id": "quest107_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest107"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest108"},
+    {
+      "kind": "log",
+      "text": "Lin Wei menatapmu dengan mata basah: 'Aku bukan saudaramu. Aku... aku dikirim untuk mengawasimu. Tapi along the way, aku mulai peduli. Nama di dinding itu — namamu. Kamu adalah Anak yang Ditunggu.'"
+    }
+  ],
+  "once": true
+}

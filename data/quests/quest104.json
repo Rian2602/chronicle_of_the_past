@@ -1,0 +1,15 @@
+{
+  "id": "quest104",
+  "title": "Kabar yang Tak Boleh Keluar",
+  "type": "main",
+  "description": "Sesepuh Mao meminta kau bicara dengan Lin Wei tentang gulungan kuil. Lin Wei tampak gelisah dan menolak bicara di tempat terbuka.",
+  "objectives": [
+    {"kind": "talk", "target": "elder_mao"},
+    {"kind": "talk", "target": "lin_wei"}
+  ],
+  "rewards": {"insight": 40, "gold": 20, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest104_done"],
+  "next": "quest105",
+  "category": "main",
+  "requires_flag": "quest103_done"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "penebus_orde_suci",
+  "name": "Penebus Orde Suci",
+  "tier": "qi_condensation",
+  "element": "fire",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 14,
+    "defense": 5,
+    "agility": 6,
+    "intelligence": 4,
+    "vitality": 4,
+    "spirit": 5,
+    "hp": 55,
+    "qi": 20
+  },
+  "skills": ["flame_strike"],
+  "tags": ["human", "holy_order"],
+  "rewards": {"insight": 35, "gold": 25}
+}

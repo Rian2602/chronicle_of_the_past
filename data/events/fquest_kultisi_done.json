@@ -1,0 +1,11 @@
+{
+  "id": "fquest_kultisi_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_kultisi"}
+  ],
+  "actions": [
+    {"kind": "log", "text": "Kultisi Merah runtuh, apinya padam. Diakon Soren datang dan mengangguk: 'Orde Suci berterima kasih. Kemurnian dijaga.'"},
+    {"kind": "grant_item", "id": "esensi_api", "count": 2}
+  ],
+  "once": true
+}

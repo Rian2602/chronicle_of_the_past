@@ -1,0 +1,14 @@
+{
+  "id": "quest104_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest103_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest104"},
+    {
+      "kind": "log",
+      "text": "Sesepuh Mao memanggilmu ke samping. 'Gulungan itu... bukan sekadar ujian. Ada nama di sana yang aku kenal. Lin Wei tahu lebih banyak dari yang dia akui. Pergi, bicarakan dengannya — di tempat yang sunyi.'"
+    }
+  ],
+  "once": true
+}

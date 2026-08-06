@@ -21,7 +21,18 @@ REQUIRED_KEYS = {
 ELEMENTS = {"metal", "wood", "earth", "water", "fire"}
 PATHS = {"sword", "alchemy", "formation", "spirit"}
 TYPES = {"physical", "technique"}
-EXPECTED_TECHNIQUES = {"qi_slash", "flame_strike", "frost_bind"}
+EXPECTED_TECHNIQUES = {
+    "qi_slash",
+    "flame_strike",
+    "frost_bind",
+    "vine_grasp",
+    "earth_charge",
+    "serbuan_akar",
+    "perisai_tanah",
+    "iblis_pedang",
+    "benteng_meridian",
+    "senjata_roh",
+}
 
 
 def test_terdapat_file_teknik_yang_diharapkan():

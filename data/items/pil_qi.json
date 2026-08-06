@@ -1,0 +1,7 @@
+{
+  "id": "pil_qi",
+  "name": "Pil Qi",
+  "type": "consumable",
+  "description": "Mengalirkan qi yang macet. Hangat di perut, jernih di pikiran.",
+  "effect": {"restore_qi": 30}
+}

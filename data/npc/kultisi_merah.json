@@ -1,0 +1,11 @@
+{
+  "id": "kultisi_merah",
+  "name": "Kultisi Merah",
+  "location": "ashfall_forest",
+  "greeting": "Api membara dalam diriku... Kau juga ingin terbakar?",
+  "dialog": [
+    "Kultisi Merah tersenyum menakutkan: 'Orde Suci itu pengecut. Mereka takut api. Kami memeluknya.'",
+    "'Kau datang untuk menghentikan kami? Mencoba saja. Api kami tak akan padam.'",
+    "'Atau... kau mau bergabung? Kami butuh darah segar untuk ritual Api Abadi.'"
+  ]
+}

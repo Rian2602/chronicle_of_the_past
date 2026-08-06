@@ -74,6 +74,8 @@ AVAILABLE = {
     "save",
     "load",
     "quit",
+    "choose",
+    "use",
 }
 
 
@@ -155,6 +157,7 @@ class GameSession:
             "Perintah tersedia:",
             "  help status map inventory quests memories party",
             "  go <lokasi> look talk <nama> cultivate breakthrough rest",
+            "  refine <resep> formation <nama> equip use <item>",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
@@ -209,6 +212,50 @@ class GameSession:
             # §25.3 menjamin event->item ter-resolve.
             name = names.get(item_id, {}).get("name", item_id)
             lines.append(f"  {name} x{count}")
+        return lines
+
+    def _cmd_use(self, command: Command) -> list[str]:
+        """Pakai item konsumabel di luar combat (GDD §18.2).
+
+        Efek non-combat (heal_hp, restore_qi, add_insight, add_meridian)
+        diterapkan segera. Efek combat-ready (buff_*) diparse tapi tidak
+        dieksekusi.
+        """
+        if not command.args:
+            return ["Pakai apa? Contoh: use <nama_item>."]
+        item_id = command.args[0]
+        items = self.state.inventory.get("items", {})
+        if items.get(item_id, 0) <= 0:
+            return [f"Kamu tidak punya {item_id} di tas."]
+        items[item_id] -= 1
+        if items[item_id] == 0:
+            del items[item_id]
+        catalog = load_items()
+        item = catalog.get(item_id)
+        if item is None:
+            return [f"Item '{item_id}' tidak dikenal di data."]
+        lines = [f"Kamu memakai {item['name']}."]
+        effect = item.get("effect")
+        player = self.state.player
+        if effect:
+            if effect.get("heal_hp"):
+                player.hp = min(player.hp_max, player.hp + effect["heal_hp"])
+                lines.append(f"HP pulih {effect['heal_hp']}.")
+            if effect.get("restore_qi"):
+                player.qi = min(player.qi_max, player.qi + effect["restore_qi"])
+                lines.append(f"Qi pulih {effect['restore_qi']}.")
+            if effect.get("add_insight"):
+                player.add_insight(effect["add_insight"])
+                lines.append(f"Insight +{effect['add_insight']}.")
+            if effect.get("add_meridian"):
+                player.meridian_buka = min(
+                    8, player.meridian_buka + effect["add_meridian"]
+                )
+                lines.append(f"Meridian terbuka ({player.meridian_buka}/8).")
+            # ponytail: effect combat (buff_*/resist_*) diparse tapi tak
+            # dieksekusi; eksekusi saat engine combat diperluas (Fase 2).
+        lines += self._run_quests()
+        lines += self._run_events()
         return lines
 
     def _cmd_quests(self, _command: Command) -> list[str]:
@@ -423,6 +470,46 @@ class GameSession:
     def _cmd_quit(self, _command: Command) -> list[str]:
         self.quit_requested = True
         return ["Sampai jumpa, kultivator."]
+
+    def _cmd_choose(self, command: Command) -> list[str]:
+        """Pilih opsi dari prompt_choice event (Sprint 1 - Choice Engine).
+
+        Hanya jalan saat TIDAK dalam battle. Menerapkan opsi yang dipilih:
+        set_flag, change_reputation, log. Lalu clear pending_choice dan
+        jalankan cascade quest+event.
+        """
+        if self.in_battle:
+            return ["Kamu sedang bertarung! (attack/defend/observe/escape)"]
+        if self.state is None:
+            return ["Belum ada permainan. Mulai baru atau muat save."]
+        pending = self.state.flags.get("pending_choice")
+        if not pending:
+            return [
+                "Tidak ada pilihan aktif. Tunggu event yang meminta keputusan."
+            ]
+        options = pending.get("options", [])
+        if not command.args:
+            return ["Pilih opsi: choose <key> (contoh: choose a)"]
+        key = command.args[0]
+        chosen = next((opt for opt in options if opt["key"] == key), None)
+        if chosen is None:
+            valid = ", ".join(opt["key"] for opt in options)
+            return [f"Opsi '{key}' tidak valid. Pilihan: {valid}"]
+        # Terapkan opsi yang dipilih
+        lines: list[str] = []
+        if "set_flag" in chosen:
+            self.state.flags[chosen["set_flag"]] = True
+        if "change_reputation" in chosen:
+            for faction, delta in chosen["change_reputation"].items():
+                self.state.add_reputation(faction, delta)
+        if "log" in chosen:
+            lines.append(chosen["log"])
+        # Clear pending_choice
+        self.state.flags.pop("pending_choice", None)
+        # Cascade quest + event (sama seperti perintah dunia lain)
+        lines.extend(self._run_quests())
+        lines.extend(self._run_events())
+        return lines
 
     def _advance_hours(self, hours: int) -> None:
         """Majukan jam game dengan rollover ke hari berikutnya (§19.2)."""

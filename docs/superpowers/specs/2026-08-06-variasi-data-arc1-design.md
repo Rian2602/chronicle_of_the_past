@@ -26,10 +26,11 @@ data terpakai (bukan mati), dan tidak menghapus/mengganti data eksisting.
   untuk musuh DAN teknik — tidak ada dominasi satu elemen.
 - **Musuh:** mix `tags` (`beast`/`human`/`undead`/`spirit`), `behavior`
   (`aggressive`/`defensive`/`passive`), reward bervariasi.
-- **Teknik:** mix `type` (`physical`/`technique`/`buff`), efek status (§16:
-  burn/poison/weaken/strengthen/dll), jalur terdistribusi (sword/alchemy/
-  formation/soul). Teknik diberikan **otomatis dari tier** (derive
-  `_get_player_techniques`, GDD §4.1) — cukup punya `requires.tier`.
+- **Teknik:** mix `type` (`physical`/`technique` — skema & test membatasi,
+  tidak ada tipe `buff`), efek status (§16: burn/poison/weaken/strengthen/
+  dll), jalur terdistribusi (sword/alchemy/formation/spirit). Teknik
+  diberikan **otomatis dari tier** (derive `_get_player_techniques`,
+  GDD §4.1) — cukup punya `requires.tier`.
 - **Item:** pill heal/qi/insight/meridian + beberapa siap-combat.
 - **Nada grimdark** (GDD §3.6) untuk semua `name`/`description`/`text`.
 - **Sebaran tier:** mayoritas Arc 1 (`qi_condensation`), beberapa fondasi
@@ -94,6 +95,9 @@ Tidak menyentuh `player.py` (stabil).
 
 Setiap item baru di-grant minimal 1× (event atau quest reward) supaya tidak
 mati. Setiap musuh baru dipakai minimal 1× (spawn peta atau target quest).
+
+> **Catatan jalur:** jalur `soul` di GDD §5.2 dinamai `spirit` di data
+> (PATHS test = `{sword, alchemy, formation, spirit}`).
 
 ---
 

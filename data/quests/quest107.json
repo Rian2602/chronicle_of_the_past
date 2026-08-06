@@ -1,0 +1,14 @@
+{
+  "id": "quest107",
+  "title": "Nama di Dinding",
+  "type": "main",
+  "description": "Di arsip kuil, kau menemukan nama Lin Wei berulang kali. Lin Wei mengaku ia tahu rahasia masa lalumu — dan harus memilih apakah akan membukakannya.",
+  "objectives": [
+    {"kind": "talk", "target": "lin_wei"}
+  ],
+  "rewards": {"insight": 70, "gold": 35, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest107_done"],
+  "next": "quest108",
+  "category": "main",
+  "requires_flag": "quest106_done"
+}

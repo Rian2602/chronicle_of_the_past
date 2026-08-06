@@ -1,0 +1,20 @@
+{
+  "id": "pembelot_pemberontak",
+  "name": "Pembelot Pemberontak",
+  "tier": "qi_condensation",
+  "element": "water",
+  "behavior": "tactical",
+  "stats": {
+    "attack": 13,
+    "defense": 6,
+    "agility": 7,
+    "intelligence": 5,
+    "vitality": 4,
+    "spirit": 3,
+    "hp": 50,
+    "qi": 18
+  },
+  "skills": ["frost_bind"],
+  "tags": ["human", "traitor"],
+  "rewards": {"insight": 25, "gold": 18}
+}

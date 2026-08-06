@@ -1,0 +1,11 @@
+{
+  "id": "fang_yue",
+  "name": "Fang Yue",
+  "location": "sect_azure",
+  "greeting": "Kau datang. Baik. Gulungan kuil tidak bohong.",
+  "dialog": [
+    "Fang Yue menatapmu tajam: 'Sekte Awan Biru bukan tempat berlatih biasa. Kami melatih mereka yang dipilih — dan menyingkirkan yang tidak.'",
+    "'Kamu memiliki bakat aneh. Itu bisa dilihat dari meridianmu. Pilih jalurmu: Pedang, Alkimia, Formasi, atau Jiwa.'",
+    "'Pilihlah dengan hati-hati. Jalur utamamu gratis; jalur lain... mahal.'"
+  ]
+}

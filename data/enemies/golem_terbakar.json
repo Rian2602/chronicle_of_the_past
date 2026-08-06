@@ -1,0 +1,20 @@
+{
+  "id": "golem_terbakar",
+  "name": "Golem Terbakar",
+  "tier": "foundation_establishment",
+  "element": "fire",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 25,
+    "defense": 20,
+    "agility": 8,
+    "intelligence": 10,
+    "vitality": 25,
+    "spirit": 12,
+    "hp": 200,
+    "qi": 60
+  },
+  "skills": ["flame_strike"],
+  "tags": ["construct", "boss"],
+  "rewards": {"insight": 120, "gold": 80}
+}

@@ -1,0 +1,11 @@
+{
+  "id": "penunggu_hutan",
+  "name": "Penunggu Hutan",
+  "location": "hutan_kelabu",
+  "greeting": "Kau berani masuk ke wilayahku, kultivator?",
+  "dialog": [
+    "Penunggu Hutan menatapmu dengan mata yang sudah melihat ribuan musim: 'Cacing abyss telah membangun sarang di gua abyss. Keseimbangan hutan terancam.'",
+    "'Kalau kau benar-benar kultivator fondasi, bantu kami. Basmi cacing itu, dan aku akan memberimu hadiah berharga.'",
+    "'Tapi ingat... cacing itu bukan musuh biasa. Ia makan qi dan mengeluarkan racun mematikan.'"
+  ]
+}

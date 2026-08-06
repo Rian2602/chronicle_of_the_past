@@ -9,7 +9,24 @@ from src.engine.quest import QUEST_KINDS
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "quests"
 NPC_DIR = Path(__file__).resolve().parents[1] / "data" / "npc"
-EXPECTED_QUESTS = {"quest101", "quest102", "quest103"}
+EXPECTED_QUESTS = {
+    "quest101",
+    "quest102",
+    "quest103",
+    "quest104",
+    "quest105",
+    "quest106",
+    "quest107",
+    "quest108",
+    "quest201",
+    "fquest_rebels_kiriman",
+    "fquest_holyorder_mata",
+    "fquest_hutan_ember",
+    "fquest_abyssal",
+    "fquest_kultisi",
+    "fquest_pelipur",
+    "fquest_fondasi",
+}
 REQUIRED_KEYS = {
     "id",
     "title",

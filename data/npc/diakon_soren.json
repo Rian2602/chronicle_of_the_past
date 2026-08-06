@@ -1,0 +1,11 @@
+{
+  "id": "diakon_soren",
+  "name": "Diakon Soren",
+  "location": "village_emberfall",
+  "greeting": "Orde Suci tidak melupakan. Kami mencari kemurnian.",
+  "dialog": [
+    "Diakon Soren menatapmu dengan mata yang tajam: 'Kau telah lulus ujian kuil. Orde Suci mengamati langkahmu.'",
+    "'Ada seorang peziarah dari selatan yang membawa berita. Dia menunggu di balai desa. Bicara dengannya — lalu laporkan padaku apa yang kau dengar.'",
+    "'Pilih kata-katamu dengan hati-hati. Orde Suci tidak mengampuni kebohongan.'"
+  ]
+}

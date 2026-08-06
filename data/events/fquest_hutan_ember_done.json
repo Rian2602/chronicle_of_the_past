@@ -1,0 +1,11 @@
+{
+  "id": "fquest_hutan_ember_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_hutan_ember"}
+  ],
+  "actions": [
+    {"kind": "log", "text": "Api di hutan padam. Jati tersenyum lelah: 'Kamu selamatkan kami. Rebels tidak akan melupakan jasa ini.'"},
+    {"kind": "grant_item", "id": "pil_pemulih", "count": 1}
+  ],
+  "once": true
+}

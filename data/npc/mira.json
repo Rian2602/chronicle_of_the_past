@@ -1,0 +1,11 @@
+{
+  "id": "mira",
+  "name": "Mira",
+  "location": "village_emberfall",
+  "greeting": "Anakku... anakku pergi ke hutan dan tidak pulang.",
+  "dialog": [
+    "Mira menatap ke arah hutan dengan mata berkaca-kaca: 'Tiga hari lalu, Bayu pergi mencari kayu. Malam itu babi hutan Qi menyerang... aku temukan jejak darah tapi tidak ada jasad.'",
+    "'Lin Wei bilang dia akan bantu cari. Tapi Lin Wei juga pergi ke kuil. Siapa yang akan mencari anakku sekarang?'",
+    "'Kalau kau ke hutan... tolong, carikan Bayu. Hidup atau... setidaknya bawa pulang cincinnya.'"
+  ]
+}

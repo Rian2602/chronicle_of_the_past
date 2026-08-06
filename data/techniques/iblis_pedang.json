@@ -1,0 +1,13 @@
+{
+  "id": "iblis_pedang",
+  "name": "Iblis Pedang",
+  "path": "sword",
+  "element": "metal",
+  "type": "physical",
+  "qi_cost": 14,
+  "power": 14,
+  "effects": [
+    {"status": "weaken", "duration": 3, "chance": 0.3}
+  ],
+  "requires": {"tier": "foundation_establishment"}
+}

@@ -35,6 +35,13 @@ EXPECTED_ENEMIES = {
     "bandit_perbatasan",
     "zombie_temple",
     "penjaga_makam",
+    "penjaga_arsip",
+    "babi_hutan_qi",
+    "pembelot_pemberontak",
+    "penebus_orde_suci",
+    "golem_terbakar",
+    "abyssal_worm",
+    "penunggu_hutan",
 }
 
 
