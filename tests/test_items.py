@@ -52,3 +52,34 @@ def test_load_items_item_tanpa_effect_tetap_lolos(tmp_path):
     items = load_items(item_dir)
     assert items["pil_lama"]["name"] == "Pil Lama"
     assert items["pil_lama"].get("effect") is None
+
+
+def test_load_items_membaca_field_price(tmp_path):
+    """Loader item membawa field price (harga beli dasar, GDD §7)."""
+    item_dir = tmp_path / "items"
+    item_dir.mkdir()
+    (item_dir / "pil_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "pil_uji",
+                "name": "Pil Uji",
+                "price": 50,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    items = load_items(item_dir)
+    assert items["pil_uji"]["price"] == 50
+
+
+def test_load_items_item_tanpa_price_tetap_lolos(tmp_path):
+    """Item tanpa price (tidak diperjualbelikan) bernilai None."""
+    item_dir = tmp_path / "items"
+    item_dir.mkdir()
+    (item_dir / "pil_lama.json").write_text(
+        json.dumps({"id": "pil_lama", "name": "Pil Lama"}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    items = load_items(item_dir)
+    assert items["pil_lama"].get("price") is None
