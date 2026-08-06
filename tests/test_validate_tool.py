@@ -420,6 +420,27 @@ def test_validator_menangkap_ref_learn_recipe_target(tmp_path):
     assert any("pil_hantu" in e for e in errors)
 
 
+def test_validator_menangkap_ref_skill_rekan(tmp_path):
+    """Rekan dengan skill tak dikenal wajib dilaporkan (GDD §20.3)."""
+    data = _pohon_data(tmp_path)
+    (data / "companions").mkdir()
+    (data / "companions" / "rekan_test.json").write_text(
+        json.dumps(
+            {
+                "id": "rekan_test",
+                "name": "Rekan Uji",
+                "tier": "qi_condensation",
+                "element": "fire",
+                "stats": {"hp": 20, "qi": 5},
+                "skills": ["hantu_kuno"],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    assert any("hantu_kuno" in e for e in collect_errors(data))
+
+
 def test_validator_data_lulus(tmp_path):
     """Validator berjalan tanpa temuan dan keluar kode 0 (AGENTS.md §1)."""
     result = subprocess.run(

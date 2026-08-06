@@ -28,6 +28,7 @@ from src.engine.maps import load_maps  # noqa: E402
 from src.engine.quest import load_quests  # noqa: E402
 from src.engine.shop import load_shops  # noqa: E402
 from src.engine.story import load_memories  # noqa: E402
+from src.models.party import load_companions  # noqa: E402
 
 DATA_DIR = ROOT / "data"
 
@@ -93,6 +94,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     techniques = {
         technique.id for technique in load_techniques(data_dir / "techniques")
     }
+    companions = load_companions(data_dir / "companions")
 
     errors: list[str] = []
     for quest in quests.values():
@@ -169,6 +171,19 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         for skill in enemy.skills:
             if skill not in techniques:
                 errors.append(f"{enemy.id}: skill {skill} tidak ada")
+
+    # Rekan (GDD §20.3): tier, elemen, dan teknik wajib ter-resolve.
+    valid_elements = {"metal", "wood", "earth", "water", "fire", "netral"}
+    for companion in companions:
+        if companion.tier not in tiers:
+            errors.append(f"{companion.id}: tier {companion.tier} tidak ada")
+        if companion.element not in valid_elements:
+            errors.append(
+                f"{companion.id}: elemen {companion.element} tidak valid"
+            )
+        for skill in companion.skills:
+            if skill not in techniques:
+                errors.append(f"{companion.id}: skill {skill} tidak ada")
 
     for map_id, raw in maps.items():
         for entry in raw.get("enemies", []):

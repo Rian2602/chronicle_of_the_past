@@ -225,3 +225,24 @@ def test_migrasi_v1_ke_v2_menambah_shop_sold(tmp_path):
     loaded = load_game("save1", tmp_path)
     assert loaded.shop_sold == {}
     assert loaded.player.gold == 10
+
+
+def test_save_roundtrip_party(tmp_path):
+    """Field party (schema v2) tersimpan & termuat utuh (GDD §19.2)."""
+    from src.models.party import Companion
+
+    state = _state()
+    companion = Companion(
+        id="lin_wei",
+        name="Lin Wei",
+        tier="qi_condensation",
+        element="wood",
+        stats={"hp": 30, "qi": 8},
+        skills=["qi_slash"],
+        bond_xp=25,
+    )
+    state.party = [companion.to_dict()]
+    save_game(state, "save1", tmp_path)
+    loaded = load_game("save1", tmp_path)
+    assert loaded.party[0]["id"] == "lin_wei"
+    assert loaded.party[0]["bond_xp"] == 25
