@@ -754,9 +754,10 @@ def test_refine_tanpa_resep_dipelajari_ditolak(tmp_path):
     session.state.inventory.setdefault("items", {})["esensi_api"] = 2
     session.state.inventory.setdefault("items", {})["esensi_tanah"] = 1
     lines = _dispatch(session, "refine pil_pemulih")
-    assert any(
-        "pelajari" in line.lower() or "resep" in line.lower() for line in lines
-    )
+    # Pesan utuh satu baris (regresi: sebelumnya terbelah 2 baris).
+    refused = [line for line in lines if "belum mempelajari" in line]
+    assert len(refused) == 1
+    assert "Beli dan pakai item resepnya dulu." in refused[0]
     assert session.state.inventory["items"]["esensi_api"] == 2
 
 

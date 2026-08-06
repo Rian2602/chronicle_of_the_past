@@ -20,3 +20,6 @@ saves/
 
 # Knowledge graph (AGENTS.md §4)
 graphify-out/
+
+# Tooling (uv)
+uv.lock

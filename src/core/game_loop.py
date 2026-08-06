@@ -441,10 +441,11 @@ class GameSession:
         if not recipe:
             return [f"{item['name']} tidak memiliki resep."]
         if not self.state.flags.get(f"recipe_{target_id}_known"):
-            return [
-                f"Kamu belum mempelajari resep {item['name']}. ",
-                "Beli dan pakai item resepnya dulu.",
-            ]
+            msg = (
+                f"Kamu belum mempelajari resep {item['name']}. "
+                "Beli dan pakai item resepnya dulu."
+            )
+            return [msg]
         items = self.state.inventory.setdefault("items", {})
         if items.get("kuali_roh", 0) <= 0:
             return ["Kamu butuh Kuali Roh untuk meracik."]
