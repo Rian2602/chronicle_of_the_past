@@ -89,6 +89,8 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         "buff_attack",
         "resist_poison",
         "cure_poison",
+        "growth_stat",
+        "max_level",
     }
     npcs = _npc_records(data_dir / "npc")
     dialogs = load_dialogs(data_dir / "dialogues")

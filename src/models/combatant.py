@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 from src.models.enemy import Enemy
 from src.models.party import Companion
@@ -55,6 +56,7 @@ def combatant_from_player(
     player: Player,
     skills: list[str] | None = None,
     element: str = "netral",
+    state: Any = None,
 ) -> Combatant:
     """Buat Combatant dari Player; stat efektif memperhitungkan cedera.
 
@@ -64,7 +66,11 @@ def combatant_from_player(
     combatant = Combatant(
         name=player.name,
         element=element,
-        stats=dict(player.effective_stats),
+        stats=(
+            dict(player.effective_stats_with_gear(state))
+            if state
+            else dict(player.effective_stats)
+        ),
         hp_max=player.hp_max,
         qi_max=player.qi_max,
         qi_regen=player.qi_regen,

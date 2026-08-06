@@ -1,0 +1,10 @@
+{
+  "id": "cermin_bayangan",
+  "name": "Cermin Bayangan",
+  "type": "artifact",
+  "description": "Artefak kuno yang memantulkan ilusi jiwa. Menyerap sisa-sisa qi di udara untuk memperkuat penggunanya.",
+  "effect": {
+    "growth_stat": "attack",
+    "max_level": 5
+  }
+}

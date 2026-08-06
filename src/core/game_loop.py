@@ -102,6 +102,8 @@ AVAILABLE = {
     "sell",
     "refine",
     "swap",
+    "equip",
+    "unequip",
 }
 
 
@@ -279,6 +281,52 @@ class GameSession:
             else:
                 lines.append(f"  {name} x{count}")
         return lines
+
+    def _cmd_equip(self, command: Command) -> list[str]:
+        if not command.args:
+            return ["Equip apa?"]
+        item_id = command.args[0]
+        if item_id not in self.state.inventory["items"]:
+            return [f"Tidak ada {item_id} di tas."]
+
+        from src.engine.items import load_items
+        catalog = load_items()
+        item_def = catalog.get(item_id)
+        if not item_def or item_def.get("type") != "artifact":
+            return [f"{item_id} bukan artefak dan tidak bisa dipasang."]
+
+        if len(self.state.inventory["equipped"]) >= 1:
+            return [
+                "Hanya bisa memakai 1 artefak sekaligus. "
+                "Lepas (unequip) yang lama dulu."
+            ]
+
+        # Pindah dari items ke equipped
+        count = self.state.inventory["items"].pop(item_id)
+        self.state.inventory["equipped"][item_id] = count
+
+        # Inisialisasi data artefak secara malas (lazy)
+        if item_id not in self.state.inventory["artifacts"]:
+            self.state.inventory["artifacts"][item_id] = {"level": 1, "xp": 0}
+
+        return [f"Memakai {item_def['name']}."]
+
+    def _cmd_unequip(self, command: Command) -> list[str]:
+        if not command.args:
+            return ["Unequip apa?"]
+        item_id = command.args[0]
+        if item_id not in self.state.inventory["equipped"]:
+            return [f"Kamu tidak sedang memakai {item_id}."]
+
+        count = self.state.inventory["equipped"].pop(item_id)
+        inventory = self.state.inventory.setdefault("items", {})
+        inventory[item_id] = inventory.get(item_id, 0) + count
+
+        from src.engine.items import load_items
+        catalog = load_items()
+        item_def = catalog.get(item_id)
+        name = item_def["name"] if item_def else item_id
+        return [f"Melepas {name}."]
 
     def _cmd_use(self, command: Command) -> list[str]:
         """Pakai item konsumabel di luar combat (GDD §18.2).
@@ -1375,7 +1423,9 @@ class GameSession:
         enemy = next((e for e in load_enemies() if e.id == enemy_id), None)
         if enemy is None:
             raise ValueError(f"musuh tidak dikenal: {enemy_id}")
-        ally = combatant_from_player(player, skills=self.player_skills)
+        ally = combatant_from_player(
+            player, skills=self.player_skills, state=self.state
+        )
         # Terapkan buff item (GDD §7): buff_<stat> menambah stat langsung;
         # resist_<x> tercatat di stats (dibaca engine combat Fase 2).
         # Buff dikonsumsi setelah battle (sekali pakai).
@@ -1541,6 +1591,17 @@ class GameSession:
         if battle.winner == "allies":
             rewards = enemy.rewards if enemy is not None else {}
             player.add_insight(rewards.get("insight", 0))
+            insight_gained = rewards.get("insight", 0)
+            if insight_gained > 0:
+                from src.engine.items import add_artifact_xp
+                for item_id in list(self.state.inventory["equipped"].keys()):
+                    if item_id in self.state.inventory["artifacts"]:
+                        if add_artifact_xp(self.state, item_id, insight_gained):
+                            battle.log.append(
+                                f"  [violet]Artefak {item_id} telah "
+                                "menyerap energi dan naik level![/]"
+                            )
+
             player.gold += rewards.get("gold", 0)
             self.state.flags[f"{self.state.location}_cleared"] = True
             if enemy is not None:

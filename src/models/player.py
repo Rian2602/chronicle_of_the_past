@@ -79,6 +79,27 @@ class Player:
             for key, value in self.stats.items()
         }
 
+    def effective_stats_with_gear(self, state: Any) -> dict[str, int]:
+        """Hitung stat dengan bonus dari artefak yang di-equip."""
+        stats = self.effective_stats.copy()
+        from src.engine.items import load_items
+        catalog = load_items()
+
+        for item_id, _ in state.inventory["equipped"].items():
+            artifact_state = state.inventory["artifacts"].get(item_id)
+            item_def = catalog.get(item_id)
+            if (
+                artifact_state
+                and item_def
+                and item_def.get("type") == "artifact"
+            ):
+                # ponytail: flat bonus dikalikan level
+                growth = item_def.get("effect", {}).get("growth_stat", "attack")
+                bonus = artifact_state["level"] * 2
+                stats[growth] = stats.get(growth, 0) + bonus
+        return stats
+
+
     def add_insight(self, amount: int) -> None:
         """Tambahkan pemahaman (XP kultivasi, §4.3)."""
         if amount < 0:

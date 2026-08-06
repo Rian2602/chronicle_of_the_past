@@ -47,3 +47,19 @@ def load_items(data_dir: Path = ITEM_DIR) -> dict[str, dict[str, Any]]:
             "recipe": raw.get("recipe"),
         }
     return items
+
+
+def add_artifact_xp(state: Any, artifact_id: str, amount: int) -> bool:
+    """Tambahkan XP ke artefak; kembalikan True jika naik level."""
+    if artifact_id not in state.inventory["artifacts"]:
+        return False
+    artifact = state.inventory["artifacts"][artifact_id]
+    artifact["xp"] += amount
+    leveled_up = False
+
+    # ponytail: hardcoded butuh 100 XP per level, maks level 5
+    while artifact["level"] < 5 and artifact["xp"] >= artifact["level"] * 100:
+        artifact["xp"] -= artifact["level"] * 100
+        artifact["level"] += 1
+        leveled_up = True
+    return leveled_up
