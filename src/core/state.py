@@ -155,8 +155,7 @@ class GameState:
             "time": self.time.to_dict(),
             "settings": dict(self.settings),
             "shop_sold": {
-                shop_id: dict(sold)
-                for shop_id, sold in self.shop_sold.items()
+                shop_id: dict(sold) for shop_id, sold in self.shop_sold.items()
             },
         }
 

@@ -221,9 +221,7 @@ def test_migrasi_v1_ke_v2_menambah_shop_sold(tmp_path):
         "time": {"day": 1, "hour": 8},
         "settings": {},
     }
-    (tmp_path / "save1.json").write_text(
-        json.dumps(raw), encoding="utf-8"
-    )
+    (tmp_path / "save1.json").write_text(json.dumps(raw), encoding="utf-8")
     loaded = load_game("save1", tmp_path)
     assert loaded.shop_sold == {}
     assert loaded.player.gold == 10

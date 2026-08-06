@@ -68,9 +68,7 @@ def test_shop_sold_roundtrip():
 def test_shop_sold_bentuk_salah_ditolak():
     """shop_sold bukan dict (save korup) ditolak keras, tanpa crash."""
     with pytest.raises(ValueError):
-        GameState.from_dict(
-            {"player": {"name": "Akar"}, "shop_sold": "rusak"}
-        )
+        GameState.from_dict({"player": {"name": "Akar"}, "shop_sold": "rusak"})
 
 
 def test_to_dict_memiliki_semua_kunci_skema():

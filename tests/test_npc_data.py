@@ -30,11 +30,15 @@ def test_terdapat_file_npc_yang_diharapkan():
 
 
 def test_semua_npc_memenuhi_skema():
-    """Setiap NPC memenuhi skema minimal: id/name/location/greeting/dialog."""
+    """Setiap NPC memenuhi skema minimal: id/name/location/greeting/dialog.
+
+    Field opsional diizinkan (mis. ``shop`` untuk NPC pedagang, GDD §7);
+    asersi memakai subset, bukan kesetaraan kunci.
+    """
     known_locations = set(load_maps())
     for path in DATA_DIR.glob("*.json"):
         data = json.loads(path.read_text(encoding="utf-8"))
-        assert set(data) == REQUIRED_KEYS, f"{path.name}: kunci tidak sesuai"
+        assert REQUIRED_KEYS <= set(data), f"{path.name}: kunci tidak sesuai"
         assert isinstance(data["id"], str) and data["id"] == path.stem
         assert isinstance(data["name"], str) and data["name"]
         assert data["location"] in known_locations, (
