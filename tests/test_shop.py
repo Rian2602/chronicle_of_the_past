@@ -89,6 +89,11 @@ def test_shop_menampilkan_stok_dan_harga(tmp_path):
     assert "Esensi Api" in joined
     assert "50 emas" in joined
     assert "sisa 3" in joined
+    # Setelah membeli 1, sisa stok yang ditampilkan ikut diperbarui.
+    session.state.player.gold = 200
+    _dispatch(session, "buy esensi_api 1")
+    joined = "\n".join(_dispatch(session, "shop"))
+    assert "sisa 2" in joined
 
 
 def test_buy_mengurangi_emas_menambah_item_dan_stok(tmp_path):

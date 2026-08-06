@@ -270,6 +270,8 @@ class GameSession:
         """
         if self.state is None:
             return None
+        # ponytail: rescan 11 file NPC tiap panggilan -> cache lokasi->shop
+        # bila jumlah NPC > 50 (GDD §10: 10 NPC final per arc).
         shops = load_shops()
         for npc_path in sorted(NPC_DIR.glob("*.json")):
             npc = json.loads(npc_path.read_text(encoding="utf-8"))
@@ -335,8 +337,8 @@ class GameSession:
         )
         if remaining <= 0:
             return [
-                f"{item_id} sudah habis dijual. ",
-                "Istirahat untuk mengisi ulang dagangan.",
+                f"{item_id} sudah habis dijual. "
+                "Istirahat untuk mengisi ulang dagangan."
             ]
         if count > remaining:
             return [f"Stok {item_id} tinggal {remaining}."]
@@ -347,18 +349,16 @@ class GameSession:
         total = price * count
         if self.state.player.gold < total:
             return [
-                f"Emasmu kurang: butuh {total} ",
-                f"(punya {self.state.player.gold}).",
+                f"Emasmu kurang: butuh {total} (punya "
+                f"{self.state.player.gold})."
             ]
         self.state.player.gold -= total
         inventory = self.state.inventory.setdefault("items", {})
         inventory[item_id] = inventory.get(item_id, 0) + count
         sold = self.state.shop_sold.setdefault(shop_id, {})
         sold[item_id] = sold.get(item_id, 0) + count
-        lines = [
-            f"Kamu membeli {item.get('name', item_id)} x{count} ",
-            f"seharga {total} emas.",
-        ]
+        name = item.get("name", item_id)
+        lines = [f"Kamu membeli {name} x{count} seharga {total} emas."]
         lines += self._run_quests()
         lines += self._run_events()
         return lines
@@ -398,10 +398,8 @@ class GameSession:
         if inventory[item_id] == 0:
             del inventory[item_id]
         self.state.player.gold += total
-        lines = [
-            f"Kamu menjual {item.get('name', item_id)} x{count} ",
-            f"seharga {total} emas.",
-        ]
+        name = item.get("name", item_id)
+        lines = [f"Kamu menjual {name} x{count} seharga {total} emas."]
         lines += self._run_quests()
         lines += self._run_events()
         return lines
