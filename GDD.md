@@ -220,7 +220,7 @@ Metal → Kayu → Tanah → Air → Api → Metal
 
 |Sistem|Deskripsi|
 |-|-|
-|**Alkimia & Pil**|Racik bahan → pil: pil kultivasi (tambah insight), pil penyembuh, pil buff, pil breakthrough. Resep ditemukan/dibeli/dipelajari. Kualitas pil (rendah→surgawi) memengaruhi efek.|
+|**Alkimia & Pil**|Racik bahan → pil: pil kultivasi (tambah insight), pil penyembuh, pil buff, pil breakthrough. Resep DIPELAJARI lewat item `resep_*` (type=recipe, efek `learn_recipe` → flag `recipe_<item>_known`); meracik (`refine`) butuh **Kuali Roh** + bahan sesuai field `recipe` (skema §14.3). Sudah ada 3 resep Arc 1 (pil_pemulih/pil_qi/pil_pemahaman, §22). Kualitas pil (rendah→surgawi) disetel Fase 5.|
 |**Teknik Rahasia**|Skill langka terikat lore; beberapa hanya bisa didapat dari quest faksi, ruang rahasia, atau peti kuno. Bisa di-*equip* (jumlah slot terbatas).|
 |**Artefak & Senjata Roh**|Item bertingkat (Mortil → Roh → Surgawi) yang **tumbuh bersama pemilik** — naik level artefak, bukan diganti. Senjata roh bisa punya "kesadaran" (dialog kecil).|
 |**Binatang Roh**|Rekan spiritual; **rekrut (kalahkan → ikat) ATAU menetas dari telur** — dua-duanya aktif (keputusan final, §24.1). Ikut bertarung, punya elemen & teknik sendiri, bisa berevolusi sekali. Detail: §20.|
@@ -636,7 +636,7 @@ Definisi tunggal stat yang dipakai seluruh sistem. Tidak ada stat di luar daftar
 |`breakthrough` (alias `terobosan`)|Coba terobosan ke tingkatan berikutnya|
 |`meditate` (alias `meditasi`)|Pulihkan qi (lokasi aman)|
 |`rest` (alias `istirahat`)|Lewati hari; pulihkan HP/status|
-|`refine <resep>` (alias `racik`)|Racik pil (butuh resep + bahan + alat)|
+|`refine <item>` (alias `racik`)|Racik pil: butuh resep dipelajari (`use` item `resep_*`) + Kuali Roh + bahan sesuai `recipe`|
 |`formation <nama>` (alias `formasi`)|Pasang/bongkar formasi|
 |`equip` / `unequip`|Pasang/lepas senjata, artefak, teknik|
 |`use <item>`|Pakai item (pil, dll.)|
@@ -820,6 +820,10 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 * Angka halus keseimbangan (damage per skill, harga jual kembali toko) — disetel saat playtest Fase 5. Harga beli toko hidup di `price` data/items; jual kembali sementara 40% (§7).
 
 ### 24.3 Changelog
+
+**v1.2 (2026-08-06)** — Sistem alkimia:
+
+* §7: mekanik belajar resep (item `resep_*`, efek `learn_recipe` → flag `recipe_<item>_known`) + alat `kuali_roh`; §14.3: field `recipe` di item (contoh pil); §18.2: `refine` (butuh resep dipelajari + kuali + bahan); §22: 3 resep Arc 1 terpenuhi (pil_pemulih/pil_qi/pil_pemahaman memakai semua 5 bahan). Pengetahuan resep tersimpan di `flags` — tanpa bump schema save (v2 tetap).
 
 **v1.1 (2026-08-06)** — Sistem toko:
 
