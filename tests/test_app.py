@@ -14,8 +14,8 @@ from textual.widgets import (
     OptionList,
     RichLog,
     Static,
-    TabPane,
     TabbedContent,
+    TabPane,
 )
 
 from src.core.game_loop import GameSession
@@ -134,10 +134,10 @@ async def test_tab_konten_memuat_story_memory_map(tmp_path):
         await pilot.pause()
         await _mulai(app, pilot)
         tabs = app.screen.query_one(TabbedContent)
-        labels = [str(pane.label) for pane in tabs.query(TabPane)]
-        assert any("Story" in label for label in labels)
-        assert any("Memory" in label for label in labels)
-        assert any("Map" in label for label in labels)
+        pane_ids = [pane.id for pane in tabs.query(TabPane)]
+        assert "tab-story" in pane_ids
+        assert "tab-memory" in pane_ids
+        assert "tab-map" in pane_ids
 
 
 @pytest.mark.asyncio
@@ -182,7 +182,7 @@ async def test_pilih_option_status_menampilkan_log(tmp_path):
 
 @pytest.mark.asyncio
 async def test_pilih_option_pergi_ke_hutan_memulai_battle(tmp_path):
-    """Pilih Pergi -> sub-menu -> ashfall_forest -> battle aktif."""
+    """Pilih Pergi -> sub-menu -> ashfall_forest -> Lihat -> battle aktif."""
     app = _app(tmp_path)
     async with app.run_test() as pilot:
         await pilot.pause()
@@ -192,6 +192,11 @@ async def test_pilih_option_pergi_ke_hutan_memulai_battle(tmp_path):
         await pilot.press("enter")
         await pilot.pause()
         _pilih(actions, "ashfall_forest", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        assert app.session.state.location == "ashfall_forest"
+        # Lihat memicu pertarungan melawan Bandit Perbatasan.
+        _pilih(actions, "lihat", pilot)
         await pilot.press("enter")
         await pilot.pause()
         assert app.session.in_battle
@@ -217,14 +222,16 @@ async def test_pilih_option_serang_melakukan_battle_step(tmp_path):
         _pilih(actions, "ashfall_forest", pilot)
         await pilot.press("enter")
         await pilot.pause()
+        _pilih(actions, "lihat", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
         assert app.session.in_battle
-        log = app.screen.query_one("#game-log", RichLog).lines
-        before = len(log)
         _pilih(actions, "serang", pilot)
         await pilot.press("enter")
         await pilot.pause()
         log = app.screen.query_one("#game-log", RichLog).lines
-        assert len(log) > before
+        joined = "\n".join(str(line) for line in log)
+        assert "menyerang" in joined
 
 
 @pytest.mark.asyncio
@@ -239,6 +246,9 @@ async def test_panel_musuh_memuat_bar_hp(tmp_path):
         await pilot.press("enter")
         await pilot.pause()
         _pilih(actions, "ashfall_forest", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        _pilih(actions, "lihat", pilot)
         await pilot.press("enter")
         await pilot.pause()
         enemy = app.screen.query_one("#enemy", Static).content
@@ -257,6 +267,9 @@ async def test_hud_menampilkan_stat_saat_battle(tmp_path):
         await pilot.press("enter")
         await pilot.pause()
         _pilih(actions, "ashfall_forest", pilot)
+        await pilot.press("enter")
+        await pilot.pause()
+        _pilih(actions, "lihat", pilot)
         await pilot.press("enter")
         await pilot.pause()
         hud = app.screen.query_one("#hud", Static).content

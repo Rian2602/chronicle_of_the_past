@@ -1,7 +1,10 @@
 """UI Textual — Chronicle of the Past (GDD §14.1).
 
-App adalah shell tipis: semua logika di GameSession (diuji penuh);
-layar hanya meneruskan perintah dan menampilkan hasilnya.
+App adalah shell tipis: semua logika di GameSession (diuji penuh).
+Navigasi murni panah ↑↓←→ + Enter + klik mouse — tanpa mengetik
+perintah. Menu aksi (OptionList) diisi data-driven dari
+``GameSession.menu_actions()``; pertarungan & dialog berjalan sebagai
+mode dalam GameScreen yang sama (satu layar, konten beralih).
 """
 
 from __future__ import annotations
@@ -9,15 +12,23 @@ from __future__ import annotations
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Button, Input, RichLog, Static
+from textual.widgets import (
+    Button,
+    Collapsible,
+    Footer,
+    Header,
+    Input,
+    OptionList,
+    ProgressBar,
+    RichLog,
+    Static,
+    TabbedContent,
+    TabPane,
+)
+from textual.widgets.option_list import Option
 
 from src.core.game_loop import BattleFrame, GameSession, make_bar
-from src.core.input import (
-    Command,
-    CommandError,
-    complete_command,
-    parse_command,
-)
+from src.core.input import Command, CommandError, parse_command
 
 
 class MainMenuScreen(Screen):
@@ -32,7 +43,7 @@ class MainMenuScreen(Screen):
     def compose(self) -> ComposeResult:
         """Susun judul dan tombol menu."""
         with Vertical(id="menu"):
-            yield Static("[bold cyan]Chronicle of the Past[/]", id="title")
+            yield Static("[bold gold3]Chronicle of the Past[/]", id="title")
             yield Static(
                 "RPG teks fantasi gelap dengan sistem kultivasi.",
                 id="tagline",
@@ -109,137 +120,293 @@ class NameScreen(Screen):
 
 
 class GameScreen(Screen):
-    """Layar permainan: HUD, log, dan input perintah.
+    """Layar permainan no-typing: navigasi via OptionList & tombol.
 
-    Pertarungan berjalan di layar yang sama (mode battle): input dialihkan
-    ke battle_step selama ada pertarungan aktif.
+    Satu layar dengan tiga mode (dunia / battle / dialog); konten panel
+    beralih mengikuti ``GameSession``. Mode battle dipicu ``in_battle``;
+    mode dialog dipicu flag ``pending_dialog``.
     """
 
     BINDINGS = [
         ("escape", "back_to_menu", "Menu Utama"),
-        ("tab", "complete", "Lengkapi"),
     ]
 
     def __init__(self, initial_log: list[str] | None = None) -> None:
         """Simpan baris log awal (mis. pesan hasil muat save)."""
         super().__init__()
         self._initial_log = list(initial_log or [])
+        # Stack sub-menu: daftar aksi induk saat menelusuri sub-menu.
+        self._menu_stack: list[list[dict]] = []
+        self._current_menu: list[dict] = []
 
     def compose(self) -> ComposeResult:
-        """Susun HUD, log, sidebar quest/party, dan input perintah."""
-        yield Static("", id="hud")
-        yield Static("", id="enemy")
+        """Susun sidebar kiri, HUD, tab konten, menu aksi, sidebar kanan."""
+        yield Header(show_clock=True)
         with Horizontal(id="main-row"):
-            yield RichLog(id="game-log", markup=True)
+            with Vertical(id="nav-col"):
+                yield Button("🎒\nTas", id="nav-tas")
+                yield Button("📜\nQuest", id="nav-quest")
+                yield Button("👥\nTim", id="nav-tim")
+                yield Button("⚡\nKultiv", id="nav-kultiv")
+                yield Button("💥\nBreak", id="nav-break")
+                yield Button("💾\nSimpan", id="nav-simpan")
+            with Vertical(id="center-col"):
+                yield Static("", id="hud")
+                with Horizontal(id="hud-bars"):
+                    yield Static("HP", id="hp-label")
+                    yield ProgressBar(id="hp-bar", show_percentage=False)
+                    yield Static("Qi", id="qi-label")
+                    yield ProgressBar(id="qi-bar", show_percentage=False)
+                yield Static("", id="combat-header")
+                yield Static("", id="enemy")
+                with TabbedContent(id="content-tabs"):
+                    with TabPane("📖 Story", id="tab-story"):
+                        yield RichLog(id="game-log", markup=True)
+                    with TabPane("🧠 Memory", id="tab-memory"):
+                        yield RichLog(id="memory-log", markup=True)
+                    with TabPane("🗺 Map", id="tab-map"):
+                        yield Static("", id="map-panel")
+                yield OptionList(id="dlg-choices")
+                yield OptionList(id="actions")
+                with Horizontal(id="action-row"):
+                    yield Button("⚡ Kultivasi", id="act-cultivate")
+                    yield Button("🌙 Istirahat", id="act-rest")
+                    yield Button("🗺 Peta", id="act-map")
             with Vertical(id="side-col"):
-                yield Static("", id="panel-quest")
-                yield Static("", id="panel-party")
-        yield Input(placeholder="Ketik perintah (help untuk bantuan)", id="cmd")
+                yield Collapsible(
+                    Static("", id="panel-quest"),
+                    title="📜 Quest",
+                    id="col-quest",
+                )
+                yield Collapsible(
+                    Static("", id="panel-party"),
+                    title="👥 Party",
+                    id="col-party",
+                )
+        yield Footer()
 
     def on_mount(self) -> None:
-        """Isi log awal, muat HUD, dan fokuskan input perintah."""
+        """Isi log awal dan muat ulang seluruh panel."""
         log = self.query_one("#game-log", RichLog)
         for line in self._initial_log:
             log.write(line + "\n")
         self._refresh()
-        self.query_one("#cmd", Input).focus()
 
-    def action_complete(self) -> None:
-        """Autocomplete perintah dari input saat ini (TAB, GDD §18).
-
-        Hanya melengkapi input satu kata; input yang sudah berisi
-        argumen (multi-kata) tidak disentuh agar argumen tidak hilang.
-        """
-        cmd = self.query_one("#cmd", Input)
-        if " " in cmd.value.strip():
+    # ------------------------------------------------------------------
+    # Navigasi & aksi
+    # ------------------------------------------------------------------
+    def on_option_list_option_selected(
+        self, event: OptionList.OptionSelected
+    ) -> None:
+        """Pilih opsi: dialog -> choose; menu aksi -> sub/command."""
+        if event.option_list.id == "dlg-choices":
+            self._choose_dialog_option(event.option.id)
             return
-        suggestion = complete_command(cmd.value)
-        if suggestion:
-            cmd.value = suggestion
-            cmd.cursor_position = len(suggestion)
+        self._select_action(event.option.id)
 
-    def on_input_submitted(self, event: Input.Submitted) -> None:
-        """Parse perintah: arahkan ke battle atau dunia sesuai kondisi."""
-        self.query_one("#cmd", Input).clear()
-        raw = event.value
-        if not raw.strip():
+    def _select_action(self, option_id: str) -> None:
+        """Jalankan aksi menu: buka sub-menu atau eksekusi command."""
+        action = next(
+            (a for a in self._current_menu if a["id"] == option_id), None
+        )
+        if action is None:
+            return
+        if action.get("sub"):
+            self._menu_stack.append(self._current_menu)
+            self._current_menu = list(action["sub"])
+            self._populate_actions(self._current_menu)
+            return
+        self._run_command(action["command"])
+
+    def _choose_dialog_option(self, option_id: str) -> None:
+        """Pilih nomor pilihan dialog (choose <nomor>)."""
+        session = self.app.session
+        if session.state is None:
+            return
+        pending = session.state.flags.get("pending_dialog")
+        if not pending:
+            return
+        self._run_command(f"choose {option_id}")
+
+    def _populate_actions(self, items: list[dict]) -> None:
+        """Isi OptionList #actions dari daftar aksi data-driven."""
+        actions = self.query_one("#actions", OptionList)
+        options = []
+        for item in items:
+            icon = item.get("icon", "")
+            label = item.get("label", item["id"])
+            prompt = f"{icon} {label}" if icon else label
+            if item.get("sub"):
+                prompt += " ▸"
+            options.append(Option(prompt, id=item["id"]))
+        actions.set_options(options)
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Sidebar kiri & tombol aksi lokasi -> command terkait."""
+        mapping = {
+            "nav-tas": "inventory",
+            "nav-quest": "quests",
+            "nav-tim": "party",
+            "nav-kultiv": "cultivate",
+            "nav-break": "breakthrough",
+            "nav-simpan": "save",
+            "act-cultivate": "cultivate",
+            "act-rest": "rest",
+            "act-map": "map",
+        }
+        raw = mapping.get(event.button.id)
+        if raw:
+            self._run_command(raw)
+
+    def _run_command(self, raw: str) -> None:
+        """Eksekusi command: battle_step saat bertarung, dispatch dunia."""
+        session = self.app.session
+        log = self.query_one("#game-log", RichLog)
+        if session.in_battle:
+            self._battle_raw(raw, log)
             return
         try:
             command = parse_command(raw)
         except CommandError as exc:
-            self.query_one("#game-log", RichLog).write(f"[red]{exc}[/]\n")
+            log.write(f"[red]{exc}[/]\n")
             return
         if command is None:
             return
-        if self.app.session.in_battle:
-            self._battle_command(command)
-        else:
-            self._world_command(command)
-
-    def _world_command(self, command: Command) -> None:
-        """Kirim perintah dunia; tangani keluar dan mulai pertarungan."""
-        session = self.app.session
         for line in session.dispatch(command):
-            self.query_one("#game-log", RichLog).write(line + "\n")
+            log.write(line + "\n")
         self._refresh()
         if session.quit_requested:
             self.app.exit()
 
-    def _battle_command(self, command: Command) -> None:
-        """Satu langkah pertarungan dari input pemain (GDD §18.3)."""
+    def _battle_raw(self, raw: str, log: RichLog) -> None:
+        """Satu langkah pertarungan dari aksi menu (GDD §18.3)."""
         session = self.app.session
-        log = self.query_one("#game-log", RichLog)
-        if command.name == "quit":
-            # Perintah global: pemain boleh keluar kapan pun (§18.1).
-            for line in session.dispatch(command):
+        if raw == "quit":
+            for line in session.dispatch(
+                Command(name="quit", args=(), raw="quit")
+            ):
                 log.write(line + "\n")
             self.app.exit()
             return
-        if command.name == "observe":
+        if raw == "observe":
             frame = session.battle_frame()
             log.write("[cyan]Amatan:[/]\n")
             for line in self._enemy_lines(frame):
                 log.write(line + "\n")
-        else:
-            frame = session.battle_step(self._battle_action(command))
-            log.clear()
-            for line in frame.log:
-                log.write(line + "\n")
-            if frame.error:
-                log.write(f"[red]{frame.error}[/]\n")
+            self._refresh()
+            return
+        frame = session.battle_step(raw)
+        log.clear()
+        for line in frame.log:
+            log.write(line + "\n")
+        if frame.error:
+            log.write(f"[red]{frame.error}[/]\n")
         self._refresh()
 
-    def _battle_action(self, command: Command) -> str:
-        """Ubah perintah menjadi aksi battle: attack/defend/technique:x."""
-        if command.name == "technique":
-            arg = command.args[0] if command.args else ""
-            return f"technique:{arg}"
-        return command.name
-
+    # ------------------------------------------------------------------
+    # Render panel
+    # ------------------------------------------------------------------
     def _refresh(self) -> None:
-        """Muat ulang HUD status, sidebar, dan panel musuh."""
+        """Muat ulang panel sesuai mode: dunia / battle / dialog."""
         session = self.app.session
         if session.state is None:
             return
-        # HUD memakai status_lines (bukan dispatch) agar tidak terblokir
-        # guard battle — stat tetap terlihat selama pertarungan.
+        self._refresh_hud()
+        self._refresh_sidebar()
+        self._refresh_memory_and_map()
+        if session.in_battle:
+            self._refresh_battle()
+        elif session.state.flags.get("pending_dialog"):
+            self._refresh_dialog()
+        else:
+            self._refresh_world()
+
+    def _refresh_hud(self) -> None:
+        """HUD: nama/lokasi/insight (status_lines) + bar HP/Qi."""
+        session = self.app.session
         self.query_one("#hud", Static).update("\n".join(session.status_lines()))
-        # Sidebar: quest aktif + komposisi tim (read-only, tanpa efek).
+        player = session.state.player
+        hp = session._ally.hp if session._ally is not None else player.hp
+        qi = session._ally.qi if session._ally is not None else player.qi
+        self.query_one("#hp-bar", ProgressBar).progress = (
+            hp / player.hp_max if player.hp_max else 0
+        )
+        self.query_one("#qi-bar", ProgressBar).progress = (
+            qi / player.qi_max if player.qi_max else 0
+        )
+
+    def _refresh_sidebar(self) -> None:
+        """Sidebar kanan: quest aktif + komposisi tim (read-only)."""
+        session = self.app.session
         quest_text = "\n".join(session.quest_lines())
         self.query_one("#panel-quest", Static).update(
             f"[bold gold3]Quest[/]\n{quest_text}"
         )
-        party_text = "\n".join(session.party_lines())
-        # Header PARTY (n/4) sudah ada di party_lines — jangan duplikasi.
-        self.query_one("#panel-party", Static).update(party_text)
-        if session.in_battle:
-            frame = session.battle_frame()
-            panel = "\n".join(self._enemy_lines(frame))
-            self.query_one("#enemy", Static).update(
-                f"[yellow]PERTARUNGAN[/]\n{panel}"
-            )
-        else:
-            self.query_one("#enemy", Static).update("")
+        self.query_one("#panel-party", Static).update(
+            "\n".join(session.party_lines())
+        )
+
+    def _refresh_memory_and_map(self) -> None:
+        """Tab Memory & Map diisi ringkas (read-only, tanpa efek)."""
+        session = self.app.session
+        memory_log = self.query_one("#memory-log", RichLog)
+        memory_log.clear()
+        for line in session._cmd_memories(
+            Command(name="memories", args=(), raw="memories")
+        ):
+            memory_log.write(line + "\n")
+        map_text = "\n".join(
+            session._cmd_map(Command(name="map", args=(), raw="map"))
+        )
+        self.query_one("#map-panel", Static).update(map_text)
+
+    def _refresh_world(self) -> None:
+        """Mode dunia: menu aksi eksplorasi; panel battle/dialog kosong."""
+        session = self.app.session
+        self.query_one("#combat-header", Static).update("")
+        self.query_one("#enemy", Static).update("")
+        self.query_one("#dlg-choices", OptionList).display = False
+        self._current_menu = session.menu_actions()
+        self._menu_stack = []
+        self._populate_actions(self._current_menu)
+        self.query_one("#actions", OptionList).display = True
+        self.query_one("#actions", OptionList).focus()
+
+    def _refresh_battle(self) -> None:
+        """Mode battle: log, header giliran, panel musuh, menu aksi."""
+        session = self.app.session
+        frame = session.battle_frame()
+        self.query_one("#dlg-choices", OptionList).display = False
+        turn = frame.active_ally_name or "—"
+        self.query_one("#combat-header", Static).update(
+            f"[bold red]⚔ PERTARUNGAN[/] — Giliran [gold3]{turn}[/]"
+        )
+        panel = "\n".join(self._enemy_lines(frame))
+        self.query_one("#enemy", Static).update(panel)
+        self._current_menu = session.menu_actions()
+        self._menu_stack = []
+        self._populate_actions(self._current_menu)
+        self.query_one("#actions", OptionList).display = True
+        self.query_one("#actions", OptionList).focus()
+
+    def _refresh_dialog(self) -> None:
+        """Mode dialog: pilihan bernomor di #dlg-choices (GDD §12.5)."""
+        session = self.app.session
+        self.query_one("#combat-header", Static).update(
+            "[bold cyan]💬 PERCAKAPAN[/]"
+        )
+        self.query_one("#enemy", Static).update("")
+        self.query_one("#actions", OptionList).display = False
+        choices = session.dialog_choices()
+        dlg = self.query_one("#dlg-choices", OptionList)
+        dlg.set_options(
+            [
+                Option(f"{choice['id']}. {choice['text']}", id=choice["id"])
+                for choice in choices
+            ]
+        )
+        dlg.display = True
+        dlg.focus()
 
     def _enemy_lines(self, frame: BattleFrame) -> list[str]:
         """Baris info musuh dengan bar HP visual (GDD §6.1)."""
@@ -254,7 +421,11 @@ class GameScreen(Screen):
         return lines
 
     def action_back_to_menu(self) -> None:
-        """Kembali ke menu utama (konfirmasi simpan menyusul)."""
+        """Escape: keluar sub-menu dulu, lalu kembali ke menu utama."""
+        if self._menu_stack:
+            self._current_menu = self._menu_stack.pop()
+            self._populate_actions(self._current_menu)
+            return
         self.app.pop_screen()
 
 
@@ -272,21 +443,96 @@ class ChronicleApp(App):
     }
     #title { text-align: center; text-style: bold; color: #D4AF37; }
     #tagline, #prompt { text-align: center; }
-    Button { width: 100%; margin-top: 1; }
-    #hud { background: #1a1a1a; padding: 0 1; border-bottom: solid #303030; }
-    #enemy { background: #1a0000; padding: 0 1; border-bottom: solid #4a0000;
-             color: #ff5555; }
+    Button { margin-top: 1; }
+    #menu Button, #name-box Button { width: 100%; }
+
+    /* Layout utama */
     #main-row { height: 1fr; }
-    #game-log { width: 2fr; border: round #D4AF37; background: #0F0F0F; }
-    #side-col { width: 1fr; border-left: solid #303030; }
-    #panel-quest, #panel-party {
-        height: 1fr;
+    #nav-col {
+        width: 14;
+        border-right: solid #303030;
+        background: #121212;
         padding: 0 1;
-        border-bottom: solid #303030;
+    }
+    #nav-col Button {
+        width: 100%;
+        height: 4;
+        min-height: 4;
+        border: none;
+        background: #1a1a1a;
+        color: #9e9e9e;
+        margin-top: 1;
+    }
+    #nav-col Button:hover, #nav-col Button:focus {
+        background: #252525;
+        color: #D4AF37;
+        border: none;
+    }
+    #center-col { width: 3fr; }
+    #side-col {
+        width: 26;
+        border-left: solid #303030;
         background: #121212;
     }
-    #cmd { border: tall #303030; background: #151515; }
-    #cmd:focus { border: tall #D4AF37; }
+
+    /* HUD */
+    #hud {
+        background: #1a1a1a;
+        padding: 0 1;
+        border-bottom: solid #303030;
+    }
+    #hud-bars { height: 1; padding: 0 1; background: #161616; }
+    #hp-label { color: #e53935; width: 3; }
+    #qi-label { color: #00bcd4; width: 3; }
+    #hp-bar { color: #e53935; }
+    #qi-bar { color: #00bcd4; }
+
+    /* Battle & dialog header */
+    #combat-header {
+        background: #1a0000;
+        padding: 0 1;
+        border-bottom: solid #4a0000;
+    }
+    #enemy {
+        background: #110000;
+        padding: 0 1;
+        border-bottom: solid #4a0000;
+        color: #ff5555;
+    }
+
+    /* Konten tab */
+    #content-tabs { height: 1fr; }
+    #game-log { height: 1fr; background: #0F0F0F; }
+    #memory-log { height: 1fr; background: #0F0F0F; }
+    #map-panel { height: 1fr; padding: 1; color: #00bcd4; }
+
+    /* Sidebar kanan */
+    #side-col Collapsible { margin-top: 1; }
+    #panel-quest, #panel-party {
+        padding: 0 1;
+        background: #121212;
+    }
+
+    /* Menu aksi */
+    #actions, #dlg-choices {
+        height: 10;
+        border: tall #303030;
+        background: #151515;
+    }
+    #actions:focus, #dlg-choices:focus { border: tall #D4AF37; }
+    #action-row { height: 5; padding: 0 1; }
+    #action-row Button {
+        width: 1fr;
+        background: #1a1a1a;
+        color: #E8E8E8;
+        border: solid #303030;
+    }
+    #action-row Button:hover, #action-row Button:focus {
+        background: #252525;
+        color: #D4AF37;
+        border: solid #D4AF37;
+    }
+    Footer { background: #121212; color: #9e9e9e; }
     """
 
     def __init__(self, session: GameSession | None = None) -> None:
