@@ -15,6 +15,7 @@ from src.core.input import Command
 from src.core.save import (
     SAVE_DIR,
     SLOTS,
+    VALID_SLOTS,
     autosave_save,
     load_game,
     save_game,
@@ -27,6 +28,7 @@ from src.engine.cultivation import (
     load_tiers,
     next_tier,
 )
+from src.engine.event import load_events, process_events
 from src.models.combatant import (
     Combatant,
     combatant_from_enemy,
@@ -144,6 +146,7 @@ class GameSession:
             "  help status map inventory quests party",
             "  go <lokasi> look cultivate breakthrough rest",
             "  save [1-3] load [1-3] quit",
+            "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
             "  observe, escape (alias Indonesia juga berlaku).",
         ]
@@ -207,11 +210,11 @@ class GameSession:
         location = command.args[0]
         if location == START_LOCATION:
             self.state.location = location
-            return [f"Kamu kembali ke {location}."]
+            return [f"Kamu kembali ke {location}."] + self._run_events()
         flag = f"map_{location}_unlocked"
         if self.state.flags.get(flag):
             self.state.location = location
-            return [f"Kamu tiba di {location}."]
+            return [f"Kamu tiba di {location}."] + self._run_events()
         return [f"Lokasi belum terbuka: {location}."]
 
     def _cmd_look(self, _command: Command) -> list[str]:
@@ -232,7 +235,7 @@ class GameSession:
         return [
             "Kamu bermeditasi menyerap qi langit-bumi...",
             f"Insight +{CULTIVATE_INSIGHT} (total {player.insight}).",
-        ]
+        ] + self._run_events()
 
     def _cmd_rest(self, _command: Command) -> list[str]:
         player = self.state.player
@@ -242,11 +245,13 @@ class GameSession:
         player.qi = player.qi_max
         healed = player.is_injured
         player.advance_day()
+        # Event diproses sebelum autosave agar efeknya ikut tersimpan.
+        event_lines = self._run_events()
         autosave_save(self.state, self.save_dir)
         message = "Kamu beristirahat hingga pagi. HP dan qi pulih penuh."
         if healed:
             message += " Cedera membaik."
-        return [message, "Permainan tersimpan otomatis."]
+        return [message, "Permainan tersimpan otomatis."] + event_lines
 
     def _cmd_breakthrough(self, _command: Command) -> list[str]:
         player = self.state.player
@@ -261,13 +266,15 @@ class GameSession:
                 "Kultivasi dulu untuk menambah pemahaman.",
             ]
         result = attempt_breakthrough(player, tiers, rng=self._rng)
+        # Event diproses sebelum autosave agar efeknya ikut tersimpan.
+        event_lines = self._run_events()
         autosave_save(self.state, self.save_dir)
         if result.success:
             return [
                 f"BREAKTHROUGH SUKSES! Kamu kini {result.tier_id} "
                 f"({result.rate}%).",
                 "Permainan tersimpan otomatis.",
-            ]
+            ] + event_lines
         note = ""
         if result.inner_demon:
             note = " Bayangan batin mengintai (pertarungan inner demon "
@@ -276,7 +283,7 @@ class GameSession:
             "Breakthrough GAGAL. Tubuhmu terluka "
             f"({result.injury_days} hari cedera, stat -25%).{note}",
             "Permainan tersimpan otomatis.",
-        ]
+        ] + event_lines
 
     def _cmd_save(self, command: Command) -> list[str]:
         slot = self._slot_arg(command, default="save1")
@@ -303,15 +310,31 @@ class GameSession:
             self.state.time.hour -= 24
             self.state.time.day += 1
 
+    def _run_events(self) -> list[str]:
+        """Proses event data-driven setelah momen mutasi state (GDD §15.4).
+
+        Dipanggil setelah go / cultivate / rest / breakthrough — sekali
+        per momen. Kembalikan baris narasi event untuk ditampilkan UI.
+        """
+        if self.state is None:
+            return []
+        return process_events(self.state, load_events()).logs
+
     def _slot_arg(self, command: Command, default: str) -> str | None:
-        """Terjemahkan argumen slot '2' -> 'save2'; default saat kosong."""
+        """Terjemahkan argumen slot; '2' -> 'save2', slot literal diterima.
+
+        Baik angka (2 -> save2) maupun nama slot sah (save2, autosave)
+        dipetakan langsung; default dipakai saat argumen kosong.
+        """
         if not command.args:
             return default
-        number = command.args[0]
-        slot = f"save{number}"
-        if slot not in SLOTS:
-            return None
-        return slot
+        raw = command.args[0]
+        if raw in VALID_SLOTS:
+            return raw
+        slot = f"save{raw}"
+        if slot in SLOTS:
+            return slot
+        return None
 
     # ------------------------------------------------------------------
     # Pertarungan

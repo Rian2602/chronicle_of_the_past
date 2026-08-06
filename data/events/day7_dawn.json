@@ -1,0 +1,13 @@
+{
+  "id": "day7_dawn",
+  "trigger": [
+    {"kind": "day_passed", "day": 7}
+  ],
+  "actions": [
+    {
+      "kind": "log",
+      "text": "Hari ketujuh. Kabar buruk tiba dari desa: dua kultivator muda hilang di Hutan Perbatasan, dan bekas cakar hitam ditemukan di gerbang saat fajar."
+    }
+  ],
+  "once": true
+}

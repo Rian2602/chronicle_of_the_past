@@ -271,3 +271,57 @@ def test_teknik_tidak_dikenal_di_battle_memberi_error(tmp_path):
     frame = session.battle_step("technique:ghost_slash")
     assert frame.error is not None
     assert "tidak dikenal" in frame.error
+
+
+# ----------------------------------------------------------------------
+# Event engine (GDD §15): hook setelah momen mutasi state
+# ----------------------------------------------------------------------
+
+
+def test_breakthrough_memicu_event_unlock_ruin_shrine(tmp_path):
+    """Breakthrough ke tier 1 memicu event unlock Reruntuhan Kuil (§15)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.add_insight(100)
+    lines = _dispatch(session, "breakthrough")
+    assert session.state.flags["event_unlock_ruin_shrine_done"] is True
+    assert session.state.flags["map_ruin_shrine_unlocked"] is True
+    assert "ruin_shrine" in session.state.map_unlocks
+    assert any("Reruntuhan Kuil" in line for line in lines)
+    map_lines = _dispatch(session, "map")
+    assert any("ruin_shrine" in line for line in map_lines)
+
+
+def test_go_hutan_memicu_event_memori_pertama(tmp_path):
+    """Masuk Hutan Perbatasan memicu echo memori pertama (§15)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    lines = _dispatch(session, "go ashfall_forest")
+    assert session.state.flags["event_ashfall_memory_done"] is True
+    assert "memory_ashfall_first_echo" in session.state.memories
+    assert any("echo memori" in line for line in lines)
+
+
+def test_rest_ke_hari_tujuh_memicu_event_narasi(tmp_path):
+    """Mencapai hari ke-7 memicu narasi event sekali saja (§15.4)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.time.day = 6
+    lines = _dispatch(session, "rest")
+    assert session.state.flags["event_day7_dawn_done"] is True
+    assert any("Hari ketujuh" in line for line in lines)
+    again = _dispatch(session, "rest")
+    assert not any("Hari ketujuh" in line for line in again)
+
+
+def test_event_unlock_peta_tersimpan_di_autosave(tmp_path):
+    """Efek event ikut tersimpan autosave (event diproses sebelum save)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    assert session.state.flags["map_ruin_shrine_unlocked"] is True
+    fresh = _session(tmp_path)
+    _dispatch(fresh, "load autosave")
+    assert fresh.state.flags["map_ruin_shrine_unlocked"] is True
+    assert fresh.state.flags["event_unlock_ruin_shrine_done"] is True
