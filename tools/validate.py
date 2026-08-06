@@ -2,8 +2,8 @@
 
 Menjalankan seluruh loader engine di atas ``data/`` lalu memeriksa
 referensi silang antar data (quest -> NPC/peta, event -> quest/memori/
-peta/tier/faksi, NPC -> peta, musuh -> tier/teknik). Keluar dengan
-kode 0 bila semua valid, 1 bila ada temuan.
+peta/tier/faksi, NPC -> peta/toko, musuh -> tier/teknik, toko -> item
+berharga). Keluar dengan kode 0 bila semua valid, 1 bila ada temuan.
 
 Usage:
     python tools/validate.py
@@ -26,6 +26,7 @@ from src.engine.event import load_events  # noqa: E402
 from src.engine.items import load_items  # noqa: E402
 from src.engine.maps import load_maps  # noqa: E402
 from src.engine.quest import load_quests  # noqa: E402
+from src.engine.shop import load_shops  # noqa: E402
 from src.engine.story import load_memories  # noqa: E402
 
 DATA_DIR = ROOT / "data"
@@ -71,6 +72,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     enemies = load_enemies(data_dir / "enemies")
     enemy_ids = {enemy.id for enemy in enemies}
     items = load_items(data_dir / "items")
+    shops = load_shops(data_dir / "shops")
 
     # Effek item yang dikenali (GDD §7 + §17). Efek tak dikenal = data
     # rusak / typo — ditangkap di sini (trust boundary data JSON).
@@ -156,6 +158,9 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     for npc_id, npc in npcs.items():
         if npc["location"] not in map_ids:
             errors.append(f"{npc_id}: lokasi {npc['location']} bukan peta")
+        shop_id = npc.get("shop")
+        if shop_id and shop_id not in shops:
+            errors.append(f"{npc_id}: shop {shop_id} tidak ada")
 
     for enemy in enemies:
         if enemy.tier not in tiers:
@@ -179,6 +184,24 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                     errors.append(
                         f"items: {item_id} -> effect key '{key}' tak dikenal"
                     )
+
+    # Toko (GDD §7): stok wajib merujuk item yang ada dan berharga.
+    for shop_id, shop in shops.items():
+        for entry in shop.get("stock", []):
+            item_id = entry["item"]
+            if item_id not in items:
+                errors.append(f"{shop_id}: stock -> item {item_id} tidak ada")
+                continue
+            price = items[item_id].get("price")
+            if not isinstance(price, int) or price < 1:
+                errors.append(
+                    f"{shop_id}: stock -> {item_id} tanpa harga beli valid"
+                )
+            count = entry.get("count")
+            if not isinstance(count, int) or count < 1:
+                errors.append(
+                    f"{shop_id}: stock -> {item_id} count tidak valid"
+                )
 
     return sorted(errors)
 

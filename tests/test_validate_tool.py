@@ -199,6 +199,84 @@ def test_validator_menangkap_ref_quest_reward_grant_item(tmp_path):
     assert any("pil_hantu" in e for e in collect_errors(data))
 
 
+def _pohon_toko(
+    tmp_path: Path,
+    stock: list[dict],
+    item_price: int | None = 10,
+) -> Path:
+    """Pohon data + folder items/shops dengan satu toko uji."""
+    data = _pohon_data(tmp_path)
+    (data / "items").mkdir()
+    item: dict = {"id": "pil_dasar", "name": "Pil Dasar"}
+    if item_price is not None:
+        item["price"] = item_price
+    (data / "items" / "pil_dasar.json").write_text(
+        json.dumps(item, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    (data / "shops").mkdir()
+    (data / "shops" / "toko_uji.json").write_text(
+        json.dumps(
+            {"id": "toko_uji", "name": "Toko Uji", "stock": stock},
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    return data
+
+
+def test_validator_menangkap_stok_item_tanpa_harga(tmp_path):
+    """Stok toko ke item tanpa price wajib dilaporkan."""
+    data = _pohon_toko(tmp_path, [{"item": "pil_dasar"}], item_price=None)
+    errors = collect_errors(data)
+    assert any("pil_dasar" in e and "harga" in e for e in errors)
+
+
+def test_validator_menangkap_stok_item_tak_dikenal(tmp_path):
+    """Stok toko ke item tak dikenal wajib dilaporkan."""
+    data = _pohon_toko(tmp_path, [{"item": "pil_hantu"}])
+    assert any("pil_hantu" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_count_stok_tidak_positif(tmp_path):
+    """Count stok toko <= 0 wajib dilaporkan."""
+    data = _pohon_toko(tmp_path, [{"item": "pil_dasar", "count": 0}])
+    assert any("count" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_ref_npc_shop_tak_ada(tmp_path):
+    """NPC dengan field shop ke toko tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "npc" / "npc_hantu.json").write_text(
+        json.dumps(
+            {
+                "id": "npc_hantu",
+                "name": "Hantu",
+                "location": "map_test",
+                "shop": "toko_hantu",
+                "greeting": "Halo.",
+                "dialog": ["Satu kalimat."],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (data / "maps" / "map_test.json").write_text(
+        json.dumps(
+            {
+                "id": "map_test",
+                "name": "Peta Uji",
+                "description": "Tempat uji.",
+                "tier": 1,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("shop" in e and "toko_hantu" in e for e in errors)
+
+
 def test_validator_menangkap_ref_quest_breakthrough(tmp_path):
     """Objektif quest breakthrough ke tier tak dikenal wajib dilaporkan."""
     data = _pohon_data(tmp_path)
