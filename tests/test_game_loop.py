@@ -2,7 +2,7 @@
 
 import random
 
-from src.core.game_loop import GameSession
+from src.core.game_loop import GameSession, make_bar
 from src.core.input import Command
 from src.core.save import slot_exists
 from src.core.state import FACTIONS
@@ -32,6 +32,29 @@ def test_new_game_membuat_state_awal(tmp_path):
     assert state.player.hp == state.player.hp_max
     assert state.player.qi == state.player.qi_max
     assert state.flags["map_ashfall_forest_unlocked"] is True
+
+
+def test_make_bar_proporsional():
+    """Bar ASCII mengisi sesuai proporsi (0 -> kosong, penuh -> penuh)."""
+    assert make_bar(0, 20, 10) == "░" * 10
+    assert make_bar(20, 20, 10) == "█" * 10
+    assert make_bar(10, 20, 10).count("█") == 5
+
+
+def test_make_bar_total_nol_kosong():
+    """Total 0 menghasilkan bar kosong (hindari pembagian nol)."""
+    assert make_bar(0, 0, 8) == "░" * 8
+    assert len(make_bar(5, 0, 8)) == 8
+
+
+def test_status_lines_memuat_bar_hp_qi(tmp_path):
+    """HUD menampilkan bar visual HP/Qi, bukan teks polos."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.hp = 40  # setengah: bar memuat █ dan ░
+    session.state.player.qi = 5
+    joined = "\n".join(session.status_lines())
+    assert "█" in joined and "░" in joined
 
 
 def test_status_berisi_info_pemain(tmp_path):

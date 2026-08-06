@@ -84,6 +84,23 @@ AVAILABLE = {
 }
 
 
+def make_bar(current: int, total: int, width: int = 20) -> str:
+    """Bar ASCII proporsional (█ terisi, ░ kosong).
+
+    Args:
+        current: Nilai saat ini (>= 0).
+        total: Nilai maksimum; 0 menghasilkan bar kosong.
+        width: Lebar bar dalam karakter.
+
+    Returns:
+        String bar, panjang tepat ``width``.
+    """
+    if total <= 0:
+        return "░" * width
+    filled = max(0, min(width, round(current / total * width)))
+    return "█" * filled + "░" * (width - filled)
+
+
 @dataclass
 class BattleFrame:
     """Kapsul status pertarungan untuk UI (GDD §6)."""
@@ -183,12 +200,16 @@ class GameSession:
         injury = ""
         if player.is_injured:
             injury = f" | CEDERA ({player.injury_days_remaining} hari)"
+        hp_bar = make_bar(player.hp, player.hp_max, 12)
+        qi_bar = make_bar(player.qi, player.qi_max, 12)
         return [
-            f"{player.name} — {tier_name}",
+            f"[bold gold3]{player.name}[/] — {tier_name}",
             f"Lokasi: {self.state.location} | "
             f"Hari {self.state.time.day}, jam {self.state.time.hour:02d}",
-            f"HP {player.hp}/{player.hp_max} | Qi {player.qi}/{player.qi_max}",
-            f"Insight {player.insight} | Gold {player.gold}"
+            f"HP [red]{hp_bar}[/] {player.hp}/{player.hp_max} | "
+            f"Qi [cyan]{qi_bar}[/] {player.qi}/{player.qi_max}",
+            f"Insight [violet]{player.insight}[/] | "
+            f"Gold [gold3]{player.gold}[/]"
             f" | Meridian {player.meridian_buka}/8{injury}",
         ]
 
