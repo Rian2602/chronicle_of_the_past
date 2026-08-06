@@ -185,6 +185,21 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                     errors.append(
                         f"items: {item_id} -> effect key '{key}' tak dikenal"
                     )
+            target = effect.get("learn_recipe")
+            if target is not None and target not in items:
+                errors.append(
+                    f"items: {item_id} -> learn_recipe target "
+                    f"'{target}' tidak ada"
+                )
+        recipe = item.get("recipe")
+        if isinstance(recipe, list):
+            for req in recipe:
+                ingredient = req.get("item")
+                if ingredient is not None and ingredient not in items:
+                    errors.append(
+                        f"items: {item_id} -> resep butuh "
+                        f"'{ingredient}' yang tidak ada"
+                    )
 
     # Toko (GDD §7): stok wajib merujuk item yang ada dan berharga.
     for shop_id, shop in shops.items():

@@ -328,6 +328,10 @@ def test_validator_menerima_efek_learn_recipe(tmp_path):
     data = _pohon_data(tmp_path)
     items_dir = data / "items"
     items_dir.mkdir(exist_ok=True)
+    (items_dir / "pil_uji.json").write_text(
+        json.dumps({"id": "pil_uji", "name": "Pil Uji"}, ensure_ascii=False),
+        encoding="utf-8",
+    )
     (items_dir / "resep_uji.json").write_text(
         json.dumps(
             {
@@ -342,6 +346,47 @@ def test_validator_menerima_efek_learn_recipe(tmp_path):
     )
     errors = collect_errors(data)
     assert not any("learn_recipe" in e for e in errors)
+
+
+def test_validator_menangkap_ref_resep_ingredient(tmp_path):
+    """Recipe dengan ingredient item tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    items_dir = data / "items"
+    items_dir.mkdir(exist_ok=True)
+    (items_dir / "pil_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "pil_uji",
+                "name": "Pil Uji",
+                "recipe": [{"item": "bahan_hantu", "qty": 2}],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("bahan_hantu" in e for e in errors)
+
+
+def test_validator_menangkap_ref_learn_recipe_target(tmp_path):
+    """Item resep dengan learn_recipe ke item tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    items_dir = data / "items"
+    items_dir.mkdir(exist_ok=True)
+    (items_dir / "resep_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "resep_uji",
+                "name": "Resep Uji",
+                "type": "recipe",
+                "effect": {"learn_recipe": "pil_hantu"},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("pil_hantu" in e for e in errors)
 
 
 def test_validator_data_lulus(tmp_path):
