@@ -371,6 +371,57 @@ Tingkatan kolom "akhir arc" mengikuti §4.1 — **kurva bos diselaraskan dengan 
 
 > **Catatan naming flag:** wajib `quest<id>_done` (mis. `quest101_done`) — **bukan** `q101_done`. Berlaku konsisten di quest, event, dan musuh (`requires_flag`).
 
+### 12.5 Sistem Dialog (Dialogue Engine)
+
+* Dialog disimpan di `data/dialogues/` sebagai JSON.
+* Satu file JSON berisi struktur graf/node untuk satu percakapan utuh.
+* **Integrasi Event:** Pilihan pemain dalam dialog dapat memicu aksi event (seperti mengubah reputasi atau men-set flag) menggunakan format aksi yang sama dengan Event Engine (§15).
+
+**Format Data Dialog (`data/dialogues/dialog_elder_mao_1.json`):**
+```json
+{
+  "id": "dialog_elder_mao_1",
+  "npc": "elder_mao",
+  "nodes": {
+    "start": {
+      "text": "Apa kamu sudah siap memulai jalan kultivasimu?",
+      "choices": [
+        {
+          "text": "Saya siap, Guru.",
+          "next": "ready",
+          "requires_flag": null,
+          "actions": [{"kind": "change_reputation", "faction": "court", "delta": -5}]
+        },
+        {
+          "text": "Beri saya waktu.",
+          "next": null
+        }
+      ]
+    },
+    "ready": {
+      "text": "Bagus. Mulailah bermeditasi.",
+      "choices": [
+        {
+          "text": "[Tinggalkan ruangan]",
+          "next": null,
+          "actions": [{"kind": "start_quest", "id": "quest101"}]
+        }
+      ]
+    }
+  }
+}
+```
+*   `requires_flag` (opsional): jika diatur, pilihan ini hanya muncul jika flag tersebut `True`.
+*   `actions` (opsional): daftar objek aksi persis seperti GDD §15.3. Dieksekusi saat pilihan dipilih.
+*   `next` bernilai `null` menandakan percakapan berakhir.
+* **Integrasi engine:** perintah `talk <npc>` (GDD §18.2) mencari dialog
+  untuk NPC yang bersangkutan; `choose <nomor>` (GDD §18.2) memilih
+  pilihan (format interaktif angka 1,2,3 — paling simpel untuk CLI).
+  Saat dialog selesai (`next: null`), engine men-set flag
+  `talked_<dialog_id>` sehingga percakapan `once` tidak terulang.
+* **Fallback:** NPC tanpa file dialog tetap memakai `greeting` +
+  `dialog` array lama (kompatibilitas data eksisting, §6).
+
 ---
 
 ## 13. Ending Dinamis
@@ -826,6 +877,15 @@ Angka final untuk perencanaan produksi. Total = target minimum yang harus tercap
 * Angka halus keseimbangan (damage per skill, harga jual kembali toko) — disetel saat playtest Fase 5. Harga beli toko hidup di `price` data/items; jual kembali sementara 40% (§7).
 
 ### 24.3 Changelog
+
+**v1.5 (2026-08-07)** — Sistem Dialog (Dialogue Engine):
+
+* §12.5: spesifikasi dialog data-driven `data/dialogues/` — graf node
+  (`nodes`), pilihan (`choices` dengan `next`/`requires_flag`/`actions`),
+  aksi memakai format §15.3; §18: `talk` mencari dialog, `choose <nomor>`
+  memilih; flag `talked_<dialog_id>` saat dialog selesai; fallback
+  `greeting`/`dialog` array untuk NPC tanpa file dialog. Dialog pertama:
+  `dialog_elder_mao_1` (membuka pilihan naratif di awal Arc 1).
 
 **v1.4 (2026-08-06)** — Party system (fondasi Arc 2, Fase 2):
 
