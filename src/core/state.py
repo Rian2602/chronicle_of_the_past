@@ -86,6 +86,8 @@ class GameState:
 
     player: Player
     party: list[dict[str, Any]] = field(default_factory=list)
+    # id rekan yang aktif bertarung (max 3 slot, GDD §20.1).
+    party_active: list[str] = field(default_factory=list)
     inventory: dict[str, Any] = field(
         default_factory=lambda: {"items": {}, "equipped": {}, "artifacts": {}}
     )
@@ -141,6 +143,7 @@ class GameState:
             "schema_version": SCHEMA_VERSION,
             "player": self.player.to_dict(),
             "party": [dict(member) for member in self.party],
+            "party_active": list(self.party_active),
             "inventory": {
                 key: dict(value) if isinstance(value, dict) else value
                 for key, value in self.inventory.items()
@@ -192,6 +195,7 @@ class GameState:
         return cls(
             player=player,
             party=[dict(member) for member in data.get("party", [])],
+            party_active=list(data.get("party_active", [])),
             inventory=dict(
                 data.get(
                     "inventory",

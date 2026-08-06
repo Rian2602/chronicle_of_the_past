@@ -43,10 +43,12 @@ from src.engine.shop import load_shops, sell_price
 from src.engine.story import load_memories
 from src.models.combatant import (
     Combatant,
+    combatant_from_companion,
     combatant_from_enemy,
     combatant_from_player,
 )
 from src.models.enemy import Enemy
+from src.models.party import Companion
 from src.models.player import Player
 
 CULTIVATE_INSIGHT = 10
@@ -55,6 +57,8 @@ REST_HOUR = 8
 START_LOCATION = "village_emberfall"
 NPC_DIR = Path(__file__).resolve().parents[2] / "data" / "npc"
 UNAVAILABLE = "Belum tersedia (Fase 1)."
+# Bond XP per kemenangan untuk tiap rekan yang masih hidup (GDD §20.3).
+BOND_XP_VICTORY = 10
 
 # Warna semantik item di inventory (GDD §14.2): material, resep, alat.
 ITEM_TYPE_COLORS = {"material": "cyan", "recipe": "violet", "tool": "gold3"}
@@ -128,6 +132,8 @@ class GameSession:
         self.battle: Battle | None = None
         self._ally: Combatant | None = None
         self._enemy: Enemy | None = None
+        # id rekan -> combatan, untuk tulis balik hp/qi pasca battle.
+        self._ally_map: dict[str, Combatant] = {}
         self.quit_requested = False
 
     # ------------------------------------------------------------------
@@ -851,16 +857,29 @@ class GameSession:
         if enemy is None:
             raise ValueError(f"musuh tidak dikenal: {enemy_id}")
         ally = combatant_from_player(player, skills=self.player_skills)
+        allies = [ally]
+        self._ally_map = {}
+        # Rekan aktif ikut bertarung (GDD §20.1: protagonis + max 3 slot).
+        active = set(self.state.party_active)
+        for raw in self.state.party:
+            companion = Companion.from_dict(raw)
+            if companion.id not in active:
+                continue
+            ally_combatant = combatant_from_companion(companion)
+            allies.append(ally_combatant)
+            self._ally_map[companion.id] = ally_combatant
         self._ally = ally
         self._enemy = enemy
         self.battle = Battle(
-            allies=[ally],
+            allies=allies,
             enemies=[combatant_from_enemy(enemy)],
             techniques=techniques,
             rng=self._rng,
         )
+        names = ", ".join(combatant.name for combatant in allies)
         return [
             f"{enemy.name} muncul dari bayangan!",
+            f"Tim bertarung: {names}.",
             "Pertarungan dimulai! (Ketik 'escape' jika ingin melarikan diri)",
             "Gunakan attack / defend / technique / observe / escape.",
         ]
@@ -919,15 +938,50 @@ class GameSession:
         while not battle.over and not self._is_player_turn():
             battle.step_enemy()
 
+    def _write_back_allies(self) -> None:
+        """Tulis balik hp/qi combatan ke player & rekan; KO pulih penuh.
+
+        Luka di dunia ikut terbawa ke pertarungan (§17.2); setelah
+        pertarungan, yang KO pulih otomatis (§20.4) sedangkan yang hidup
+        menyimpan luka tersisa.
+        """
+        player = self.state.player
+        ally = self._ally
+        if ally is not None:
+            player.hp = min(ally.hp, player.hp_max)
+            player.qi = min(ally.qi, player.qi_max)
+        for raw in self.state.party:
+            companion = Companion.from_dict(raw)
+            combatant = self._ally_map.get(companion.id)
+            if combatant is None:
+                continue
+            if combatant.hp <= 0:
+                # KO: pulih otomatis (GDD §20.4).
+                raw["hp"] = companion.hp_max
+                raw["qi"] = companion.qi_max
+            else:
+                raw["hp"] = min(combatant.hp, companion.hp_max)
+                raw["qi"] = min(combatant.qi, companion.qi_max)
+
+    def _grant_bond_xp(self, battle: Battle) -> None:
+        """Naikkan bond XP rekan yang hidup setelah kemenangan (§20.3)."""
+        for raw in self.state.party:
+            companion = Companion.from_dict(raw)
+            combatant = self._ally_map.get(companion.id)
+            if combatant is None or combatant.hp <= 0:
+                continue
+            raw["bond_xp"] = companion.bond_xp + BOND_XP_VICTORY
+            battle.log.append(
+                f"Ikatan dengan {companion.name} menguat "
+                f"(+{BOND_XP_VICTORY} bond XP)."
+            )
+
     def _finish_battle(self) -> None:
         """Tutup pertarungan: reward, tulis balik hp/qi, pemulihan KO."""
         battle = self.battle
         player = self.state.player
-        ally = self._ally
         enemy = self._enemy
-        if ally is not None:
-            player.hp = min(ally.hp, player.hp_max)
-            player.qi = min(ally.qi, player.qi_max)
+        self._write_back_allies()
         if battle.winner == "allies":
             rewards = enemy.rewards if enemy is not None else {}
             player.add_insight(rewards.get("insight", 0))
@@ -942,6 +996,7 @@ class GameSession:
                 f"Menang! Insight +{rewards.get('insight', 0)}, "
                 f"Gold +{rewards.get('gold', 0)}."
             )
+            self._grant_bond_xp(battle)
             # Quest dievaluasi setelah kemenangan (GDD §12.4); narasi
             # quest masuk log pertarungan agar terlihat UI.
             for line in self._run_quests():
@@ -949,7 +1004,7 @@ class GameSession:
             for line in self._run_events():
                 battle.log.append(line)
         elif battle.winner == "enemies":
-            # KO: pulih otomatis setelah pertarungan (GDD §20.4).
+            # KO protagonis: pulih otomatis setelah pertarungan (§20.4).
             player.hp = player.hp_max
             battle.log.append(
                 "Kamu tersungkur... dan sadar kembali dengan luka menganga."

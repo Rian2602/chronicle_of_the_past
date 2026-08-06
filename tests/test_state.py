@@ -21,6 +21,7 @@ REQUIRED_KEYS = {
     "schema_version",
     "player",
     "party",
+    "party_active",
     "inventory",
     "quests",
     "flags",

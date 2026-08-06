@@ -246,3 +246,12 @@ def test_save_roundtrip_party(tmp_path):
     loaded = load_game("save1", tmp_path)
     assert loaded.party[0]["id"] == "lin_wei"
     assert loaded.party[0]["bond_xp"] == 25
+
+
+def test_save_roundtrip_party_active(tmp_path):
+    """party_active (field baru, backfill aman) ikut tersimpan (GDD §19.2)."""
+    state = _state()
+    state.party_active = ["lin_wei"]
+    save_game(state, "save1", tmp_path)
+    loaded = load_game("save1", tmp_path)
+    assert loaded.party_active == ["lin_wei"]

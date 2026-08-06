@@ -1164,3 +1164,66 @@ def test_arc1_full_playthrough(tmp_path):
     assert any(flag.startswith("ending_path_") for flag in session.state.flags)
 
     print("✅ Arc 1 full playthrough PASSED")
+
+
+def _rekrut_lin_wei(session: GameSession) -> None:
+    """Suntik rekan Lin Wei langsung ke state (bukan via event)."""
+    from src.models.party import Companion
+
+    session.state.party = [
+        Companion(
+            id="lin_wei",
+            name="Lin Wei",
+            tier="qi_condensation",
+            element="wood",
+            stats={
+                "attack": 5,
+                "defense": 3,
+                "agility": 4,
+                "intelligence": 3,
+                "vitality": 5,
+                "spirit": 3,
+                "hp": 30,
+                "qi": 8,
+            },
+            skills=["qi_slash"],
+        ).to_dict()
+    ]
+    session.state.party_active = ["lin_wei"]
+
+
+def test_battle_dengan_rekan_aktif_dan_bond_xp(tmp_path):
+    """Rekan aktif ikut bertarung; bond XP naik setelah menang (GDD §20.3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    assert len(session.battle.allies) == 2
+    frame = session.battle_frame()
+    while not frame.over:
+        frame = session.battle_step("attack")
+    assert frame.victory is True
+    member = next(m for m in session.state.party if m["id"] == "lin_wei")
+    assert member["bond_xp"] > 0
+
+
+def test_rekan_ko_pulih_setelah_pertarungan(tmp_path):
+    """KO rekan dipulihkan otomatis pasca battle (GDD §20.4)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    _dispatch(session, "talk elder_mao")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    ally = session.battle.allies[1]
+    ally.hp = 0  # simulasi KO
+    while not session.battle_frame().over:
+        session.battle_step("attack")
+    member = next(m for m in session.state.party if m["id"] == "lin_wei")
+    assert member["hp"] == member["stats"]["hp"]  # pulih penuh
