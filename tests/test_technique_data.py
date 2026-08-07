@@ -19,7 +19,7 @@ REQUIRED_KEYS = {
     "requires",
 }
 ELEMENTS = {"metal", "wood", "earth", "water", "fire"}
-PATHS = {"sword", "alchemy", "formation", "spirit"}
+PATHS = {"sword", "alchemy", "formation", "spirit", "soul"}
 TYPES = {"physical", "technique"}
 EXPECTED_TECHNIQUES = {
     "qi_slash",
@@ -33,6 +33,9 @@ EXPECTED_TECHNIQUES = {
     "benteng_meridian",
     "senjata_roh",
     "tebasan_bayangan",
+    "jaring_jiwa",
+    "jarum_racun",
+    "perisai_cahaya",
 }
 
 

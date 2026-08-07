@@ -1,0 +1,15 @@
+{
+  "id": "perisai_cahaya",
+  "name": "Perisai Cahaya",
+  "path": "formation",
+  "element": "metal",
+  "type": "technique",
+  "qi_cost": 15,
+  "power": 0,
+  "effects": [
+    {"type": "status", "status": "barrier", "chance": 100}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}
