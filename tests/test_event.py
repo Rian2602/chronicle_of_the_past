@@ -517,11 +517,8 @@ def test_action_prompt_choice_overwrite_pending():
 # ----------------------------------------------------------------------
 
 
-def test_event_quest103_done_unlock_maps(tmp_path):
-    """quest103_done: unlock sect_azure + guild_city.
-
-    grant memory, start quest201.
-    """
+def test_event_quest103_done_only_log(tmp_path):
+    """quest103_done: just logging narrative (no map unlock/memory/quest201)."""
     from src.core.state import GameState
     from src.engine.event import load_events, process_events
     from src.models.player import Player
@@ -533,18 +530,17 @@ def test_event_quest103_done_unlock_maps(tmp_path):
     result = process_events(state, events)
     # Check event fired
     assert "quest103_done" in result.fired
-    # Maps unlocked
-    assert state.flags.get("map_sect_azure_unlocked") is True
-    assert state.flags.get("map_guild_city_unlocked") is True
-    assert "sect_azure" in state.map_unlocks
-    assert "guild_city" in state.map_unlocks
-    # Memory granted
-    assert "memory_arc1_complete" in state.memories
-    # Quest201 started
-    assert "quest201" in state.quests.started
+    # Maps NOT unlocked
+    assert state.flags.get("map_sect_azure_unlocked") is None
+    assert state.flags.get("map_guild_city_unlocked") is None
+    assert "sect_azure" not in state.map_unlocks
+    assert "guild_city" not in state.map_unlocks
+    # Memory NOT granted
+    assert "memory_arc1_complete" not in state.memories
+    # Quest201 NOT started
+    assert "quest201" not in state.quests.started
     # Log contains narrative
     assert any("Anak yang Ditunggu" in line for line in result.logs)
-    assert any("Lin Wei" in line for line in result.logs)
 
 
 # ----------------------------------------------------------------------

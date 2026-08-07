@@ -1138,11 +1138,7 @@ def test_arc1_full_playthrough(tmp_path):
     assert "memory_shrine_trial" in session.state.memories
     assert "pil_peneguh_fondasi" in session.state.inventory["items"]
 
-    # === Transisi Arc 1→2: quest103_done event ===
-    assert session.state.flags["map_sect_azure_unlocked"] is True
-    assert session.state.flags["map_guild_city_unlocked"] is True
-    assert "memory_arc1_complete" in session.state.memories
-    assert "quest201" in session.state.quests.started
+    # === Transisi Arc 1→2 dipindah ke quest108 ===
 
     # === Quest 104: Kabar yang Tak Boleh Keluar ===
     _dispatch(session, "go village_emberfall")
@@ -1195,6 +1191,13 @@ def test_arc1_full_playthrough(tmp_path):
     assert (
         session.state.reputation["ancient_order"] == 30
     )  # quest106(+5) + quest108(+10) + choice(+15)
+
+    # === Transisi Arc 1→2: quest108_done event ===
+    assert session.state.flags.get("map_sect_azure_unlocked") is True
+    assert session.state.flags.get("map_guild_city_unlocked") is True
+    assert "memory_arc1_complete" in session.state.memories
+    assert "quest201" in session.state.quests.started
+
     # === Faction Quest: Rebels ===
     _dispatch(session, "go ashfall_forest")
     _dispatch(session, "rest")  # recover HP/qi before faction battles

@@ -4,14 +4,10 @@
     {"kind": "quest_done", "quest": "quest103"}
   ],
   "actions": [
-    {"kind": "unlock_map", "target": "sect_azure"},
-    {"kind": "unlock_map", "target": "guild_city"},
-    {"kind": "grant_memory", "memory_id": "memory_arc1_complete"},
     {
       "kind": "log",
-      "text": "Penjaga Makam runtuh, dan debu abad berkeliaran. Di tengah reruntuhan, kau menemukan gulungan kuno yang bercerita tentang 'Anak yang Ditunggu' — dan nama itu tertulis di dinding kuil bersama nama-nama yang gagal. Saat kau membaca baris terakhir, suara Lin Wei bergema dari hutan: 'Sekte Awan Biru... mereka tahu.'"
-    },
-    {"kind": "start_quest", "id": "quest201"}
+      "text": "Penjaga Makam runtuh, dan debu abad berkeliaran. Di tengah reruntuhan, kau menemukan gulungan kuno yang bercerita tentang 'Anak yang Ditunggu' — dan nama itu tertulis di dinding kuil bersama nama-nama yang gagal."
+    }
   ],
   "once": true
 }

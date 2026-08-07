@@ -11,5 +11,5 @@
   "flags_on_complete": ["quest201_done"],
   "next": null,
   "category": "main",
-  "requires_flag": "quest103_done"
+  "requires_flag": "quest108_done"
 }
