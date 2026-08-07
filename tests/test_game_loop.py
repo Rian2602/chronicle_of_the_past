@@ -1589,3 +1589,31 @@ def test_battle_frame_memuat_allies(tmp_path):
     assert len(frame.allies) == 1  # hanya protagonis
     assert frame.allies[0]["name"] == "Akar"
     assert "hp" in frame.allies[0] and "qi_max" in frame.allies[0]
+
+
+def test_missing_exploration_commands(tmp_path):
+    """Test stub perintah eksplorasi dan pengaturan (meditate, loot, dll)."""
+    from src.core.input import Command
+
+    session = _session(tmp_path)
+    session.new_game("Akar")
+
+    # settings
+    res = session._cmd_settings(Command("settings", (), "settings"))
+    assert "Pengaturan" in res[0]
+
+    # loot
+    res = session._cmd_loot(Command("loot", (), "loot"))
+    assert "jarahan" in res[0].lower()
+
+    # meditate
+    res = session._cmd_meditate(Command("meditate", (), "meditate"))
+    assert "bermeditasi" in res[0].lower()
+
+    # examine
+    res = session._cmd_examine(Command("examine", (), "examine"))
+    assert "objek" in res[0].lower()
+
+    # recall
+    res = session._cmd_recall(Command("recall", (), "recall"))
+    assert "recall" in res[0].lower()
