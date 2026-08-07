@@ -30,6 +30,8 @@ class Companion:
         rank: Peringkat rekan saat ini (1-3 per arc), diset konten.
         hp: HP saat ini di dunia (dibawa ke pertarungan).
         qi: Qi saat ini di dunia.
+        evolution: Evolusi sekali (GDD §20.3): dict trigger_tier ->
+            evolved_id. Rekan hasil evolusi tidak punya field ini.
     """
 
     id: str
@@ -42,6 +44,7 @@ class Companion:
     rank: int = 1
     hp: int | None = None
     qi: int | None = None
+    evolution: dict[str, Any] | None = None
 
     @property
     def hp_max(self) -> int:
@@ -55,7 +58,7 @@ class Companion:
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize untuk save (schema §19.2, field party)."""
-        return {
+        result = {
             "id": self.id,
             "name": self.name,
             "tier": self.tier,
@@ -67,6 +70,9 @@ class Companion:
             "hp": self.hp,
             "qi": self.qi,
         }
+        if self.evolution:
+            result["evolution"] = dict(self.evolution)
+        return result
 
     @classmethod
     def from_dict(cls, raw: dict[str, Any]) -> Companion:
@@ -82,6 +88,7 @@ class Companion:
             rank=int(raw.get("rank", 1)),
             hp=raw.get("hp"),
             qi=raw.get("qi"),
+            evolution=raw.get("evolution"),
         )
 
 

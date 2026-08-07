@@ -1,0 +1,19 @@
+{
+  "id": "phoenix_abu",
+  "name": "Phoenix Abu",
+  "tier": "golden_core",
+  "element": "fire",
+  "stats": {
+    "attack": 20,
+    "defense": 12,
+    "agility": 25,
+    "intelligence": 12,
+    "vitality": 18,
+    "spirit": 20,
+    "hp": 120,
+    "qi": 90
+  },
+  "skills": [
+    "flame_strike"
+  ]
+}

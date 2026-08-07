@@ -46,6 +46,7 @@ EXPECTED_EVENTS = {
     "quest206_done",
     "quest207_done",
     "quest208_done",
+    "macan_baja_recruit",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

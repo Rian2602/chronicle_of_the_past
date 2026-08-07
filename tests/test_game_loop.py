@@ -1720,3 +1720,50 @@ def test_player_skills_memuat_skill_formasi_aktif(tmp_path):
     assert "perisai_tanah" not in session.player_skills
     session.state.formation_active = "benteng_bumi"
     assert "perisai_tanah" in session.player_skills
+
+
+# ----------------------------------------------------------------------
+# Binatang Roh (GDD §20.3): recall via swap, telur menetas jadi rekan
+# ----------------------------------------------------------------------
+
+
+def test_cmd_recall_mendelegasikan_ke_swap(tmp_path):
+    """Recall panggil/lepas rekan — semantik sama dengan swap."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.party = [{"id": "lin_wei", "name": "Lin Wei"}]
+    session.state.party_active = []
+    res = session._cmd_recall(
+        Command(name="recall", args=("lin_wei",), raw="recall lin_wei")
+    )
+    assert "Lin Wei" in " ".join(res)
+    assert "lin_wei" in session.state.party_active
+    res = session._cmd_recall(
+        Command(name="recall", args=("lin_wei",), raw="recall lin_wei")
+    )
+    assert "lin_wei" not in session.state.party_active
+
+
+def test_cmd_recall_tanpa_argumen_memberi_hint(tmp_path):
+    """Recall tanpa argumen memunculkan hint penggunaan (GDD §18.2)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    res = session._cmd_recall(Command(name="recall", args=(), raw="recall"))
+    assert "recall" in res[0].lower()
+
+
+def test_cmd_use_menetaskan_telur_menambah_rekan(tmp_path):
+    """Item effect hatch_companion menambah rekan dan menghapus telur."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory["items"]["telur_phoenix_abu"] = 1
+    session._cmd_use(
+        Command(
+            name="use",
+            args=("telur_phoenix_abu",),
+            raw="use telur_phoenix_abu",
+        )
+    )
+    ids = [raw["id"] for raw in session.state.party]
+    assert "phoenix_abu" in ids
+    assert session.state.inventory["items"].get("telur_phoenix_abu", 0) == 0
