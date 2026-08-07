@@ -30,3 +30,15 @@ uv.lock
 
 # Artefak orkestrasi agen (.agents/)
 .agents/
+
+# Dokumen desain & data pengembangan (hanya untuk kontributor lokal)
+AGENTS.md
+CLAUDE.md
+GDD.md
+audit_report.md
+tdd_proof.md
+scratch_*.py
+docs/
+tests/
+tools/
+
