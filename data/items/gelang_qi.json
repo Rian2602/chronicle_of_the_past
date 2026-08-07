@@ -1,0 +1,10 @@
+{
+  "id": "gelang_qi",
+  "name": "Gelang Qi",
+  "type": "artifact",
+  "description": "Membantu menstabilkan kapasitas qi penggunanya.",
+  "price": 500,
+  "effect": {
+    "buff_qi_max": 20
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "pil_langkah_angin",
+  "name": "Pil Langkah Angin",
+  "type": "consumable",
+  "description": "Membuat tubuh seringan bulu.",
+  "price": 150,
+  "effect": {
+    "status_inflict": "haste"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "jubah_bayangan",
+  "name": "Jubah Bayangan",
+  "type": "artifact",
+  "description": "Jubah tenunan benang roh gelap yang sulit dideteksi mata.",
+  "price": 400,
+  "effect": {
+    "resist_dark": 10,
+    "buff_agility": 5
+  }
+}

@@ -87,8 +87,12 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         "buff_hp",
         "buff_defense",
         "buff_attack",
+        "buff_agility",
+        "buff_qi_max",
         "resist_poison",
+        "resist_dark",
         "cure_poison",
+        "status_inflict",
         "growth_stat",
         "max_level",
     }

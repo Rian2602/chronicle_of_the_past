@@ -137,3 +137,26 @@ def test_resep_pil_merujuk_bahan_yang_valid():
                 f"{item_id}: qty resep {req['item']} tidak valid"
             )
     assert ber_resep >= 3, "target Arc 1: minimal 3 resep (GDD §22)"
+
+
+def test_item_baru_arc2_ada():
+    """5 item baru Arc 2 (3 pil + 2 artefak) wajib ada di data (GDD §22)."""
+    data_dir = Path(__file__).resolve().parents[1] / "data" / "items"
+    items = load_items(data_dir)
+    expected_ids = {
+        "pil_racun_meridian",
+        "pil_baja_tubuh",
+        "pil_langkah_angin",
+        "jubah_bayangan",
+        "gelang_qi",
+    }
+    assert expected_ids <= set(items), (
+        f"kurang item: {expected_ids - set(items)}"
+    )
+
+    # Verifikasi tipe
+    assert items["pil_racun_meridian"]["type"] == "consumable"
+    assert items["pil_baja_tubuh"]["type"] == "consumable"
+    assert items["pil_langkah_angin"]["type"] == "consumable"
+    assert items["jubah_bayangan"]["type"] == "artifact"
+    assert items["gelang_qi"]["type"] == "artifact"

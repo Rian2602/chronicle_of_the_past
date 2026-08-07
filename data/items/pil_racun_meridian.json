@@ -1,0 +1,10 @@
+{
+  "id": "pil_racun_meridian",
+  "name": "Pil Racun Meridian",
+  "type": "consumable",
+  "description": "Racun pekat yang merusak aliran qi.",
+  "price": 100,
+  "effect": {
+    "status_inflict": "poison"
+  }
+}
