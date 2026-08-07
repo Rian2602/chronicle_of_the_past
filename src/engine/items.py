@@ -77,7 +77,9 @@ def add_artifact_xp(
     if catalog is None:
         catalog = load_items()
 
-    max_level = catalog.get(artifact_id, {}).get("max_level") or 5
+    max_level = catalog.get(artifact_id, {}).get("max_level")
+    if max_level is None:
+        max_level = 5
 
     while (
         artifact["level"] < max_level

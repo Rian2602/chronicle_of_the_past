@@ -196,6 +196,8 @@ class GameState:
         )
         if not isinstance(ending_points, dict):
             raise ValueError("ending_points harus berupa objek")
+        if not all(isinstance(v, int) for v in ending_points.values()):
+            raise ValueError("nilai ending_points harus integer")
         shop_sold = data.get("shop_sold", {})
         if not isinstance(shop_sold, dict):
             raise ValueError("shop_sold harus berupa objek")

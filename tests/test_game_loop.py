@@ -1593,27 +1593,25 @@ def test_battle_frame_memuat_allies(tmp_path):
 
 def test_missing_exploration_commands(tmp_path):
     """Test stub perintah eksplorasi dan pengaturan (meditate, loot, dll)."""
-    from src.core.input import Command
-
     session = _session(tmp_path)
     session.new_game("Akar")
 
     # settings
-    res = session._cmd_settings(Command("settings", (), "settings"))
+    res = _dispatch(session, "settings")
     assert "Pengaturan" in res[0]
 
     # loot
-    res = session._cmd_loot(Command("loot", (), "loot"))
+    res = _dispatch(session, "loot")
     assert "jarahan" in res[0].lower()
 
     # meditate
-    res = session._cmd_meditate(Command("meditate", (), "meditate"))
+    res = _dispatch(session, "meditate")
     assert "bermeditasi" in res[0].lower()
 
     # examine
-    res = session._cmd_examine(Command("examine", (), "examine"))
+    res = _dispatch(session, "examine")
     assert "objek" in res[0].lower()
 
     # recall
-    res = session._cmd_recall(Command("recall", (), "recall"))
+    res = _dispatch(session, "recall")
     assert "recall" in res[0].lower()
