@@ -11,7 +11,7 @@
     }
   ],  "rewards": {
     "insight": 50,
-    "gold": 20,
+    "gold": 150,
     "grant_items": [
       {"id": "resep_pil_baja_tubuh", "count": 1},
       {"id": "resep_pil_besi_hitam", "count": 1}

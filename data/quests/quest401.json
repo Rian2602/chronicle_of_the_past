@@ -11,7 +11,7 @@
   ],
   "rewards": {
     "insight": 300,
-    "gold": 300,
+    "gold": 850,
     "reputation": {"ancient_order": 5},
     "grant_items": [
       {"id": "talisman_penyegel", "count": 1},

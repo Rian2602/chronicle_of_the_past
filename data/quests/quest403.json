@@ -10,7 +10,7 @@
   ],
   "rewards": {
     "insight": 400,
-    "gold": 400,
+    "gold": 500,
     "grant_items": [
       {"id": "mantra_bisikan", "count": 1},
       {"id": "pil_qi_tenang", "count": 1}

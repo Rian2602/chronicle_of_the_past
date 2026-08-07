@@ -9,7 +9,7 @@
   ],
   "rewards": {
     "insight": 50,
-    "gold": 40,
+    "gold": 100,
     "reputation": {"guilds": 10},
     "grant_items": [
       {"id": "pil_langkah_angin", "count": 1},

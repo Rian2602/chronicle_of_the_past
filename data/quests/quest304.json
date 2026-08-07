@@ -11,7 +11,7 @@
   ],
   "rewards": {
     "insight": 150,
-    "gold": 150,
+    "gold": 600,
     "grant_items": [
       {"id": "liontin_api", "count": 1},
       {"id": "mahkota_ashfall", "count": 1}

@@ -10,7 +10,7 @@
   ],
   "rewards": {
     "insight": 130,
-    "gold": 200,
+    "gold": 350,
     "reputation": {"holy_order": 5},
     "grant_items": [
       {"id": "cincin_roh_kenabian", "count": 1},

@@ -11,7 +11,7 @@
   ],
   "rewards": {
     "insight": 150,
-    "gold": 100,
+    "gold": 200,
     "grant_items": [
       {"id": "pil_kristal", "count": 1},
       {"id": "resep_pil_kristal", "count": 1}

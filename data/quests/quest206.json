@@ -11,7 +11,7 @@
     }
   ],  "rewards": {
     "insight": 100,
-    "gold": 50,
+    "gold": 150,
     "grant_items": [
       {"id": "cermin_bayangan", "count": 1},
       {"id": "jubah_bayangan", "count": 1},

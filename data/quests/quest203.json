@@ -8,7 +8,7 @@
   ],
   "rewards": {
     "insight": 150,
-    "gold": 50,
+    "gold": 150,
     "grant_items": [
       {"id": "resep_pil_baja", "count": 1},
       {"id": "resep_pil_qi_tenang", "count": 1}

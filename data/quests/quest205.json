@@ -11,7 +11,7 @@
     }
   ],  "rewards": {
     "insight": 70,
-    "gold": 40,
+    "gold": 100,
     "grant_items": [
       {"id": "elixir_empedu_api", "count": 1},
       {"id": "pil_antidot", "count": 1},
