@@ -278,3 +278,31 @@ def test_penjaga_makam_dialog_ada_dan_grimdark():
         for node in dialog["nodes"].values()
         for c in node.get("choices", [])
     )
+
+
+def test_dialog_keputusan_kunci_menambah_ending_points():
+    """Pilihan keputusan kunci memuat aksi add_ending_points valid (§21.1)."""
+    import json
+    from pathlib import Path
+
+    dialogues_dir = Path(__file__).resolve().parents[1] / "data" / "dialogues"
+    for dialog_id in [
+        "dialog_elder_mao_1",
+        "dialog_fang_yue_1",
+        "dialog_kestrel_1",
+        "dialog_sera_ember_1",
+        "dialog_inquisitor_vega_1",
+        "dialog_warden_kai_1",
+        "dialog_the_voice_1",
+    ]:
+        raw = json.loads(
+            (dialogues_dir / f"{dialog_id}.json").read_text(encoding="utf-8")
+        )
+        found = False
+        for node in raw["nodes"].values():
+            for choice in node.get("choices", []):
+                for action in choice.get("actions", []):
+                    if action.get("kind") == "add_ending_points":
+                        assert action["path"] in {"defy", "seal", "reconcile"}
+                        found = True
+        assert found, f"{dialog_id}: tidak ada keputusan kunci ending"

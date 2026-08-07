@@ -20,7 +20,45 @@
       ]
     },
     "ready": {
-      "text": "Sesepuh Mao mengangguk: 'Bagus. Mulailah bermeditasi. Temui aku lagi setelah kau melakukannya.'",
+      "text": "Sesepuh Mao mengangguk: 'Bagus. Mulailah bermeditasi. Tapi sebelum itu — jawab satu hal. Desas-desus tentang bakatmu mulai menyebar. Jalan seperti apa yang ingin kau tempuh?'",
+      "choices": [
+        {
+          "text": "Aku ingin membangun kekuatanku sendiri, melampaui aturan desa ini.",
+          "next": "keputusan_1",
+          "actions": [
+            {"kind": "add_ending_points", "path": "defy", "amount": 10}
+          ]
+        },
+        {
+          "text": "Aku ingin hidup tenang dan patuh. Biarkan desa memutuskan jalanku.",
+          "next": "keputusan_2",
+          "actions": [
+            {"kind": "add_ending_points", "path": "seal", "amount": 10}
+          ]
+        },
+        {
+          "text": "[Tinggalkan ruangan]",
+          "next": null,
+          "actions": [
+            {"kind": "set_flag", "flag": "dialog_elder_mao_1_selesai", "value": true}
+          ]
+        }
+      ]
+    },
+    "keputusan_1": {
+      "text": "Sesepuh Mao menghela napas panjang. 'Kuatkan meridianmu, anak muda. Jalan itu tidak akan memaafkan kelemahan — begitu juga dunia yang kau tuju.'",
+      "choices": [
+        {
+          "text": "[Tinggalkan ruangan]",
+          "next": null,
+          "actions": [
+            {"kind": "set_flag", "flag": "dialog_elder_mao_1_selesai", "value": true}
+          ]
+        }
+      ]
+    },
+    "keputusan_2": {
+      "text": "Sesepuh Mao mengangguk pelan. 'Bijak. Tapi ingat: desa ini tidak bisa melindungimu dari apa yang sudah mulai mencari namamu.'",
       "choices": [
         {
           "text": "[Tinggalkan ruangan]",
