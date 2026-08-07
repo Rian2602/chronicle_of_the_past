@@ -36,6 +36,7 @@ REQUIRED_KEYS = {
     "settings",
     "shop_sold",
     "ending_points",
+    "ritual_ready",
 }
 
 
@@ -262,3 +263,21 @@ def test_save_lama_tanpa_formation_active_backfill():
     del data["formation_active"]
     restored = GameState.from_dict(data)
     assert restored.formation_active is None
+
+
+def test_ritual_ready_backfill_roundtrip():
+    """ritual_ready default False dan ikut round-trip to_dict/from_dict."""
+    state = _state()
+    assert state.ritual_ready is False
+    state.ritual_ready = True
+    data = state.to_dict()
+    restored = GameState.from_dict(data)
+    assert restored.ritual_ready is True
+
+
+def test_save_lama_tanpa_ritual_ready_backfill():
+    """Save lama tanpa ritual_ready dimuat sebagai False."""
+    data = _state().to_dict()
+    del data["ritual_ready"]
+    restored = GameState.from_dict(data)
+    assert restored.ritual_ready is False

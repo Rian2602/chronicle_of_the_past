@@ -842,6 +842,34 @@ class GameSession:
             "Bonus berlaku untuk seluruh tim saat bertarung."
         ]
 
+    def _cmd_ritual(self, _command: Command) -> list[str]:
+        """Selesaikan ritual persiapan melawan entitas kuno (GDD §21.3).
+
+        Cek syarat via check_ritual_ready (artefak kunci + formasi +
+        tim). Bila lengkap, set ritual_ready (state + flags) sehingga
+        quest405 (kind=flag) bisa selesai dan event narasi terpicu.
+        """
+        from src.systems.ritual import check_ritual_ready
+
+        if self.in_battle:
+            return ["Tidak bisa menggelar ritual saat bertarung."]
+        if self.state.ritual_ready:
+            return ["Ritual sudah selesai. Suara menunggumu."]
+        ok, reasons = check_ritual_ready(self.state)
+        if not ok:
+            return ["Ritual belum bisa digelar:"] + [
+                f"  - {reason}" for reason in reasons
+            ]
+        self.state.ritual_ready = True
+        self.state.flags["ritual_ready"] = True
+        lines = [
+            "Artefak menyala, formasi terkunci, tim berdiri tegak. ",
+            "Ritual selesai — langit di atasmu berdenyut sebagai jawaban.",
+        ]
+        lines.extend(self._run_quests())
+        lines.extend(self._run_events())
+        return lines
+
     def _cmd_meditate(self, command: Command) -> list[str]:
         # Pulihkan qi (versi sederhana dari rest)
         self.state.player.qi = self.state.player.qi_max

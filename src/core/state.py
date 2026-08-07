@@ -114,6 +114,8 @@ class GameState:
     ending_points: dict[str, int] = field(
         default_factory=lambda: {"defy": 0, "seal": 0, "reconcile": 0}
     )
+    # Ritual persiapan melawan entitas kuno selesai (GDD §21.3).
+    ritual_ready: bool = False
 
     def __post_init__(self) -> None:
         """Normalisasi reputasi 5 faksi (§8), ending_points, dan hp/qi konkret.
@@ -175,6 +177,7 @@ class GameState:
             "buffs": dict(self.buffs),
             "formation_active": self.formation_active,
             "ending_points": dict(self.ending_points),
+            "ritual_ready": bool(self.ritual_ready),
         }
 
     @classmethod
@@ -237,4 +240,5 @@ class GameState:
             buffs=dict(data.get("buffs", {})),
             formation_active=data.get("formation_active"),
             ending_points=dict(ending_points),
+            ritual_ready=bool(data.get("ritual_ready", False)),
         )

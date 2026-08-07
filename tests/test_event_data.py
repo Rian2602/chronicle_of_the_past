@@ -81,6 +81,7 @@ EXPECTED_EVENTS = {
     "quest408_intro",
     "rahasia_terungkap",
     "suara_defeated",
+    "ritual_prepare",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 
