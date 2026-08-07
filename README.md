@@ -165,84 +165,120 @@ python3 launcher.py
 Setelah meluncurkan game, kamu akan disambut oleh layar judul. Pilih **Mulai
 Baru** untuk memulai petualangan sebagai **Akar**, pemuda dari Desa Emberfall.
 
-**Contoh sesi:**
+**Antarmuka layar permainan:**
 
 ```
-╔══════════════════════════════════════════════════════╗
-║              CHRONICLE OF THE PAST                   ║
-║            Episode 1: Desa Emberfall                 ║
-╚══════════════════════════════════════════════════════╝
-
-Kamu terbangun di gubuk bambu yang sempit. Cahaya senja
-masuk melalui celah dinding. Tubuhmu terasa aneh — seolah
-ada sesuatu yang mengalir di dalam urat nadi, sesuatu yang
-seharusnya tidak ada.
-
-> talk elder_mao
-
-Sesepuh Mao menatapmu: "Apa kamu sudah siap memulai jalan
-kultivasimu?"
-
-  [1] Saya siap, Guru.
-  [2] Beri saya waktu.
+┌─────────────────────────────────────────────────────────┐
+│ 🔖 Chronicle of the Past                      ⏰ 12:34 │
+├────┬──────────────────────────────────────────┬─────────┤
+│🎒  │ Akar — Desa Emberfall             ⚡QC Lv.1 │📜Quest  │
+│📜  │ [████████████████░░░░] HP    17/20    │ [Quest] │
+│👥  │ [████████████████████] Qi     20/20    │ ...     │
+│⚡  │                                          │         │
+│💥  │ ── Tab: 📖 Story ──                     │👥Party  │
+│💾  │ Kamu terbangun di gubuk bambu...         │ Akar    │
+│    │                                          │ Lin Wei │
+│    │ ┌──────────────────────────────────┐     │         │
+│    │ │ 🗣 Bicara dgn Sesepuh Mao     ▸  │     │         │
+│    │ │ ⚡ Mulai kultivasi               │     │         │
+│    │ │ 🌙 Istirahat                     │     │         │
+│    │ │ 🗺 Buka peta                     │     │         │
+│    │ └──────────────────────────────────┘     │         │
+│    │ [⚡ Kultivasi] [🌙 Istirahat] [🗺 Peta]  │         │
+├────┴──────────────────────────────────────────┴─────────┤
+│ 🔤 N: Mulai Baru  L: Muat  Q: Keluar  Esc: Menu        │
+└─────────────────────────────────────────────────────────┘
 ```
 
-Navigasi sederhana: ketik perintah (atau nomor pilihan) dan tekan Enter.
+**Cara bermain — tanpa mengetik:**
+
+| Yang ingin kamu lakukan | Caranya |
+|-------------------------|---------|
+| Berjalan ke lokasi lain | Klik 🗺 Peta / menu "Jelajahi" → pilih lokasi |
+| Bicara dengan NPC | Klik "🗣 Bicara" → pilih NPC dari daftar |
+| Pilih opsi dialog | Klik opsi yang muncul di panel dialog (atau ↑↓ Enter) |
+| Bertarung | Klik ⚔ Serang / 🧘 Teknik / 🛡 Bertahan dari menu battle |
+| Buka tas/inventaris | Klik tombol 🎒 Tas di sidebar kiri |
+| Cek quest | Klik 📜 Quest di sidebar kiri atau panel kanan |
+| Atur tim | Klik 👥 Tim di sidebar kiri |
+| Kultivasi | Klik ⚡ Kultiv atau 💥 Break di sidebar / baris bawah |
+| Simpan permainan | Klik 💾 Simpan di sidebar kiri |
+| Cek peta | Klik 🗺 Peta di baris tombol bawah |
+| Gunakan formasi | Klik menu "Formasi" dari daftar aksi |
+| Gelar ritual | Klik menu "Ritual" dari daftar aksi (Arc 4) |
+
+> 💡 **Navigasi:** Gunakan **mouse** untuk klik tombol, atau **panah ↑↓**
+> untuk memilih opsi lalu **Enter** untuk konfirmasi. Tidak perlu mengetik
+> perintah — cukup klik dan pilih. Satu-satunya saat kamu perlu mengetik
+> adalah saat memasukkan nama kultivatormu di awal permainan.
 
 ---
 
-## ⌨️ Perintah Dasar
+## 🎮 Menu & Kontrol
 
-### Navigasi & Eksplorasi
-| Perintah | Fungsi |
-|----------|--------|
-| `help` | Tampilkan daftar perintah |
-| `status` | Lihat status pemain (HP, Qi, tier) |
-| `map` | Lihat peta dunia dan lokasi tersedia |
-| `go <lokasi>` | Pindah ke lokasi |
-| `look` | Amati lingkungan sekitar |
-| `talk <nama>` | Bicara dengan NPC |
+Permainan dikendalikan sepenuhnya via **klik** + **panah ↑↓ Enter** —
+tanpa perlu mengetik perintah (kecuali nama karakter di awal).
 
-### Pertempuran
-| Perintah | Fungsi |
-|----------|--------|
-| `attack` | Serangan fisik dasar |
-| `defend` | Bertahan, kurangi damage |
-| `technique <nama>` | Gunakan teknik kultivasi |
-| `observe` | Analisis musuh |
-| `escape` | Melarikan diri |
+### Sidebar Kiri (Tombol Cepat)
 
-### Kultivasi & Item
-| Perintah | Fungsi |
-|----------|--------|
-| `cultivate` | Mengumpulkan qi |
-| `breakthrough` | Naikkan tingkat kultivasi |
-| `rest` | Pulihkan HP |
-| `meditate` | Pulihkan Qi |
-| `use <item>` | Gunakan item |
-| `refine <item>` | Buat item dari resep |
-| `shop` | Lihat barang di toko |
-| `buy/sell <item>` | Jual beli |
+| Tombol | Fungsi |
+|--------|--------|
+| 🎒 Tas | Buka inventaris & kelola item |
+| 📜 Quest | Lihat quest aktif & progres |
+| 👥 Tim | Lihat & atur anggota party |
+| ⚡ Kultiv | Mulai kultivasi (kumpulkan qi) |
+| 💥 Break | Coba naikkan tingkat kultivasi |
+| 💾 Simpan | Simpan permainan ke slot |
 
-### Party & Tim
-| Perintah | Fungsi |
-|----------|--------|
-| `party` | Lihat anggota party |
-| `swap <nama>` | Tukar anggota aktif |
-| `formation <id>` | Aktifkan formasi |
-| `ritual` | Gelar ritual persiapan (Arc 4) |
+### Menu Aksi Utama (Panel Tengah)
 
-### Sistem
-| Perintah | Fungsi |
-|----------|--------|
-| `save [1-3]` | Simpan ke slot |
-| `load [1-3]` | Muat dari slot |
-| `inventory` | Buka inventaris |
-| `quests` | Lihat quest aktif |
-| `memories` | Lihat echo memori terkumpul |
+Daftar opsi yang muncul di panel tengah berubah sesuai situasi:
 
-> 💡 **Tips:** Gunakan `help` kapan pun kamu bingung. Sebagian besar perintah
-> juga punya alias Bahasa Indonesia!
+**Mode Jelajah (dunia):**
+```
+🗣 Bicara dgn Sesepuh Mao   ▸
+⚡ Mulai kultivasi
+🌙 Istirahat
+🗺 Buka peta
+🔧 Gunakan item             ▸
+🔄 Atur formasi             ▸
+📖 Echo memori
+⏳ Ritual persiapan          ▸
+```
+
+**Mode Pertarungan:**
+```
+⚔ Serang
+🧘 Teknik                   ▸
+🛡 Bertahan
+🔍 Amati musuh
+🏃 Melarikan diri
+🧪 Gunakan item             ▸
+```
+
+**Mode Percakapan:**
+Panel dialog muncul dengan pilihan bernomor — klik salah satu
+atau gunakan ↑↓ + Enter untuk memilih.
+
+### Baris Tombol Bawah
+
+```
+[⚡ Kultivasi] [🌙 Istirahat] [🗺 Peta]
+```
+
+### Pintasan Keyboard
+
+| Tombol | Fungsi |
+|--------|--------|
+| `↑` `↓` | Navigasi opsi di menu/aksi |
+| `Enter` | Pilih opsi yang disorot |
+| `Esc` | Kembali ke sub-menu / ke menu utama |
+| `N` | Mulai baru (dari menu utama) |
+| `L` | Muat save (dari menu utama) |
+| `Q` | Keluar game |
+
+> 💡 **Tips:** Cukup gunakan mouse untuk klik tombol, atau keyboard
+> dengan ↑↓ Enter. Tidak ada perintah yang perlu dihapal atau diketik.
 
 ---
 
