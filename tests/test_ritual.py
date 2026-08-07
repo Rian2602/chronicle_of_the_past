@@ -36,3 +36,23 @@ def test_ritual_kurang_satu_syarat():
     ok, reasons = check_ritual_ready(state)
     assert ok is False
     assert any("Artefak" in reason for reason in reasons)
+
+
+def test_perintah_ritual_terdaftar_di_available():
+    """Perintah ritual wajib ada di AVAILABLE agar bisa di-dispatch."""
+    from src.core.game_loop import AVAILABLE
+
+    assert "ritual" in AVAILABLE
+
+
+def test_perintah_ritual_tidak_diblokir(tmp_path):
+    """Dispatch ritual menjawab syarat, bukan "Belum tersedia (Fase 1)"."""
+    import random
+
+    from src.core.game_loop import GameSession
+    from src.core.input import Command
+
+    session = GameSession(save_dir=tmp_path, rng=random.Random(1))
+    session.new_game("Akar")
+    lines = session.dispatch(Command(name="ritual", args=(), raw="ritual"))
+    assert not any("Belum tersedia" in line for line in lines)

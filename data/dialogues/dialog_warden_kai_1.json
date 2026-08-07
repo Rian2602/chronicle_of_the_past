@@ -9,7 +9,7 @@
           "text": "Ritual penuh. Kita lawan Suara dengan segala yang kita punya.",
           "next": "keputusan_1",
           "actions": [
-            {"kind": "add_ending_points", "path": "reconcile", "amount": 10},
+            {"kind": "add_ending_points", "path": "reconcile", "points": 10},
             {"kind": "change_reputation", "faction": "ancient_order", "delta": 10}
           ]
         },
@@ -17,7 +17,7 @@
           "text": "Hemat sumber daya. Dunia harus tetap berdiri meski langit runtuh.",
           "next": "keputusan_2",
           "actions": [
-            {"kind": "add_ending_points", "path": "seal", "amount": 10}
+            {"kind": "add_ending_points", "path": "seal", "points": 10}
           ]
         },
         {

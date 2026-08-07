@@ -25,14 +25,14 @@
           "text": "Tidak ada yang membeli dan tidak ada yang menjual. Aku bermain dengan aturanku sendiri.",
           "next": null,
           "actions": [
-            {"kind": "add_ending_points", "path": "reconcile", "amount": 10}
+            {"kind": "add_ending_points", "path": "reconcile", "points": 10}
           ]
         },
         {
           "text": "Aku akan memutuskan sendiri jalan yang kutempuh — dan yang menghalanginya akan kubersihkan.",
           "next": null,
           "actions": [
-            {"kind": "add_ending_points", "path": "defy", "amount": 10}
+            {"kind": "add_ending_points", "path": "defy", "points": 10}
           ]
         },
         {

@@ -26,14 +26,14 @@
           "text": "Aku akan membangun kekuatan di sini — untuk tujuanku sendiri.",
           "next": "keputusan_1",
           "actions": [
-            {"kind": "add_ending_points", "path": "defy", "amount": 10}
+            {"kind": "add_ending_points", "path": "defy", "points": 10}
           ]
         },
         {
           "text": "Aku akan mengabdi pada sekte dengan setia dan patuh.",
           "next": "keputusan_2",
           "actions": [
-            {"kind": "add_ending_points", "path": "seal", "amount": 10}
+            {"kind": "add_ending_points", "path": "seal", "points": 10}
           ]
         }
       ]

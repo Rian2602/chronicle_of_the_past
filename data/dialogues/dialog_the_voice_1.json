@@ -9,24 +9,27 @@
           "text": "Langit ini akan kurombak. Aturan lama mati bersamamu.",
           "next": "pilih_defy",
           "actions": [
-            {"kind": "add_ending_points", "path": "defy", "amount": 15},
-            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true}
+            {"kind": "add_ending_points", "path": "defy", "points": 15},
+            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true},
+            {"kind": "grant_memory", "memory_id": "memory_arc4_choice"}
           ]
         },
         {
           "text": "Aku akan menyegel segalanya — termasuk diriku sendiri. Dunia harus tenang.",
           "next": "pilih_seal",
           "actions": [
-            {"kind": "add_ending_points", "path": "seal", "amount": 15},
-            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true}
+            {"kind": "add_ending_points", "path": "seal", "points": 15},
+            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true},
+            {"kind": "grant_memory", "memory_id": "memory_arc4_choice"}
           ]
         },
         {
           "text": "Aku berdiri di antara kalian — melindungi keduanya dari kehancuran total.",
           "next": "pilih_reconcile",
           "actions": [
-            {"kind": "add_ending_points", "path": "reconcile", "amount": 15},
-            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true}
+            {"kind": "add_ending_points", "path": "reconcile", "points": 15},
+            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true},
+            {"kind": "grant_memory", "memory_id": "memory_arc4_choice"}
           ]
         }
       ]

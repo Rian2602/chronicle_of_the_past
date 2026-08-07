@@ -234,3 +234,38 @@ def test_trigger_tier_mengacu_tingkatan_yang_ada():
                 assert condition["tier"] in tier_ids, (
                     f"{path.name}: tier {condition['tier']} tidak dikenal"
                 )
+
+
+def test_semua_memori_digrant_oleh_event_atau_dialog():
+    """Setiap memori di data/story wajib di-grant (event/dialog).
+
+    Mencegah konten mati: file memori tanpa grant_memory tidak akan pernah
+    tampil di game (GDD §15.3).
+    """
+    story_dir = Path(__file__).resolve().parents[1] / "data" / "story"
+    dialogues_dir = Path(__file__).resolve().parents[1] / "data" / "dialogues"
+
+    memory_ids = {
+        json.loads(p.read_text(encoding="utf-8"))["id"]
+        for p in story_dir.glob("*.json")
+    }
+    granted = set()
+
+    def collect(actions):
+        for action in actions:
+            if action.get("kind") == "grant_memory":
+                granted.add(action["memory_id"])
+            if action.get("kind") == "prompt_choice":
+                for opt in action.get("options", []):
+                    collect(opt.get("actions", []))
+
+    for path in DATA_DIR.glob("*.json"):
+        collect(json.loads(path.read_text(encoding="utf-8")).get("actions", []))
+    for path in dialogues_dir.glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for node in data.get("nodes", {}).values():
+            for choice in node.get("choices", []):
+                collect(choice.get("actions", []))
+
+    missing = memory_ids - granted
+    assert not missing, f"memori tanpa grant: {sorted(missing)}"

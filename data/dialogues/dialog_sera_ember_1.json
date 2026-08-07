@@ -10,8 +10,9 @@
           "next": "pilih_pemberontak",
           "actions": [
             {"kind": "change_reputation", "faction": "rebels", "delta": 10},
-            {"kind": "add_ending_points", "path": "defy", "amount": 10},
-            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true}
+            {"kind": "add_ending_points", "path": "defy", "points": 10},
+            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true},
+            {"kind": "grant_memory", "memory_id": "memory_arc3_choice"}
           ]
         },
         {
@@ -19,16 +20,18 @@
           "next": "pilih_hati_hati",
           "actions": [
             {"kind": "change_reputation", "faction": "holy_order", "delta": 5},
-            {"kind": "add_ending_points", "path": "seal", "amount": 10},
-            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true}
+            {"kind": "add_ending_points", "path": "seal", "points": 10},
+            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true},
+            {"kind": "grant_memory", "memory_id": "memory_arc3_choice"}
           ]
         },
         {
           "text": "Kedua kalian buta. Aku akan menemukan jalan ketiga — atau mati mencoba.",
           "next": "pilih_jalan_ketiga",
           "actions": [
-            {"kind": "add_ending_points", "path": "reconcile", "amount": 10},
-            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true}
+            {"kind": "add_ending_points", "path": "reconcile", "points": 10},
+            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true},
+            {"kind": "grant_memory", "memory_id": "memory_arc3_choice"}
           ]
         }
       ]

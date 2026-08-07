@@ -4,6 +4,7 @@
     {"kind": "quest_done", "quest": "quest103"}
   ],
   "actions": [
+    {"kind": "grant_memory", "memory_id": "memory_arc1_kuil"},
     {
       "kind": "log",
       "text": "Penjaga Makam runtuh, dan debu abad berkeliaran. Di tengah reruntuhan, kau menemukan gulungan kuno yang bercerita tentang 'Anak yang Ditunggu' — dan nama itu tertulis di dinding kuil bersama nama-nama yang gagal."

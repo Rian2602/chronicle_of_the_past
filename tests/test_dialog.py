@@ -306,3 +306,18 @@ def test_dialog_keputusan_kunci_menambah_ending_points():
                         assert action["path"] in {"defy", "seal", "reconcile"}
                         found = True
         assert found, f"{dialog_id}: tidak ada keputusan kunci ending"
+
+
+def test_keputusan_kunci_menambah_poin_saat_dieksekusi():
+    """Aksi add_ending_points benar-benar menambah poin saat dieksekusi.
+
+    Bukti runtime (§21.1): pilihan keputusan kunci the_voice menambah 15
+    poin ke jalur defy — bukan hanya ada di data.
+    """
+    dialogues_dir = Path(__file__).resolve().parents[1] / "data" / "dialogues"
+    dialog = load_dialogs(dialogues_dir)["dialog_the_voice_1"]
+    state = _state()
+    result = EventResult()
+    choice = get_node(dialog, "start")["choices"][0]
+    apply_actions(choice["actions"], state, result, "dialog_the_voice_1")
+    assert state.ending_points["defy"] == 15

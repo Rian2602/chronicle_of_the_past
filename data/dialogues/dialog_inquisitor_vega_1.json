@@ -9,7 +9,7 @@
           "text": "Orde Suci harus dihancurkan sampai ke akarnya.",
           "next": "keputusan_1",
           "actions": [
-            {"kind": "add_ending_points", "path": "defy", "amount": 10},
+            {"kind": "add_ending_points", "path": "defy", "points": 10},
             {"kind": "change_reputation", "faction": "holy_order", "delta": -10}
           ]
         },
@@ -17,7 +17,7 @@
           "text": "Ada jalan damai di antara orde dan yang kau sebut kotor.",
           "next": "keputusan_2",
           "actions": [
-            {"kind": "add_ending_points", "path": "reconcile", "amount": 10}
+            {"kind": "add_ending_points", "path": "reconcile", "points": 10}
           ]
         },
         {
