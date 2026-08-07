@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from src.core.state import GameState
+from src.engine.story import calculate_ending
 from src.models.party import load_companion
 
 EVENT_DIR = Path(__file__).resolve().parents[2] / "data" / "events"
@@ -40,6 +41,7 @@ ACTION_KINDS = {
     "log",
     "prompt_choice",
     "add_ending_points",
+    "calculate_ending",
 }
 
 
@@ -200,6 +202,11 @@ def apply_action(
         points = action.get("points", 0)
         curr = state.ending_points.get(ep_path, 0)
         state.ending_points[ep_path] = curr + points
+    elif kind == "calculate_ending":
+        # GDD §21.1: jalur poin tertinggi menentukan ending; hanya flag
+        # pemenang yang diset (test menuntut flag loser None).
+        winner = calculate_ending(state)
+        state.flags[f"ending_{winner}_win"] = True
 
 
 def process_events(state: GameState, events: list[GameEvent]) -> EventResult:

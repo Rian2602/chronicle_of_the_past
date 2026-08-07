@@ -8,7 +8,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from src.core.state import GameState
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 STORY_DIR = DATA_DIR / "story"
@@ -31,3 +34,29 @@ def load_memories(data_dir: Path = STORY_DIR) -> dict[str, dict[str, str]]:
         raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
         memories[raw["id"]] = {"title": raw["title"], "text": raw["text"]}
     return memories
+
+
+def calculate_ending(state: GameState) -> str:
+    """Hitung jalur ending dengan poin tertinggi dari state.ending_points.
+
+    Sesuai GDD §21.1, ending utama ditentukan oleh jalur dengan poin
+    tertinggi di ``state.ending_points`` ('defy', 'seal', 'reconcile').
+    Jika terjadi seri (tie), prioritas default adalah 'defy' >= 'seal' >=
+    'reconcile'.
+
+    Args:
+        state: GameState permainan saat ini.
+
+    Returns:
+        Nama jalur ending yang menang: 'defy', 'seal', atau 'reconcile'.
+    """
+    points = state.ending_points
+    defy_pts = points.get("defy", 0)
+    seal_pts = points.get("seal", 0)
+    reconcile_pts = points.get("reconcile", 0)
+
+    if defy_pts >= seal_pts and defy_pts >= reconcile_pts:
+        return "defy"
+    if seal_pts >= reconcile_pts:
+        return "seal"
+    return "reconcile"
