@@ -2012,6 +2012,9 @@ class GameSession:
             )
         # BUG-14: lepaskan referensi combatant lama. status_lines/HUD
         # memilih _ally.hp selama _ally tidak None — tanpa reset, HP
-        # stale (0/80) tampil padahal state.player sudah pulih.
+        # stale (0/80) tampil padahal state.player sudah pulih. `_enemy`
+        # juga di-reset (asimetri: hanya _finish_battle yang membacanya,
+        # tapi reset simetris cegah pembaca baru di masa depan).
         self._ally = None
         self._ally_map = {}
+        self._enemy = None

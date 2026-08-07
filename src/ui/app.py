@@ -241,10 +241,13 @@ class GameScreen(Screen):
                 yield Static("", id="enemy")
                 with TabbedContent(id="content-tabs"):
                     with TabPane("📖 Story", id="tab-story"):
-                        # ponytail: BUG-9 — RichLog tanpa max_lines; log
-                        # sesi panjang bisa menurunkan performa render.
-                        # Upgrade: set max_lines (mis. 500) bila terukur
-                        # melambat di battle massal/sesi sangat panjang.
+                        # BUG-9: RichLog tanpa max_lines; log sesi panjang bisa
+                        # menurunkan performa. Upgrade: set max_lines (mis. 500)
+                        # bila terukur melambat di battle massal/sesi sangat
+                        # panjang.
+                        # BUG-16: min-height log ditangani via CSS (#game-log
+                        # min-height:5) — Textual 8.2.8 tidak menerima argumen
+                        # min_height di konstruktor RichLog.
                         yield RichLog(id="game-log", markup=True)
                     with TabPane("🧠 Memory", id="tab-memory"):
                         yield RichLog(id="memory-log", markup=True)
@@ -390,6 +393,7 @@ class GameScreen(Screen):
                 Command(name="quit", args=(), raw="quit")
             ):
                 log.write(line + "\n")
+                self._remember_log(line)
             self.app.exit()
             return
         if raw == "observe":
@@ -525,6 +529,11 @@ class GameScreen(Screen):
                 for choice in choices
             ]
         )
+        # BUG-15: set_options me-reset highlighted ke None -> Enter pada
+        # opsi pertama tidak merespons. Auto-highlight opsi pertama agar
+        # navigasi satu ketukan, bukan dua (regresi TUI hunt).
+        if choices:
+            dlg.highlighted = 0
         dlg.display = True
         dlg.focus()
 
@@ -624,7 +633,7 @@ class ChronicleApp(App):
        pendek (terbukti tmux 120x30 s/d 15 baris); trade-off: di bawah
        15 baris menu aksi yang terpotong, bukan log. ponytail: tata
        letak responsif penuh (scrollbar/prioritas) menyusul Fase polish. */
-    #content-tabs { height: 1fr; min-height: 5; }
+    #content-tabs { height: 1fr; min-height: 8; }
     #game-log { height: 1fr; min-height: 5; background: #0F0F0F; }
     #memory-log { height: 1fr; min-height: 5; background: #0F0F0F; }
     #map-panel { height: 1fr; min-height: 5; padding: 1; color: #00bcd4; }
