@@ -1,0 +1,15 @@
+{
+  "id": "resep_pil_asar_jiwa",
+  "name": "Resep Pil Asar Jiwa",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Asar Jiwa — pil langka yang ditempa dari sisa-sisa qi.",
+  "price": 280,
+  "effect": {
+    "learn_recipe": "pil_asar_jiwa"
+  },
+  "recipe": [
+    {"item": "batu_qi", "qty": 2},
+    {"item": "esensi_api", "qty": 1},
+    {"item": "esensi_air", "qty": 1}
+  ]
+}

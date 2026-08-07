@@ -112,6 +112,21 @@ def test_item_alkimia_alat_dan_resep_ada():
     assert expected <= files, f"kurang: {expected - files}"
 
 
+def test_target_konten_arc4_terpenuhi():
+    """Pelengkap GDD §22: resep 14, artefak 12, memori 9."""
+    data_dir = Path(__file__).resolve().parents[1] / "data"
+    items = [
+        json.loads(path.read_text(encoding="utf-8"))
+        for path in (data_dir / "items").glob("*.json")
+    ]
+    recipes = [item for item in items if item.get("type") == "recipe"]
+    artifacts = [item for item in items if item.get("type") == "artifact"]
+    memories = list((data_dir / "story").glob("*.json"))
+    assert len(recipes) >= 14, f"resep {len(recipes)}/14"
+    assert len(artifacts) >= 12, f"artefak {len(artifacts)}/12"
+    assert len(memories) >= 9, f"memori {len(memories)}/9"
+
+
 def test_resep_pil_merujuk_bahan_yang_valid():
     """Recipe tiap pil: ingredient ada di data dan bertype material."""
     data_dir = Path(__file__).resolve().parents[1] / "data" / "items"
