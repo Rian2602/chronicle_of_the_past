@@ -1,0 +1,11 @@
+{
+  "id": "guntur",
+  "name": "Guntur",
+  "location": "village_emberfall",
+  "greeting": "Aku sudah tua, tapi ingatan tak pernah pudar.",
+  "dialog": [
+    "Guntur menghela napas berat: 'Malam pembantaian... api membakar arsip sekte. Aku selamat karena tersembunyi di lubang sumur.'",
+    "'Di arsip itu ada nama-nama. Ratusan nama. Termasuk nama orang tuamu. Dan nama Lin Wei.'",
+    "'Penjaga arsip masih berdiri di sana — bangkai yang dijaga qi hitam. Kau harus melewatinya untuk mendapatkan kebenaran.'"
+  ]
+}

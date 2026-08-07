@@ -1,0 +1,13 @@
+{
+  "id": "frost_bind",
+  "name": "Ikatan Es",
+  "path": "sword",
+  "element": "water",
+  "type": "technique",
+  "qi_cost": 10,
+  "power": 6,
+  "effects": [
+    {"status": "freeze", "duration": 2}
+  ],
+  "requires": {"tier": "qi_condensation"}
+}

@@ -1,0 +1,12 @@
+{
+  "id": "pedagang_kelana",
+  "name": "Pedagang Kelana",
+  "location": "village_emberfall",
+  "greeting": "Hei, kultivator! Mau beli barang langka?",
+  "dialog": [
+    "Pedagang Kelana membuka tasnya: 'Aku punya esensi-api, esensi-air, esensi-kayu, esensi-tanah. Bahan bagus untuk racik pil.'",
+    "'Harganya murah: 50 emas per esensi. Atau tukar dengan batu_qi kalau punya.'",
+    "'Aku juga punya pil_pemulih dan pil_qi. Mau beli?'"
+  ],
+  "shop": "pedagang_kelana"
+}

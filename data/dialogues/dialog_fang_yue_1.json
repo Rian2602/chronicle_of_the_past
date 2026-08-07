@@ -1,0 +1,66 @@
+{
+  "id": "dialog_fang_yue_1",
+  "npc": "fang_yue",
+  "nodes": {
+    "start": {
+      "text": "Jadi kau yang selamat dari Hutan Perbatasan? Aku Fang Yue. Apa tujuanmu di sini?",
+      "choices": [
+        {
+          "text": "Aku datang untuk berlatih.",
+          "next": "accept",
+          "requires_flag": null
+        }
+      ]
+    },
+    "accept": {
+      "text": "Bagus. Jika kau ingin bertahan di sini, temui Xiu Sang Alkemi. Dia ada tugas untuk murid baru. Tapi kukatakan dulu: sekte ini bukan rumah — ia tangga. Kau naik, atau kau dipijak.",
+      "choices": [
+        {
+          "text": "[Mengangguk]",
+          "next": null,
+          "actions": [
+            {"kind": "start_quest", "id": "quest202"}
+          ]
+        },
+        {
+          "text": "Aku akan membangun kekuatan di sini — untuk tujuanku sendiri.",
+          "next": "keputusan_1",
+          "actions": [
+            {"kind": "add_ending_points", "path": "defy", "points": 10}
+          ]
+        },
+        {
+          "text": "Aku akan mengabdi pada sekte dengan setia dan patuh.",
+          "next": "keputusan_2",
+          "actions": [
+            {"kind": "add_ending_points", "path": "seal", "points": 10}
+          ]
+        }
+      ]
+    },
+    "keputusan_1": {
+      "text": "Fang Yue menyeringai. 'Jujur. Aku suka. Tapi jangan pernah ucapkan itu di depan sesepuh — mereka mendengar segala sesuatu yang berguna bagi mereka.'",
+      "choices": [
+        {
+          "text": "[Temui Xiu Sang Alkemi]",
+          "next": null,
+          "actions": [
+            {"kind": "start_quest", "id": "quest202"}
+          ]
+        }
+      ]
+    },
+    "keputusan_2": {
+      "text": "Fang Yue mengangguk datar. 'Patuh. Sekte menyukai yang patuh — dan biasanya memakainya lebih dulu. Terserah kau.'",
+      "choices": [
+        {
+          "text": "[Temui Xiu Sang Alkemi]",
+          "next": null,
+          "actions": [
+            {"kind": "start_quest", "id": "quest202"}
+          ]
+        }
+      ]
+    }
+  }
+}

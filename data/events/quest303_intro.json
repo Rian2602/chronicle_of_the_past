@@ -1,0 +1,14 @@
+{
+  "id": "quest303_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest302"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest303"},
+    {
+      "kind": "log",
+      "text": "Lorong katedral memuntahkanmu ke halaman belakang. Seorang inquisitor berjubah gelap menatapmu dari kejauhan — bukan dengan kebencian, tapi dengan pertanyaan. Namanya Inquisitor Vega."
+    }
+  ],
+  "once": true
+}

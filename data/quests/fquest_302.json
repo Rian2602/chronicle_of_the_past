@@ -1,0 +1,14 @@
+{
+  "id": "fquest_302",
+  "title": "Bekas Luka Gilda",
+  "type": "faction",
+  "category": "faction",
+  "description": "Kestrel menawarkan emas — banyak emas — untuk 'membersihkan' dua pembunuh gilda yang membelot membawa rahasia kontrak. 'Mereka bukan lagi milik gilda,' katanya. 'Mereka milik siapa pun yang membayar.'",
+  "requires_flag": "quest306_done",
+  "objectives": [
+    {"kind": "kill_count", "target": "pembunuh_gilda", "count": 2}
+  ],
+  "rewards": {"insight": 120, "gold": 500, "reputation": {"guilds": 8}},
+  "flags_on_complete": ["fquest_302_done"],
+  "next": null
+}

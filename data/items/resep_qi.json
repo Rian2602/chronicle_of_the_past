@@ -1,0 +1,10 @@
+{
+  "id": "resep_qi",
+  "name": "Resep Pil Qi",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Qi.",
+  "price": 60,
+  "effect": {
+    "learn_recipe": "pil_qi"
+  }
+}

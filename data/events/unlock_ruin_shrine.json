@@ -1,0 +1,14 @@
+{
+  "id": "unlock_ruin_shrine",
+  "trigger": [
+    {"kind": "tier_reached", "tier": "qi_condensation"}
+  ],
+  "actions": [
+    {"kind": "unlock_map", "target": "ruin_shrine"},
+    {
+      "kind": "log",
+      "text": "Saat meridian pertamamu terbuka, ingatan tua Sesepuh Mao mengalir: sebuah kuil terkubur di balik Hutan Perbatasan menyimpan pil peneguh fondasi. Reruntuhan Kuil (ruin_shrine) kini terbuka di peta."
+    }
+  ],
+  "once": true
+}

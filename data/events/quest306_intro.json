@@ -1,0 +1,14 @@
+{
+  "id": "quest306_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest305"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest306"},
+    {
+      "kind": "log",
+      "text": "Fajar menyingsing, dan markas pemberontak mendadak sepi. Tiga pembunuh gilda telah menembus pagar. 'Sesuatu membocorkan kita,' desis Sera. 'Cari tahu siapa yang tahu terlalu banyak.'"
+    }
+  ],
+  "once": true
+}

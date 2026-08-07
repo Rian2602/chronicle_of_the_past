@@ -1,0 +1,15 @@
+{
+  "id": "quest103",
+  "title": "Ujian Orde Kuno",
+  "type": "main",
+  "description": "Kuil ini tempat ujian. Penjaga Makam menguji mereka yang disebut 'yang ditunggu' — dan setiap nama di dinding sebelumnya gagal.",
+  "objectives": [
+    {"kind": "enemy", "target": "zombie_temple"},
+    {"kind": "enemy", "target": "penjaga_makam"}
+  ],
+  "rewards": {"insight": 100, "gold": 50, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest103_done"],
+  "next": null,
+  "category": "main",
+  "requires_flag": null
+}

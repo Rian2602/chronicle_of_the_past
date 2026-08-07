@@ -1,0 +1,10 @@
+{
+  "id": "pil_pemahaman_sharif",
+  "name": "Pil Pencerahan Sharif",
+  "type": "consumable",
+  "description": "Pecahan kesadaran yang ditinggalkan peziarah mati. Pemahaman datang dengan harga.",
+  "effect": {
+    "add_insight": 30
+  },
+  "price": 40
+}

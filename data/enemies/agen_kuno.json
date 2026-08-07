@@ -1,0 +1,20 @@
+{
+  "id": "agen_kuno",
+  "name": "Agen Orde Kuno",
+  "tier": "golden_core",
+  "element": "metal",
+  "behavior": "defensive",
+  "stats": {
+    "attack": 24,
+    "defense": 26,
+    "agility": 16,
+    "intelligence": 16,
+    "vitality": 16,
+    "spirit": 16,
+    "hp": 200,
+    "qi": 70
+  },
+  "skills": ["penebasan_kehampaan"],
+  "tags": ["ancient_order"],
+  "rewards": {"insight": 95, "gold": 90}
+}

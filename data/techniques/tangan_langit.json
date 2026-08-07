@@ -1,0 +1,15 @@
+{
+  "id": "tangan_langit",
+  "name": "Tangan Langit",
+  "path": "formation",
+  "element": "wood",
+  "type": "technique",
+  "qi_cost": 50,
+  "power": 75,
+  "effects": [
+    {"status": "strengthen", "chance": 0.4, "duration": 3}
+  ],
+  "requires": {
+    "tier": "heaven_challenger"
+  }
+}

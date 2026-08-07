@@ -1,0 +1,22 @@
+{
+  "id": "quest307",
+  "title": "Segel yang Retak",
+  "type": "main",
+  "category": "main",
+  "description": "Warden Kai membawakan kabar yang tidak ingin kau dengar: segel di bawah Ruang Rahasia Kuno retak. Sesuatu telah melewatinya — dan ia berjalan menuju langit.",
+  "requires_flag": "quest306_done",
+  "objectives": [
+    {"kind": "flag", "target": "segel_retak_terungkap"}
+  ],
+  "rewards": {
+    "insight": 220,
+    "gold": 300,
+    "grant_items": [
+      {"id": "salib_bisu", "count": 1},
+      {"id": "pil_asar_jiwa", "count": 1},
+      {"id": "resep_pil_asar_jiwa", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest307_done"],
+  "next": "quest308"
+}

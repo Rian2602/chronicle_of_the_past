@@ -1,0 +1,14 @@
+{
+  "id": "senjata_roh",
+  "name": "Senjata Roh",
+  "path": "spirit",
+  "element": "metal",
+  "type": "technique",
+  "qi_cost": 14,
+  "power": 18,
+  "effects": [
+    {"status": "weaken", "duration": 3},
+    {"status": "seal", "duration": 2}
+  ],
+  "requires": {"tier": "foundation_establishment"}
+}

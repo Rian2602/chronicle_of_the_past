@@ -1,0 +1,15 @@
+{
+  "id": "fquest_fondasi",
+  "title": "Uji Fondasi di Gua Abyss",
+  "type": "faction",
+  "description": "Orde kuno menguji kultivator yang sudah mencapai fondasi. Butuh mengalahkan golem terbakar dan penunggu hutan.",
+  "objectives": [
+    {"kind": "enemy", "target": "golem_terbakar"},
+    {"kind": "enemy", "target": "penunggu_hutan"}
+  ],
+  "rewards": {"insight": 80, "gold": 60, "reputation": {"ancient_order": 15}, "grant_item": {"id": "pil_peneguh_fondasi", "count": 1}},
+  "flags_on_complete": ["fquest_fondasi_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "fquest_fondasi_active"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "pukulan_beruntun",
+  "name": "Pukulan Beruntun",
+  "path": "sword",
+  "element": "metal",
+  "type": "technique",
+  "qi_cost": 25,
+  "power": 45,
+  "effects": [],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

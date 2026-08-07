@@ -1,0 +1,14 @@
+{
+  "id": "fquest_holyorder_mata",
+  "title": "Mata Sang Orde",
+  "type": "faction",
+  "description": "Diakon Soren meminta kau menyampaikan laporan ke markas Orde Suci di utara. Di tengah jalan, kau dihadapkan pada pilihan: lapor kebenaran atau menyesatkan.",
+  "objectives": [
+    {"kind": "talk", "target": "diakon_soren"}
+  ],
+  "rewards": {"insight": 30, "gold": 20},
+  "flags_on_complete": ["fquest_holyorder_mata_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest105_done"
+}

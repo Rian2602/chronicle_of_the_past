@@ -1,0 +1,28 @@
+{
+  "id": "fquest_holyorder_mata_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_holyorder_mata"}
+  ],
+  "actions": [
+    {
+      "kind": "prompt_choice",
+      "options": [
+        {
+          "key": "a",
+          "text": "Lapor sungguhan: pemberontak berkumpul di selatan",
+          "set_flag": "lapor_jujur_orde",
+          "change_reputation": {"holy_order": 15, "rebels": -15},
+          "log": "Kamu melaporkan kebenaran. Diakon Soren mengangguk: 'Kemurnian membutuhkan kejujuran, bahkan pahit.'"
+        },
+        {
+          "key": "b",
+          "text": "Menyesatkan: tidak ada ancaman di selatan",
+          "set_flag": "lapor_bohong_orde",
+          "change_reputation": {"rebels": 15, "holy_order": -15},
+          "log": "Kamu melaporkan tidak ada ancaman. Diakon Soren memejamkan mata: 'Baik. Kami percaya padamu.'"
+        }
+      ]
+    }
+  ],
+  "once": true
+}

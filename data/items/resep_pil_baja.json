@@ -1,0 +1,14 @@
+{
+  "id": "resep_pil_baja",
+  "name": "Resep Pil Baja Tubuh",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Baja Tubuh.",
+  "price": 250,
+  "effect": {
+    "learn_recipe": "pil_baja_tubuh"
+  },
+  "recipe": [
+    {"item": "batu_qi", "qty": 2},
+    {"item": "esensi_kayu", "qty": 2}
+  ]
+}

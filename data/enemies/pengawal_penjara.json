@@ -1,0 +1,1 @@
+{"id": "pengawal_penjara", "name": "Pengawal Penjara", "tier": "foundation_establishment", "element": "wood", "behavior": "defensive", "stats": {"attack": 9, "defense": 9, "agility": 6, "intelligence": 3, "vitality": 9, "spirit": 4, "hp": 60, "qi": 14}, "skills": ["vine_grasp", "serapan_akar"], "tags": ["human"], "rewards": {"insight": 38, "gold": 25}}

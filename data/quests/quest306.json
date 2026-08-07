@@ -1,0 +1,14 @@
+{
+  "id": "quest306",
+  "title": "Pengkhianat di Antara Kita",
+  "type": "main",
+  "category": "main",
+  "description": "Sesuatu membocorkan lokasi markas pemberontak ke Gilda Pembunuh. Sera menatapmu lama: 'Tiga dari mereka datang malam ini. Temukan yang mana yang tahu terlalu banyak.'",
+  "requires_flag": "quest305_done",
+  "objectives": [
+    {"kind": "kill_count", "target": "pembunuh_gilda", "count": 3}
+  ],
+  "rewards": {"insight": 180, "gold": 400, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest306_done"],
+  "next": "quest307"
+}

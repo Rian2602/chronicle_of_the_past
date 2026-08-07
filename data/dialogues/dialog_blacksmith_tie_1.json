@@ -1,0 +1,32 @@
+{
+  "id": "dialog_blacksmith_tie_1",
+  "npc": "blacksmith_tie",
+  "nodes": {
+    "start": {
+      "text": "Senjata roh tidak dibuat dengan api saja. Ia ditempa oleh tekad, dan dihancurkan oleh keraguan.",
+      "choices": [
+        {
+          "text": "Apa yang kau tahu tentang senjata yang tumbuh?",
+          "next": "info",
+          "requires_flag": null,
+          "actions": []
+        },
+        {
+          "text": "[Meninggalkan tempa]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    },
+    "info": {
+      "text": "Pilih satu dan ia akan belajar dari pertumpahan darahmu. Jangan pilih yang kau tak sanggup menanggung harganya.",
+      "choices": [
+        {
+          "text": "[Meninggalkan tempa]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    }
+  }
+}

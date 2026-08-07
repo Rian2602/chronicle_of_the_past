@@ -1,0 +1,13 @@
+{
+  "id": "talisman_penyegel",
+  "name": "Talisman Penyegel",
+  "type": "artifact",
+  "description": "Ukiran rune kuno yang menahan sesuatu di balik langit. Sekarang, menahanmu juga. Kunci ritual persiapan melawan Suara.",
+  "growth_stat": "spirit",
+  "max_level": 6,
+  "effect": {
+    "growth_stat": "spirit",
+    "max_level": 6
+  },
+  "price": 2500
+}

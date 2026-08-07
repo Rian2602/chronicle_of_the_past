@@ -1,0 +1,14 @@
+{
+  "id": "quest308",
+  "title": "Satu Jalan Tersisa",
+  "type": "main",
+  "category": "main",
+  "description": "Inquisitor Agung berdiri di tengah katedral yang terbakar. 'Kau pikir ini tentang faksi?' Suaranya memecah marmer. 'Ini tentang apa yang MENUNGGU di balik langit — dan siapa yang harus mengorbankan segalanya untuk menghentikannya.'",
+  "requires_flag": "quest307_done",
+  "objectives": [
+    {"kind": "enemy", "target": "bos_inquisitor_agung"}
+  ],
+  "rewards": {"insight": 400, "gold": 800, "reputation": {"ancient_order": 5}},
+  "flags_on_complete": ["quest308_done"],
+  "next": null
+}

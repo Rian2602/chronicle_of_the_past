@@ -1,0 +1,11 @@
+{
+  "id": "penjaga_abyss",
+  "name": "Penjaga Abyss",
+  "location": "gua_abyss",
+  "greeting": "Siapa yang berani mengganggu tidur Tuhan Abyss?",
+  "dialog": [
+    "Penjaga Abyss berdiri tegak di pintu gua: 'Cacing abyss adalah anak Tuhan Abyss. Siapa yang menyentuhnya, mati.'",
+    "'Tapi... kalau kau cukup kuat mengalahkan cacing itu, aku biarkan kau lewat.'",
+    "'Di dalam gua ada harta karun kuno. Tapi hati-hati... abyss memakan jiwa yang lemah.'"
+  ]
+}

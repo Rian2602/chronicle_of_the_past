@@ -1,0 +1,14 @@
+{
+  "id": "quest105",
+  "title": "Peziarah dari Selatan",
+  "type": "main",
+  "description": "Seorang peziarah tiba di desa membawa berita dari selatan. Diakon Soren meminta kau mengobrol dengannya dan melaporkan isi pembicaraan.",
+  "objectives": [
+    {"kind": "talk", "target": "diakon_soren"}
+  ],
+  "rewards": {"insight": 50, "gold": 25, "reputation": {"holy_order": 5}},
+  "flags_on_complete": ["quest105_done"],
+  "next": "quest106",
+  "category": "main",
+  "requires_flag": "quest104_done"
+}

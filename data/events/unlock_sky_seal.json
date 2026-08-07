@@ -1,0 +1,15 @@
+{
+  "id": "unlock_sky_seal",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest407"}
+  ],
+  "actions": [
+    {"kind": "unlock_map", "target": "sky_seal"},
+    {"kind": "set_flag", "flag": "map_sky_seal_unlocked", "value": true},
+    {
+      "kind": "log",
+      "text": "Ritual terakhir selesai, dan jalan menuju Segel Langit terbuka. Di puncak itu langit bukan langit — ia adalah pintu. Dan sesuatu di baliknya tersenyum."
+    }
+  ],
+  "once": true
+}

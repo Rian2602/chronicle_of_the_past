@@ -1,0 +1,15 @@
+{
+  "id": "quest101",
+  "title": "Qi Pertama",
+  "type": "main",
+  "description": "Sesepuh Mao mengajarkanmu menghirup qi langit-bumi.",
+  "objectives": [
+    {"kind": "talk", "target": "elder_mao"},
+    {"kind": "breakthrough", "target": "qi_condensation"}
+  ],
+  "rewards": {"insight": 50, "gold": 20, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest101_done", "path_unlocked_sword"],
+  "next": "quest102",
+  "category": "main",
+  "requires_flag": null
+}

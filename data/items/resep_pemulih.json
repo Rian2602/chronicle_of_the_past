@@ -1,0 +1,10 @@
+{
+  "id": "resep_pemulih",
+  "name": "Resep Pil Pemulih",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Pemulih.",
+  "price": 60,
+  "effect": {
+    "learn_recipe": "pil_pemulih"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "fquest_abyssal_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest106_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_abyssal"},
+    {"kind": "set_flag", "flag": "fquest_abyssal_active", "value": true},
+    {"kind": "unlock_map", "target": "hutan_kelabu"},
+    {"kind": "unlock_map", "target": "gua_abyss"},
+    {
+      "kind": "log",
+      "text": "Penunggu hutan menyeringai dari balik kabut: 'Cacing abyss menggerogoti akar Hutan Kelabu — keseimbangan hancur. Gua Abyss menunggu di kedalaman. Bawa kekuatan fondasimu, atau jangan kembali.'"
+    }
+  ],
+  "once": true
+}

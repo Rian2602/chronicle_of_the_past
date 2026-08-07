@@ -1,0 +1,14 @@
+{
+  "id": "resep_pil_racun",
+  "name": "Resep Pil Racun Meridian",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Racun Meridian.",
+  "price": 200,
+  "effect": {
+    "learn_recipe": "pil_racun_meridian"
+  },
+  "recipe": [
+    {"item": "esensi_kayu", "qty": 3},
+    {"item": "esensi_tanah", "qty": 1}
+  ]
+}

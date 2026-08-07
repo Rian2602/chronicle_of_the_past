@@ -1,0 +1,11 @@
+{
+  "id": "qi_slash",
+  "name": "Tebasan Qi",
+  "path": "sword",
+  "element": "metal",
+  "type": "physical",
+  "qi_cost": 5,
+  "power": 8,
+  "effects": [],
+  "requires": {"tier": "qi_condensation"}
+}

@@ -1,0 +1,26 @@
+{
+  "id": "quest204",
+  "title": "Latihan Tingkat Lanjut",
+  "type": "main",
+  "description": "Berlatihlah dengan menghancurkan Golem Latihan di ruang bawah tanah sekte.",
+  "objectives": [
+    {
+      "kind": "kill_count",
+      "target": "golem_latihan",
+      "count": 3
+    }
+  ],  "rewards": {
+    "insight": 50,
+    "gold": 150,
+    "grant_items": [
+      {"id": "resep_pil_baja_tubuh", "count": 1},
+      {"id": "resep_pil_besi_hitam", "count": 1}
+    ]
+  },
+  "flags_on_complete": [
+    "quest204_done"
+  ],
+  "next": "quest205",
+  "category": "main",
+  "requires_flag": "quest203_done"
+}

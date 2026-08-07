@@ -1,0 +1,14 @@
+{
+  "id": "ashfall_memory",
+  "trigger": [
+    {"kind": "location_entered", "map": "ashfall_forest"}
+  ],
+  "actions": [
+    {"kind": "grant_memory", "memory_id": "memory_ashfall_first_echo"},
+    {
+      "kind": "log",
+      "text": "Di sela pepohonan hangus, sebuah gema masa lalu menusuk kesadaranmu: abu turun bagai hujan, dan teriakan yang tak pernah berhenti. Sebuah echo memori tertangkap."
+    }
+  ],
+  "once": true
+}

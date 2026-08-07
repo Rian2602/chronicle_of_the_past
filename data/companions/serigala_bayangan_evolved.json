@@ -1,0 +1,20 @@
+{
+  "id": "serigala_bayangan_evolved",
+  "name": "Serigala Malam Belati",
+  "tier": "golden_core",
+  "element": "water",
+  "stats": {
+    "attack": 28,
+    "defense": 18,
+    "agility": 45,
+    "intelligence": 10,
+    "vitality": 22,
+    "spirit": 15,
+    "hp": 180,
+    "qi": 80
+  },
+  "skills": [
+    "tebasan_bayangan",
+    "frost_bind"
+  ]
+}

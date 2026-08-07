@@ -1,0 +1,13 @@
+{
+  "id": "resep_pil_baja_hitam",
+  "name": "Resep: Pil Baja Hitam",
+  "type": "recipe",
+  "description": "Resep rahasia untuk meracik Pil Baja Hitam yang dapat memperkuat tubuh hingga sekeras baja hitam.",
+  "effect": {
+    "learn_recipe": "pil_besi_hitam"
+  },
+  "recipe": [
+    {"item": "batu_qi", "qty": 3},
+    {"item": "esensi_kayu", "qty": 3}
+  ]
+}

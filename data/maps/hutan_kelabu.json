@@ -1,0 +1,12 @@
+{
+  "id": "hutan_kelabu",
+  "name": "Hutan Kelabu",
+  "description": "Pepohonan kelabu tua menutupi langit. Udara dingin berbau racun dan bunga mati. Di tengah ada gua gelap yang menghembuskan angin dingin.",
+  "tier": 2,
+  "enemies": [
+    {"enemy": "penunggu_hutan", "requires_flag": "fquest_abyssal_active"},
+    {"enemy": "abyssal_worm", "requires_flag": "fquest_abyssal_active"},
+    {"enemy": "hantu_laut", "requires_flag": "fquest_hutan_ember_active"},
+    {"enemy": "serigala_ember", "requires_flag": "fquest_hutan_ember_active"}
+  ]
+}

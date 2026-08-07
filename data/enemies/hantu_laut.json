@@ -1,0 +1,20 @@
+{
+  "id": "hantu_laut",
+  "name": "Hantu Laut",
+  "tier": "qi_condensation",
+  "element": "water",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 9,
+    "defense": 5,
+    "agility": 4,
+    "intelligence": 3,
+    "vitality": 6,
+    "spirit": 3,
+    "hp": 42,
+    "qi": 10
+  },
+  "skills": ["frost_bind"],
+  "tags": ["undead", "beast"],
+  "rewards": {"insight": 25, "gold": 15}
+}

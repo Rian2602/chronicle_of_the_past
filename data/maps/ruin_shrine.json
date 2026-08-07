@@ -1,0 +1,11 @@
+{
+  "id": "ruin_shrine",
+  "name": "Reruntuhan Kuil",
+  "description": "Batu-batu hitam runtuh menyembunyikan tangga turun yang berbisik dengan suara yang hampir familier.",
+  "tier": 1,
+  "enemies": [
+    {"enemy": "zombie_temple", "requires_flag": "quest102_done"},
+    {"enemy": "penjaga_makam", "requires_flag": "ruin_shrine_cleared"},
+    {"enemy": "penjaga_arsip", "requires_flag": "quest105_done"}
+  ]
+}

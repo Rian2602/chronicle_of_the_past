@@ -1,0 +1,20 @@
+{
+  "id": "serigala_ember",
+  "name": "Serigala Ember",
+  "tier": "qi_condensation",
+  "element": "fire",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 12,
+    "defense": 6,
+    "agility": 6,
+    "intelligence": 2,
+    "vitality": 6,
+    "spirit": 2,
+    "hp": 40,
+    "qi": 12
+  },
+  "skills": ["flame_strike"],
+  "tags": ["beast"],
+  "rewards": {"insight": 25, "gold": 15}
+}

@@ -1,0 +1,15 @@
+{
+  "id": "quest106",
+  "title": "Arsip yang Terbakar",
+  "type": "main",
+  "description": "Guntur mengarahkanmu ke Reruntuhan Kuil untuk menemukan arsip terbakar. Penjaga Arsip mengawasi tempat itu.",
+  "objectives": [
+    {"kind": "talk", "target": "guntur"},
+    {"kind": "enemy", "target": "penjaga_arsip"}
+  ],
+  "rewards": {"insight": 60, "gold": 30, "reputation": {"ancient_order": 5}},
+  "flags_on_complete": ["quest106_done"],
+  "next": "quest107",
+  "category": "main",
+  "requires_flag": "quest105_done"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "kultisi_merah",
+  "name": "Kultisi Merah",
+  "tier": "qi_condensation",
+  "element": "metal",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 10,
+    "defense": 6,
+    "agility": 4,
+    "intelligence": 5,
+    "vitality": 6,
+    "spirit": 4,
+    "hp": 48,
+    "qi": 14
+  },
+  "skills": ["qi_slash"],
+  "tags": ["human"],
+  "rewards": {"insight": 30, "gold": 20}
+}

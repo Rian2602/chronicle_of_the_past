@@ -1,0 +1,10 @@
+{
+  "id": "kestrel",
+  "name": "Kestrel",
+  "description": "Wanita bertubuh ramping dengan senyum yang tak pernah sampai ke mata. Di balik meja kedai yang remang, ia memandang setiap orang seperti harga.",
+  "location": "guild_city",
+  "greeting": "Kau terlihat seperti orang yang harganya layak dibayar. Baik untuk mati, atau untuk membunuh.",
+  "dialog": [
+    "Gilda membunuh demi bayaran, bukan demi keyakinan. Keyakinan adalah kemewahan orang mati."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "quest403_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest402"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest403"},
+    {
+      "kind": "log",
+      "text": "Rune di dinding ruang rahasia berdenyut seirama dengan nadimu. Warden Kai mundur selangkah. 'Echo terakhir ada di sini. Kau akan tahu segalanya — dan setelah tahu, tidak ada yang bisa kembali seperti semula.'"
+    }
+  ],
+  "once": true
+}

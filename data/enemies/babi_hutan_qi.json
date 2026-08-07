@@ -1,0 +1,20 @@
+{
+  "id": "babi_hutan_qi",
+  "name": "Babi Hutan Qi",
+  "tier": "qi_condensation",
+  "element": "earth",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 11,
+    "defense": 7,
+    "agility": 3,
+    "intelligence": 2,
+    "vitality": 8,
+    "spirit": 2,
+    "hp": 55,
+    "qi": 12
+  },
+  "skills": ["earth_charge"],
+  "tags": ["beast"],
+  "rewards": {"insight": 20, "gold": 12}
+}

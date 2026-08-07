@@ -1,0 +1,15 @@
+{
+  "id": "jarum_racun",
+  "name": "Jarum Racun",
+  "path": "alchemy",
+  "element": "wood",
+  "type": "technique",
+  "qi_cost": 10,
+  "power": 15,
+  "effects": [
+    {"type": "status", "status": "poison", "chance": 80}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

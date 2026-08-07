@@ -1,0 +1,14 @@
+{
+  "id": "quest407",
+  "title": "Pintu Langit Terbuka",
+  "type": "main",
+  "category": "main",
+  "description": "Rasul Langit tumbang, namun langit tetap menganga. Jalan ke Segel Langit terbuka — dan di puncaknya, sesuatu yang lebih tua dari dunia menantimu.",
+  "requires_flag": "quest406_done",
+  "objectives": [
+    {"kind": "map", "target": "sky_seal"}
+  ],
+  "rewards": {"insight": 400, "gold": 400},
+  "flags_on_complete": ["quest407_done"],
+  "next": "quest408"
+}

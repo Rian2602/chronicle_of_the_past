@@ -1,0 +1,10 @@
+{
+  "id": "resep_pil_kristal",
+  "name": "Resep Pil Kristal Emas",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Kristal Emas.",
+  "effect": {
+    "learn_recipe": "pil_kristal"
+  },
+  "price": 300
+}

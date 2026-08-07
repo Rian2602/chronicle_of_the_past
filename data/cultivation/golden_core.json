@@ -1,0 +1,14 @@
+{
+  "id": "golden_core",
+  "name": "Kristal Emas",
+  "order": 3,
+  "insight_required": 800,
+  "stat_bonus": {
+    "attack": 14,
+    "defense": 6,
+    "vitality": 2,
+    "hp_max": 90,
+    "qi_max": 20
+  },
+  "unlocks": ["technique_advanced"]
+}

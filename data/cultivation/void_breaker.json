@@ -1,0 +1,14 @@
+{
+  "id": "void_breaker",
+  "name": "Pemutus Kehampaan",
+  "order": 5,
+  "insight_required": 5000,
+  "stat_bonus": {
+    "attack": 32,
+    "agility": 4,
+    "vitality": 4,
+    "hp_max": 180,
+    "qi_max": 40
+  },
+  "unlocks": ["technique_master"]
+}

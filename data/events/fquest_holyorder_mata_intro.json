@@ -1,0 +1,15 @@
+{
+  "id": "fquest_holyorder_mata_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest105_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_holyorder_mata"},
+    {"kind": "set_flag", "flag": "fquest_holyorder_mata_active", "value": true},
+    {
+      "kind": "log",
+      "text": "Diakon Soren mengamati selatan dengan cemas: 'Orde Suci butuh mata di tanah. Pemberontak dikabarkan berkumpul di sana. Laporkan apa yang kau lihat — dan biarlah kebenaran, bukan ketakutan, yang memutuskan.'"
+    }
+  ],
+  "once": true
+}

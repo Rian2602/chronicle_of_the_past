@@ -1,0 +1,13 @@
+{
+  "id": "tebasan_cahaya",
+  "name": "Tebasan Cahaya",
+  "path": "sword",
+  "element": "fire",
+  "type": "technique",
+  "qi_cost": 25,
+  "power": 45,
+  "effects": [],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

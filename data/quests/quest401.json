@@ -1,0 +1,23 @@
+{
+  "id": "quest401",
+  "title": "Ruang yang Terkunci",
+  "type": "main",
+  "category": "main",
+  "description": "Di bawah ibukota, di balik pintu yang tidak terlihat oleh mata biasa, Ruang Rahasia Kuno menunggu. Warden Kai memegang kuncinya — dan rahasia tentang siapa dirimu sebenarnya.",
+  "requires_flag": "quest308_done",
+  "objectives": [
+    {"kind": "map", "target": "capital"},
+    {"kind": "talk", "target": "warden_kai"}
+  ],
+  "rewards": {
+    "insight": 300,
+    "gold": 850,
+    "reputation": {"ancient_order": 5},
+    "grant_items": [
+      {"id": "talisman_penyegel", "count": 1},
+      {"id": "resep_pil_peneguh_fondasi", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest401_done"],
+  "next": "quest402"
+}

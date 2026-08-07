@@ -1,0 +1,15 @@
+{
+  "id": "quest201",
+  "title": "Menuju Sekte Awan Biru",
+  "type": "main",
+  "description": "Gulungan kuil mengarah ke Sekte Awan Biru. Lin Wei menunggu di sana — dan jawaban tentang masa lalumu.",
+  "objectives": [
+    {"kind": "map", "target": "sect_azure"},
+    {"kind": "talk", "target": "fang_yue"}
+  ],
+  "rewards": {"insight": 50, "gold": 30, "reputation": {"ancient_order": 10}},
+  "flags_on_complete": ["quest201_done"],
+  "next": null,
+  "category": "main",
+  "requires_flag": "quest108_done"
+}

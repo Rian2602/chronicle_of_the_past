@@ -1,0 +1,14 @@
+{
+  "id": "quest401_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest308"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest401"},
+    {
+      "kind": "log",
+      "text": "Inquisitor Agung tumbang bersama katedral. Dari abunya, Warden Kai muncul — seolah telah menunggu momen ini seumur hidup. 'Sekarang kau sudah cukup kuat untuk mendengar kebenaran. Ikut aku ke ibukota.'"
+    }
+  ],
+  "once": true
+}

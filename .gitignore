@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Save game (GDD §19)
+saves/
+*.save
+*.save.tmp
+*.bak
+
+# Knowledge graph (AGENTS.md §4)
+graphify-out/
+
+# Tooling (uv)
+uv.lock
+
+# Agent relay sync (AGENTS.md kolaborasi Freebuff↔Antigravity)
+.agent-sync/
+.worktrees/
+
+# Artefak orkestrasi agen (.agents/)
+.agents/
+
+# Dokumen desain & data pengembangan (hanya untuk kontributor lokal)
+AGENTS.md
+CLAUDE.md
+GDD.md
+audit_report.md
+tdd_proof.md
+scratch_*.py
+docs/
+tests/
+tools/
+

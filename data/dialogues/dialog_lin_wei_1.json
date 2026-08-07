@@ -1,0 +1,70 @@
+{
+  "id": "dialog_lin_wei_1",
+  "npc": "lin_wei",
+  "nodes": {
+    "start": {
+      "text": "Lin Wei berdiri di tepi desa, punggungnya membelakangi asap dapur yang membubung. Ia menoleh saat kau mendekat. 'Kau ingin bertanya tentang masa lalumu. Aku bisa melihatnya di matamu — sama seperti aku melihatnya setiap malam di mimpiku.'",
+      "choices": [
+        {
+          "text": "Kau mengenalku sebelum aku lahir, bukan?",
+          "next": "lore_masa_lalu"
+        },
+        {
+          "text": "Aku tidak ingin mengingatnya.",
+          "next": "menolak"
+        }
+      ]
+    },
+    "lore_masa_lalu": {
+      "text": "Lin Wei tertawa — pahit, bukan ceria. 'Dulu, sebelum desa ini ada, orangtuamu bukan orang desa. Mereka datang dari arah Reruntuhan Kuil pada malam badai, membawa kau yang baru lahir... dan sesuatu yang mereka kubur di bawah lantai rumahmu. Aku tidak pernah tahu apa itu. Dan aku tidak ingin tahu.'",
+      "choices": [
+        {
+          "text": "Apa yang mereka kubur?",
+          "next": "kuburan_rahasia",
+          "requires_flag": "quest101_done"
+        },
+        {
+          "text": "Cukup. Aku pergi ke kuil.",
+          "next": null,
+          "actions": [
+            {
+              "kind": "set_flag",
+              "flag": "lin_wei_mengantar_ke_kuil",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    "kuburan_rahasia": {
+      "text": "'Aku hanya ingat satu hal: malam itu, sebelum mereka menutup lantai, kau menangis — dan dari langit, sesuatu menjawab. Bukan guntur. Bukan angin. Sesuatu yang membuat seluruh desa diam dan memilih melupakan.' Ia menatapmu. 'Orangtuamu bukan menyembunyikan rahasia darimu, Akar. Mereka menyembunyikanmu dari rahasia itu.'",
+      "choices": [
+        {
+          "text": "[Tinggalkan — berangkat ke kuil]",
+          "next": null,
+          "actions": [
+            {
+              "kind": "change_reputation",
+              "faction": "rebels",
+              "delta": -5
+            },
+            {
+              "kind": "set_flag",
+              "flag": "lin_wei_mengantar_ke_kuil",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    "menolak": {
+      "text": "'Pilihan yang bijak... atau pengecut. Di dunia ini, keduanya sering sama saja.' Lin Wei menoleh ke arah hutan. 'Tapi kuil itu tidak akan menunggumu selamanya. Dan apa pun yang kau lupakan, ia ingat.'",
+      "choices": [
+        {
+          "text": "[Tinggalkan]",
+          "next": null
+        }
+      ]
+    }
+  }
+}

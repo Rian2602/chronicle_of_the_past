@@ -1,0 +1,10 @@
+{
+  "id": "ending_reconcile",
+  "trigger": [
+    {"kind": "flag", "flag": "ending_reconcile_win", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "log", "text": "REKONSILIASI — Kau berdiri di antara faksi-faksi yang saling membunuh dan entitas yang mulai bangkit. Ritual pengorbanan dijalankan setengah, darahmu jadi jembatan. Orde Suci dan pemberontak belajar berbagi bayangan yang sama. Langit tetap retak — tapi kini ada yang menjaganya. Bukan sebagai dewa: sebagai penjaga perbatasan antara dua dunia."}
+  ],
+  "once": true
+}

@@ -1,0 +1,22 @@
+{
+  "id": "quest405",
+  "title": "Ritual Persiapan",
+  "type": "main",
+  "category": "main",
+  "description": "Warden Kai membacakan gulungan terakhir: tanpa ritual lengkap — artefak, formasi, dan tim yang siap — melawan Suara sama saja dengan memeluk kematian. Siapkan semuanya.",
+  "requires_flag": "quest404_done",
+  "objectives": [
+    {"kind": "flag", "target": "ritual_ready"}
+  ],
+  "rewards": {
+    "insight": 300,
+    "gold": 300,
+    "reputation": {"ancient_order": 10},
+    "grant_items": [
+      {"id": "pil_baja_tubuh", "count": 1},
+      {"id": "pil_besi_hitam", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest405_done"],
+  "next": "quest406"
+}

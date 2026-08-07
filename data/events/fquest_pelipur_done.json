@@ -1,0 +1,11 @@
+{
+  "id": "fquest_pelipur_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_pelipur"}
+  ],
+  "actions": [
+    {"kind": "log", "text": "Mira memeluk anaknya yang sudah sembuh. Air matanya jatuh: 'Terima kasih... kau penyelamat kami.'"},
+    {"kind": "grant_item", "id": "pil_pemulih", "count": 2}
+  ],
+  "once": true
+}

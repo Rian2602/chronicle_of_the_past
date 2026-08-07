@@ -1,0 +1,10 @@
+{
+  "id": "pil_buka_meridian",
+  "name": "Pil Pembuka Meridian",
+  "type": "consumable",
+  "description": "Meridian terbakar lalu mengasa. Jalan baru membuka — dan rasa sakit itu nyata.",
+  "effect": {
+    "add_meridian": 1
+  },
+  "price": 100
+}

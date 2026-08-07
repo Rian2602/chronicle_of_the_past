@@ -1,0 +1,23 @@
+{
+  "id": "quest301",
+  "title": "Panggilan Pemberontak",
+  "type": "main",
+  "category": "main",
+  "description": "Sera Ember, pemimpin pemberontak, mengirim utusan mencarimu. Kata-katanya hanya satu: 'Kau sudah melihat apa yang Orde Suci lakukan. Sekarang lihat apa yang kami coba perbaiki.'",
+  "requires_flag": "quest208_done",
+  "objectives": [
+    {"kind": "talk", "target": "sera_ember"},
+    {"kind": "map", "target": "rebel_hideout"}
+  ],
+  "rewards": {
+    "insight": 100,
+    "gold": 100,
+    "reputation": {"rebels": 5},
+    "grant_items": [
+      {"id": "pil_pemulih_kecil", "count": 3},
+      {"id": "resep_ramuan_meridian", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest301_done"],
+  "next": "quest302"
+}

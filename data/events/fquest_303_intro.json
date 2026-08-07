@@ -1,0 +1,14 @@
+{
+  "id": "fquest_303_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest307"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_303"},
+    {
+      "kind": "log",
+      "text": "Warden Kai menatapmu dengan mata yang telah melihat terlalu banyak malam. 'Gua Abyss menyimpan sisa-sisa Orde Kuno — dan jejak yang seharusnya sudah mati. Sesuatu membukakan pintu bagi entitas itu. Kita harus tahu apa.'"
+    }
+  ],
+  "once": true
+}

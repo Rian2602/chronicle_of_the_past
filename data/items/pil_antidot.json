@@ -1,0 +1,10 @@
+{
+  "id": "pil_antidot",
+  "name": "Pil Antidot",
+  "type": "consumable",
+  "description": "Netralkan racun dalam darah. Warna hijau kebiruan, bau anyir.",
+  "effect": {
+    "cure_poison": true
+  },
+  "price": 20
+}

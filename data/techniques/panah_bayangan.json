@@ -1,0 +1,13 @@
+{
+  "id": "panah_bayangan",
+  "name": "Panah Bayangan",
+  "path": "sword",
+  "element": "water",
+  "type": "technique",
+  "qi_cost": 25,
+  "power": 45,
+  "effects": [],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

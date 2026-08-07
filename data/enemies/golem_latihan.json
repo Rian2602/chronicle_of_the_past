@@ -1,0 +1,28 @@
+{
+  "id": "golem_latihan",
+  "name": "Golem Latihan",
+  "tier": "qi_condensation",
+  "element": "earth",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 8,
+    "defense": 15,
+    "agility": 2,
+    "intelligence": 1,
+    "vitality": 10,
+    "spirit": 5,
+    "hp": 80,
+    "qi": 20
+  },
+  "skills": [
+    "earth_charge"
+  ],
+  "tags": [
+    "golem",
+    "training"
+  ],
+  "rewards": {
+    "insight": 10,
+    "gold": 5
+  }
+}

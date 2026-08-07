@@ -1,0 +1,14 @@
+{
+  "id": "resep_pil_baja_tubuh",
+  "name": "Resep Pil Baja Tubuh",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Baja Tubuh — pil pertahanan dari esensi tanah.",
+  "price": 220,
+  "effect": {
+    "learn_recipe": "pil_baja_tubuh"
+  },
+  "recipe": [
+    {"item": "esensi_tanah", "qty": 2},
+    {"item": "batu_qi", "qty": 1}
+  ]
+}

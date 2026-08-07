@@ -1,0 +1,7 @@
+{
+  "id": "pil_uji_buff",
+  "name": "Pil Uji Buff",
+  "type": "consumable",
+  "description": "Pil uji combat-ready.",
+  "effect": {"buff_attack": 5}
+}

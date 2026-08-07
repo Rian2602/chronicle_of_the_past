@@ -1,0 +1,17 @@
+{
+  "id": "lin_wei",
+  "name": "Lin Wei",
+  "tier": "qi_condensation",
+  "element": "wood",
+  "stats": {
+    "attack": 5,
+    "defense": 3,
+    "agility": 4,
+    "intelligence": 3,
+    "vitality": 5,
+    "spirit": 3,
+    "hp": 30,
+    "qi": 8
+  },
+  "skills": ["qi_slash", "vine_grasp"]
+}

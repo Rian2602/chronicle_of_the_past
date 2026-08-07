@@ -1,0 +1,19 @@
+{
+  "id": "tebasan_bayangan",
+  "name": "Tebasan Bayangan",
+  "path": "sword",
+  "element": "water",
+  "type": "physical",
+  "qi_cost": 30,
+  "power": 45,
+  "effects": [
+    {
+      "status": "bleed",
+      "duration": 2,
+      "power": 10
+    }
+  ],
+  "requires": {
+    "tier": "foundation_establishment"
+  }
+}

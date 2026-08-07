@@ -1,0 +1,15 @@
+{
+  "id": "pil_pembakar_surgawi",
+  "name": "Pil Pembakar Surgawi",
+  "path": "alchemy",
+  "element": "fire",
+  "type": "technique",
+  "qi_cost": 30,
+  "power": 38,
+  "effects": [
+    {"status": "burn", "duration": 3}
+  ],
+  "requires": {
+    "tier": "soul_separation"
+  }
+}

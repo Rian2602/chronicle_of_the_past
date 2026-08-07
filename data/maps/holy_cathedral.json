@@ -1,0 +1,26 @@
+{
+  "id": "holy_cathedral",
+  "name": "Katedral Suci Orde",
+  "description": "Markas utama Orde Suci. Cahaya memancar terang dari kaca patri, namun bayang-bayang di sudutnya menyembunyikan kebusukan dan intrik pembantaian masa lalu.",
+  "tier": 3,
+  "enemies": [
+    {
+      "enemy": "bos_sekte_bayangan",
+      "requires_flag": "quest305_done"
+    },
+    {
+      "enemy": "bos_inquisitor_agung",
+      "requires_flag": "quest307_done"
+    },
+    {
+      "enemy": "inquisitor_elit"
+    },
+    {
+      "enemy": "tentara_salib"
+    },
+    {
+      "enemy": "uskup_muda"
+    },    {"enemy": "penebus_orde_suci", "requires_flag": "quest301_done"},
+    {"enemy": "algojo_katedral_enemy", "requires_flag": "quest301_done"}
+  ]
+}

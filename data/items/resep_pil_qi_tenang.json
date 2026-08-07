@@ -1,0 +1,14 @@
+{
+  "id": "resep_pil_qi_tenang",
+  "name": "Resep Pil Qi Tenang",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Qi Tenang.",
+  "price": 300,
+  "effect": {
+    "learn_recipe": "pil_qi_tenang"
+  },
+  "recipe": [
+    {"item": "batu_qi", "qty": 1},
+    {"item": "esensi_air", "qty": 2}
+  ]
+}

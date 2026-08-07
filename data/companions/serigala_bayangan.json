@@ -1,0 +1,23 @@
+{
+  "id": "serigala_bayangan",
+  "name": "Serigala Bayangan",
+  "tier": "foundation_establishment",
+  "element": "water",
+  "stats": {
+    "attack": 15,
+    "defense": 10,
+    "agility": 30,
+    "intelligence": 5,
+    "vitality": 15,
+    "spirit": 10,
+    "hp": 100,
+    "qi": 50
+  },
+  "skills": [
+    "qi_slash"
+  ],
+  "evolution": {
+    "trigger_tier": "golden_core",
+    "evolved_id": "serigala_bayangan_evolved"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "resep_pemahaman",
+  "name": "Resep Pil Pemahaman",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Pemahaman.",
+  "price": 60,
+  "effect": {
+    "learn_recipe": "pil_pemahaman"
+  }
+}

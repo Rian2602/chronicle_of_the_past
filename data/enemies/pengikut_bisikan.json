@@ -1,0 +1,20 @@
+{
+  "id": "pengikut_bisikan",
+  "name": "Pengikut Bisikan",
+  "tier": "golden_core",
+  "element": "earth",
+  "behavior": "balanced",
+  "stats": {
+    "attack": 26,
+    "defense": 20,
+    "agility": 14,
+    "intelligence": 18,
+    "vitality": 14,
+    "spirit": 18,
+    "hp": 180,
+    "qi": 60
+  },
+  "skills": ["seruan_jiwa", "jaring_jiwa"],
+  "tags": ["cultist"],
+  "rewards": {"insight": 90, "gold": 80}
+}

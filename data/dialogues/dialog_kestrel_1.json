@@ -1,0 +1,46 @@
+{
+  "id": "dialog_kestrel_1",
+  "npc": "kestrel",
+  "nodes": {
+    "start": {
+      "text": "Kota ini penuh mata yang meminta bayaran. Telingaku mendengar nama yang seharusnya sudah mati — dan namamu ada di antaranya.",
+      "choices": [
+        {
+          "text": "Siapa yang memburuku?",
+          "next": "jawaban",
+          "requires_flag": null,
+          "actions": []
+        },
+        {
+          "text": "[Pergi]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    },
+    "jawaban": {
+      "text": "Orde Suci memberi imbalan besar untuk informasi tentang bakat semacam dirimu. Gilda juga. Dan pemberontak juga. Semua membayar untuk orang sepertimu — pertanyaannya, kau mau dijual kepada siapa?",
+      "choices": [
+        {
+          "text": "Tidak ada yang membeli dan tidak ada yang menjual. Aku bermain dengan aturanku sendiri.",
+          "next": null,
+          "actions": [
+            {"kind": "add_ending_points", "path": "reconcile", "points": 10}
+          ]
+        },
+        {
+          "text": "Aku akan memutuskan sendiri jalan yang kutempuh — dan yang menghalanginya akan kubersihkan.",
+          "next": null,
+          "actions": [
+            {"kind": "add_ending_points", "path": "defy", "points": 10}
+          ]
+        },
+        {
+          "text": "[Pergi]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    }
+  }
+}

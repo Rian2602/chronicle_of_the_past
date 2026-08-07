@@ -1,0 +1,15 @@
+{
+  "id": "pil_pembakar",
+  "name": "Pil Pembakar",
+  "path": "alchemy",
+  "element": "fire",
+  "type": "technique",
+  "qi_cost": 14,
+  "power": 18,
+  "effects": [
+    {"status": "burn", "duration": 3, "power": 6}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

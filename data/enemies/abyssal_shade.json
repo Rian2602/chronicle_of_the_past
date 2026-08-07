@@ -1,0 +1,1 @@
+{"id": "abyssal_shade", "name": "Abyssal Shade", "tier": "soul_separation", "element": "water", "behavior": "aggressive", "stats": {"attack": 22, "defense": 12, "agility": 16, "intelligence": 8, "vitality": 10, "spirit": 14, "hp": 90, "qi": 40}, "skills": ["tebasan_bayangan", "serapan_akar", "frost_bind"], "tags": ["abyssal"], "rewards": {"insight": 85, "gold": 55}}

@@ -1,0 +1,15 @@
+{
+  "id": "quest302",
+  "title": "Infiltrasi Katedral",
+  "type": "main",
+  "category": "main",
+  "description": "Di bawah marmer Katedral Suci mengalir lorong-lorong yang tidak pernah disebut dalam khotbah. Sera ingin tahu apa yang Orde Suci sembunyikan di sana — dan siapa yang menjaga rahasianya.",
+  "requires_flag": "quest301_done",
+  "objectives": [
+    {"kind": "map", "target": "holy_cathedral"},
+    {"kind": "enemy", "target": "penebus_orde_suci"}
+  ],
+  "rewards": {"insight": 120, "gold": 300},
+  "flags_on_complete": ["quest302_done"],
+  "next": "quest303"
+}

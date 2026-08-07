@@ -1,0 +1,14 @@
+{
+  "id": "quest305_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest304"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest305"},
+    {
+      "kind": "log",
+      "text": "Malam itu kau bermimpi — atau begitulah kau menyebutnya. Sesuatu yang luas dan tua menatapmu dari balik bintang. 'Akhirnya,' katanya, 'kamu ingat.'"
+    }
+  ],
+  "once": true
+}

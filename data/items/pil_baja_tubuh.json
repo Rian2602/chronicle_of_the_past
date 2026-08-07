@@ -1,0 +1,11 @@
+{
+  "id": "pil_baja_tubuh",
+  "name": "Pil Baja Tubuh",
+  "type": "consumable",
+  "description": "Mengeraskan kulit seperti baja.",
+  "price": 150,
+  "effect": {
+    "status_inflict": "strengthen"
+  }
+}
+

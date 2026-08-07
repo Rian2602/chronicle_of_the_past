@@ -1,0 +1,12 @@
+{
+  "id": "sky_seal",
+  "name": "Segel Langit",
+  "description": "Di atas segalanya. Di sini langit bukan langit — ia adalah pintu, dan sesuatu di baliknya sudah mulai mendorong. Angin dingin membawa suara yang mengenal namamu.",
+  "tier": 6,
+  "enemies": [
+    {"enemy": "manifestasi_langit"},
+    {"enemy": "rasul_langit", "requires_flag": "quest405_done"},
+    {"enemy": "suara", "requires_flag": "quest407_done"},
+    {"enemy": "pelindung_langit", "requires_flag": "quest407_done"}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "alchemist_xiu",
+  "name": "Xiu Sang Alkemi",
+  "description": "Tangan dan wajahnya dipenuhi noda abu. Bau herbal tajam menguar dari jubahnya.",
+  "location": "sect_azure",
+  "greeting": "Bahan, bahan! Aku butuh lebih banyak bahan! Ah, murid baru ya? Kebetulan sekali.",
+  "dialog": [
+    "Jika kau ingin berlatih alkimia, kau harus tahan panas."
+  ]
+}

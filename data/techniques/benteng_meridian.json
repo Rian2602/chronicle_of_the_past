@@ -1,0 +1,14 @@
+{
+  "id": "benteng_meridian",
+  "name": "Benteng Meridian",
+  "path": "formation",
+  "element": "earth",
+  "type": "technique",
+  "qi_cost": 8,
+  "power": 0,
+  "effects": [
+    {"status": "barrier", "duration": 3},
+    {"status": "strengthen", "duration": 2}
+  ],
+  "requires": {"tier": "foundation_establishment"}
+}

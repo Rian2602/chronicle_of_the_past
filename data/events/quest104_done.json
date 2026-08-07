@@ -1,0 +1,14 @@
+{
+  "id": "quest104_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest104"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest105"},
+    {
+      "kind": "log",
+      "text": "Lin Wei menunduk, lalu bicara pelan: 'Kuil itu bukan tempat ujian biasa. Itu pintu menuju sesuatu yang lebih tua dari sekte manapun. Aku... aku takut apa yang akan kau temui di sana. Tapi kau harus pergi.'"
+    }
+  ],
+  "once": true
+}

@@ -1,0 +1,20 @@
+{
+  "id": "uskup_muda",
+  "name": "Uskup Muda",
+  "tier": "foundation_establishment",
+  "element": "fire",
+  "behavior": "balanced",
+  "stats": {
+    "attack": 16,
+    "defense": 12,
+    "agility": 10,
+    "intelligence": 14,
+    "vitality": 9,
+    "spirit": 12,
+    "hp": 110,
+    "qi": 40
+  },
+  "skills": ["flame_strike", "perisai_cahaya"],
+  "tags": ["human", "holy_order"],
+  "rewards": {"insight": 60, "gold": 55}
+}

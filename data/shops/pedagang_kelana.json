@@ -1,0 +1,50 @@
+{
+  "id": "pedagang_kelana",
+  "name": "Dagangan Pedagang Kelana",
+  "stock": [
+    {
+      "item": "esensi_api",
+      "count": 3
+    },
+    {
+      "item": "esensi_air",
+      "count": 3
+    },
+    {
+      "item": "esensi_kayu",
+      "count": 3
+    },
+    {
+      "item": "esensi_tanah",
+      "count": 3
+    },
+    {
+      "item": "pil_pemulih",
+      "count": 5
+    },
+    {
+      "item": "pil_qi",
+      "count": 5
+    },
+    {
+      "item": "batu_qi",
+      "count": 2
+    },
+    {
+      "item": "kuali_roh",
+      "count": 1
+    },
+    {
+      "item": "resep_pemulih",
+      "count": 1
+    },
+    {
+      "item": "resep_qi",
+      "count": 1
+    },
+    {
+      "item": "resep_pemahaman",
+      "count": 1
+    }
+  ]
+}

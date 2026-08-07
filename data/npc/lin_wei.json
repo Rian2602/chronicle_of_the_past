@@ -1,0 +1,10 @@
+{
+  "id": "lin_wei",
+  "name": "Lin Wei",
+  "location": "village_emberfall",
+  "greeting": "Lin Wei menatapmu lama, lalu tersenyum kecil. \"Kau berubah sejak kemarin — bukan hanya kekuatanmu.\"",
+  "dialog": [
+    "\"Kabar tentang Reruntuhan Kuil sampai ke desa. Sesepuh Mao selalu memilih jalan untukmu, dan itu yang membuatku takut: aku tak tahu kenapa.\"",
+    "\"Dulu... tidak. Lupakan. Pergilah ke kuil itu. Tapi jangan percaya apa pun yang berbisik di sana.\""
+  ]
+}

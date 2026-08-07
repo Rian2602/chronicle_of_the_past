@@ -1,0 +1,12 @@
+{
+  "id": "shrine_trial_start",
+  "trigger": [
+    {"kind": "location_entered", "map": "ruin_shrine"},
+    {"kind": "quest_done", "quest": "quest102"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest103"},
+    {"kind": "log", "text": "Di dinding ruang bawah, guratan kuno menyala menuliskan deretan nama — semuanya gagal. Dari celah batu, Penjaga Makam bangkit untuk menguji 'yang ditunggu'."}
+  ],
+  "once": true
+}

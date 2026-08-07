@@ -1,0 +1,30 @@
+{
+  "id": "quest105_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest105"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest106"},
+    {
+      "kind": "prompt_choice",
+      "options": [
+        {
+          "key": "a",
+          "text": "Lapor sungguhan apa yang kau dengar dari peziarah",
+          "set_flag": "lapor_jujur",
+          "change_reputation": {"holy_order": 10, "rebels": -10},
+          "log": "Kamu melaporkan dengan jujur: peziarah berbicara tentang gerakan di selatan yang menentang Orde Suci."
+        },
+        {
+          "key": "b",
+          "text": "Menyesatkan Diakon Soren, sembunyikan kebenaran",
+          "set_flag": "lapor_bohong",
+          "change_reputation": {"rebels": 10, "holy_order": -10},
+          "log": "Kamu memutarbalikkan fakta: peziarah hanyalah pedagang biasa, tidak ada ancaman."
+        }
+      ]
+    },
+    {"kind": "set_flag", "flag": "peziarah_terjawab", "value": true}
+  ],
+  "once": true
+}

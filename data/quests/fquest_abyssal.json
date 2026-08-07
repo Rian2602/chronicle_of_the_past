@@ -1,0 +1,15 @@
+{
+  "id": "fquest_abyssal",
+  "title": "Abyssal di Gua Kelam",
+  "type": "faction",
+  "description": "Penunggu hutan meminta bantuan mengusir cacing abyss yang mengganggu keseimbangan hutan. Butuh kekuatan fondasi.",
+  "objectives": [
+    {"kind": "talk", "target": "penunggu_hutan"},
+    {"kind": "enemy", "target": "abyssal_worm"}
+  ],
+  "rewards": {"insight": 60, "gold": 50, "reputation": {"ancient_order": 15}},
+  "flags_on_complete": ["fquest_abyssal_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest106_done"
+}

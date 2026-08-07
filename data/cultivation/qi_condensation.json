@@ -1,0 +1,8 @@
+{
+  "id": "qi_condensation",
+  "name": "Pengumpul Qi",
+  "order": 1,
+  "insight_required": 100,
+  "stat_bonus": {"attack": 4, "hp_max": 40, "qi_max": 10},
+  "unlocks": ["path_selection", "technique_basic"]
+}

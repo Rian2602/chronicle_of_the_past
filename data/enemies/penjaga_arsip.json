@@ -1,0 +1,20 @@
+{
+  "id": "penjaga_arsip",
+  "name": "Penjaga Arsip",
+  "tier": "qi_condensation",
+  "element": "wood",
+  "behavior": "defensive",
+  "stats": {
+    "attack": 12,
+    "defense": 10,
+    "agility": 3,
+    "intelligence": 4,
+    "vitality": 6,
+    "spirit": 3,
+    "hp": 60,
+    "qi": 15
+  },
+  "skills": ["vine_grasp"],
+  "tags": ["undead", "guardian"],
+  "rewards": {"insight": 30, "gold": 15}
+}

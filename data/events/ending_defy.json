@@ -1,0 +1,10 @@
+{
+  "id": "ending_defy",
+  "trigger": [
+    {"kind": "flag", "flag": "ending_defy_win", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "log", "text": "MENENTANG LANGIT — Kau menaiki langit yang retak dan menggenggam kilat. Aturan-aturan lama runtuh satu per satu. Kerajaan dibangun ulang di atas abu para dewa, dan namamu diukir bukan sebagai penguasa, melainkan sebagai peringatan. Di kejauhan, sesuatu yang baru mulai bernapas. Kau tidak tahu apakah kau menyelamatkan dunia — atau menggantikan penjaganya."}
+  ],
+  "once": true
+}

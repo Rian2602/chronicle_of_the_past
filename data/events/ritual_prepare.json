@@ -1,0 +1,13 @@
+{
+  "id": "ritual_prepare",
+  "trigger": [
+    {"kind": "flag", "flag": "ritual_ready", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {
+      "kind": "log",
+      "text": "Rune di Segel Langit menjawab ritualmu — satu per satu menyala, mengunci jalan menuju Suara. Warden Kai menatapmu: 'Sudah siap. Jangan biarkan langit menelanmu.'"
+    }
+  ],
+  "once": true
+}

@@ -1,0 +1,13 @@
+{
+  "id": "mantra_bisikan",
+  "name": "Mantra Bisikan",
+  "type": "artifact",
+  "description": "Gulungan yang menulis ulang dirinya sendiri setiap malam. Isinya selalu sama: satu nama — milikmu.",
+  "growth_stat": "intelligence",
+  "max_level": 4,
+  "effect": {
+    "growth_stat": "intelligence",
+    "max_level": 4
+  },
+  "price": 1800
+}

@@ -1,0 +1,11 @@
+{
+  "id": "quest102_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest101"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest102"},
+    {"kind": "log", "text": "Sesepuh Mao menepuk bahumu: \"Kuil itu menyimpan pil peneguh fondasi — dan sesuatu yang lebih tua dari desa ini. Bicaralah dulu dengan Lin Wei; ia kenal jalan-jalan itu.\""}
+  ],
+  "once": true
+}

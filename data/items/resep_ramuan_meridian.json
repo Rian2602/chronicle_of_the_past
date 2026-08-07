@@ -1,0 +1,14 @@
+{
+  "id": "resep_ramuan_meridian",
+  "name": "Resep Ramuan Meridian",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Ramuan Meridian.",
+  "price": 450,
+  "effect": {
+    "learn_recipe": "ramuan_meridian"
+  },
+  "recipe": [
+    {"item": "esensi_air", "qty": 2},
+    {"item": "esensi_api", "qty": 1}
+  ]
+}

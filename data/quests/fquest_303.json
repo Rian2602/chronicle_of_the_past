@@ -1,0 +1,15 @@
+{
+  "id": "fquest_303",
+  "title": "Jejak Orde Kuno",
+  "type": "faction",
+  "category": "faction",
+  "description": "Warden Kai memintamu menyusuri Gua Abyss — tempat persembunyian lama Orde Rahasia Kuno. 'Ada jejak yang harus dipastikan mati,' katanya. 'Entitas tidak bangkit sendirian. Sesuatu membukakan pintunya.'",
+  "requires_flag": "quest307_done",
+  "objectives": [
+    {"kind": "map", "target": "gua_abyss"},
+    {"kind": "enemy", "target": "abyssal_worm"}
+  ],
+  "rewards": {"insight": 140, "gold": 300, "reputation": {"ancient_order": 8}},
+  "flags_on_complete": ["fquest_303_done"],
+  "next": null
+}

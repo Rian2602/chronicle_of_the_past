@@ -1,0 +1,13 @@
+{
+  "id": "jimat_roh_liar",
+  "name": "Jimat Roh Liar",
+  "type": "artifact",
+  "description": "Jimat dari tulang binatang roh yang tak pernah jinak. Ia mendengkur lembut di jiwamu — dan memakan sisa qi yang kau anggap milikmu.",
+  "price": 700,
+  "growth_stat": "spirit",
+  "max_level": 5,
+  "effect": {
+    "growth_stat": "spirit",
+    "max_level": 5
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "quest304",
+  "title": "Martir atau Pejuang",
+  "type": "main",
+  "category": "main",
+  "description": "Sera Ember menunggumu di gerbang markas. 'Cukup melihat-lihat,' katanya. 'Waktunya memilih sisi. Jalan mana yang akan kau pikul, pejuang?'",
+  "requires_flag": "quest303_done",
+  "objectives": [
+    {"kind": "talk", "target": "sera_ember"},
+    {"kind": "flag", "target": "pilihan_faksi_dibuat"}
+  ],
+  "rewards": {
+    "insight": 150,
+    "gold": 600,
+    "grant_items": [
+      {"id": "liontin_api", "count": 1},
+      {"id": "mahkota_ashfall", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest304_done"],
+  "next": "quest305"
+}

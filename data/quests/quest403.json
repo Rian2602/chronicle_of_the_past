@@ -1,0 +1,21 @@
+{
+  "id": "quest403",
+  "title": "Echo Terakhir",
+  "type": "main",
+  "category": "main",
+  "description": "Dinding ruang rahasia kuno memancarkan rune yang berdenyut seirama dengan nadimu. Di sinilah rahasia masa lalumu disimpan — lengkap, utuh, dan tak seorang pun siap mendengarnya.",
+  "requires_flag": "quest402_done",
+  "objectives": [
+    {"kind": "flag", "target": "rahasia_terungkap"}
+  ],
+  "rewards": {
+    "insight": 400,
+    "gold": 500,
+    "grant_items": [
+      {"id": "mantra_bisikan", "count": 1},
+      {"id": "pil_qi_tenang", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest403_done"],
+  "next": "quest404"
+}

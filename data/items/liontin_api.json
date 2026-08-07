@@ -1,0 +1,13 @@
+{
+  "id": "liontin_api",
+  "name": "Liontin Api Penyucian",
+  "type": "artifact",
+  "description": "Sebongkah batu dari inti gunung berapi. Berdenyut seperti jantung, membakar ketidakmurnian di tubuh pemiliknya.",
+  "growth_stat": "vitality",
+  "max_level": 5,
+  "effect": {
+    "growth_stat": "vitality",
+    "max_level": 5
+  }
+}
+

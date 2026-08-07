@@ -1,0 +1,22 @@
+{
+  "id": "quest303",
+  "title": "Dua Sisi Pedang",
+  "type": "main",
+  "category": "main",
+  "description": "Inquisitor Vega tidak seperti rekan-rekannya. Dia memurnikan dengan keraguan, bukan keyakinan — dan keraguan adalah celah yang bisa kamu masuki.",
+  "requires_flag": "quest302_done",
+  "objectives": [
+    {"kind": "talk", "target": "inquisitor_vega"}
+  ],
+  "rewards": {
+    "insight": 130,
+    "gold": 350,
+    "reputation": {"holy_order": 5},
+    "grant_items": [
+      {"id": "cincin_roh_kenabian", "count": 1},
+      {"id": "pil_pemahaman_sharif", "count": 1}
+    ]
+  },
+  "flags_on_complete": ["quest303_done"],
+  "next": "quest304"
+}

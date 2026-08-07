@@ -1,0 +1,20 @@
+{
+  "id": "memory_sekte_intrik",
+  "trigger": [
+    {
+      "kind": "quest_done",
+      "quest": "quest203"
+    }
+  ],
+  "actions": [
+    {
+      "kind": "grant_memory",
+      "memory_id": "memory_sekte_intrik"
+    },
+    {
+      "kind": "log",
+      "text": "Di lorong sepi sekte, tiba-tiba kau mendengar bisikan yang bukan darimu. Kata-katanya merayap masuk, lalu hilang seperti tak pernah ada."
+    }
+  ],
+  "once": true
+}

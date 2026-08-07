@@ -1,0 +1,8 @@
+{
+  "id": "langit_pecah",
+  "name": "Langit Pecah",
+  "element": "fire",
+  "description": "Formasi agresif: semburan qi menajam, kecepatan barisan melonjak.",
+  "buff": {"attack": 15, "agility": 10},
+  "skill": "earth_charge"
+}

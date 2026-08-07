@@ -1,0 +1,20 @@
+{
+  "id": "pil_pemahaman",
+  "name": "Pil Pemahaman",
+  "type": "consumable",
+  "description": "Kecerdasan tertuang dalam pil. Pemahaman mengalir seperti air.",
+  "effect": {
+    "add_insight": 50
+  },
+  "price": 40,
+  "recipe": [
+    {
+      "item": "esensi_kayu",
+      "qty": 2
+    },
+    {
+      "item": "batu_qi",
+      "qty": 1
+    }
+  ]
+}

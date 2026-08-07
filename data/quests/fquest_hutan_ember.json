@@ -1,0 +1,16 @@
+{
+  "id": "fquest_hutan_ember",
+  "title": "Api di Hutan Ember",
+  "type": "faction",
+  "description": "Jati meminta bantuan memadamkan api liar di hutan yang disebabkan penebus orde suci. Butuh membasmi hantu laut dan serigala ember.",
+  "objectives": [
+    {"kind": "talk", "target": "jati"},
+    {"kind": "enemy", "target": "hantu_laut"},
+    {"kind": "enemy", "target": "serigala_ember"}
+  ],
+  "rewards": {"insight": 50, "gold": 40, "reputation": {"rebels": 20}},
+  "flags_on_complete": ["fquest_hutan_ember_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest103_done"
+}

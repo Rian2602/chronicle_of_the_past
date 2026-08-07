@@ -1,0 +1,10 @@
+{
+  "id": "algojo_katedral",
+  "name": "Algojo Katedral",
+  "location": "holy_cathedral",
+  "greeting": "Jangan macam-macam di sini, pendatang.",
+  "dialog": [
+    "Algojo itu hanya menatapmu dari balik topeng besinya. 'Katedral ini bukan tempatmu. Inquisitor Vega sudah bicara tentangmu. Pergi sebelum aku dapat perintah yang lebih jelas.'",
+    "Tubuhnya tidak bergerak, tapi nadanya membuatmu sadar: ini bukan ancaman — ini kepastian."
+  ]
+}

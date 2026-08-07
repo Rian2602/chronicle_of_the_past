@@ -1,0 +1,14 @@
+{
+  "id": "quest302_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest301"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest302"},
+    {
+      "kind": "log",
+      "text": "Sera Ember menyerahkan peta usang dengan garis-garis merah. 'Di bawah Katedral ada lorong yang tidak pernah disebut dalam khotbah. Penebus menjaga rahasianya. Cari tahu apa yang mereka sembunyikan — dan jangan mati sebelum kembali.'"
+    }
+  ],
+  "once": true
+}

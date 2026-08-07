@@ -1,0 +1,13 @@
+{
+  "id": "earth_charge",
+  "name": "Tumbakan Bumi",
+  "path": "formation",
+  "element": "earth",
+  "type": "physical",
+  "qi_cost": 8,
+  "power": 10,
+  "effects": [
+    {"status": "stun", "duration": 1}
+  ],
+  "requires": {"tier": "qi_condensation"}
+}

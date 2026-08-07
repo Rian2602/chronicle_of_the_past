@@ -1,0 +1,15 @@
+{
+  "id": "unlock_ancient_vault",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest401"}
+  ],
+  "actions": [
+    {"kind": "unlock_map", "target": "ancient_vault"},
+    {"kind": "set_flag", "flag": "map_ancient_vault_unlocked", "value": true},
+    {
+      "kind": "log",
+      "text": "Warden Kai menuntunmu melewati lorong tersembunyi di bawah ibukota. Rune kuno menyala saat kau mendekat — seolah mengenalimu. 'Ini rumahmu sebelum rumahmu ada,' bisiknya."
+    }
+  ],
+  "once": true
+}

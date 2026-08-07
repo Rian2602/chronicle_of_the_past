@@ -1,0 +1,10 @@
+{
+  "id": "warden_kai",
+  "name": "Warden Kai",
+  "description": "Karakter misterius: Warden Kai. Nada suram.",
+  "location": "rebel_hideout",
+  "greeting": "Banyak yang mati agar rahasia ini tetap aman.",
+  "dialog": [
+    "Halo dari Warden Kai."
+  ]
+}

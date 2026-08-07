@@ -1,0 +1,15 @@
+{
+  "id": "fquest_kultisi_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest105_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_kultisi"},
+    {"kind": "set_flag", "flag": "fquest_kultisi_active", "value": true},
+    {
+      "kind": "log",
+      "text": "Diakon Soren memanggilmu: 'Kultisi merah berkumpul di hutan selatan — pembasmi yang menyebut diri pemurni. Jemput mereka di jalan, lalu basmi. Api mereka tidak boleh sampai ke desa ini.'"
+    }
+  ],
+  "once": true
+}

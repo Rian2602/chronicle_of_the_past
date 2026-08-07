@@ -1,0 +1,15 @@
+{
+  "id": "langkah_seribu",
+  "name": "Langkah Seribu Bayangan",
+  "path": "sword",
+  "element": "metal",
+  "type": "physical",
+  "qi_cost": 28,
+  "power": 42,
+  "effects": [
+    {"status": "bleed", "chance": 0.3, "duration": 2}
+  ],
+  "requires": {
+    "tier": "soul_separation"
+  }
+}

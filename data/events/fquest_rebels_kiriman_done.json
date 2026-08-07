@@ -1,0 +1,14 @@
+{
+  "id": "fquest_rebels_kiriman_done",
+  "trigger": [
+    {"kind": "quest_done", "quest": "fquest_rebels_kiriman"}
+  ],
+  "actions": [
+    {
+      "kind": "log",
+      "text": "Jati tersenyum lebar: 'Kiriman obat selamat sampai. Rakyat selatan akan bertahan karena dirimu. Rebels berutang budi.'"
+    },
+    {"kind": "grant_item", "id": "pil_peneguh_fondasi", "count": 1}
+  ],
+  "once": true
+}

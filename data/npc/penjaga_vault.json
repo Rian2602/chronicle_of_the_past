@@ -1,0 +1,10 @@
+{
+  "id": "penjaga_vault",
+  "name": "Penjaga Vault",
+  "location": "ancient_vault",
+  "greeting": "...",
+  "dialog": [
+    "Golem kuno itu tidak bergerak saat kau mendekat. Tapi saat kau menyentuh dinding vault, batu di sekitarnya bergetar — dan suara dalam kepalamu berkata: 'Kau telah datang. Seperti yang diramalkan.'",
+    "Tidak ada mulut yang bergerak. Tapi suara itu jelas. 'Di bawah sini ada sesuatu yang menunggumu. Tapi kau harus menjawab satu teka-teki terlebih dahulu.'"
+  ]
+}

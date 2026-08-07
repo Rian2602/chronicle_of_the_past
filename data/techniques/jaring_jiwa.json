@@ -1,0 +1,15 @@
+{
+  "id": "jaring_jiwa",
+  "name": "Jaring Jiwa",
+  "path": "soul",
+  "element": "water",
+  "type": "technique",
+  "qi_cost": 12,
+  "power": 0,
+  "effects": [
+    {"type": "status", "status": "stun", "chance": 100}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

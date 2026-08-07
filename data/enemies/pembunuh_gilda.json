@@ -1,0 +1,29 @@
+{
+  "id": "pembunuh_gilda",
+  "name": "Pembunuh Bayaran Gilda",
+  "tier": "golden_core",
+  "element": "metal",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 32,
+    "defense": 18,
+    "agility": 25,
+    "intelligence": 12,
+    "vitality": 15,
+    "spirit": 10,
+    "hp": 220,
+    "qi": 45
+  },
+  "skills": [
+    "qi_slash"
+  ],
+  "tags": [
+    "human",
+    "assassin"
+  ],
+  "requires_flag": "map_guild_city_unlocked",
+  "rewards": {
+    "insight": 50,
+    "gold": 35
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "quest102",
+  "title": "Panggilan Kuil",
+  "type": "main",
+  "description": "Sesepuh Mao menunjuk Reruntuhan Kuil di balik hutan. Lin Wei, rekan masa kecilmu, tampak tahu lebih banyak daripada yang ia ucapkan.",
+  "objectives": [
+    {"kind": "talk", "target": "lin_wei"},
+    {"kind": "map", "target": "ruin_shrine"}
+  ],
+  "rewards": {"insight": 40, "gold": 10, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest102_done"],
+  "next": null,
+  "category": "main",
+  "requires_flag": null
+}

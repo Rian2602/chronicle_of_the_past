@@ -1,0 +1,10 @@
+{
+  "id": "pil_pemulih_besar",
+  "name": "Pil Pemulih Besar",
+  "type": "consumable",
+  "description": "Menyambung daging dan tulang yang hancur. Darahnya menolak.",
+  "effect": {
+    "heal_hp": 60
+  },
+  "price": 60
+}

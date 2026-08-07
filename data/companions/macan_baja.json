@@ -1,0 +1,21 @@
+{
+  "id": "macan_baja",
+  "name": "Macan Baja",
+  "tier": "golden_core",
+  "element": "metal",
+  "stats": {
+    "attack": 25,
+    "defense": 30,
+    "agility": 15,
+    "intelligence": 5,
+    "vitality": 30,
+    "spirit": 10,
+    "hp": 300,
+    "qi": 20
+  },
+  "skills": [
+    "qi_slash"
+  ],
+  "bond_xp": 0,
+  "rank": 1
+}

@@ -1,0 +1,13 @@
+{
+  "id": "mahkota_ashfall",
+  "name": "Mahkota Ashfall",
+  "type": "artifact",
+  "description": "Mahkota pertama kerajaan, ditempa dari abu gunung yang meletus seribu tahun lalu. Ia mengingat setiap pengkhianatan yang dilakukan atas namanya.",
+  "growth_stat": "spirit",
+  "max_level": 5,
+  "effect": {
+    "growth_stat": "spirit",
+    "max_level": 5
+  },
+  "price": 2000
+}

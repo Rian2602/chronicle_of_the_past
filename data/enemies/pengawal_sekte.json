@@ -1,0 +1,1 @@
+{"id": "pengawal_sekte", "name": "Pengawal Sekte", "tier": "foundation_establishment", "element": "metal", "behavior": "defensive", "stats": {"attack": 8, "defense": 10, "agility": 5, "intelligence": 3, "vitality": 8, "spirit": 4, "hp": 55, "qi": 15}, "skills": ["perisai_tanah", "qi_slash"], "tags": ["human"], "rewards": {"insight": 40, "gold": 30}}

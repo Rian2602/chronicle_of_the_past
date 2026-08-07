@@ -1,0 +1,13 @@
+{
+  "id": "cincin_roh_kenabian",
+  "name": "Cincin Roh Kenabian",
+  "type": "artifact",
+  "description": "Cincin perunggu dari pemberontak tua. Ia berbisik tentang kematian yang bisa dihindari — jika kau cukup cepat mendengarnya.",
+  "growth_stat": "agility",
+  "max_level": 4,
+  "effect": {
+    "growth_stat": "agility",
+    "max_level": 4
+  },
+  "price": 1200
+}

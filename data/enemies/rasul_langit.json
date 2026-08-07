@@ -1,0 +1,21 @@
+{
+  "id": "rasul_langit",
+  "name": "Rasul Langit",
+  "tier": "void_breaker",
+  "element": "fire",
+  "behavior": "boss",
+  "stats": {
+    "attack": 95,
+    "defense": 80,
+    "agility": 60,
+    "intelligence": 85,
+    "vitality": 80,
+    "spirit": 90,
+    "hp": 1800,
+    "qi": 900
+  },
+  "skills": ["pil_pembakar_surgawi", "penebasan_kehampaan", "tangan_langit"],
+  "tags": ["boss", "celestial", "ancient_order"],
+  "requires_flag": "quest405_done",
+  "rewards": {"insight": 800, "gold": 1000}
+}

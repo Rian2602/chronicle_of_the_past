@@ -1,0 +1,14 @@
+{
+  "id": "quest402_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest401"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest402"},
+    {
+      "kind": "log",
+      "text": "Di ruang bawah istana, Warden Kai berhenti di depan dinding kosong. 'Pintu ini tidak terbuka untuk kunci. Ia terbuka untuk darah — darah yang sama yang mengalir di nadimu.'"
+    }
+  ],
+  "once": true
+}

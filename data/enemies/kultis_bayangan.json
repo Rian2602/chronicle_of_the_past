@@ -1,0 +1,29 @@
+{
+  "id": "kultis_bayangan",
+  "name": "Kultis Bayangan",
+  "tier": "foundation_establishment",
+  "element": "water",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 22,
+    "defense": 8,
+    "agility": 15,
+    "intelligence": 15,
+    "vitality": 12,
+    "spirit": 15,
+    "hp": 150,
+    "qi": 80
+  },
+  "skills": [
+    "frost_bind",
+    "tebasan_bayangan"
+  ],
+  "tags": [
+    "cultist",
+    "human"
+  ],
+  "rewards": {
+    "insight": 35,
+    "gold": 20
+  }
+}

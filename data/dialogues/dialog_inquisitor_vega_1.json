@@ -1,0 +1,42 @@
+{
+  "id": "dialog_inquisitor_vega_1",
+  "npc": "inquisitor_vega",
+  "nodes": {
+    "start": {
+      "text": "Inquisitor Vega berdiri di bayang-bayang katedral, jubahnya basah oleh hujan yang tidak pernah berhenti. 'Kau datang mencari kebenaran tentang Orde Suci. Baik. Tapi kebenaran tidak gratis — ia menuntut posisi. Kau akan berdiri di sisi mana?'",
+      "choices": [
+        {
+          "text": "Orde Suci harus dihancurkan sampai ke akarnya.",
+          "next": "keputusan_1",
+          "actions": [
+            {"kind": "add_ending_points", "path": "defy", "points": 10},
+            {"kind": "change_reputation", "faction": "holy_order", "delta": -10}
+          ]
+        },
+        {
+          "text": "Ada jalan damai di antara orde dan yang kau sebut kotor.",
+          "next": "keputusan_2",
+          "actions": [
+            {"kind": "add_ending_points", "path": "reconcile", "points": 10}
+          ]
+        },
+        {
+          "text": "[Tinggalkan]",
+          "next": null
+        }
+      ]
+    },
+    "keputusan_1": {
+      "text": "Vega menatapmu lama, lalu tersenyum — senyum pertama yang kau lihat dari seorang inquisitor. 'Maka kita satu tujuan, meski berbeda alasan. Hati-hati: aku bisa saja menjadi musuhmu besok.'",
+      "choices": [
+        {"text": "[Tinggalkan]", "next": null}
+      ]
+    },
+    "keputusan_2": {
+      "text": "Vega terdiam. 'Jalan damai. Kau mungkin satu-satunya orang yang cukup gila untuk percaya itu masih mungkin. Jangan mati sebelum membuktikannya padaku.'",
+      "choices": [
+        {"text": "[Tinggalkan]", "next": null}
+      ]
+    }
+  }
+}

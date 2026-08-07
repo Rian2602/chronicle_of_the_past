@@ -1,0 +1,28 @@
+{
+  "id": "inquisitor_elit",
+  "name": "Inquisitor Elit",
+  "tier": "golden_core",
+  "element": "metal",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 40,
+    "defense": 35,
+    "agility": 25,
+    "intelligence": 30,
+    "vitality": 35,
+    "spirit": 40,
+    "hp": 250,
+    "qi": 150
+  },
+  "skills": [
+    "qi_slash"
+  ],
+  "tags": [
+    "human",
+    "holy_order"
+  ],
+  "rewards": {
+    "insight": 50,
+    "gold": 120
+  }
+}

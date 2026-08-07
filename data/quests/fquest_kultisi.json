@@ -1,0 +1,15 @@
+{
+  "id": "fquest_kultisi",
+  "title": "Kultisi Merah di Selatan",
+  "type": "faction",
+  "description": "Kultisi merah berkumpul di hutan selatan. Diakon Soren meminta disiasati dan dibasmi.",
+  "objectives": [
+    {"kind": "talk", "target": "kultisi_merah"},
+    {"kind": "enemy", "target": "kultisi_merah"}
+  ],
+  "rewards": {"insight": 40, "gold": 30, "reputation": {"holy_order": 15}},
+  "flags_on_complete": ["fquest_kultisi_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest105_done"
+}

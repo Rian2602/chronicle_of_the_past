@@ -1,0 +1,10 @@
+{
+  "id": "pil_besi_hitam",
+  "name": "Pil Besi Hitam",
+  "type": "consumable",
+  "description": "Mengeraskan kulit menjadi baja sementara. Siap untuk combat.",
+  "effect": {
+    "buff_defense": 30
+  },
+  "price": 40
+}
