@@ -217,7 +217,7 @@ class GameState:
             ):
                 raise ValueError("shop_sold: stok terjual harus item -> int")
             normalized_sold[shop_id] = dict(sold)
-        # Backfill P0.1: save lama punya field ritual_ready (bool) → pindah ke flag.
+        # Backfill P0.1: ritual_ready field lama → pindah ke flag.
         flags = dict(data.get("flags", {}))
         if data.get("ritual_ready"):
             flags["ritual_ready"] = True
