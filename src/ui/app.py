@@ -9,6 +9,8 @@ mode dalam GameScreen yang sama (satu layar, konten beralih).
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
@@ -29,19 +31,26 @@ from textual.widgets.option_list import Option
 
 from src.core.game_loop import BattleFrame, GameSession, make_bar
 from src.core.input import Command, CommandError, parse_command
+from src.core.save import AUTOSAVE, SLOTS, slot_exists
 
 
 class MainMenuScreen(Screen):
-    """Menu utama: mulai baru, muat save, keluar."""
+    """Menu utama: mulai baru, lanjutkan, muat save, keluar."""
 
     BINDINGS = [
         ("n", "new_game", "Mulai Baru"),
+        ("c", "resume_game", "Lanjutkan"),
         ("l", "load_game", "Muat Save"),
         ("q", "quit_app", "Keluar"),
     ]
 
     def compose(self) -> ComposeResult:
-        """Susun judul dan tombol menu."""
+        """Susun judul dan tombol menu.
+
+        Tombol Lanjutkan selalu ada tapi disembunyikan bila tidak ada
+        sesi berjalan (di-sync on_mount & on_screen_resume) — dengan
+        begini Escape dari game langsung memunculkannya tanpa re-compose.
+        """
         with Vertical(id="menu"):
             yield Static("[bold gold3]Chronicle of the Past[/]", id="title")
             yield Static(
@@ -49,13 +58,31 @@ class MainMenuScreen(Screen):
                 id="tagline",
             )
             yield Button("Mulai Baru (n)", id="new", variant="primary")
+            yield Button("Lanjutkan (c)", id="resume")
             yield Button("Muat Save (l)", id="load")
             yield Button("Keluar (q)", id="quit")
+
+    def on_mount(self) -> None:
+        """Sinkronkan tombol Lanjutkan saat menu pertama kali tampil."""
+        self._sync_resume_button()
+
+    def on_screen_resume(self) -> None:
+        """Saat menu di-reveal lagi (mis. Escape dari game): sinkronkan."""
+        self._sync_resume_button()
+
+    def _sync_resume_button(self) -> None:
+        """Tampilkan tombol Lanjutkan hanya saat ada sesi berjalan."""
+        resume = self.query_one("#resume", Button)
+        active = self.app.session.state is not None
+        resume.display = active
+        resume.disabled = not active
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Teruskan klik tombol ke aksi yang sama dengan key binding."""
         if event.button.id == "new":
             self.action_new_game()
+        elif event.button.id == "resume":
+            self.action_resume_game()
         elif event.button.id == "load":
             self.action_load_game()
         elif event.button.id == "quit":
@@ -65,17 +92,64 @@ class MainMenuScreen(Screen):
         """Buka layar input nama."""
         self.app.push_screen(NameScreen())
 
+    def action_resume_game(self) -> None:
+        """Lanjutkan sesi yang masih berjalan (state in-memory).
+
+        Escape dari GameScreen tidak membuang sesi — tombol ini kembali
+        ke permainan tanpa reload, mempertahankan seluruh state.
+        """
+        if self.app.session.state is None:
+            self.notify(
+                "Tidak ada permainan yang sedang berjalan.", severity="warning"
+            )
+            return
+        self.app.push_screen(GameScreen())
+
     def action_load_game(self) -> None:
-        """Muat save slot 1; gagal -> notifikasi."""
-        messages = self.app.session.load("save1")
-        if self.app.session.state is not None:
-            self.app.push_screen(GameScreen(initial_log=messages))
-        else:
-            self.notify(" ".join(messages), severity="error")
+        """Buka pemilih slot (save1-3 + autosave, GDD §19)."""
+        self.app.push_screen(SlotPickerScreen(self.app.session.save_dir))
 
     def action_quit_app(self) -> None:
         """Keluar dari aplikasi."""
         self.app.exit()
+
+
+class SlotPickerScreen(Screen):
+    """Pemilih slot save (GDD §19): hanya slot yang ada + kembali."""
+
+    BINDINGS = [("escape", "back", "Kembali")]
+
+    def __init__(self, save_dir: Path) -> None:
+        """Simpan direktori save untuk mengecek slot yang tersedia."""
+        super().__init__()
+        self._save_dir = save_dir
+
+    def compose(self) -> ComposeResult:
+        """Susun judul dan satu tombol per slot yang tersedia."""
+        with Vertical(id="slot-box"):
+            yield Static("Muat Save — pilih slot:", id="slot-title")
+            for slot in (*SLOTS, AUTOSAVE):
+                if slot_exists(slot, self._save_dir):
+                    label = "Autosave" if slot == AUTOSAVE else slot.upper()
+                    yield Button(label, id=f"slot-{slot}")
+            yield Button("Kembali", id="slot-back")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Klik slot -> muat + buka game; Kembali -> pop screen."""
+        if event.button.id == "slot-back":
+            self.app.pop_screen()
+            return
+        slot = event.button.id.removeprefix("slot-")
+        messages = self.app.session.load(slot)
+        if self.app.session.state is not None:
+            self.app.pop_screen()
+            self.app.push_screen(GameScreen(initial_log=messages))
+        else:
+            self.notify(" ".join(messages), severity="error")
+
+    def action_back(self) -> None:
+        """Kembali ke menu utama tanpa memuat apa pun."""
+        self.app.pop_screen()
 
 
 class NameScreen(Screen):
@@ -444,16 +518,16 @@ class ChronicleApp(App):
     TITLE = "Chronicle of the Past"
     CSS = """
     Screen { background: #0F0F0F; color: #E8E8E8; }
-    #menu, #name-box {
+    #menu, #name-box, #slot-box {
         align: center middle;
         width: 60;
         padding: 1 2;
         border: round #D4AF37;
     }
     #title { text-align: center; text-style: bold; color: #D4AF37; }
-    #tagline, #prompt { text-align: center; }
+    #tagline, #prompt, #slot-title { text-align: center; }
     Button { margin-top: 1; }
-    #menu Button, #name-box Button { width: 100%; }
+    #menu Button, #name-box Button, #slot-box Button { width: 100%; }
 
     /* Layout utama */
     #main-row { height: 1fr; }
