@@ -1,0 +1,9 @@
+{
+  "id": "sekretaris_istana",
+  "name": "Sekretaris Istana",
+  "location": "capital",
+  "greeting": "Kaisar tidak menerima tamu tanpa nama. Tapi kau — kau punya banyak nama, bukan?",
+  "dialog": [
+    "Sekretaris itu menulis tanpa menatapmu: 'Setiap rahasia di istana ini punya harga. Pertanyaannya, kau mau membayar dengan apa?'"
+  ]
+}

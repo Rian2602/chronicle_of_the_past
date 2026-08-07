@@ -25,6 +25,9 @@ EXPECTED_NPCS = {
     "inquisitor_vega",
     "sera_ember",
     "warden_kai",
+    "the_voice",
+    "sekretaris_istana",
+    "utusan_kuno",
 }
 REQUIRED_KEYS = {"id", "name", "location", "greeting", "dialog"}
 

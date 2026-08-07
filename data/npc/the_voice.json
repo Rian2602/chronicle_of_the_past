@@ -1,0 +1,9 @@
+{
+  "id": "the_voice",
+  "name": "Suara",
+  "location": "sky_seal",
+  "greeting": "…Kamu akhirnya datang. Aku sudah mengenalmu sejak sebelum namamu ada — sejak sebelum kerajaan ini diberi nama.",
+  "dialog": [
+    "Suara itu tidak memiliki bentuk, hanya kehadiran yang menggetarkan meridianmu: 'Aku bukan musuhmu. Aku bukan sekutumu. Aku adalah yang menunggumu, dan kini kau ada di sini untuk memutuskan sisanya.'"
+  ]
+}

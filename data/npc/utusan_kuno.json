@@ -1,0 +1,9 @@
+{
+  "id": "utusan_kuno",
+  "name": "Utusan Kuno",
+  "location": "ancient_vault",
+  "greeting": "Seribu tahun kami menjaga pintu. Kau adalah kunci yang kami tunggu — atau musuh yang kami takuti. Waktu akan menjawab.",
+  "dialog": [
+    "Utusan kuno mengangkat tangan berkerut: 'Orde Rahasia Kuno tidak pernah berhenti menjaga. Kami hanya berhenti berharap. Sampai kau datang.'"
+  ]
+}

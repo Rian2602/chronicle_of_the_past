@@ -1,0 +1,47 @@
+{
+  "id": "dialog_the_voice_1",
+  "npc": "the_voice",
+  "nodes": {
+    "start": {
+      "text": "Kehadiran di balik langit terhampar di hadapanmu — bukan ancaman, bukan permohonan. Sekadar fakta. 'Dunia ini dibangun di atas satu keputusan yang diambil seribu tahun lalu. Sekarang giliranmu: mau menulis ulang, menyegel, atau berdiri di antara keduanya?'",
+      "choices": [
+        {
+          "text": "Langit ini akan kurombak. Aturan lama mati bersamamu.",
+          "next": "pilih_defy",
+          "actions": [
+            {"kind": "add_ending_points", "path": "defy", "amount": 15},
+            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true}
+          ]
+        },
+        {
+          "text": "Aku akan menyegel segalanya — termasuk diriku sendiri. Dunia harus tenang.",
+          "next": "pilih_seal",
+          "actions": [
+            {"kind": "add_ending_points", "path": "seal", "amount": 15},
+            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true}
+          ]
+        },
+        {
+          "text": "Aku berdiri di antara kalian — melindungi keduanya dari kehancuran total.",
+          "next": "pilih_reconcile",
+          "actions": [
+            {"kind": "add_ending_points", "path": "reconcile", "amount": 15},
+            {"kind": "set_flag", "flag": "keputusan_final_dibuat", "value": true}
+          ]
+        }
+      ]
+    },
+    "pilih_defy": {
+      "text": "Kehadiran itu tertawa — bukan mengejek, tapi lega. 'Akhirnya. Seribu tahun menunggu seseorang yang cukup berani membenci langit ini.'",
+      "choices": [{"text": "[Tinggalkan]", "next": null}]
+    },
+    "pilih_seal": {
+      "text": "Kehadiran itu terdiam. 'Bijak. Tapi ingat: segel adalah janji, dan janji adalah beban yang tidak pernah berakhir.'",
+      "choices": [{"text": "[Tinggalkan]", "next": null}]
+    },
+    "pilih_reconcile": {
+      "text": "Kehadiran itu memandangmu lama. 'Jalan ketiga. Yang paling sulit — karena kau harus menahan dua dunia yang saling menghancurkan.'",
+      "choices": [{"text": "[Tinggalkan]", "next": null}]
+    }
+  }
+}
