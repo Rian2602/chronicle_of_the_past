@@ -1,0 +1,19 @@
+{
+  "id": "kestrel",
+  "name": "Kestrel",
+  "tier": "golden_core",
+  "element": "metal",
+  "stats": {
+    "attack": 30,
+    "defense": 30,
+    "agility": 30,
+    "intelligence": 30,
+    "vitality": 30,
+    "spirit": 30,
+    "hp": 200,
+    "qi": 100
+  },
+  "skills": [
+    "qi_slash"
+  ]
+}

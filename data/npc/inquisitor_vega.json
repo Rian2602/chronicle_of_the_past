@@ -1,0 +1,10 @@
+{
+  "id": "inquisitor_vega",
+  "name": "Inquisitor Vega",
+  "description": "Karakter misterius: Inquisitor Vega. Nada suram.",
+  "location": "holy_cathedral",
+  "greeting": "Keadilan Orde buta, namun pedangku tidak.",
+  "dialog": [
+    "Halo dari Inquisitor Vega."
+  ]
+}

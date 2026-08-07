@@ -1,0 +1,15 @@
+{
+  "id": "dialog_warden_kai_1",
+  "npc": "warden_kai",
+  "nodes": {
+    "start": {
+      "text": "Dialog utama warden_kai. Dunia ini kejam.",
+      "choices": [
+        {
+          "text": "Tinggalkan.",
+          "next": null
+        }
+      ]
+    }
+  }
+}

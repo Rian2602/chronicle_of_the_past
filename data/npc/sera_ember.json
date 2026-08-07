@@ -1,0 +1,10 @@
+{
+  "id": "sera_ember",
+  "name": "Sera Ember",
+  "description": "Karakter misterius: Sera Ember. Nada suram.",
+  "location": "rebel_hideout",
+  "greeting": "Kami bersembunyi di bawah agar bisa menusuk dari kegelapan.",
+  "dialog": [
+    "Halo dari Sera Ember."
+  ]
+}

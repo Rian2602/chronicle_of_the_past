@@ -1,0 +1,15 @@
+{
+  "id": "dialog_inquisitor_vega_1",
+  "npc": "inquisitor_vega",
+  "nodes": {
+    "start": {
+      "text": "Dialog utama inquisitor_vega. Dunia ini kejam.",
+      "choices": [
+        {
+          "text": "Tinggalkan.",
+          "next": null
+        }
+      ]
+    }
+  }
+}

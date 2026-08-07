@@ -1,0 +1,15 @@
+{
+  "id": "dialog_sera_ember_1",
+  "npc": "sera_ember",
+  "nodes": {
+    "start": {
+      "text": "Dialog utama sera_ember. Dunia ini kejam.",
+      "choices": [
+        {
+          "text": "Tinggalkan.",
+          "next": null
+        }
+      ]
+    }
+  }
+}
