@@ -22,6 +22,7 @@ REQUIRED_KEYS = {
     "player",
     "party",
     "party_active",
+    "formation_active",
     "buffs",
     "inventory",
     "quests",
@@ -243,3 +244,21 @@ def test_save_lama_tanpa_ending_points_backfill():
         del data["ending_points"]
     restored = GameState.from_dict(data)
     assert restored.ending_points == {"defy": 0, "seal": 0, "reconcile": 0}
+
+
+def test_formation_active_backfill_roundtrip():
+    """Formasi aktif default None dan ikut round-trip to_dict/from_dict."""
+    state = _state()
+    assert state.formation_active is None
+    state.formation_active = "jaring_naga"
+    data = state.to_dict()
+    restored = GameState.from_dict(data)
+    assert restored.formation_active == "jaring_naga"
+
+
+def test_save_lama_tanpa_formation_active_backfill():
+    """Save lama tanpa formation_active dimuat sebagai None."""
+    data = _state().to_dict()
+    del data["formation_active"]
+    restored = GameState.from_dict(data)
+    assert restored.formation_active is None

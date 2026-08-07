@@ -108,6 +108,8 @@ class GameState:
     # Buff combat dari item (GDD §7): stat -> nilai; diterapkan ke
     # combatant protagonis saat battle dimulai, lalu dikonsumsi.
     buffs: dict[str, int] = field(default_factory=dict)
+    # Formasi aktif (GDD §7, §18.2): id formasi yang terpasang, atau None.
+    formation_active: str | None = None
     # Poin ending untuk Pondasi Fase 4: path -> poin.
     ending_points: dict[str, int] = field(
         default_factory=lambda: {"defy": 0, "seal": 0, "reconcile": 0}
@@ -171,6 +173,7 @@ class GameState:
                 shop_id: dict(sold) for shop_id, sold in self.shop_sold.items()
             },
             "buffs": dict(self.buffs),
+            "formation_active": self.formation_active,
             "ending_points": dict(self.ending_points),
         }
 
@@ -232,5 +235,6 @@ class GameState:
             settings=dict(data.get("settings", {})),
             shop_sold=normalized_sold,
             buffs=dict(data.get("buffs", {})),
+            formation_active=data.get("formation_active"),
             ending_points=dict(ending_points),
         )

@@ -30,6 +30,7 @@ from src.engine.quest import load_quests  # noqa: E402
 from src.engine.shop import load_shops  # noqa: E402
 from src.engine.story import load_memories  # noqa: E402
 from src.models.party import load_companions  # noqa: E402
+from src.systems.formation import load_formations  # noqa: E402
 
 DATA_DIR = ROOT / "data"
 
@@ -56,7 +57,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     Args:
         data_dir: Direktori root ``data`` berisi subfolder quests/,
             events/, story/, maps/, npc/, cultivation/, techniques/,
-            enemies/ (default data/ proyek).
+            enemies/, formations/ (default data/ proyek).
 
     Returns:
         Daftar temuan terurut abjad; kosong bila semua referensi valid.
@@ -103,6 +104,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         technique.id for technique in load_techniques(data_dir / "techniques")
     }
     companions = load_companions(data_dir / "companions")
+    formations = load_formations(data_dir / "formations")
 
     errors: list[str] = []
     for quest in quests.values():
@@ -321,6 +323,14 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         for skill in companion.skills:
             if skill not in techniques:
                 errors.append(f"{companion.id}: skill {skill} tidak ada")
+
+    # Formasi (GDD §7): skill aktif wajib merujuk teknik yang ada.
+    for formation_id, formation in formations.items():
+        skill = formation.get("skill")
+        if skill is not None and skill not in techniques:
+            errors.append(
+                f"formations: {formation_id} -> skill {skill} tidak ada"
+            )
 
     for map_id, raw in maps.items():
         for entry in raw.get("enemies", []):

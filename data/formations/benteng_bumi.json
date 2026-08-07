@@ -1,0 +1,8 @@
+{
+  "id": "benteng_bumi",
+  "name": "Benteng Bumi",
+  "element": "earth",
+  "description": "Benteng kokoh: vitalitas barisan menguat, tapak tak goyah.",
+  "buff": {"vitality": 15, "defense": 10},
+  "skill": "perisai_tanah"
+}

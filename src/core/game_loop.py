@@ -62,6 +62,11 @@ from src.models.combatant import (
 from src.models.enemy import Enemy
 from src.models.party import Companion
 from src.models.player import Player
+from src.systems.formation import (
+    formation_buff,
+    formation_skill,
+    load_formations,
+)
 
 CULTIVATE_INSIGHT = 10
 CULTIVATE_HOURS = 3
@@ -104,6 +109,7 @@ AVAILABLE = {
     "swap",
     "equip",
     "unequip",
+    "formation",
     "meditate",
     "examine",
     "loot",
@@ -213,6 +219,7 @@ class GameSession:
             "  go <lokasi> look talk <nama> cultivate breakthrough rest",
             "  shop buy <item> [jumlah] sell <item> [jumlah]",
             "  use <item> refine <item>",
+            "  formation <id> (bongkar: formation)",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
@@ -781,6 +788,45 @@ class GameSession:
         )
         state = "aktif" if companion_id in active else "cadangan"
         return [f"{name} kini {state}."]
+
+    def _cmd_formation(self, command: Command) -> list[str]:
+        """Pasang/bongkar formasi, hanya di lokasi aman (GDD §18.2).
+
+        Tanpa argumen: bongkar formasi aktif. Dengan argumen: pasang
+        formasi (id divalidasi ke data/formations). Lokasi aman sama
+        dengan _cmd_swap — peta tanpa musuh (desa/kota).
+        """
+        if self.in_battle:
+            return ["Tidak bisa mengatur formasi saat bertarung."]
+        location_data = load_maps().get(self.state.location, {})
+        if location_data.get("enemies"):
+            return [
+                "Area ini tidak aman untuk memasang formasi. "
+                "Kembali ke desa atau kota dulu."
+            ]
+        if not command.args:
+            if self.state.formation_active is None:
+                return [
+                    "Formasi apa? Contoh: formation jaring_naga. "
+                    "Formasi aktif: tidak ada."
+                ]
+            formations = load_formations()
+            active = self.state.formation_active
+            # ponytail: id tak dikenal di data (save editan tangan) ->
+            # tampil id mentah; validator §25.3 menjamin data->formasi
+            # ter-resolve. Upgrade ke error keras bila save divalidasi.
+            name = formations.get(active, {}).get("name", active)
+            self.state.formation_active = None
+            return [f"Formasi {name} dibongkar."]
+        formation_id = command.args[0]
+        formations = load_formations()
+        if formation_id not in formations:
+            return [f"Formasi '{formation_id}' tidak dikenal."]
+        self.state.formation_active = formation_id
+        return [
+            f"Formasi {formations[formation_id]['name']} terpasang. "
+            "Bonus berlaku untuk seluruh tim saat bertarung."
+        ]
 
     def _cmd_meditate(self, command: Command) -> list[str]:
         # Pulihkan qi (versi sederhana dari rest)
@@ -1448,11 +1494,17 @@ class GameSession:
         """
         if self.state is None:
             return []
-        return [
+        skills = [
             technique.id
             for technique in load_techniques()
             if technique.requires.get("tier") == self.state.player.tier_id
         ]
+        # Skill formasi aktif ikut tersedia (GDD §18.3 formation_skill).
+        if self.state.formation_active:
+            skill = formation_skill(self.state.formation_active)
+            if skill:
+                skills.append(skill)
+        return skills
 
     def _start_battle(self, enemy_id: str) -> list[str]:
         player = self.state.player
@@ -1483,6 +1535,14 @@ class GameSession:
             ally_combatant = combatant_from_companion(companion)
             allies.append(ally_combatant)
             self._ally_map[companion.id] = ally_combatant
+        # Formasi aktif (GDD §7): buff area diterapkan ke seluruh tim
+        # (protagonis + rekan aktif) setelah semua ally terbentuk.
+        formation_bonus = {}
+        if self.state.formation_active:
+            formation_bonus = formation_buff(self.state.formation_active)
+        for ally_unit in allies:
+            for stat, value in formation_bonus.items():
+                ally_unit.stats[stat] = ally_unit.stats.get(stat, 0) + value
         self._ally = ally
         self._enemy = enemy
         self.battle = Battle(
@@ -1559,6 +1619,15 @@ class GameSession:
             self._resolve_enemy_turns()
             if not battle.over and self._is_player_turn():
                 try:
+                    # Aksi formasi (GDD §18.3): terjemahkan ke teknik
+                    # aktif formasi sebelum dicek engine combat.
+                    if (
+                        action == "formation_skill"
+                        and self.state.formation_active
+                    ):
+                        skill = formation_skill(self.state.formation_active)
+                        if skill:
+                            action = f"technique:{skill}"
                     battle.step(action)
                 except ValueError as exc:
                     error = str(exc)

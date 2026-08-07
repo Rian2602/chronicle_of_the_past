@@ -1,0 +1,8 @@
+{
+  "id": "jaring_naga",
+  "name": "Jaring Naga",
+  "element": "earth",
+  "description": "Formasi pertahanan: lafalkan jejak naga tanah, perisai mengeras bagi seluruh barisan.",
+  "buff": {"defense": 20},
+  "skill": null
+}
