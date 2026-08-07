@@ -736,13 +736,20 @@ class GameSession:
         """Tukar komposisi tim, hanya di lokasi aman (GDD §20.1).
 
         Lokasi aman = peta tanpa musuh (desa/kota). Swap di combat
-        ditunda (ponytail: butuh roster cadangan > 3 anggota).
+        diperbolehkan bila roster > 3 (ada cadangan).
         """
         if self.in_battle:
-            return [
-                "Tidak bisa mengganti tim saat bertarung "
-                "(swap combat ditunda — Fase 2 lanjutan)."
-            ]
+            # Di battle: hanya boleh swap bila ada cadangan (roster > 3)
+            all_ids = [raw["id"] for raw in self.state.party]
+            if len(all_ids) <= 3:
+                return [
+                    "Tidak bisa mengganti tim saat bertarung "
+                    "(tidak ada rekan cadangan)."
+                ]
+            # Delegasi ke battle_swap
+            if not command.args:
+                return ["Tukar siapa? Contoh: swap <id_rekan>"]
+            return self._battle_swap(command.args[0])
         location_data = load_maps().get(self.state.location, {})
         if location_data.get("enemies"):
             return [
@@ -1019,7 +1026,7 @@ class GameSession:
         technique_names = {t.id: t.name for t in techniques}
         items = load_items()
         owned = sorted(self.state.inventory.get("items", {}))
-        return [
+        actions = [
             {
                 "id": "serang",
                 "label": "Serang",
@@ -1065,12 +1072,40 @@ class GameSession:
                 "sub": [
                     {
                         "id": item_id,
-                        "command": f"use {item_id}",
+                        "command": f"use:{item_id}",
                         "desc": items.get(item_id, {}).get("name", item_id),
                     }
                     for item_id in owned
                 ],
             },
+        ]
+        # Swap: hanya muncul bila roster > 3 (ada cadangan)
+        all_ids = [raw["id"] for raw in self.state.party]
+        active_ids = set(self.state.party_active)
+        inactive = [cid for cid in all_ids if cid not in active_ids]
+        if inactive:
+            actions.append(
+                {
+                    "id": "ganti",
+                    "label": "Ganti",
+                    "command": "swap",
+                    "icon": "🔄",
+                    "battle": True,
+                    "sub": [
+                        {
+                            "id": cid,
+                            "command": f"swap:{cid}",
+                            "desc": next(
+                                raw["name"]
+                                for raw in self.state.party
+                                if raw["id"] == cid
+                            ),
+                        }
+                        for cid in inactive
+                    ],
+                }
+            )
+        actions.append(
             {
                 "id": "kabur",
                 "label": "Kabur",
@@ -1078,7 +1113,8 @@ class GameSession:
                 "icon": "🏃",
                 "battle": True,
             },
-        ]
+        )
+        return actions
 
     def _npc_at_location(self) -> list[dict[str, Any]]:
         """NPC yang berada di lokasi pemain (untuk sub-menu bicara).
@@ -1735,6 +1771,16 @@ class GameSession:
                         if battle.over:
                             self._finish_battle()
                         return self.battle_frame(error=error)
+                    # Aksi swap rekan di battle (GDD §20.1): swap:<id>
+                    elif action.startswith("swap:"):
+                        companion_id = action.split(":", 1)[1]
+                        result = self._battle_swap(companion_id)
+                        if result:
+                            battle.log.extend(result)
+                        self._resolve_enemy_turns()
+                        if battle.over:
+                            self._finish_battle()
+                        return self.battle_frame(error=error)
                     battle.step(action)
                 except ValueError as exc:
                     error = str(exc)
@@ -1742,6 +1788,130 @@ class GameSession:
             if battle.over:
                 self._finish_battle()
         return self.battle_frame(error=error)
+
+    def _battle_use_item(self, item_id: str) -> list[str] | None:
+        """Pakai item konsumabel dalam pertarungan (GDD §18.2, §18.3).
+
+        Hanya item dengan efek non-combat (heal_hp, restore_qi) dan
+        combat-ready (buff_*, resist_*) diperbolehkan. Bahan (material)
+        ditolak. Item tidak dikenal atau tidak dimiliki ditolak.
+        """
+        items = self.state.inventory.get("items", {})
+        if items.get(item_id, 0) <= 0:
+            return [f"Kamu tidak punya {item_id} di tas."]
+        catalog = load_items()
+        item = catalog.get(item_id)
+        if item is None:
+            return [f"Item '{item_id}' tidak dikenal di data."]
+        if item.get("type") == "material":
+            return [
+                f"{item['name']} adalah bahan — tidak bisa dipakai "
+                "langsung. Racik dulu dengan refine."
+            ]
+        # Hanya izinkan efek yang relevan dalam battle
+        effect = item.get("effect")
+        if not effect:
+            return [
+                f"{item['name']} tidak punya efek yang bisa dipakai di battle."
+            ]
+        allowed_effects = {
+            "heal_hp",
+            "restore_qi",
+            "buff_hp",
+            "buff_defense",
+            "buff_attack",
+            "buff_agility",
+            "buff_qi_max",
+            "resist_poison",
+            "resist_dark",
+            "cure_poison",
+        }
+        has_allowed = any(k in allowed_effects for k in effect)
+        if not has_allowed:
+            return [f"{item['name']} tidak bisa dipakai dalam pertarungan."]
+        # Konsumsi item
+        items[item_id] -= 1
+        if items[item_id] == 0:
+            del items[item_id]
+        lines = [f"Kamu memakai {item['name']}."]
+        caster = self.battle.current
+        if effect:
+            if effect.get("heal_hp"):
+                # Heal caster (bisa player atau rekan)
+                heal = effect["heal_hp"]
+                if caster.hp < caster.hp_max:
+                    caster.hp = min(caster.hp_max, caster.hp + heal)
+                    lines.append(f"HP {caster.name} pulih {heal}.")
+                else:
+                    lines.append(f"{caster.name} sudah HP penuh.")
+            if effect.get("restore_qi"):
+                restore = effect["restore_qi"]
+                if caster.qi < caster.qi_max:
+                    caster.qi = min(caster.qi_max, caster.qi + restore)
+                    lines.append(f"Qi {caster.name} pulih {restore}.")
+                else:
+                    lines.append(f"{caster.name} sudah Qi penuh.")
+            # Combat-ready buffs: catat ke state.buffs, diterapkan ke
+            # combatant di _start_battle (sudah dijalankan). Di sini kita
+            # tambahkan ke buffs caster langsung untuk battle ini.
+            for key, value in effect.items():
+                if key.startswith("buff_"):
+                    stat = key[len("buff_") :]
+                    caster.stats[stat] = caster.stats.get(stat, 0) + value
+                    lines.append(f"{caster.name} {stat} naik {value}.")
+                elif key.startswith("resist_"):
+                    caster.stats[key] = caster.stats.get(key, 0) + value
+                    lines.append(
+                        f"{caster.name} resist {key[7:]} naik {value}."
+                    )
+        return lines
+
+    def _battle_swap(self, companion_id: str) -> list[str] | None:
+        """Tukar rekan aktif dengan cadangan selama pertarungan.
+
+        Hanya boleh dilakukan bila ada rekan di cadangan (roster > 3).
+        Rekan yang diganti keluar mempertahankan HP/Qi di state.party.
+        Rekan yang masuk diambil dari state.party (HP/Qi tersimpan).
+        """
+        all_ids = [raw["id"] for raw in self.state.party]
+        if len(all_ids) <= 3:
+            return [
+                "Tidak bisa mengganti tim saat bertarung "
+                "(tidak ada rekan cadangan)."
+            ]
+        if companion_id not in all_ids:
+            return [f"Rekan '{companion_id}' tidak ada di timmu."]
+        active = list(self.state.party_active)
+        if companion_id in active:
+            return [f"{companion_id} sudah aktif."]
+        if len(active) < 3:
+            # Masih ada slot kosong, cukup tambahkan
+            active.append(companion_id)
+        else:
+            # Tim penuh, tukar dengan rekan yang giliran (atau pertama)
+            current = self.battle.current
+            current_id = None
+            for raw in self.state.party:
+                if raw["id"] == current.name and raw["id"] in active:
+                    current_id = raw["id"]
+                    break
+            if current_id is None:
+                current_id = active[0]
+            active.remove(current_id)
+            active.append(companion_id)
+        self.state.party_active = active
+        # Update _ally_map untuk rekan baru
+        self._rebuild_ally_map()
+        return [f"{companion_id} bergabung ke pertarungan!"]
+
+    def _rebuild_ally_map(self) -> None:
+        """Bangun ulang _ally_map dari party_active saat ini."""
+        self._ally_map = {}
+        for raw in self.state.party:
+            if raw["id"] in self.state.party_active:
+                companion = Companion.from_dict(raw)
+                combatant = combatant_from_companion(companion)
+                self._ally_map[companion.id] = combatant
 
     def _is_player_turn(self) -> bool:
         """Kembalikan True bila giliran aktif milik sekutu pemain."""
@@ -1840,3 +2010,8 @@ class GameSession:
             battle.log.append(
                 "Kamu tersungkur... dan sadar kembali dengan luka menganga."
             )
+        # BUG-14: lepaskan referensi combatant lama. status_lines/HUD
+        # memilih _ally.hp selama _ally tidak None — tanpa reset, HP
+        # stale (0/80) tampil padahal state.player sudah pulih.
+        self._ally = None
+        self._ally_map = {}
