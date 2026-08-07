@@ -16,6 +16,13 @@
       "text": "Bagus. Jika kau ingin bertahan di sini, temui Xiu Sang Alkemi. Dia ada tugas untuk murid baru. Tapi kukatakan dulu: sekte ini bukan rumah — ia tangga. Kau naik, atau kau dipijak.",
       "choices": [
         {
+          "text": "[Mengangguk]",
+          "next": null,
+          "actions": [
+            {"kind": "start_quest", "id": "quest202"}
+          ]
+        },
+        {
           "text": "Aku akan membangun kekuatan di sini — untuk tujuanku sendiri.",
           "next": "keputusan_1",
           "actions": [
@@ -27,13 +34,6 @@
           "next": "keputusan_2",
           "actions": [
             {"kind": "add_ending_points", "path": "seal", "amount": 10}
-          ]
-        },
-        {
-          "text": "[Mengangguk]",
-          "next": null,
-          "actions": [
-            {"kind": "start_quest", "id": "quest202"}
           ]
         }
       ]
