@@ -104,6 +104,11 @@ AVAILABLE = {
     "swap",
     "equip",
     "unequip",
+    "meditate",
+    "examine",
+    "loot",
+    "recall",
+    "settings",
 }
 
 
@@ -776,6 +781,27 @@ class GameSession:
         )
         state = "aktif" if companion_id in active else "cadangan"
         return [f"{name} kini {state}."]
+
+    def _cmd_meditate(self, command: Command) -> list[str]:
+        # Pulihkan qi (versi sederhana dari rest)
+        self.state.player.qi = self.state.player.qi_max
+        return ["Kamu bermeditasi. Qi pulih sepenuhnya."]
+
+    def _cmd_examine(self, command: Command) -> list[str]:
+        return ["Tidak ada objek spesifik untuk diperiksa di sini saat ini."]
+
+    def _cmd_loot(self, command: Command) -> list[str]:
+        return ["Tidak ada jarahan di area ini."]
+
+    def _cmd_recall(self, command: Command) -> list[str]:
+        return ["Fitur recall binatang roh akan segera hadir."]
+
+    def _cmd_settings(self, command: Command) -> list[str]:
+        return [
+            "--- Pengaturan ---",
+            "1. Kecepatan Teks: Normal",
+            "(Gunakan command lain untuk mengubah)",
+        ]
 
     def quest_lines(self) -> list[str]:
         """Ringkasan quest aktif untuk panel UI (read-only, tanpa efek).

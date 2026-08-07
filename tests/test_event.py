@@ -320,6 +320,16 @@ def test_action_log_masuk_result():
     assert result.logs == ["Abu turun bagai hujan."]
 
 
+def test_action_add_ending_points():
+    """add_ending_points menambah poin ke jalur ending tertentu."""
+    state = _state()
+    event = _event(
+        actions=[{"kind": "add_ending_points", "path": "defy", "points": 10}]
+    )
+    _fire(event, state)
+    assert state.ending_points["defy"] == 10
+
+
 # ----------------------------------------------------------------------
 # Aturan proses (§15.4)
 # ----------------------------------------------------------------------

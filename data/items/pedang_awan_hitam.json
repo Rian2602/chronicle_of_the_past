@@ -3,6 +3,8 @@
   "name": "Pedang Awan Hitam",
   "type": "artifact",
   "description": "Pedang yang menyerap cahaya. Terasa dingin saat disentuh.",
+  "growth_stat": "attack",
+  "max_level": 5,
   "effect": {
     "growth_stat": "attack",
     "max_level": 5
