@@ -12,8 +12,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from rich.bar import Bar
-
 from src.core.input import Command
 from src.core.save import (
     SAVE_DIR,
@@ -122,6 +120,23 @@ AVAILABLE = {
     "recall",
     "settings",
 }
+
+
+def make_bar(current: int, total: int, width: int = 20) -> str:
+    """Bar ASCII proporsional (█ terisi, ░ kosong).
+
+    Args:
+        current: Nilai saat ini (>= 0).
+        total: Nilai maksimum; 0 menghasilkan bar kosong.
+        width: Lebar bar dalam karakter.
+
+    Returns:
+        String bar, panjang tepat ``width``.
+    """
+    if total <= 0:
+        return "░" * width
+    filled = max(0, min(width, round(current / total * width)))
+    return "█" * filled + "░" * (width - filled)
 
 
 @dataclass
@@ -234,10 +249,8 @@ class GameSession:
         # pemain yang sedang terluka (bar tetap penuh).
         hp = self._ally.hp if self._ally is not None else player.hp
         qi = self._ally.qi if self._ally is not None else player.qi
-        hp_bar = Bar(size=player.hp_max, begin=0, end=hp, width=12, color="red")
-        qi_bar = Bar(
-            size=player.qi_max, begin=0, end=qi, width=12, color="blue"
-        )
+        hp_bar = make_bar(hp, player.hp_max, 12)
+        qi_bar = make_bar(qi, player.qi_max, 12)
         return [
             f"[bold gold3]{player.name}[/] — {tier_name}",
             f"Lokasi: {self.state.location} | "
@@ -723,7 +736,7 @@ class GameSession:
                     else companion.hp_max
                 )
                 hp_max = companion.hp_max
-            bar = Bar(size=hp_max, begin=0, end=hp, width=10, color="red")
+            bar = make_bar(hp, hp_max, 10)
             lines.append(
                 f"  [cyan]{companion.name}[/] · {companion.tier} · "
                 f"{companion.element} · HP {bar} {hp}/{hp_max} · "
