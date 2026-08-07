@@ -23,6 +23,13 @@
       "text": "Sesepuh Mao mengangguk: 'Bagus. Mulailah bermeditasi. Tapi sebelum itu — jawab satu hal. Desas-desus tentang bakatmu mulai menyebar. Jalan seperti apa yang ingin kau tempuh?'",
       "choices": [
         {
+          "text": "[Tinggalkan ruangan]",
+          "next": null,
+          "actions": [
+            {"kind": "set_flag", "flag": "dialog_elder_mao_1_selesai", "value": true}
+          ]
+        },
+        {
           "text": "Aku ingin membangun kekuatanku sendiri, melampaui aturan desa ini.",
           "next": "keputusan_1",
           "actions": [
@@ -34,13 +41,6 @@
           "next": "keputusan_2",
           "actions": [
             {"kind": "add_ending_points", "path": "seal", "amount": 10}
-          ]
-        },
-        {
-          "text": "[Tinggalkan ruangan]",
-          "next": null,
-          "actions": [
-            {"kind": "set_flag", "flag": "dialog_elder_mao_1_selesai", "value": true}
           ]
         }
       ]
