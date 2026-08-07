@@ -7,7 +7,7 @@
   "requires_flag": "quest307_done",
   "objectives": [
     {"kind": "map", "target": "gua_abyss"},
-    {"kind": "enemy", "target": "penjaga_abyss"}
+    {"kind": "enemy", "target": "abyssal_worm"}
   ],
   "rewards": {"insight": 140, "gold": 300, "reputation": {"ancient_order": 8}},
   "flags_on_complete": ["fquest_303_done"],
