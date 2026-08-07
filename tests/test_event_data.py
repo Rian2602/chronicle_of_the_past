@@ -54,6 +54,10 @@ EXPECTED_EVENTS = {
     "fquest_301_intro",
     "fquest_302_intro",
     "fquest_303_intro",
+    "calculate_ending_trigger",
+    "ending_defy",
+    "ending_seal",
+    "ending_reconcile",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

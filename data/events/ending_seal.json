@@ -1,0 +1,10 @@
+{
+  "id": "ending_seal",
+  "trigger": [
+    {"kind": "flag", "flag": "ending_seal_win", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "log", "text": "MENYEGEL DIRI — Kau memilih mundur. Segel itu kau pasang dengan tangan sendiri, menutup pintu yang tak boleh terbuka. Dunia memilih jalannya sendiri: tanpa kau, faksi-faksi saling menghancurkan, dan langit tertidur sekali lagi. Di antara reruntuhan, orang-orang mengingat seorang kultivator yang menolak menjadi pahlawan. Mungkin itu juga cara untuk menang."}
+  ],
+  "once": true
+}

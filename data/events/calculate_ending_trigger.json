@@ -1,0 +1,10 @@
+{
+  "id": "calculate_ending_trigger",
+  "trigger": [
+    {"kind": "flag", "flag": "arc4_boss_defeated", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "calculate_ending"}
+  ],
+  "once": true
+}

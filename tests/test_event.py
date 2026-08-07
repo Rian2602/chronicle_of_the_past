@@ -652,3 +652,19 @@ def test_action_add_companion_mengaktifkan_rekan_roster_yang_belum_aktif():
     _fire(event, state)
     assert len(state.party) == 1  # tidak duplikasi roster
     assert "lin_wei" in state.party_active
+
+
+def test_ending_events_terpicu_setelah_bos_kalah():
+    """Set arc4_boss_defeated -> calculate_ending -> ending event (cascade)."""
+    from src.core.state import GameState
+    from src.engine.event import load_events, process_events
+    from src.models.player import Player
+
+    state = GameState(player=Player(name="Akar"))
+    state.ending_points = {"defy": 2, "seal": 7, "reconcile": 3}
+    state.flags["arc4_boss_defeated"] = True
+    result = process_events(state, load_events())
+    assert state.flags.get("ending_seal_win") is True
+    assert any(event_id.startswith("ending_") for event_id in result.fired)
+    # Seal menang -> teks ending reconcile TIDAK boleh muncul.
+    assert all("REKONSILIASI" not in line for line in result.logs)
