@@ -9,8 +9,6 @@ mode dalam GameScreen yang sama (satu layar, konten beralih).
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
@@ -107,7 +105,7 @@ class MainMenuScreen(Screen):
 
     def action_load_game(self) -> None:
         """Buka pemilih slot (save1-3 + autosave, GDD §19)."""
-        self.app.push_screen(SlotPickerScreen(self.app.session.save_dir))
+        self.app.push_screen(SlotPickerScreen())
 
     def action_quit_app(self) -> None:
         """Keluar dari aplikasi."""
@@ -119,17 +117,12 @@ class SlotPickerScreen(Screen):
 
     BINDINGS = [("escape", "back", "Kembali")]
 
-    def __init__(self, save_dir: Path) -> None:
-        """Simpan direktori save untuk mengecek slot yang tersedia."""
-        super().__init__()
-        self._save_dir = save_dir
-
     def compose(self) -> ComposeResult:
         """Susun judul dan satu tombol per slot yang tersedia."""
         with Vertical(id="slot-box"):
             yield Static("Muat Save — pilih slot:", id="slot-title")
             for slot in (*SLOTS, AUTOSAVE):
-                if slot_exists(slot, self._save_dir):
+                if slot_exists(slot, self.app.session.save_dir):
                     label = "Autosave" if slot == AUTOSAVE else slot.upper()
                     yield Button(label, id=f"slot-{slot}")
             yield Button("Kembali", id="slot-back")
