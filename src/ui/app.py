@@ -103,7 +103,8 @@ class MainMenuScreen(Screen):
                 "Tidak ada permainan yang sedang berjalan.", severity="warning"
             )
             return
-        self.app.push_screen(GameScreen())
+        # BUG-17: teruskan riwayat log sesi agar narasi tidak hilang.
+        self.app.push_screen(GameScreen(initial_log=list(self.app.log_history)))
 
     def action_load_game(self) -> None:
         """Buka pemilih slot (save1-3 + autosave, GDD §19)."""
@@ -142,6 +143,9 @@ class SlotPickerScreen(Screen):
         slot = event.button.id.removeprefix("slot-")
         messages = self.app.session.load(slot)
         if self.app.session.state is not None:
+            # BUG-17: muat save = sesi baru dari disk; riwayat dimulai
+            # dari pesan hasil muat (bukan sisa sesi in-memory lama).
+            self.app.log_history = list(messages)
             self.app.pop_screen()
             self.app.push_screen(GameScreen(initial_log=messages))
         else:
@@ -189,6 +193,8 @@ class NameScreen(Screen):
         bukan ke layar nama yang basi.
         """
         self.app.session.new_game(name)
+        # BUG-17: mulai baru = riwayat log kosong.
+        self.app.log_history = []
         self.app.pop_screen()
         self.app.push_screen(GameScreen())
 
@@ -318,6 +324,11 @@ class GameScreen(Screen):
                 prompt += " ▸"
             options.append(Option(prompt, id=item["id"]))
         actions.set_options(options)
+        # BUG-15: set_options me-reset highlighted ke None -> Enter pada
+        # opsi pertama tidak merespons. Auto-highlight opsi pertama agar
+        # navigasi satu ketukan, bukan dua (regresi TUI hunt).
+        if options:
+            actions.highlighted = 0
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Sidebar kiri & tombol aksi lokasi -> command terkait."""
@@ -336,6 +347,19 @@ class GameScreen(Screen):
         if raw:
             self._run_command(raw)
 
+    def _remember_log(self, line: str) -> None:
+        """Catat baris log untuk dipulihkan saat resume (BUG-17).
+
+        GameScreen baru (Lanjutkan) memakai ``app.log_history`` sebagai
+        initial_log; tanpa ini narasi sesi hilang saat escape ke menu.
+        Batas 200 baris menjaga memori tetap kecil (ponytail: hubungkan
+        ke RichLog max_lines BUG-9 bila sesi jauh lebih panjang).
+        """
+        history = self.app.log_history
+        history.append(line)
+        if len(history) > 200:
+            del history[: len(history) - 200]
+
     def _run_command(self, raw: str) -> None:
         """Eksekusi command: battle_step saat bertarung, dispatch dunia."""
         session = self.app.session
@@ -347,11 +371,13 @@ class GameScreen(Screen):
             command = parse_command(raw)
         except CommandError as exc:
             log.write(f"[red]{exc}[/]\n")
+            self._remember_log(f"[red]{exc}[/]")
             return
         if command is None:
             return
         for line in session.dispatch(command):
             log.write(line + "\n")
+            self._remember_log(line)
         self._refresh()
         if session.quit_requested:
             self.app.exit()
@@ -369,16 +395,23 @@ class GameScreen(Screen):
         if raw == "observe":
             frame = session.battle_frame()
             log.write("[cyan]Amatan:[/]\n")
+            self._remember_log("[cyan]Amatan:[/]")
             for line in self._enemy_lines(frame):
                 log.write(line + "\n")
+                self._remember_log(line)
             self._refresh()
             return
         frame = session.battle_step(raw)
+        # Battle mengganti isi log (bukan menumpuk): sinkronkan riwayat
+        # agar resume menampilkan frame yang sama dengan layar terakhir.
         log.clear()
+        self.app.log_history.clear()
         for line in frame.log:
             log.write(line + "\n")
+            self._remember_log(line)
         if frame.error:
             log.write(f"[red]{frame.error}[/]\n")
+            self._remember_log(f"[red]{frame.error}[/]")
         self._refresh()
 
     # ------------------------------------------------------------------
@@ -587,11 +620,14 @@ class ChronicleApp(App):
         color: #ff5555;
     }
 
-    /* Konten tab */
-    #content-tabs { height: 1fr; }
-    #game-log { height: 1fr; background: #0F0F0F; }
-    #memory-log { height: 1fr; background: #0F0F0F; }
-    #map-panel { height: 1fr; padding: 1; color: #00bcd4; }
+    /* Konten tab. BUG-16: min-height menjaga log terbaca di terminal
+       pendek (terbukti tmux 120x30 s/d 15 baris); trade-off: di bawah
+       15 baris menu aksi yang terpotong, bukan log. ponytail: tata
+       letak responsif penuh (scrollbar/prioritas) menyusul Fase polish. */
+    #content-tabs { height: 1fr; min-height: 5; }
+    #game-log { height: 1fr; min-height: 5; background: #0F0F0F; }
+    #memory-log { height: 1fr; min-height: 5; background: #0F0F0F; }
+    #map-panel { height: 1fr; min-height: 5; padding: 1; color: #00bcd4; }
 
     /* Sidebar kanan */
     #side-col Collapsible { margin-top: 1; }
@@ -626,6 +662,9 @@ class ChronicleApp(App):
         """Terima sesi (bisa disuntikkan untuk test)."""
         super().__init__()
         self.session = session if session is not None else GameSession()
+        # Riwayat log untuk resume (BUG-17): GameScreen baru saat Lanjutkan
+        # memakai initial_log dari sini, bukan dari widget yang dibuang.
+        self.log_history: list[str] = []
 
     def on_mount(self) -> None:
         """Buka menu utama saat aplikasi dimulai."""
