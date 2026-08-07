@@ -12,6 +12,8 @@ EXPECTED_MAPS = {
     "guild_city",
     "hutan_kelabu",
     "gua_abyss",
+    "holy_cathedral",
+    "rebel_hideout",
 }
 REQUIRED_KEYS = {"id", "name", "description", "tier"}  # + opsional "enemies"
 

@@ -50,6 +50,8 @@ EXPECTED_ENEMIES = {
     "pembunuh_gilda",
     "kultis_bayangan",
     "bos_sekte_bayangan",
+    "bos_inquisitor_agung",
+    "inquisitor_elit",
 }
 
 

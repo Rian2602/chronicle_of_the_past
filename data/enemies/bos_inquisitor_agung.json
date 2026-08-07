@@ -1,0 +1,29 @@
+{
+  "id": "bos_inquisitor_agung",
+  "name": "Inquisitor Agung",
+  "tier": "golden_core",
+  "element": "metal",
+  "behavior": "boss",
+  "stats": {
+    "attack": 60,
+    "defense": 45,
+    "agility": 30,
+    "intelligence": 50,
+    "vitality": 50,
+    "spirit": 55,
+    "hp": 600,
+    "qi": 350
+  },
+  "skills": [
+    "qi_slash"
+  ],
+  "tags": [
+    "boss",
+    "human",
+    "holy_order"
+  ],
+  "rewards": {
+    "insight": 250,
+    "gold": 600
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "rebel_hideout",
+  "name": "Markas Pemberontak (Bawah Tanah)",
+  "description": "Labirin gua tersembunyi di bawah kota. Bau darah dan besi berkarat menguar di udara. Hanya mereka yang berani mati yang bisa bertahan di sini.",
+  "tier": 3,
+  "enemies": [
+    {
+      "enemy": "pembelot_pemberontak"
+    },
+    {
+      "enemy": "kultis_bayangan"
+    }
+  ]
+}
