@@ -1,24 +1,14 @@
 {
   "id": "quest306",
-  "title": "Quest quest306 Title",
+  "title": "Pengkhianat di Antara Kita",
   "type": "main",
   "category": "main",
-  "description": "Deskripsi untuk quest306. Bernada grimdark.",
+  "description": "Sesuatu membocorkan lokasi markas pemberontak ke Gilda Pembunuh. Sera menatapmu lama: 'Tiga dari mereka datang malam ini. Temukan yang mana yang tahu terlalu banyak.'",
   "requires_flag": "quest305_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "kill_count", "target": "pembunuh_gilda", "count": 3}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {}
-  },
-  "flags_on_complete": [
-    "quest306_done"
-  ],
+  "rewards": {"insight": 180, "gold": 400, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest306_done"],
   "next": "quest307"
 }

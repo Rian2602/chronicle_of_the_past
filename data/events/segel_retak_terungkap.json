@@ -1,0 +1,14 @@
+{
+  "id": "segel_retak_terungkap",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest305"}
+  ],
+  "actions": [
+    {"kind": "set_flag", "flag": "segel_retak_terungkap", "value": true},
+    {
+      "kind": "log",
+      "text": "Warden Kai membuka gulungan kuno dan menunjukkanmu peta Segel Langit. Retakan merah membelahnya dari bawah ke atas — seperti garis hidup yang menunggumu di puncak."
+    }
+  ],
+  "once": true
+}

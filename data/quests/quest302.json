@@ -1,24 +1,15 @@
 {
   "id": "quest302",
-  "title": "Quest quest302 Title",
+  "title": "Infiltrasi Katedral",
   "type": "main",
   "category": "main",
-  "description": "Deskripsi untuk quest302. Bernada grimdark.",
+  "description": "Di bawah marmer Katedral Suci mengalir lorong-lorong yang tidak pernah disebut dalam khotbah. Sera ingin tahu apa yang Orde Suci sembunyikan di sana — dan siapa yang menjaga rahasianya.",
   "requires_flag": "quest301_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "map", "target": "holy_cathedral"},
+    {"kind": "enemy", "target": "penebus_orde_suci"}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {}
-  },
-  "flags_on_complete": [
-    "quest302_done"
-  ],
+  "rewards": {"insight": 120, "gold": 300},
+  "flags_on_complete": ["quest302_done"],
   "next": "quest303"
 }

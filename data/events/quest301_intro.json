@@ -1,0 +1,14 @@
+{
+  "id": "quest301_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest208"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest301"},
+    {
+      "kind": "log",
+      "text": "Kepala Sekte Bayangan tumbang, tapi kekosongan kekuasaannya diisi oleh sesuatu yang lebih tua. Seorang utusan pemberontak menunggumu di gerbang kota: 'Sera Ember ingin bicara. Tentang Orde Suci. Tentang apa yang mereka kubur.'"
+    }
+  ],
+  "once": true
+}

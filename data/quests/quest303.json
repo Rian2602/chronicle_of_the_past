@@ -1,24 +1,14 @@
 {
   "id": "quest303",
-  "title": "Quest quest303 Title",
+  "title": "Dua Sisi Pedang",
   "type": "main",
   "category": "main",
-  "description": "Deskripsi untuk quest303. Bernada grimdark.",
+  "description": "Inquisitor Vega tidak seperti rekan-rekannya. Dia memurnikan dengan keraguan, bukan keyakinan — dan keraguan adalah celah yang bisa kamu masuki.",
   "requires_flag": "quest302_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "talk", "target": "inquisitor_vega"}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {}
-  },
-  "flags_on_complete": [
-    "quest303_done"
-  ],
+  "rewards": {"insight": 130, "gold": 200, "reputation": {"holy_order": 5}},
+  "flags_on_complete": ["quest303_done"],
   "next": "quest304"
 }

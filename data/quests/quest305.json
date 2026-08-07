@@ -1,24 +1,14 @@
 {
   "id": "quest305",
-  "title": "Quest quest305 Title",
+  "title": "Entitas Bergerak",
   "type": "main",
   "category": "main",
-  "description": "Deskripsi untuk quest305. Bernada grimdark.",
+  "description": "Malam itu, untuk pertama kalinya dalam hidupmu, sesuatu di balik langit menyebut namamu. Bukan ancaman. Bukan panggilan. Lebih seperti pengakuan.",
   "requires_flag": "quest304_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "flag", "target": "memory_entitas_pertama"}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {}
-  },
-  "flags_on_complete": [
-    "quest305_done"
-  ],
+  "rewards": {"insight": 200, "gold": 200},
+  "flags_on_complete": ["quest305_done"],
   "next": "quest306"
 }

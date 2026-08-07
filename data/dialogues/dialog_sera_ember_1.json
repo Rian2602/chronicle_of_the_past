@@ -3,13 +3,47 @@
   "npc": "sera_ember",
   "nodes": {
     "start": {
-      "text": "Dialog utama sera_ember. Dunia ini kejam.",
+      "text": "Sera Ember menatapmu dari seberang api unggun. 'Kau berdiri di persimpangan, pejuang. Orde Suci menawarkan ketertiban dengan darah. Kami menawarkan kebebasan dengan lebih banyak darah. Tidak ada pilihan bersih di dunia ini.'",
       "choices": [
         {
-          "text": "Tinggalkan.",
-          "next": null
+          "text": "Aku berdiri bersama pemberontak. Kebebasan lebih berharga daripada ketertiban.",
+          "next": "pilih_pemberontak",
+          "actions": [
+            {"kind": "change_reputation", "faction": "rebels", "delta": 10},
+            {"kind": "add_ending_points", "path": "defy", "amount": 10},
+            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true}
+          ]
+        },
+        {
+          "text": "Kekacauan hanya melahirkan kekacauan baru. Aku cari jalan yang lebih hati-hati.",
+          "next": "pilih_hati_hati",
+          "actions": [
+            {"kind": "change_reputation", "faction": "holy_order", "delta": 5},
+            {"kind": "add_ending_points", "path": "seal", "amount": 10},
+            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true}
+          ]
+        },
+        {
+          "text": "Kedua kalian buta. Aku akan menemukan jalan ketiga — atau mati mencoba.",
+          "next": "pilih_jalan_ketiga",
+          "actions": [
+            {"kind": "add_ending_points", "path": "reconcile", "amount": 10},
+            {"kind": "set_flag", "flag": "pilihan_faksi_dibuat", "value": true}
+          ]
         }
       ]
+    },
+    "pilih_pemberontak": {
+      "text": "Sera tersenyum — senyum yang tidak pernah sampai ke matanya. 'Maka kau akan menanggung apa yang kami tanggung. Selamat datang di perang yang tidak pernah berakhir, pejuang.'",
+      "choices": [{"text": "[Tinggalkan]", "next": null}]
+    },
+    "pilih_hati_hati": {
+      "text": "Sera mengangguk pelan. 'Hati-hati adalah cara bertahan hidup. Tapi ingat: di dunia ini, yang hati-hati biasanya yang mati lebih dulu.'",
+      "choices": [{"text": "[Tinggalkan]", "next": null}]
+    },
+    "pilih_jalan_ketiga": {
+      "text": "Sera menatapmu lama, lalu tertawa — tawa yang pahit. 'Jalan ketiga. Kau mungkin satu-satunya orang gila yang cukup bodoh untuk mencarinya. Jangan mati sebelum menemukannya.'",
+      "choices": [{"text": "[Tinggalkan]", "next": null}]
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "id": "memory_entitas_pertama",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest304"}
+  ],
+  "actions": [
+    {"kind": "grant_memory", "memory_id": "memory_entitas_pertama"},
+    {"kind": "set_flag", "flag": "memory_entitas_pertama", "value": true},
+    {
+      "kind": "log",
+      "text": "Ingatan asing membanjiri kepalamu — bukan milikmu, bukan manusia. Sesuatu di balik langit telah menunggumu sejak sebelum desa ini berdiri."
+    }
+  ],
+  "once": true
+}

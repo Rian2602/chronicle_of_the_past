@@ -156,3 +156,21 @@ def test_setiap_fquest_memiliki_event_intro():
             action["kind"] == "start_quest" and action["id"] == data["id"]
             for action in events[intro_id]["actions"]
         ), f"{data['id']}: intro tidak men-start quest"
+
+
+def test_quest_arc3_bukan_placeholder():
+    """Quest Arc 3 harus punya judul naratif asli, bukan 'Quest quest30X Title'."""
+    for quest_id in [
+        "quest301",
+        "quest302",
+        "quest303",
+        "quest304",
+        "quest305",
+        "quest306",
+        "quest307",
+        "quest308",
+    ]:
+        data = json.loads((DATA_DIR / f"{quest_id}.json").read_text(encoding="utf-8"))
+        assert data["title"] != f"Quest {quest_id} Title", quest_id
+        assert len(data["objectives"]) >= 1, quest_id
+        assert data["description"] != f"Deskripsi untuk {quest_id}. Bernada grimdark.", quest_id

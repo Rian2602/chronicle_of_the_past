@@ -1,24 +1,15 @@
 {
   "id": "quest301",
-  "title": "Quest quest301 Title",
+  "title": "Panggilan Pemberontak",
   "type": "main",
   "category": "main",
-  "description": "Deskripsi untuk quest301. Bernada grimdark.",
+  "description": "Sera Ember, pemimpin pemberontak, mengirim utusan mencarimu. Kata-katanya hanya satu: 'Kau sudah melihat apa yang Orde Suci lakukan. Sekarang lihat apa yang kami coba perbaiki.'",
   "requires_flag": "quest208_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "talk", "target": "sera_ember"},
+    {"kind": "map", "target": "rebel_hideout"}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {}
-  },
-  "flags_on_complete": [
-    "quest301_done"
-  ],
+  "rewards": {"insight": 100, "gold": 100, "reputation": {"rebels": 5}},
+  "flags_on_complete": ["quest301_done"],
   "next": "quest302"
 }

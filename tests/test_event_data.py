@@ -58,6 +58,16 @@ EXPECTED_EVENTS = {
     "ending_defy",
     "ending_seal",
     "ending_reconcile",
+    "quest301_intro",
+    "quest302_intro",
+    "quest303_intro",
+    "quest304_intro",
+    "quest305_intro",
+    "quest306_intro",
+    "quest307_intro",
+    "quest308_intro",
+    "memory_entitas_pertama",
+    "segel_retak_terungkap",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

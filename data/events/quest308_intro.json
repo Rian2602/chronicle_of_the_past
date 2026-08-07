@@ -1,0 +1,14 @@
+{
+  "id": "quest308_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest307"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest308"},
+    {
+      "kind": "log",
+      "text": "Katedral terbakar. Inquisitor Agung berdiri di tengah api, jubahnya tak tersentuh — bukan karena kuasa Orde, tapi karena sesuatu yang jauh lebih tua memilihnya sebagai juru bicara. 'Kau pikir ini tentang faksi?' suaranya memecah marmer."
+    }
+  ],
+  "once": true
+}

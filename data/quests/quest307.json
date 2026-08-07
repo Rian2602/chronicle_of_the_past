@@ -1,24 +1,14 @@
 {
   "id": "quest307",
-  "title": "Quest quest307 Title",
+  "title": "Segel yang Retak",
   "type": "main",
   "category": "main",
-  "description": "Deskripsi untuk quest307. Bernada grimdark.",
+  "description": "Warden Kai membawakan kabar yang tidak ingin kau dengar: segel di bawah Ruang Rahasia Kuno retak. Sesuatu telah melewatinya — dan ia berjalan menuju langit.",
   "requires_flag": "quest306_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "flag", "target": "segel_retak_terungkap"}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {}
-  },
-  "flags_on_complete": [
-    "quest307_done"
-  ],
+  "rewards": {"insight": 220, "gold": 300, "grant_item": {"id": "salib_bisu", "count": 1}},
+  "flags_on_complete": ["quest307_done"],
   "next": "quest308"
 }

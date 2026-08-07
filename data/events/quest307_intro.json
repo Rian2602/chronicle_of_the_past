@@ -1,0 +1,14 @@
+{
+  "id": "quest307_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest306"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest307"},
+    {
+      "kind": "log",
+      "text": "Warden Kai tiba di markas pemberontak dengan wajah pucat. 'Segel di bawah Ruang Rahasia Kuno retak. Sesuatu telah melewatinya — dan ia berjalan menuju langit, menuju puncak tempat semuanya dimulai.'"
+    }
+  ],
+  "once": true
+}
