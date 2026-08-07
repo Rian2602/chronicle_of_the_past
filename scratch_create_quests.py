@@ -44,7 +44,8 @@ def create_event(id_, quest_id):
                 "kind": "start_quest",
                 "id": quest_id
             }
-        ]
+        ],
+        "once": True
     }
 
 # Main Quests

@@ -11,5 +11,6 @@
       "kind": "start_quest",
       "id": "fquest_301"
     }
-  ]
+  ],
+  "once": true
 }
