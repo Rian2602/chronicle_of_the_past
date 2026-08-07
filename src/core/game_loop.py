@@ -369,6 +369,9 @@ class GameSession:
         learned = (item.get("effect") or {}).get("learn_recipe")
         if learned and self.state.flags.get(f"recipe_{learned}_known"):
             return [f"Kamu sudah mempelajari resep {item['name']}."]
+        hatch = (item.get("effect") or {}).get("hatch_companion")
+        if hatch and any(raw["id"] == hatch for raw in self.state.party):
+            return ["Binatang roh ini sudah di timmu."]
         items[item_id] -= 1
         if items[item_id] == 0:
             del items[item_id]
@@ -400,9 +403,7 @@ class GameSession:
                 companion_id = effect["hatch_companion"]
                 ids = [raw["id"] for raw in self.state.party]
                 if companion_id not in ids:
-                    companion = Companion.from_dict(
-                        load_companion(companion_id).to_dict()
-                    )
+                    companion = load_companion(companion_id)
                     self.state.party.append(companion.to_dict())
                     if len(self.state.party_active) < 3:
                         self.state.party_active.append(companion_id)
@@ -1342,10 +1343,13 @@ class GameSession:
             if not evolution or evolution.get("trigger_tier") != tier_id:
                 continue
             evolved_id = evolution["evolved_id"]
-            evolved = Companion.from_dict(load_companion(evolved_id).to_dict())
+            evolved = load_companion(evolved_id)
             evolved.bond_xp = int(raw.get("bond_xp", 0))
             evolved.rank = int(raw.get("rank", 1))
+            evolved.hp = raw.get("hp")
+            evolved.qi = raw.get("qi")
             replaced[raw["id"]] = evolved_id
+            raw.clear()
             raw.update(evolved.to_dict())
             messages.append(
                 f"{evolved.name} berevolusi! Bentuk barunya "

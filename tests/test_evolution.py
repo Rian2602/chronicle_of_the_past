@@ -69,3 +69,24 @@ def test_evolve_mengganti_rekan_saat_tier_tercapai(tmp_path):
     assert "serigala_bayangan" not in ids
     assert any("Serigala Malam Belati" in m for m in messages)
     assert "serigala_bayangan_evolved" in session.state.party_active
+
+
+def test_evolve_menghapus_field_evolution_rekan(tmp_path):
+    """Rekan hasil evolusi tak punya field evolution (sekali, GDD §20.3)."""
+    session = _game_session_with_companion(tmp_path)
+    session.state.player.tier_id = "golden_core"
+    session._evolve_companions("golden_core")
+    assert all("evolution" not in raw for raw in session.state.party)
+
+
+def test_evolve_menjaga_hp_dan_qi_rekan(tmp_path):
+    """Evolusi mempertahankan hp/qi rekan (batas data baru)."""
+    session = _game_session_with_companion(tmp_path)
+    session.state.party[0]["hp"] = 40
+    session.state.party[0]["qi"] = 20
+    session.state.player.tier_id = "golden_core"
+    session._evolve_companions("golden_core")
+    evolved = session.state.party[0]
+    assert evolved["id"] == "serigala_bayangan_evolved"
+    assert evolved["hp"] == 40
+    assert evolved["qi"] == 20
