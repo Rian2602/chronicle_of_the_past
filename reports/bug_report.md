@@ -511,3 +511,73 @@ aktual + elder_mao, evolusi & hatch, formation_skill battle). Rencana:
   bekerja, material ditolak — berfungsi benar.
 - Fuzz regresi: 5 seed (42/1337/7/99/555) × 400 langkah = 0 crash,
   save round-trip identik, battle selalu berakhir.
+
+---
+
+## Putaran 3 Fix — Balance Gold Quest + Fase C–E Lanjutan (8 Agustus 2026)
+
+Metode (rencana `2026-08-08-bughunt-round3-fix-plan.md`): verifikasi
+final BUG-18 (fuzz ulang swap 3 seed × 27 swap, 0 crash), balance gold
+reward quest (TDD RED→GREEN), audit data Arc 2–4 (BFS penuh), save
+migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
+
+## BALANCE-1 · Note→Fix — Gold quest tak sebanding nilai item yang di-grant
+
+- **Area:** `data/quests/*.json` (rewards.gold) — 11 quest
+- **Bukti (skrip):** quest yang men-grant item mahal memberi gold jauh
+  lebih kecil (quest401 grant talisman_penyegel 2500 → gold 300;
+  quest304 grant mahkota_ashfall 2000 → gold 150; quest303 grant
+  cincin_roh_kenabian 1200 → gold 200).
+- **Keputusan pemilik proyek (2026-08-08):** sesuaikan gold reward.
+  Aturan: `gold_baru = max(gold, floor(30% × nilai_item / 50) × 50)`.
+- **Fix (TDD RED→GREEN):** test baru
+  `test_gold_reward_sebanding_grant_item` (tests/test_quest_data.py)
+  gagal untuk 11 quest → update gold: fquest_gilda_kontrak 40→100,
+  quest203 50→150, quest204 20→150, quest205 40→100, quest206 50→150,
+  quest207 100→200, quest303 200→350, quest304 150→600, quest401
+  300→850, quest403 400→500, quest404 200→350. Item tanpa `price`
+  (artefak naratif) bernilai 0, tidak mengunci.
+- **Status:** FIXED
+
+## BUG-19 · Minor — Menu aksi battle tidak terlihat di terminal 80×24
+
+- **Area:** `src/ui/app.py` (battle actions OptionList)
+- **Reproduksi (terbukti tmux 80×24):** saat battle dimulai, menu aksi
+  (Serang/Teknik/Bertahan/Amati/Item/Kabur) **tidak tampil sama sekali**
+  — baris terpotong di bawah footer; navigasi buta (Down×5 + Enter
+  untuk Kabur terbukti berfungsi, tapi pemain tak bisa melihat opsi).
+- **Dampak:** di terminal pendek, pemain tidak tahu aksi apa yang
+  tersedia saat battle; hanya bisa menebak urutan.
+- **Status:** OPEN (Minor UX) — perbaikan tata letak battle frame di
+  terminal pendek, terpisah dari bug hunt ini (dicatat `ponytail:` bila
+  dipilih lanjut).
+
+## BUG-20 · Minor — Header clock (jam) menimpa border panel kanan
+
+- **Area:** `src/ui/app.py` (Header clock)
+- **Reproduksi (terbukti tmux 80×24):** jam kanan atas menabrak garis
+  border panel kanan (`▔▔` terlihat di capture); HUD "Lokasi: … | Hari
+  1, jam …" terpotong wrap di kolom tengah; party HP bar menampilkan
+  `━╺━━ --` tanpa angka.
+- **Dampak:** kosmetik — teks terpotong/tumpang tindih di ukuran
+  kecil, tidak ada kehilangan fungsi.
+- **Status:** OPEN (Minor UX) — dicatat untuk iterasi tata letak.
+
+## Verifikasi BERSIH Fase C–E (bukan bug)
+
+- **C1 Referensi & flag lintas arc (BFS 45 quest × 74 event × dialog):**
+  0 deadlock — semua objective flag/quest_done/collect punya sumber
+  set (event `once` men-set event_<id>_done otomatis di engine;
+  ritual_ready di-set perintah `ritual` — false positive lama).
+- **C2 Event once/trigger:** 0 event once mati, 0 trigger unreachable.
+- **C3 Tier gating:** 2 catatan desain (mahkota_ashfall 2000 di
+  quest304, cincin_roh_kenabian 1200 di quest303) — reward naratif,
+  gold quest-nya sudah dinaikkan (BALANCE-1), bukan bug.
+- **D1 Migrasi schema v1:** save v1 (ritual_ready field lama) dimuat
+  tanpa error, flag ter-backfill. **D2 Korupsi parsial (7 kasus: skills
+  party, bond_xp, buffs, shop_sold negatif, kills bukan int, inventory
+  rusak, party_active tak dikenal):** 0 exception liar — SaveError rapi
+  atau defensif + main 20 langkah tanpa crash.
+- **E1 TUI battle 80×24:** battle penuh (menang/kalah/kabur), swap
+  absen benar untuk tim tanpa rekan, resume mempertahankan state & log,
+  HP KO pulih — 0 crash, 0 traceback, 0 markup Rich bocor.
