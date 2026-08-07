@@ -1,0 +1,14 @@
+{
+  "id": "quest405_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest404"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest405"},
+    {
+      "kind": "log",
+      "text": "Warden Kai menyerahkan gulungan terakhir. 'Ritualnya sederhana, tapi tidak mudah: artefak yang tumbuh bersamamu, formasi yang kau pasang, dan tim yang kau percaya. Tanpa itu, Suara akan memakanmu hidup-hidup.'"
+    }
+  ],
+  "once": true
+}

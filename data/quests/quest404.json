@@ -1,0 +1,14 @@
+{
+  "id": "quest404",
+  "title": "Keputusan di Ambang",
+  "type": "main",
+  "category": "main",
+  "description": "Suara itu menunggumu di Segel Langit — bukan untuk bertarung, tapi untuk mendengar jawaban atas pertanyaan yang telah ditanyakan seribu tahun. Keputusan terakhir ada di tanganmu.",
+  "requires_flag": "quest403_done",
+  "objectives": [
+    {"kind": "flag", "target": "keputusan_final_dibuat"}
+  ],
+  "rewards": {"insight": 200, "gold": 200},
+  "flags_on_complete": ["quest404_done"],
+  "next": "quest405"
+}

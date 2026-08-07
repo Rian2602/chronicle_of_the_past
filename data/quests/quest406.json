@@ -1,0 +1,14 @@
+{
+  "id": "quest406",
+  "title": "Rasul Langit",
+  "type": "main",
+  "category": "main",
+  "description": "Rasul Langit turun — bukan dari langit, tapi DARI baliknya. Jubahnya menyala dengan api yang tidak menghanguskan apa pun kecuali jiwa. 'Suara memanggilmu,' katanya. 'Dan aku utus untuk menjemput.'",
+  "requires_flag": "quest405_done",
+  "objectives": [
+    {"kind": "enemy", "target": "rasul_langit"}
+  ],
+  "rewards": {"insight": 800, "gold": 1000, "reputation": {"ancient_order": 5}},
+  "flags_on_complete": ["quest406_done"],
+  "next": "quest407"
+}

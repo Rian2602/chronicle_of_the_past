@@ -1,0 +1,14 @@
+{
+  "id": "quest408_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest407"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest408"},
+    {
+      "kind": "log",
+      "text": "Di puncak Segel Langit, langit tidak lagi menjadi latar — ia menjadi lawan. Suara itu akhirnya memiliki wujud: wujud yang pernah menjadi milikmu, seribu tahun lalu."
+    }
+  ],
+  "once": true
+}

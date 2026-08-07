@@ -1,0 +1,14 @@
+{
+  "id": "quest404_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest403"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest404"},
+    {
+      "kind": "log",
+      "text": "Kebenaran penuh terungkap: kau bukan orang buangan — kau adalah yang ditunggu, pecahan dari keputusan yang diambil seribu tahun lalu. Dan sekarang, keputusan itu menunggumu di Segel Langit."
+    }
+  ],
+  "once": true
+}

@@ -47,6 +47,14 @@ EXPECTED_QUESTS = {
     "fquest_301",
     "fquest_302",
     "fquest_303",
+    "quest401",
+    "quest402",
+    "quest403",
+    "quest404",
+    "quest405",
+    "quest406",
+    "quest407",
+    "quest408",
 }
 REQUIRED_KEYS = {
     "id",

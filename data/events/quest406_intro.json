@@ -1,0 +1,14 @@
+{
+  "id": "quest406_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest405"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest406"},
+    {
+      "kind": "log",
+      "text": "Ritual selesai — dan langit menjawab. Sosok berjubah api turun dari puncak Segel Langit, dan setiap kultivator di ibukota jatuh berlutut kecuali kamu. 'Suara memanggilmu,' katanya. 'Aku utus untuk menjemput.'"
+    }
+  ],
+  "once": true
+}

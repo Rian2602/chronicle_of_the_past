@@ -1,0 +1,15 @@
+{
+  "id": "quest402",
+  "title": "Penjaga Terakhir",
+  "type": "main",
+  "category": "main",
+  "description": "Gerbang Ruang Rahasia Kuno dijaga oleh sesuatu yang lebih tua dari Orde itu sendiri — penjaga yang tidak pernah tidur, tidak pernah makan, dan tidak pernah lupa siapa yang berhak masuk.",
+  "requires_flag": "quest401_done",
+  "objectives": [
+    {"kind": "map", "target": "ancient_vault"},
+    {"kind": "enemy", "target": "abyssal_worm"}
+  ],
+  "rewards": {"insight": 320, "gold": 500},
+  "flags_on_complete": ["quest402_done"],
+  "next": "quest403"
+}

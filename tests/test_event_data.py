@@ -71,6 +71,15 @@ EXPECTED_EVENTS = {
     "unlock_capital",
     "unlock_ancient_vault",
     "unlock_sky_seal",
+    "quest401_intro",
+    "quest402_intro",
+    "quest403_intro",
+    "quest404_intro",
+    "quest405_intro",
+    "quest406_intro",
+    "quest407_intro",
+    "quest408_intro",
+    "rahasia_terungkap",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

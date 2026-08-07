@@ -1,0 +1,15 @@
+{
+  "id": "rahasia_terungkap",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest402"}
+  ],
+  "actions": [
+    {"kind": "grant_memory", "memory_id": "memory_arc4_truth"},
+    {"kind": "set_flag", "flag": "rahasia_terungkap", "value": true},
+    {
+      "kind": "log",
+      "text": "Rune terakhir menyala, dan seluruh masa lalumu — yang asli, bukan yang diceritakan orang — membanjiri pikirannya."
+    }
+  ],
+  "once": true
+}

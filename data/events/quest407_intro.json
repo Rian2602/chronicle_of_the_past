@@ -1,0 +1,14 @@
+{
+  "id": "quest407_intro",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest406"}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "quest407"},
+    {
+      "kind": "log",
+      "text": "Rasul Langit hancur, dan langit di atasnya menganga — bukan biru, bukan hitam, tapi seperti pintu yang terbuka pelan. Segel Langit kini terjangkau. Suara itu menunggumu di puncak."
+    }
+  ],
+  "once": true
+}

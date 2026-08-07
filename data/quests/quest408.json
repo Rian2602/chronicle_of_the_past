@@ -1,0 +1,14 @@
+{
+  "id": "quest408",
+  "title": "Suara",
+  "type": "main",
+  "category": "main",
+  "description": "Tidak ada pertarungan yang bisa kau persiapkan, tidak ada formasi yang cukup kuat. Di puncak Segel Langit, Suara itu menantimu — untuk yang terakhir kalinya, dengan kebenaran penuh tentang siapa dirimu.",
+  "requires_flag": "quest407_done",
+  "objectives": [
+    {"kind": "enemy", "target": "suara"}
+  ],
+  "rewards": {"insight": 1500, "gold": 2000, "reputation": {"ancient_order": 10}},
+  "flags_on_complete": ["quest408_done"],
+  "next": null
+}
