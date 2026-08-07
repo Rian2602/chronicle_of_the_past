@@ -1767,3 +1767,14 @@ def test_cmd_use_menetaskan_telur_menambah_rekan(tmp_path):
     ids = [raw["id"] for raw in session.state.party]
     assert "phoenix_abu" in ids
     assert session.state.inventory["items"].get("telur_phoenix_abu", 0) == 0
+
+
+def test_run_events_menampilkan_epilog_sekali(tmp_path):
+    """Setelah flag ending diset, _run_events memuat epilog satu kali saja."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["ending_defy_win"] = True
+    first = session._run_events()
+    assert any("EPILOG" in line for line in first)
+    second = session._run_events()
+    assert not any("EPILOG" in line for line in second)

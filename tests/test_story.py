@@ -2,7 +2,7 @@
 
 from src.core.state import GameState
 from src.engine.event import EventResult, apply_action
-from src.engine.story import calculate_ending
+from src.engine.story import build_epilogue, calculate_ending
 from src.models.player import Player
 
 
@@ -65,3 +65,20 @@ def test_apply_action_calculate_ending():
     assert state.flags.get("ending_seal_win") is True
     assert state.flags.get("ending_defy_win") is None
     assert state.flags.get("ending_reconcile_win") is None
+
+
+def test_build_epilogue_menyebut_status_faksi():
+    """Epilog menyebut tiap faksi dengan status dari reputasi (GDD §21.2)."""
+    state = _state()
+    state.reputation = {
+        "court": 40,
+        "holy_order": -60,
+        "rebels": 10,
+        "guilds": 0,
+        "ancient_order": 70,
+    }
+    lines = build_epilogue(state)
+    joined = "\n".join(lines)
+    assert "ancient_order" in joined and "berkuasa" in joined
+    assert "holy_order" in joined and "hancur" in joined
+    assert len(lines) == 5

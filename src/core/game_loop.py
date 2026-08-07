@@ -52,7 +52,7 @@ from src.engine.quest import (
     objective_label,
 )
 from src.engine.shop import load_shops, sell_price
-from src.engine.story import load_memories
+from src.engine.story import build_epilogue, load_memories
 from src.models.combatant import (
     Combatant,
     combatant_from_companion,
@@ -1518,10 +1518,23 @@ class GameSession:
 
         Dipanggil setelah go / cultivate / rest / breakthrough / talk —
         sekali per momen. Kembalikan baris narasi event untuk UI.
+        Bila event ending memicu flag ending_<jalur>_win, tambahkan
+        epilog dari reputasi faksi (GDD §21.2) — sekali per playthrough
+        (flag ending_epilogue_shown).
         """
         if self.state is None:
             return []
-        return process_events(self.state, load_events()).logs
+        lines = list(process_events(self.state, load_events()).logs)
+        if any(
+            self.state.flags.get(f"ending_{path}_win")
+            for path in ("defy", "seal", "reconcile")
+        ) and not self.state.flags.get("ending_epilogue_shown"):
+            # ponytail: alur keluar setelah ending (kembali ke menu)
+            # menyusul Fase polish (master plan Task 7).
+            self.state.flags["ending_epilogue_shown"] = True
+            lines.append("— EPILOG —")
+            lines.extend(build_epilogue(self.state))
+        return lines
 
     def _slot_arg(self, command: Command, default: str) -> str | None:
         """Terjemahkan argumen slot; '2' -> 'save2', slot literal diterima.

@@ -60,3 +60,29 @@ def calculate_ending(state: GameState) -> str:
     if seal_pts >= reconcile_pts:
         return "seal"
     return "reconcile"
+
+
+def build_epilogue(state: GameState) -> list[str]:
+    """Susun epilog dari reputasi 5 faksi (GDD §21.2).
+
+    Status per faksi: >= 70 "berkuasa", >= 30 "kuat", > -30 "lemah",
+    lainnya "hancur". Dipanggil game_loop saat flag ending memicu.
+
+    Args:
+        state: GameState permainan saat ini.
+
+    Returns:
+        Daftar baris epilog, satu baris per faksi.
+    """
+    lines: list[str] = []
+    for faction, score in state.reputation.items():
+        if score >= 70:
+            status = "berkuasa"
+        elif score >= 30:
+            status = "kuat"
+        elif score > -30:
+            status = "lemah"
+        else:
+            status = "hancur"
+        lines.append(f"{faction}: {status} ({score})")
+    return lines
