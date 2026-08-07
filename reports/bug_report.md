@@ -422,6 +422,74 @@ fitur eksternal `_battle_use_item`, audit balance & cross-check flag.
 (BUG-15/16/17 di terminal asli; BUG-14 via test headless + unit).
 Rencana perbaikan: `docs/superpowers/plans/2026-08-08-bughunt-round2-fix-plan.md`.*
 
+---
+
+## Putaran 3 — Sistem Baru & Playthrough Deep (8 Agustus 2026)
+
+Metode: fuzz sistem baru (ritual/formation/swap/recall/unequip/buy/sell/
+refine — 3 seed × 300 langkah dunia + 150 battle, 0 crash), playthrough
+dalam (ritual sukses/gagal, battle swap 4 anggota, 3 dialog bercabang
+aktual + elder_mao, evolusi & hatch, formation_skill battle). Rencana:
+`docs/superpowers/plans/2026-08-08-bughunt-round3.md` (Fase A–B).
+
+## BUG-18 · Important — Battle swap mengganti rekan yang salah (fallback active[0])
+
+- **Area:** `src/core/game_loop.py` (`_battle_swap`, fitur eksternal yang
+  ikut ter-commit putaran 2)
+- **Reproduksi (terbukti runtime):** party 4 (aktif lin_wei/jati/kestrel,
+  cadangan guntur); battle; majukan sampai giliran **Jati**; `swap:guntur`
+  → **lin_wei yang keluar**, bukan Jati (rekan yang sedang bertarung).
+- **Akar:** `_battle_swap` mencocokkan `current.name` (mis. `"Jati"`)
+  dengan `raw["id"]` (mis. `"jati"`) — dua domain berbeda, **tidak pernah
+  cocok** → `current_id` selalu None → fallback `active[0]` (lin_wei)
+  selalu keluar walau giliran milik rekan lain. Saat giliran protagonis
+  (bukan rekan), fallback memang benar — bug hanya terlihat saat giliran
+  rekan non-pertama.
+- **Dampak:** pemain yang swap rekan terpukul bisa menukar rekan yang
+  salah (yang masih segar keluar, yang terluka tetap di medan).
+- **Fix (Putaran 3, 2026-08-08):** cocokkan via `_ally_map` (referensi
+  objek `combatant is battle.current`, filter `cid in active`) — sama
+  dengan cara `_write_back_allies` menemukan combatan. Test RED→GREEN:
+  `test_battle_swap_mengganti_rekan_yang_sedang_giliran`.
+- **Perluasan BUG-18 (review independen, 3 isu dikonfirmasi + fixed):**
+  1. *Swap kedua gagal identity match* — setelah swap 1, map lama
+     di-rebuild membuat objek baru ≠ battle.allies → swap 2 tidak cocok.
+  2. *Damage rekan hilang* — HP/qi live tidak disinkron ke party sebelum
+     swap → luka terbakar saat combatant dibangun ulang dari raw lama.
+  3. *Rekan pengganti tidak pernah benar-benar bertarung* — akar masalah:
+     `_rebuild_ally_map` membangun map terpisah yang tidak pernah
+     menggantikan objek di `battle.allies`/`turn_order` (engine combat
+     membandingkan via identitas objek, GDD §6) → musuh tetap menyerang
+     rekan yang sudah keluar, rekan baru tidak diserang & tidak menyerang.
+- **Fix final (Putaran 3):** `_battle_swap` kini mengganti objek
+  Combatant **in-place** di `battle.allies` & `battle.turn_order`
+  (identity), menyinkron HP/qi live ke `state.party` sebelum komposisi
+  berubah, dan membangun combatant rekan masuk dari raw tersimpan.
+  `_rebuild_ally_map` dihapus (mati — tak ada pemanggil tersisa).
+  Formasi aktif diterapkan ke rekan yang baru masuk (GDD §7).
+  Test RED→GREEN: `test_battle_swap_kedua_masih_mengganti_yang_giliran`
+  (swap 1→2→3), `test_battle_swap_damage_rekan_tidak_hilang`,
+  `test_battle_swap_rekan_baru_benar_bertarung` (rekan baru ada di
+  battle.allies, giliran berlanjut normal).
+- **Status:** FIXED
+
+## Verifikasi BERSIH putaran 3 (bukan bug)
+
+- **Ritual**: jalur sukses (artefak pedang_taring_naga + formasi + tim)
+  set `ritual_ready` + pesan "sudah selesai" saat diulang; jalur gagal
+  menampilkan daftar alasan tanpa set flag. Benar.
+- **Battle swap HP/qi**: cadangan yang masuk memakai HP tersimpan di
+  party (12/40 terbawa ke combatant live). Benar (setelah BUG-18).
+- **Dialog bercabang** (xiu/fang_yue/blacksmith_tie/elder_mao): semua
+  node `next` valid, percakapan selesai (flag talked), change_reputation
+  diterapkan. Benar.
+- **Evolusi & hatch**: breakthrough multi-tier tidak crash; telur phoenix
+  menetas; hatch duplikat ditolak (guard). Benar.
+- **formation_skill**: tersedia di sub-menu Teknik saat formasi aktif;
+  dieksekusi tanpa crash; tanpa formasi = error frame ramah. Benar.
+- **Fuzz sistem baru**: 0 crash; invariant hp/qi/gold ≥ 0, party_active
+  ≤ 3 dan valid. Benar.
+
 ## Catatan Balance (bukan bug) — item reward vs gold quest
 
 - Banyak item grant jauh lebih bernilai dari gold reward quest
