@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from rich.bar import Bar
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.screen import Screen
@@ -29,7 +30,7 @@ from textual.widgets import (
 )
 from textual.widgets.option_list import Option
 
-from src.core.game_loop import BattleFrame, GameSession, make_bar
+from src.core.game_loop import BattleFrame, GameSession
 from src.core.input import Command, CommandError, parse_command
 from src.core.save import AUTOSAVE, SLOTS, slot_exists
 
@@ -575,7 +576,13 @@ class GameScreen(Screen):
         """Baris info musuh dengan bar HP visual (GDD §6.1)."""
         lines: list[str] = []
         for enemy in frame.enemies:
-            bar = make_bar(enemy["hp"], enemy["hp_max"], 12)
+            bar = Bar(
+                size=enemy["hp_max"],
+                begin=0,
+                end=enemy["hp"],
+                width=12,
+                color="red",
+            )
             lines.append(
                 f"[bold red]{enemy['name']}[/] HP [red]{bar}[/] "
                 f"{enemy['hp']}/{enemy['hp_max']} | Qi {enemy['qi']} "
