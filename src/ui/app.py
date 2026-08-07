@@ -316,7 +316,9 @@ class GameScreen(Screen):
         self._refresh_memory_and_map()
         if session.in_battle:
             self._refresh_battle()
-        elif session.state.flags.get("pending_dialog"):
+        elif session.state.flags.get(
+            "pending_dialog"
+        ) or session.state.flags.get("pending_choice"):
             self._refresh_dialog()
         else:
             self._refresh_world()
@@ -390,10 +392,17 @@ class GameScreen(Screen):
         self.query_one("#actions", OptionList).focus()
 
     def _refresh_dialog(self) -> None:
-        """Mode dialog: pilihan bernomor di #dlg-choices (GDD §12.5)."""
+        """Mode keputusan: pilihan dialog/event di #dlg-choices (§12.5, §15.3).
+
+        Satu panel untuk dua sumber keputusan: percakapan bercabang
+        (``pending_dialog``) dan prompt_choice event (``pending_choice``)
+        — keduanya dijawab lewat klik (choose <key>).
+        """
         session = self.app.session
+        is_choice = bool(session.state.flags.get("pending_choice"))
+        title = "⚖ KEPUTUSAN" if is_choice else "💬 PERCAKAPAN"
         self.query_one("#combat-header", Static).update(
-            "[bold cyan]💬 PERCAKAPAN[/]"
+            f"[bold cyan]{title}[/]"
         )
         self.query_one("#enemy", Static).update("")
         self.query_one("#actions", OptionList).display = False

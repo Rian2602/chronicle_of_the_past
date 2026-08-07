@@ -31,6 +31,9 @@ ALIASES: dict[str, str] = {
     "amat": "look",
     "talk": "talk",
     "bicara": "talk",
+    # Pilihan dialog/event (§12.5, §15.3): UI klik mengirim
+    # "choose <nomor>" (dialog) atau "choose <key>" (prompt_choice).
+    "choose": "choose",
     "cultivate": "cultivate",
     "kultivasi": "cultivate",
     "breakthrough": "breakthrough",
