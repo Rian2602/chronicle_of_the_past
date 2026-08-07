@@ -1,1 +1,1 @@
-"""Paket inti: game loop, state, save, dan input."""
+"""Paket inti: game loop, state, dan save."""

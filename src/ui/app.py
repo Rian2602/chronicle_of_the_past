@@ -30,7 +30,6 @@ from textual.widgets import (
 from textual.widgets.option_list import Option
 
 from src.core.game_loop import BattleFrame, GameSession, make_bar
-from src.core.input import Command, CommandError, parse_command
 from src.core.save import AUTOSAVE, SLOTS, slot_exists
 
 
@@ -391,21 +390,19 @@ class GameScreen(Screen):
             del history[: len(history) - 200]
 
     def _run_command(self, raw: str) -> None:
-        """Eksekusi command: battle_step saat bertarung, dispatch dunia."""
+        """Eksekusi command tanpa parse fuzzy."""
         session = self.app.session
         log = self.query_one("#game-log", RichLog)
+
+        parts = raw.split()
+        action = parts[0] if parts else ""
+        args = parts[1:]
+
         if session.in_battle:
             self._battle_raw(raw, log)
             return
-        try:
-            command = parse_command(raw)
-        except CommandError as exc:
-            log.write(f"[red]{exc}[/]\n")
-            self._remember_log(f"[red]{exc}[/]")
-            return
-        if command is None:
-            return
-        for line in session.dispatch(command):
+
+        for line in session.dispatch(action, args):
             log.write(line + "\n")
             self._remember_log(line)
         self._refresh()
@@ -416,9 +413,7 @@ class GameScreen(Screen):
         """Satu langkah pertarungan dari aksi menu (GDD §18.3)."""
         session = self.app.session
         if raw == "quit":
-            for line in session.dispatch(
-                Command(name="quit", args=(), raw="quit")
-            ):
+            for line in session.dispatch("quit", []):
                 log.write(line + "\n")
                 self._remember_log(line)
             self.app.exit()
@@ -502,13 +497,9 @@ class GameScreen(Screen):
         session = self.app.session
         memory_log = self.query_one("#memory-log", RichLog)
         memory_log.clear()
-        for line in session._cmd_memories(
-            Command(name="memories", args=(), raw="memories")
-        ):
+        for line in session._cmd_memories():
             memory_log.write(line + "\n")
-        map_text = "\n".join(
-            session._cmd_map(Command(name="map", args=(), raw="map"))
-        )
+        map_text = "\n".join(session._cmd_map())
         self.query_one("#map-panel", Static).update(map_text)
 
     def _refresh_world(self) -> None:
