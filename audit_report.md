@@ -1,153 +1,165 @@
 # Laporan Audit Proyek "Chronicle of the Past" — Status Implementasi & Gap GDD
 
 **Sumber spesifikasi:** `GDD.md` (v1.6 locked) & `AGENTS.md`
-**Tanggal audit:** 7 Agustus 2026 (revisi — menggantikan draf audit sebelumnya yang sudah tidak akurat)
+**Tanggal audit:** 7 Agustus 2026 (revisi 2 — menggantikan revisi sebelumnya yang ditulis saat suite masih merah)
 **Metode:** pemeriksaan langsung `src/`, `data/`, `tests/` + eksekusi ulang semua alat verifikasi resmi proyek.
 
 ---
 
 ## 1. Ringkasan Eksekutif
 
-Proyek **Chronicle of the Past** adalah RPG teks kultivasi (Python 3.12, Rich/Textual, konten data-driven JSON). Kondisi aktual:
+Proyek **Chronicle of the Past** adalah RPG teks kultivasi (Python 3.12, Rich/Textual, konten data-driven JSON). Kondisi aktual terverifikasi:
 
 | Ranah | Status | Bukti |
 |---|---|---|
 | **Validator data** | ✅ Lulus | `python3 tools/validate.py` → `OK: semua data valid, referensi ter-resolve.` |
-| **Unit test** | ⚠️ **1 gagal konsisten** + 1 flaky | `pytest -q` → **455 passed, 1 failed** (`test_story.py::test_apply_action_calculate_ending`); `test_app.py::test_pilih_option_serang_melakukan_battle_step` pernah gagal 1× (flaky) |
-| **Lint (ruff check)** | ⚠️ 2 error | `tests/test_story.py`: F401 (`pytest` tak terpakai) + E501 (baris 82 > 80) |
-| **Format (ruff format)** | ⚠️ 1 file | `src/engine/story.py` perlu diformat ulang |
-| **Konten per Arc** | Fase 0–2 ✅ · Arc 3 ⚠️ (placeholder) · Arc 4 ❌ (0%) | lihat §4 |
-| **Sistem engine inti** | ~95% terpasang | semua modul `src/` ada; gap kecil (inner demon fight, swap in combat) |
+| **Unit test** | ✅ **460 passed, 0 failed** | `pytest -q` (stabil, dijalankan berulang) |
+| **Lint (ruff check)** | ✅ Bersih | `All checks passed!` |
+| **Format (ruff format)** | ✅ 60 file rapi | `ruff format --check` |
+| **Git** | ✅ `main` satu-satunya branch, sinkron remote | `## main...origin/main` |
+| **Engine inti** | ✅ Lengkap (22 file `.py`) | semua modul GDD §14.2 terpasang |
+| **Ending engine** | ✅ Terpasang (GDD §13/§21) | `story.py` + 4 event ending (lihat §4.4) |
+| **Konten per Arc** | Fase 0–2 ✅ · Arc 3 ⚠️ (quest utama placeholder) · Arc 4 ❌ (0%) | lihat §4 |
 
-**Kesimpulan singkat:** fondasi engine dan konten Arc 1–2 **utuh dan teruji**; Arc 3 baru berupa **kerangka placeholder** (quest301–308 & fquest_301–303 berisi judul/deskripsi dummy); Arc 4 + sistem ending dinamis **belum ada**; dan ada **satu pekerjaan setengah jadi** (action `calculate_ending`) yang membuat suite test **merah** saat ini.
-
-> ⚠️ **Koreksi terhadap laporan audit sebelumnya:** draf lama mengklaim *"449 passed / 0 lint error / Arc 3 100% selesai"*. Setelah diverifikasi ulang: suite saat ini **1 gagal konsisten**, lint **2 error**, dan quest301–308 **berisi placeholder** (bukan konten naratif). Angka pada laporan ini adalah kondisi aktual terverifikasi.
+**Kesimpulan singkat:** fondasi engine **lengkap dan teruji** (460 test hijau, lint/format/validator bersih), konten Arc 1–2 **asli dan lengkap**, **ending engine sudah terpasang**, tapi Arc 3 masih menyisakan **quest utama placeholder** (quest301–308, fquest_301–303), dan **Arc 4 belum ada sama sekali** (quest 401–408, 3 peta, 2 bos, ritual, NPC final). Semua gap dirinci di §4–5.
 
 ---
 
 ## 2. Status Verifikasi Teknis (Bukti Eksekusi Ulang)
 
 ```bash
-# 1. Validator aset data
-python3 tools/validate.py
-# OK: semua data valid, referensi ter-resolve.
-
-# 2. Test suite (dijalankan 3×, konsisten)
-pytest -q
-# FAILED tests/test_story.py::test_apply_action_calculate_ending - ValueError: kind aksi tidak dikenal: calculate_ending
-# 1 failed, 455 passed in ~13s
-# (1× dari 4 run: test_app.py::test_pilih_option_serang_melakukan_battle_step ikut gagal — flaky/urutan)
-
-# 3. Lint
-ruff check src launcher.py tools tests
-# Found 2 errors: F401 unused import `pytest` (test_story.py:3), E501 line too long 82>80 (test_story.py:31)
-
-# 4. Format
-ruff format --check src launcher.py tools tests
-# 1 file would be reformatted: src/engine/story.py (baris 63)
+pytest -q                       → 460 passed in 12.49s
+ruff check src launcher.py tools tests → All checks passed!
+ruff format --check ...         → 60 files already formatted
+python3 tools/validate.py       → OK: semua data valid, referensi ter-resolve.
+git status -sb                  → ## main...origin/main (sinkron, bersih)
 ```
 
-### Akar masalah test merah (kritis)
-`tests/test_story.py` menuntut aksi event `{"kind": "calculate_ending"}` yang men-set flag `ending_<path>_win`, tetapi `ACTION_KINDS` di `src/engine/event.py` **belum memuat** `calculate_ending`, dan `apply_action` belum punya cabangnya. Artinya: `src/engine/story.py::calculate_ending()` (fungsi) sudah ditulis + state `ending_points` sudah ada + aksi `add_ending_points` sudah aktif, tetapi **penutup terakhir (aksi pemicu ending) belum di-wire** — pekerjaan Fase 4 (GDD §21) setengah jadi dan tidak ter-commit (`M src/engine/story.py`, `?? tests/test_story.py` di git status).
-
 ---
 
-## 3. Inventaris Data Aktual (239 file JSON, 13 direktori)
+## 3. Inventori Aset (Kondisi Aktual)
 
-| Direktori | File | Rincian |
+### 3.1 Data (folder `data/`)
+
+| Folder | Jumlah | Detail |
 |---|---|---|
-| `data/quests/` | 37 | 24 main (101–108, 201–208 real; **301–308 placeholder**) + 13 faksi (10 real; **fquest_301–303 placeholder**) |
-| `data/events/` | 45 | intro/done quest, unlock peta, echo memori, prompt pilihan |
-| `data/items/` | 47 | 21 consumable (pil), 12 resep, 8 artefak, 5 material, 1 alat (`kuali_roh`) |
-| `data/techniques/` | 30 | 30 teknik, seimbang 5 elemen |
-| `data/enemies/` | 20 | 15 non-bos + 5 bertag `boss` (3 bos arc + 2 mini-bos faksi) |
-| `data/npc/` | 18 | Emberfall, Sekte Azure, Guild City, Rebel Hideout, Cathedral |
-| `data/dialogues/` | 11 | graf node multi-pilihan (elder_mao, lin_wei, xiu, kestrel, vega, sera, warden_kai, dll.) |
-| `data/maps/` | 9 | 7 peta GDD + 2 ekstra (gua_abyss, hutan_kelabu) |
-| `data/companions/` | 6 | 3 binatang roh (+1 varian evolusi) + 2 rekan cerita |
-| `data/cultivation/` | 6 | 6 tingkatan lengkap (Pengumpul Qi → Penantang Surga) |
-| `data/story/` | 5 | 5 echo memori |
-| `data/formations/` | 3 | benteng_bumi, jaring_naga, langit_pecah |
-| `data/shops/` | 2 | pedagang_kelana, toko_tie |
+| `data/quests/` | **37** | 24 quest utama (quest101–108, 201–208, 301–308) + 13 quest faksi (fquest_*) |
+| `data/events/` | **49** | termasuk ending engine, intro/done quest, rekrut rekan, unlock peta |
+| `data/enemies/` | **20** | 5 ber-tag `boss`; 15 non-bos |
+| `data/techniques/` | **30** | semua ber-tier ≤ `golden_core` (qi_cond 7, foundation 4, golden_core 19) |
+| `data/items/` | **47** | material 5, consumable 21, recipe 12, artifact 8, tool 1 |
+| `data/shops/` | **2** | `pedagang_kelana`, `toko_tie` |
+| `data/maps/` | **9** | lihat §4.2 |
+| `data/npc/` | **18** | lihat §4.3 |
+| `data/companions/` | **6** | lin_wei, kestrel, macan_baja, phoenix_abu, serigala_bayangan (+evolved) |
+| `data/dialogues/` | **11** | dialog node-graph untuk 10 NPC |
+| `data/story/` (memori) | **5** | memory_arc1_complete, arc2_climax, ashfall_first_echo, sekte_intrik, shrine_trial |
+| `data/cultivation/` | **6** | **lengkap**: qi_condensation → heaven_challenger |
+| `data/formations/` | **3** | benteng_bumi, jaring_naga, langit_pecah |
+| `data/memories/` | — | (tidak ada folder; memori hidup di `data/story/`) |
+
+### 3.2 Kode (`src/`, 22 file `.py`) — semua GDD §14.2 terpenuhi
+
+- `src/core/`: `game_loop`, `input`, `save`, `state`
+- `src/engine/`: `combat`, `cultivation`, `dialog`, `event`, `items`, `maps`, `quest`, `shop`, `story`
+- `src/models/`: `combatant`, `enemy`, `party`, `player`, `technique`
+- `src/systems/`: `formation`
+- `src/ui/`: `app` (Textual) + `launcher.py`
+- `tests/`: **32 file test**, 460 kasus lulus
 
 ---
 
-## 4. Matriks Target Konten GDD §22 vs Aktual
+## 4. Status Konten per Arc vs GDD §22
 
-| Kategori | Target GDD | Aktual | % | Catatan |
-|---|---|---|---|---|
-| Quest utama | 32 | 24 file | 75% | **Konten nyata hanya 16** (Arc 1–2); 8 file Arc 3 = placeholder |
-| Quest faksi | 10 | 13 file | 130% | Konten nyata 10; 3 file placeholder (fquest_301–303) |
-| Peta baru | 10 | 9 file | 90% | 7 sesuai GDD + 2 ekstra; **hilang: `capital`, `ancient_vault`, `sky_seal`** |
-| NPC | 25 | 18 | 72% | 10 inti GDD §10 ada; **hilang: `the_voice`** |
-| Musuh non-bos | 30 | 15 | 50% | Kurang 15 (terutama Arc 3 lanjutan & Arc 4) |
-| Bos | 5 | 3 arc-bos | 60% | penjaga_makam ✓, bos_sekte_bayangan ✓, bos_inquisitor_agung ✓; **hilang: Rasul Langit & Suara** (+2 mini-bos faksi sudah ada) |
-| Teknik | 30 | 30 | 100% | ✅ lengkap |
-| Resep pil | 14 | 12 | 86% | Kurang 2 |
-| Artefak roh | 12 | 8 | 67% | Kurang 4 |
-| Binatang roh | 4 | 3 (+1 evolusi) | 75% | serigala_bayangan, phoenix_abu, macan_baja; Arc 4 belum |
-| Echo memori | 9 | 5 | 56% | Kurang 4 (terutama Arc 3 lanjutan & Arc 4) |
+### 4.1 Quest
 
----
+| Arc | GDD target | Aktual | Status |
+|---|---|---|---|
+| Arc 1 (quest101–108) | 8 utama | 8 **asli** (judul/objektif naratif) | ✅ Lengkap |
+| Arc 2 (quest201–208) | 8 utama | 8 **asli** | ✅ Lengkap |
+| Arc 3 (quest301–308) | 8 utama | 8 file, **semua placeholder** (`"Quest quest30X Title"`, objektif `enemy:kultis_bayangan`, rantai next 301→308) | ⚠️ Placeholder |
+| Arc 4 (quest401–408) | 8 utama | **0** | ❌ Belum ada |
+| Quest faksi | 10 | 13 file — 10 **asli** + 3 placeholder (`fquest_301–303` berjudul `"Quest fquest_30X Title"`) | ⚠️ Sebagian |
 
-## 5. Matriks Implementasi Sistem GDD (yang SUDAH ada)
+### 4.2 Peta (target 10)
 
-| GDD § | Sistem | Status & catatan |
+| Peta GDD | Ada? | Catatan |
 |---|---|---|
-| §4/§17 | Kultivasi: 6 tingkatan, insight, breakthrough (sukses/gagal, cedera −25% 2 hari, 30% inner demon **flag**), meridian 0–8, formula qi/hp/crit/miss/dodge | ✅ inti; ⚠️ pertarungan inner demon fisik ditunda (hanya flag + catatan) |
-| §5 | Latar belakang & jalur (path) protagonis, rahasia via echo memori | ✅ (`background`, `path` di save; 4 jalur: sword/alchemy/formation/soul) |
-| §6 | Combat turn-based, order agility tetap, tim max 4, 5 elemen ×1.5/×0.7, resonansi tim, defend/observe/escape/item | ✅; ⚠️ `swap` dalam combat ditunda (`ponytail:`) |
-| §7 | Alkimia (12 resep, `learn_recipe`, refine + kuali_roh), artefak bertumbuh (`growth_stat`/`max_level`), binatang roh (rekrut + menetas + evolusi), formasi (3), toko (buy/sell, 40%, `shop_sold`, restock) | ✅ lengkap |
-| §8 | 5 faksi, reputasi −100..+100, trigger event `reputation_reached` | ✅ |
-| §9 | Gating peta via event `unlock_map` (`map_<id>_unlocked`), mekanisme `requires_flag` di enemies peta | ✅ |
-| §10 | 18 NPC + 11 dialog graf | ✅ 18/25 (lihat §4) |
-| §11 | Musuh & bos per arc | ⚠️ 20/35 (lihat §4) |
-| §12 | Quest engine: 8 kind objective, `quest<id>_done` otomatis, dialog engine + `talked_<id>` + fallback | ✅ |
-| §15 | Event engine: 6 trigger, 12 aksi, `once`, cascade, `prompt_choice` | ✅ |
-| §16 | 13 status effect (3 dot, 3 kontrol, 3 debuff, 4 buff), bos kebal kontrol | ✅ |
-| §18 | 30+ perintah dengan alias Indonesia, koreksi typo difflib, autocomplete TAB | ✅ lengkap (incl. combat) |
-| §19 | Save v2: 3 slot + autosave, migrasi v1→v2, backfill `quest<id>_done`, atomic write, anti-corrupt `.bak` | ✅ |
-| §20 | Party 4 slot, bond XP, peringkat rekan, rekrut+menetas, evolusi sekali, KO pulih otomatis | ✅ |
-| §21 | `ending_points` (defy/seal/reconcile) + aksi `add_ending_points` + fungsi `calculate_ending()` | ⚠️ **setengah jadi** — aksi `calculate_ending` belum di-wire (test merah) |
+| `village_emberfall`, `ashfall_forest`, `ruin_shrine` (Arc 1) | ✅ | |
+| `sect_azure`, `guild_city` (Arc 2) | ✅ | |
+| `holy_cathedral`, `rebel_hideout` (Arc 3) | ✅ | |
+| `capital` (Arc 3–4) | ❌ | **belum ada** |
+| `ancient_vault`, `sky_seal` (Arc 4) | ❌ | **belum ada** |
+| Ekstra non-GDD | — | `gua_abyss`, `hutan_kelabu` (tambahan) |
+
+### 4.3 NPC & Musuh
+
+| Kategori | GDD target | Aktual | Gap |
+|---|---|---|---|
+| NPC | 25 | 18 | −7; **`the_voice` (Arc 4) belum ada**; `inquisitor_vega`, `sera_ember`, `warden_kai` sudah ada |
+| Musuh non-bos | 30 | 15 | −15 (khususnya konten Arc 3–4: manifestasi entitas, pion langit, pemberontak fanatik) |
+| Bos | 5 | 4 sesuai GDD | ✅ `penjaga_makam` (A1), `bos_sekte_bayangan` (A2), `bos_inquisitor_agung` (A3); **`rasul_langit` & `suara` (A4) belum ada** (`golem_terbakar`, `abyssal_worm` ekstra) |
+
+### 4.4 Ending Engine (GDD §13, §21) — ✅ SUDAH TERPASANG (fase sebelumnya)
+
+- `src/engine/story.py`: `calculate_ending()` (pemenang dari `ending_points` + tie-break), `build_epilogue()` (status 5 faksi, label Indonesia GDD §8)
+- `src/engine/event.py`: aksi `calculate_ending` → set flag `ending_<jalur>_win`
+- `src/core/game_loop.py`: epilog ditampilkan sekali pasca `_run_events`
+- 4 event: `calculate_ending_trigger`, `ending_defy`, `ending_seal`, `ending_reconcile`
+- ⚠️ **Pemicu in-game belum aktif** — flag `arc4_boss_defeated` hanya ada di event trigger; **belum ada bos Arc 4 yang men-set-nya** (lihat §5)
+
+### 4.5 Konten Pendukung vs GDD §22
+
+| Konten | Target | Aktual | Gap |
+|---|---|---|---|
+| Teknik | 30 | 30 ✅ | tapi **semua tier ≤ golden_core** — teknik tier `soul_separation`/`void_breaker`/`heaven_challenger` (Arc 3–4) belum ada |
+| Resep pil | 14 | 12 | −2 |
+| Artefak roh | 12 | 8 | −4 |
+| Binatang roh | 4 | 4 (+1 evolusi) | ✅ |
+| Echo memori | 9 | 5 | −4 (Arc 3–4 belum) |
+| Kultivasi tier | 6 | 6 | ✅ lengkap |
 
 ---
 
-## 6. Gap — yang BELUM ada (sesuai GDD)
+## 5. Gap vs GDD (Apa yang Belum Ada)
 
-### 6.1 Arc 4 (0% — GDD §12.1, §22)
-- **Quest utama `quest401`–`quest408`** (8 quest).
-- **Peta `capital`, `ancient_vault`, `sky_seal`** (GDD §9) — termasuk peta final pertarungan klimaks.
-- **Bos `Rasul Langit` & `Suara`/`the_voice`** (GDD §11) + ~6 musuh non-bos Arc 4.
-- **NPC `the_voice`** (GDD §10).
-- 4 echo memori Arc 3–4 & 4 artefak tambahan untuk mencapai target §22.
+### Prioritas tinggi (blokir tamat / Fase 4)
+1. **Quest Arc 4 (quest401–408)** — GDD §12.2, §22: 8 quest utama final (Ruang Rahasia Kuno → rahasia penuh → keputusan final).
+2. **Peta Arc 4**: `capital`, `ancient_vault`, `sky_seal` (GDD §9).
+3. **Bos Arc 4**: `rasul_langit` (Pemutus Kehampaan puncak) & `suara` (Penantang Surga) — GDD §11. Tanpa bos ini, `arc4_boss_defeated` tak pernah diset, ending engine tak pernah terpicu in-game.
+4. **NPC `the_voice`** (entitas kuno, sky_seal) — GDD §10.
 
-### 6.2 Ending Dinamis (GDD §13, §21) — setengah jadi
-- Aksi event `calculate_ending` **tidak ada** di `ACTION_KINDS`/`apply_action` (penyebab suite merah). Test menuntut: set `ending_<path>_win` berdasarkan jalur poin tertinggi.
-- **Epilog berbasis reputasi 5 faksi** (GDD §21.2) — belum ada konten/generator.
-- **Ritual + pertarungan dua tahap melawan Suara** (GDD §21.3) — belum ada (skema ritual, buff/penalti komponen, boss final 2-stage).
-- 7 keputusan kunci penentu `ending_points` (GDD §21.1) — hanya landasan state/aksi yang ada, belum ada keputusan berjangkarnya di quest/dialog Arc 3–4.
+### Prioritas sedang (konten Arc 3 asli)
+5. **Ganti placeholder quest301–308** (judul/objektif/next naratif sesuai GDD §12.3) dan **fquest_301–303**.
+6. **Teknik tier tinggi** (Arc 3–4): tier `soul_separation`, `void_breaker`, `heaven_challenger` — GDD §22 menarget 30 total, sekarang semua terkonsentrasi di golden_core.
+7. **Musuh non-bos Arc 3–4** (tentara salib, manifestasi entitas, pion langit, pemberontak fanatik) — GDD §11.
+8. **Echo memori Arc 3–4** (target 9, baru 5) — GDD §22.
 
-### 6.3 Fitur ditunda (dicatat `ponytail:` / di-changelog)
-- Pertarungan **inner demon** 30% (GDD §4.1) — flag & catatan saja.
-- **Swap anggota dalam combat** (GDD §18.3) — swap hanya di lokasi aman.
-- Penyempurnaan kecil Arc 3: dialog/variasi faksi, echo memori sampingan.
+### Prioritas rendah (pelengkap Fase 5)
+9. **Ritual + pertarungan dua tahap** (GDD §21.3) untuk ending "Menentang Langit" — belum ada sistemnya sama sekali.
+10. **Resep pil −2** dan **artefak roh −4** (GDD §22).
+11. **Keputusan kunci (7)** yang menambah `ending_points` — GDD §21.1 menyebut 1 di Arc 1, 2 di Arc 2–4; perlu diverifikasi berapa yang sudah ter-wire di quest/dialog existing.
 
-### 6.4 Kualitas (harus dibenahi sebelum klaim "selesai")
-- 1 test gagal konsisten + 1 test flaky (lihat §2).
-- 2 error `ruff check` + 1 file belum `ruff format`.
-- Konten placeholder quest301–308 & fquest_301–303 harus diganti narasi grimdark asli (judul/deskripsi/objective/reward nyata).
+### Catatan teknis lain
+- `swap` dalam combat & inner demon fight (30% gagal breakthrough) sempat tercatat sebagai gap kecil di audit sebelumnya — perlu verifikasi ulang di sesi berikutnya.
 
 ---
 
-## 7. Rekomendasi Langkah Selanjutnya
+## 6. Skor Kelengkapan Keseluruhan
 
-1. **Perbaiki suite merah dulu** (kecil): tambah `calculate_ending` ke `ACTION_KINDS` + cabang `apply_action` di `event.py`, bersihkan lint/format `test_story.py` & `story.py`. Ini menyelesaikan satu-satunya test gagal + 2 error lint.
-2. **Isi konten Arc 3 yang asli** — ganti placeholder quest301–308 & fquest_301–303 dengan narasi grimdark (sesuai GDD §12, tone §3.6).
-3. **Bangun Arc 4** — quest401–408, peta capital/ancient_vault/sky_seal, bos Rasul Langit & Suara, NPC the_voice, 4 memori, 4 artefak.
-4. **Selesaikan sistem ending** — aksi `calculate_ending`, epilog berbasis reputasi, ritual 2-tahap, keputusan kunci di quest/dialog Arc 3–4.
-5. **Fase 5 polish** — smoke test alur penuh (mulai → 4 arc → ending), selidiki test flaky `test_app`, tuning keseimbangan (GDD §24.2).
-6. Commit pekerjaan yang belum di-commit (`story.py`, `test_story.py`, dokumen plan) setelah hijau.
+| Komponen | Skor |
+|---|---|
+| Engine inti (semua modul) | **100%** |
+| Ending engine (mekanisme) | **100%** (menunggu pemicu konten) |
+| Data valid & teruji | **100%** (460 test, lint, validator) |
+| Arc 1 | **100%** |
+| Arc 2 | **100%** |
+| Arc 3 | **~50%** (peta/NPC/bos/faksi asli ada; quest utama masih placeholder; teknik/musuh/memori Arc 3 kurang) |
+| Arc 4 | **0%** |
+| Fase 5 (polish, playtest, keseimbangan) | **0%** |
+
+**Kesimpulan:** Game bisa dimainkan penuh hingga akhir Arc 2; Arc 3 bisa dimasuki tapi quest utamanya masih kosong; game **belum bisa ditamatkan** karena Arc 4 dan pemicu ending belum ada. Prioritas berikutnya: **konten asli Arc 3** (ganti placeholder) → **Arc 4 lengkap** (quest, peta, bos, the_voice) → polish Fase 5.
 
 ---
 
-*Laporan disusun ulang 7 Agustus 2026 berdasarkan verifikasi langsung: `validate.py`, `pytest -q` (3×), `ruff check`, `ruff format --check`, inspeksi `data/*.json`, dan `src/*.py`.*
+*Dokumen ini diperbarui otomatis dari pemeriksaan langsung repo pada 7 Agustus 2026. Angka aktual (37 quest, 49 event, 20 musuh, 30 teknik, 47 item, 9 peta, 18 NPC, 6 rekan, 11 dialog, 5 memori, 6 tier, 3 formasi, 22 modul src, 32 file test, 460 test lulus) diverifikasi langsung dari sistem file dan alat verifikasi proyek.*
