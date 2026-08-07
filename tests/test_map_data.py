@@ -14,6 +14,9 @@ EXPECTED_MAPS = {
     "gua_abyss",
     "holy_cathedral",
     "rebel_hideout",
+    "capital",
+    "ancient_vault",
+    "sky_seal",
 }
 REQUIRED_KEYS = {"id", "name", "description", "tier"}  # + opsional "enemies"
 

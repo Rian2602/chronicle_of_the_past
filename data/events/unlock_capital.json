@@ -1,0 +1,15 @@
+{
+  "id": "unlock_capital",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest305"}
+  ],
+  "actions": [
+    {"kind": "unlock_map", "target": "capital"},
+    {"kind": "set_flag", "flag": "map_capital_unlocked", "value": true},
+    {
+      "kind": "log",
+      "text": "Gerbang ibukota Ashenfeld terbuka di hadapanmu. Warden Kai memperingatkanmu: 'Di sana, kata-kata lebih tajam dari pedang. Dan semua orang berbohong — termasuk kaisar.'"
+    }
+  ],
+  "once": true
+}

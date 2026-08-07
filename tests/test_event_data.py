@@ -68,6 +68,9 @@ EXPECTED_EVENTS = {
     "quest308_intro",
     "memory_entitas_pertama",
     "segel_retak_terungkap",
+    "unlock_capital",
+    "unlock_ancient_vault",
+    "unlock_sky_seal",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

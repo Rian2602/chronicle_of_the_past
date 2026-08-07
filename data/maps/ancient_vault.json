@@ -1,0 +1,11 @@
+{
+  "id": "ancient_vault",
+  "name": "Ruang Rahasia Kuno",
+  "description": "Gua yang diukir bukan oleh tangan manusia. Rune kuno menyala redup di dinding — bahasa sebelum kerajaan, sebelum nama Ashenfeld. Orde Rahasia Kuno menjaga sesuatu di sini selama seribu tahun. Hampir seribu tahun.",
+  "tier": 4,
+  "enemies": [
+    {"enemy": "agen_kuno"},
+    {"enemy": "pengikut_bisikan"},
+    {"enemy": "abyssal_worm", "requires_flag": "quest401_done"}
+  ]
+}
