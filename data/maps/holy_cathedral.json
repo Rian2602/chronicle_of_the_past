@@ -10,7 +10,7 @@
     },
     {
       "enemy": "bos_inquisitor_agung",
-      "requires_flag": "quest308_done"
+      "requires_flag": "quest307_done"
     },
     {
       "enemy": "inquisitor_elit"
@@ -20,6 +20,10 @@
     },
     {
       "enemy": "uskup_muda"
+    },
+    {
+      "enemy": "penebus_orde_suci",
+      "requires_flag": "quest301_done"
     }
   ]
 }

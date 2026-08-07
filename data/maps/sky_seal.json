@@ -5,7 +5,7 @@
   "tier": 6,
   "enemies": [
     {"enemy": "manifestasi_langit"},
-    {"enemy": "rasul_langit", "requires_flag": "quest406_done"},
-    {"enemy": "suara", "requires_flag": "quest408_done"}
+    {"enemy": "rasul_langit", "requires_flag": "quest405_done"},
+    {"enemy": "suara", "requires_flag": "quest407_done"}
   ]
 }

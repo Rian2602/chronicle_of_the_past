@@ -52,3 +52,51 @@ def test_peta_arc1_menyebut_musuh_yang_valid():
             )
             requires_flag = entry.get("requires_flag", None)
             assert isinstance(requires_flag, (str, type(None)))
+
+
+def test_musuh_target_quest_muncul_di_peta():
+    """Tiap musuh yang jadi target quest muncul di minimal satu peta.
+
+    Mencegah quest macet: objektif enemy/kill_count menuntut kills musuh,
+    tapi musuh tak pernah muncul di peta mana pun (GDD §9).
+    """
+    quests_dir = Path(__file__).resolve().parents[1] / "data" / "quests"
+    targets: set[str] = set()
+    for path in quests_dir.glob("*.json"):
+        quest = json.loads(path.read_text(encoding="utf-8"))
+        for objective in quest.get("objectives", []):
+            if objective["kind"] in ("enemy", "kill_count"):
+                targets.add(objective["target"])
+    placed: set[str] = set()
+    for path in DATA_DIR.glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        placed.update(entry["enemy"] for entry in data.get("enemies", []))
+    missing = targets - placed
+    assert not missing, f"musuh target quest tak muncul di peta: {missing}"
+
+
+def test_bos_tidak_digate_oleh_quest_yang_membunuhnya():
+    """Musuh tak boleh digate quest<id>_done dari quest yang menargetkannya.
+
+    Deadlock: kalau bos X muncul hanya saat quest<id>_done (padahal quest
+    itu menuntut membunuh X), pemain tak pernah bisa membunuhnya (GDD §9,
+    §11). Gate harus quest SEBELUMNYA (yang men-start quest pembunuhan).
+    """
+    quests_dir = Path(__file__).resolve().parents[1] / "data" / "quests"
+    killers: dict[str, set[str]] = {}
+    for path in quests_dir.glob("*.json"):
+        quest = json.loads(path.read_text(encoding="utf-8"))
+        for objective in quest.get("objectives", []):
+            if objective["kind"] in ("enemy", "kill_count"):
+                killers.setdefault(objective["target"], set()).add(quest["id"])
+    for path in DATA_DIR.glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for entry in data.get("enemies", []):
+            requires = entry.get("requires_flag")
+            if not requires or not requires.endswith("_done"):
+                continue
+            gate_quest = requires[: -len("_done")]
+            assert gate_quest not in killers.get(entry["enemy"], set()), (
+                f"{path.name}: musuh {entry['enemy']} digate "
+                f"{requires} padahal quest itu yang menargetkannya"
+            )
