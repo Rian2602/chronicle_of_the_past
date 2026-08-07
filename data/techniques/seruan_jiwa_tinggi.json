@@ -1,0 +1,15 @@
+{
+  "id": "seruan_jiwa_tinggi",
+  "name": "Seruan Jiwa Tinggi",
+  "path": "spirit",
+  "element": "water",
+  "type": "technique",
+  "qi_cost": 40,
+  "power": 55,
+  "effects": [
+    {"status": "charm", "chance": 0.35, "duration": 2}
+  ],
+  "requires": {
+    "tier": "void_breaker"
+  }
+}

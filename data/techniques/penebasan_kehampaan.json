@@ -1,0 +1,15 @@
+{
+  "id": "penebasan_kehampaan",
+  "name": "Penebasan Kehampaan",
+  "path": "sword",
+  "element": "metal",
+  "type": "physical",
+  "qi_cost": 42,
+  "power": 60,
+  "effects": [
+    {"status": "weaken", "chance": 0.3, "duration": 2}
+  ],
+  "requires": {
+    "tier": "void_breaker"
+  }
+}

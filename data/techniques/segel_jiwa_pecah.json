@@ -1,0 +1,15 @@
+{
+  "id": "segel_jiwa_pecah",
+  "name": "Segel Jiwa Pecah",
+  "path": "formation",
+  "element": "earth",
+  "type": "technique",
+  "qi_cost": 32,
+  "power": 40,
+  "effects": [
+    {"status": "seal", "duration": 2}
+  ],
+  "requires": {
+    "tier": "soul_separation"
+  }
+}

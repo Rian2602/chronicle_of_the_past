@@ -54,6 +54,12 @@ EXPECTED_TECHNIQUES = {
     "ikatan_roh",
     "pandangan_jiwa",
     "penyerapan_jiwa",
+    "langkah_seribu",
+    "pil_pembakar_surgawi",
+    "segel_jiwa_pecah",
+    "seruan_jiwa_tinggi",
+    "penebasan_kehampaan",
+    "tangan_langit",
 }
 
 
@@ -92,3 +98,25 @@ def test_efek_status_valid():
             assert isinstance(duration, int) and duration >= 1
             power = effect.get("power", 0)
             assert isinstance(power, int) and power >= 0
+
+
+def test_teknik_tier_tinggi_ada():
+    """Teknik Arc 3-4 (tier soul_separation ke atas) harus tersedia."""
+    ids = {
+        "langkah_seribu",
+        "pil_pembakar_surgawi",
+        "segel_jiwa_pecah",
+        "seruan_jiwa_tinggi",
+        "penebasan_kehampaan",
+        "tangan_langit",
+    }
+    assert ids <= EXPECTED_TECHNIQUES, f"Kurang: {ids - EXPECTED_TECHNIQUES}"
+    for tech_id in ids:
+        data = json.loads(
+            (DATA_DIR / f"{tech_id}.json").read_text(encoding="utf-8")
+        )
+        assert data["requires"]["tier"] in {
+            "soul_separation",
+            "void_breaker",
+            "heaven_challenger",
+        }
