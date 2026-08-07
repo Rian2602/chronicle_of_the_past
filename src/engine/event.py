@@ -39,6 +39,7 @@ ACTION_KINDS = {
     "add_companion",
     "log",
     "prompt_choice",
+    "add_ending_points",
 }
 
 
@@ -194,6 +195,11 @@ def apply_action(
         # Tampilkan pilihan ke pemain via log
         for opt in options:
             result.logs.append(f"  [{opt['key']}] {opt['text']}")
+    elif kind == "add_ending_points":
+        ep_path = action["path"]
+        points = action.get("points", 0)
+        curr = state.ending_points.get(ep_path, 0)
+        state.ending_points[ep_path] = curr + points
 
 
 def process_events(state: GameState, events: list[GameEvent]) -> EventResult:

@@ -108,9 +108,13 @@ class GameState:
     # Buff combat dari item (GDD §7): stat -> nilai; diterapkan ke
     # combatant protagonis saat battle dimulai, lalu dikonsumsi.
     buffs: dict[str, int] = field(default_factory=dict)
+    # Poin ending untuk Pondasi Fase 4: path -> poin.
+    ending_points: dict[str, int] = field(
+        default_factory=lambda: {"defy": 0, "seal": 0, "reconcile": 0}
+    )
 
     def __post_init__(self) -> None:
-        """Normalisasi reputasi 5 faksi (§8) dan hp/qi konkret.
+        """Normalisasi reputasi 5 faksi (§8), ending_points, dan hp/qi konkret.
 
         Invariant: state.reputation selalu memuat kelima faksi, dan
         state.player.hp/qi selalu angka (save lama tanpa field -> penuh).
@@ -119,6 +123,9 @@ class GameState:
             faction: int(self.reputation.get(faction, 0))
             for faction in FACTIONS
         }
+        ending_defaults = {"defy": 0, "seal": 0, "reconcile": 0}
+        for ep_path, ep_val in ending_defaults.items():
+            self.ending_points.setdefault(ep_path, ep_val)
         if self.player.hp is None:
             self.player.hp = self.player.hp_max
         if self.player.qi is None:
@@ -164,6 +171,7 @@ class GameState:
                 shop_id: dict(sold) for shop_id, sold in self.shop_sold.items()
             },
             "buffs": dict(self.buffs),
+            "ending_points": dict(self.ending_points),
         }
 
     @classmethod
@@ -183,6 +191,11 @@ class GameState:
         reputation = data.get("reputation", {})
         if not isinstance(reputation, dict):
             raise ValueError("reputasi harus berupa objek")
+        ending_points = data.get(
+            "ending_points", {"defy": 0, "seal": 0, "reconcile": 0}
+        )
+        if not isinstance(ending_points, dict):
+            raise ValueError("ending_points harus berupa objek")
         shop_sold = data.get("shop_sold", {})
         if not isinstance(shop_sold, dict):
             raise ValueError("shop_sold harus berupa objek")
@@ -217,4 +230,5 @@ class GameState:
             settings=dict(data.get("settings", {})),
             shop_sold=normalized_sold,
             buffs=dict(data.get("buffs", {})),
+            ending_points=dict(ending_points),
         )

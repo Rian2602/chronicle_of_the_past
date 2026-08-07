@@ -34,6 +34,7 @@ REQUIRED_KEYS = {
     "time",
     "settings",
     "shop_sold",
+    "ending_points",
 }
 
 
@@ -219,3 +220,26 @@ def test_save_lama_tanpa_kills_jadi_kosong():
     del data["kills"]
     restored = GameState.from_dict(data)
     assert restored.kills == {}
+
+
+def test_ending_points_initialized():
+    """ending_points diinisialisasi dengan defy: 0, seal: 0, reconcile: 0."""
+    state = GameState(player=Player(name="Akar"))
+    assert state.ending_points == {"defy": 0, "seal": 0, "reconcile": 0}
+
+
+def test_ending_points_roundtrip():
+    """ending_points tersimpan dan terbaca kembali secara identik."""
+    state = GameState(player=Player(name="Akar"))
+    state.ending_points["defy"] = 10
+    restored = GameState.from_dict(state.to_dict())
+    assert restored.ending_points == {"defy": 10, "seal": 0, "reconcile": 0}
+
+
+def test_save_lama_tanpa_ending_points_backfill():
+    """Save lama tanpa ending_points di-backfill saat load."""
+    data = _state().to_dict()
+    if "ending_points" in data:
+        del data["ending_points"]
+    restored = GameState.from_dict(data)
+    assert restored.ending_points == {"defy": 0, "seal": 0, "reconcile": 0}
