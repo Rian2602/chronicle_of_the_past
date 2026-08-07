@@ -9,7 +9,15 @@
     {"kind": "map", "target": "capital"},
     {"kind": "talk", "target": "warden_kai"}
   ],
-  "rewards": {"insight": 300, "gold": 300, "reputation": {"ancient_order": 5}},
+  "rewards": {
+    "insight": 300,
+    "gold": 300,
+    "reputation": {"ancient_order": 5},
+    "grant_items": [
+      {"id": "talisman_penyegel", "count": 1},
+      {"id": "resep_pil_peneguh_fondasi", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest401_done"],
   "next": "quest402"
 }

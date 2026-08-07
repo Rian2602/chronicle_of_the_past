@@ -1,0 +1,20 @@
+{
+  "id": "kestrel_recruit",
+  "trigger": [
+    {
+      "kind": "quest_done",
+      "quest": "fquest_gilda_kontrak"
+    }
+  ],
+  "actions": [
+    {
+      "kind": "add_companion",
+      "id": "kestrel"
+    },
+    {
+      "kind": "log",
+      "text": "Kontrak itu selesai dengan satu mayat lagi di jalan. Kestrel menyandang pedangnya dan berjongkok di atap: 'Aku tidak pernah bertaruh pada orang yang bisa bertahan hidup selama ini. Tapi lihat dirimu — kau masih berdiri. Mungkin kali ini aku memihak yang tidak kalah.' Ia melompat turun, mengikutimu seperti bayangan yang memilih majikannya."
+    }
+  ],
+  "once": true
+}

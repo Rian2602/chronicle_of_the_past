@@ -6,7 +6,14 @@
   "objectives": [
     {"kind": "collect", "target": "pil_pemahaman", "count": 1}
   ],
-  "rewards": {"insight": 150, "gold": 50},
+  "rewards": {
+    "insight": 150,
+    "gold": 50,
+    "grant_items": [
+      {"id": "resep_pil_baja", "count": 1},
+      {"id": "resep_pil_qi_tenang", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest203_done"],
   "next": "quest204",
   "category": "main",

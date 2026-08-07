@@ -7,7 +7,15 @@
     {"kind": "talk", "target": "kestrel"},
     {"kind": "kill_count", "target": "pembunuh_gilda", "count": 1}
   ],
-  "rewards": {"insight": 50, "gold": 40, "reputation": {"guilds": 10}},
+  "rewards": {
+    "insight": 50,
+    "gold": 40,
+    "reputation": {"guilds": 10},
+    "grant_items": [
+      {"id": "pil_langkah_angin", "count": 1},
+      {"id": "resep_pil_angin", "count": 1}
+    ]
+  },
   "flags_on_complete": ["fquest_gilda_kontrak_done"],
   "next": null,
   "category": "faction",

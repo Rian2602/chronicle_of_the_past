@@ -9,7 +9,15 @@
     {"kind": "talk", "target": "sera_ember"},
     {"kind": "map", "target": "rebel_hideout"}
   ],
-  "rewards": {"insight": 100, "gold": 100, "reputation": {"rebels": 5}},
+  "rewards": {
+    "insight": 100,
+    "gold": 100,
+    "reputation": {"rebels": 5},
+    "grant_items": [
+      {"id": "pil_pemulih_kecil", "count": 3},
+      {"id": "resep_ramuan_meridian", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest301_done"],
   "next": "quest302"
 }

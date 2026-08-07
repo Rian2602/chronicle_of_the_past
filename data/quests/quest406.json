@@ -8,7 +8,15 @@
   "objectives": [
     {"kind": "enemy", "target": "rasul_langit"}
   ],
-  "rewards": {"insight": 800, "gold": 1000, "reputation": {"ancient_order": 5}},
+  "rewards": {
+    "insight": 800,
+    "gold": 1000,
+    "reputation": {"ancient_order": 5},
+    "grant_items": [
+      {"id": "pil_pemahaman", "count": 1},
+      {"id": "pil_pemulih_kecil", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest406_done"],
   "next": "quest407"
 }

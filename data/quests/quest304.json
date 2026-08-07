@@ -9,7 +9,14 @@
     {"kind": "talk", "target": "sera_ember"},
     {"kind": "flag", "target": "pilihan_faksi_dibuat"}
   ],
-  "rewards": {"insight": 150, "gold": 150},
+  "rewards": {
+    "insight": 150,
+    "gold": 150,
+    "grant_items": [
+      {"id": "liontin_api", "count": 1},
+      {"id": "mahkota_ashfall", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest304_done"],
   "next": "quest305"
 }

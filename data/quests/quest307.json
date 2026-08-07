@@ -8,7 +8,15 @@
   "objectives": [
     {"kind": "flag", "target": "segel_retak_terungkap"}
   ],
-  "rewards": {"insight": 220, "gold": 300, "grant_item": {"id": "salib_bisu", "count": 1}},
+  "rewards": {
+    "insight": 220,
+    "gold": 300,
+    "grant_items": [
+      {"id": "salib_bisu", "count": 1},
+      {"id": "pil_asar_jiwa", "count": 1},
+      {"id": "resep_pil_asar_jiwa", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest307_done"],
   "next": "quest308"
 }

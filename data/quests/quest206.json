@@ -9,10 +9,15 @@
       "target": "kultis_bayangan",
       "count": 4
     }
-  ],
-  "rewards": {
+  ],  "rewards": {
     "insight": 100,
-    "gold": 50
+    "gold": 50,
+    "grant_items": [
+      {"id": "cermin_bayangan", "count": 1},
+      {"id": "jubah_bayangan", "count": 1},
+      {"id": "resep_pil_baja_hitam", "count": 1},
+      {"id": "pil_buka_meridian", "count": 1}
+    ]
   },
   "flags_on_complete": [
     "quest206_done"

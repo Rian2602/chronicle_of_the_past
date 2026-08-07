@@ -8,7 +8,14 @@
   "objectives": [
     {"kind": "flag", "target": "rahasia_terungkap"}
   ],
-  "rewards": {"insight": 400, "gold": 400},
+  "rewards": {
+    "insight": 400,
+    "gold": 400,
+    "grant_items": [
+      {"id": "mantra_bisikan", "count": 1},
+      {"id": "pil_qi_tenang", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest403_done"],
   "next": "quest404"
 }

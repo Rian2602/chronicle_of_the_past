@@ -147,6 +147,8 @@ def complete_quest(state: GameState, quest: Quest) -> list[str]:
     """Set quest<id>_done flag, terapkan rewards, set flags_on_complete.
 
     Tambah quest ke state.quests.done; hapus dari state.quests.started.
+    Reward item memakai ``grant_items`` (list) atau ``grant_item``
+    (tunggal, kompatibilitas); keduanya menambah inventory.
     Kembalikan list baris narasi.
     """
     if quest.id in state.quests.done:
@@ -158,14 +160,19 @@ def complete_quest(state: GameState, quest: Quest) -> list[str]:
     state.player.gold += gold
     for faction, delta in rewards.get("reputation", {}).items():
         state.add_reputation(faction, delta)
-    grant_item_line = None
-    grant_item = rewards.get("grant_item")
-    if grant_item:
-        item_id = grant_item["id"]
-        count = grant_item.get("count", 1)
+    grant_item_lines = []
+    raw_grants = rewards.get("grant_items", [])
+    if not isinstance(raw_grants, list):
+        raise ValueError("grant_items wajib berupa list")
+    grants = list(raw_grants)
+    if rewards.get("grant_item"):
+        grants.append(rewards["grant_item"])
+    for grant in grants:
+        item_id = grant["id"]
+        count = grant.get("count", 1)
         items = state.inventory.setdefault("items", {})
         items[item_id] = items.get(item_id, 0) + count
-        grant_item_line = f"Item +{count}: {item_id}."
+        grant_item_lines.append(f"Item +{count}: {item_id}.")
     # Flag kelulusan otomatis engine (§12.2) — tidak tergantung data.
     state.flags[f"{quest.id}_done"] = True
     for flag in quest.flags_on_complete:
@@ -180,8 +187,7 @@ def complete_quest(state: GameState, quest: Quest) -> list[str]:
         lines.append(f"Gold +{gold}.")
     for faction, delta in rewards.get("reputation", {}).items():
         lines.append(f"Reputasi {faction} {delta:+d}.")
-    if grant_item_line:
-        lines.append(grant_item_line)
+    lines.extend(grant_item_lines)
     return lines
 
 

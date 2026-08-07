@@ -8,7 +8,15 @@
   "objectives": [
     {"kind": "talk", "target": "inquisitor_vega"}
   ],
-  "rewards": {"insight": 130, "gold": 200, "reputation": {"holy_order": 5}},
+  "rewards": {
+    "insight": 130,
+    "gold": 200,
+    "reputation": {"holy_order": 5},
+    "grant_items": [
+      {"id": "cincin_roh_kenabian", "count": 1},
+      {"id": "pil_pemahaman_sharif", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest303_done"],
   "next": "quest304"
 }

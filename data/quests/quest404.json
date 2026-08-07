@@ -8,7 +8,14 @@
   "objectives": [
     {"kind": "flag", "target": "keputusan_final_dibuat"}
   ],
-  "rewards": {"insight": 200, "gold": 200},
+  "rewards": {
+    "insight": 200,
+    "gold": 200,
+    "grant_items": [
+      {"id": "gelang_qi", "count": 1},
+      {"id": "jimat_roh_liar", "count": 1}
+    ]
+  },
   "flags_on_complete": ["quest404_done"],
   "next": "quest405"
 }

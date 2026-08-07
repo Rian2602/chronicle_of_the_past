@@ -5,7 +5,8 @@
   ],
   "actions": [
     {"kind": "log", "text": "Api di hutan padam. Jati tersenyum lelah: 'Kamu selamatkan kami. Rebels tidak akan melupakan jasa ini.'"},
-    {"kind": "grant_item", "id": "pil_pemulih", "count": 1}
+    {"kind": "grant_item", "id": "pil_pemulih", "count": 1},
+    {"kind": "grant_item", "id": "telur_phoenix_abu", "count": 1}
   ],
   "once": true
 }
