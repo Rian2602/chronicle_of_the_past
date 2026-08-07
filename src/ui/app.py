@@ -397,6 +397,8 @@ class GameScreen(Screen):
         parts = raw.split()
         action = parts[0] if parts else ""
         args = parts[1:]
+        if not action:
+            return
 
         if session.in_battle:
             self._battle_raw(raw, log)

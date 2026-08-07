@@ -202,7 +202,10 @@ class GameSession:
     # ------------------------------------------------------------------
     # Dispatch perintah dunia
     # ------------------------------------------------------------------
-    def dispatch(self, action: str, args: list[str] = []) -> list[str]:
+    # ------------------------------------------------------------------
+    # Dispatch perintah dunia
+    # ------------------------------------------------------------------
+    def dispatch(self, action: str, args: list[str] | None = None) -> list[str]:
         """Kirim perintah dunia; kembalikan baris pesan untuk UI."""
         if action not in AVAILABLE:
             return [UNAVAILABLE]
@@ -212,10 +215,11 @@ class GameSession:
         # load harus jalan meski belum ada permainan aktif.
         if self.state is None and action != "load":
             return ["Belum ada permainan. Mulai baru atau muat save."]
+        args = args or []
         handler = getattr(self, f"_cmd_{action}")
         return handler(args)
 
-    def _cmd_help(self, _args: list[str] = []) -> list[str]:
+    def _cmd_help(self, _args: list[str] | None = None) -> list[str]:
         return [
             "Perintah tersedia:",
             "  help status map inventory quests memories party",
@@ -261,10 +265,10 @@ class GameSession:
             f" | Meridian {player.meridian_buka}/8{injury}",
         ]
 
-    def _cmd_status(self, _args: list[str] = []) -> list[str]:
+    def _cmd_status(self, _args: list[str] | None = None) -> list[str]:
         return self.status_lines()
 
-    def _cmd_map(self, _args: list[str] = []) -> list[str]:
+    def _cmd_map(self, _args: list[str] | None = None) -> list[str]:
         unlocked = [START_LOCATION]
         for flag, value in self.state.flags.items():
             if flag.startswith("map_") and flag.endswith("_unlocked") and value:
@@ -275,7 +279,7 @@ class GameSession:
             lines.append(f"  {location}{marker}")
         return lines
 
-    def _cmd_inventory(self, _args: list[str] = []) -> list[str]:
+    def _cmd_inventory(self, _args: list[str] | None = None) -> list[str]:
         """Tampilkan isi tas dengan warna semantik per tipe (GDD §14.2).
 
         Warna: material cyan, resep violet, alat (tool) gold3; item lain
@@ -298,7 +302,8 @@ class GameSession:
                 lines.append(f"  {name} x{count}")
         return lines
 
-    def _cmd_equip(self, args: list[str] = []) -> list[str]:
+    def _cmd_equip(self, args: list[str] | None = None) -> list[str]:
+        args = args or []
         if not args:
             return ["Equip apa?"]
         item_id = args[0]
@@ -328,7 +333,8 @@ class GameSession:
 
         return [f"Memakai {item_def['name']}."]
 
-    def _cmd_unequip(self, args: list[str] = []) -> list[str]:
+    def _cmd_unequip(self, args: list[str] | None = None) -> list[str]:
+        args = args or []
         if not args:
             return ["Unequip apa?"]
         item_id = args[0]
@@ -346,7 +352,7 @@ class GameSession:
         name = item_def["name"] if item_def else item_id
         return [f"Melepas {name}."]
 
-    def _cmd_use(self, args: list[str] = []) -> list[str]:
+    def _cmd_use(self, args: list[str] | None = None) -> list[str]:
         """Pakai item konsumabel di luar combat (GDD §18.2).
 
         Item divalidasi ke data/items sebelum dikonsumsi (item tak dikenal
@@ -355,6 +361,7 @@ class GameSession:
         add_meridian) diterapkan segera. Efek combat-ready (buff_*) diparse
         tapi tidak dieksekusi.
         """
+        args = args or []
         if not args:
             return ["Pakai apa? Contoh: use <nama_item>."]
         item_id = args[0]
@@ -474,7 +481,7 @@ class GameSession:
                     return shop_id, shop
         return None
 
-    def _cmd_shop(self, _args: list[str] = []) -> list[str]:
+    def _cmd_shop(self, _args: list[str] | None = None) -> list[str]:
         """Tampilkan dagangan toko di lokasi saat ini (GDD §18.2).
 
         Harga beli dari data/items (price); sisa stok = count di
@@ -499,13 +506,14 @@ class GameSession:
         lines.append("Jual kembali: 40% dari harga beli.")
         return lines
 
-    def _cmd_buy(self, args: list[str] = []) -> list[str]:
+    def _cmd_buy(self, args: list[str] | None = None) -> list[str]:
         """Beli item dari toko di lokasi saat ini (GDD §18.2).
 
         Validasi: toko ada, item dijual, stok tersisa, jumlah valid, dan
         emas cukup. Memperbarui gold, inventory, dan shop_sold, lalu
         cascade quest+event (objektif collect).
         """
+        args = args or []
         if not args:
             return ["Beli apa? Contoh: buy <item> [jumlah]"]
         item_id = args[0]
@@ -555,13 +563,14 @@ class GameSession:
         lines += self._run_events()
         return lines
 
-    def _cmd_sell(self, args: list[str] = []) -> list[str]:
+    def _cmd_sell(self, args: list[str] | None = None) -> list[str]:
         """Jual item milik pemain ke toko di lokasi saat ini (GDD §18.2).
 
         Harga jual = 40% harga beli (sell_price). Item tanpa price tidak
         bisa dijual. Memperbarui inventory dan gold, lalu cascade
         quest+event.
         """
+        args = args or []
         if not args:
             return ["Jual apa? Contoh: sell <item> [jumlah]"]
         item_id = args[0]
@@ -596,12 +605,13 @@ class GameSession:
         lines += self._run_events()
         return lines
 
-    def _cmd_refine(self, args: list[str] = []) -> list[str]:
+    def _cmd_refine(self, args: list[str] | None = None) -> list[str]:
         """Racik pil dari bahan sesuai resep (GDD §18.2).
 
         Delegasi ke sistem alkimia (src/systems/alchemy.py); setelah
         berhasil, cascade quest+event (pola buy/sell).
         """
+        args = args or []
         if not args:
             return ["Racik apa? Contoh: refine <nama_pil>."]
         from src.systems.alchemy import refine_item
@@ -613,7 +623,7 @@ class GameSession:
         lines += self._run_events()
         return lines
 
-    def _cmd_quests(self, _args: list[str] = []) -> list[str]:
+    def _cmd_quests(self, _args: list[str] | None = None) -> list[str]:
         """Tampilkan quest aktif dengan progres per objektif (GDD §12)."""
         quests = load_quests()
         active = [
@@ -644,7 +654,7 @@ class GameSession:
                 lines.append(f"  {quest.title}")
         return lines
 
-    def _cmd_talk(self, args: list[str] = []) -> list[str]:
+    def _cmd_talk(self, args: list[str] | None = None) -> list[str]:
         """Bicara dengan NPC di lokasi saat ini (GDD §18.2, §12.5).
 
         Bila NPC punya file dialog data-driven yang belum selesai,
@@ -652,6 +662,7 @@ class GameSession:
         Tanpa file dialog, fallback ke dialog statis lama (`greeting`
         + array) — kompatibilitas data eksisting (AGENTS §6).
         """
+        args = args or []
         if not args:
             return ["Bicara dengan siapa? Contoh: talk elder_mao"]
         npc_id = args[0]
@@ -694,7 +705,7 @@ class GameSession:
         lines.extend(self._run_events())
         return lines
 
-    def _cmd_memories(self, _args: list[str] = []) -> list[str]:
+    def _cmd_memories(self, _args: list[str] | None = None) -> list[str]:
         """Tampilkan echo memori yang terkumpul (GDD §15.3 grant_memory)."""
         if not self.state.memories:
             return ["Tidak ada memori."]
@@ -712,7 +723,7 @@ class GameSession:
             lines.append(f"    {data['text']}")
         return lines
 
-    def _cmd_party(self, _args: list[str] = []) -> list[str]:
+    def _cmd_party(self, _args: list[str] | None = None) -> list[str]:
         """Tampilkan tim: protagonis + rekan aktif dengan bond (GDD §20)."""
         player = self.state.player
         active = set(self.state.party_active)
@@ -753,12 +764,13 @@ class GameSession:
             lines.append(f"  Cadangan: {names}")
         return lines
 
-    def _cmd_swap(self, args: list[str] = []) -> list[str]:
+    def _cmd_swap(self, args: list[str] | None = None) -> list[str]:
         """Tukar komposisi tim, hanya di lokasi aman (GDD §20.1).
 
         Lokasi aman = peta tanpa musuh (desa/kota). Swap di combat
         diperbolehkan bila roster > 3 (ada cadangan).
         """
+        args = args or []
         if self.in_battle:
             # Di battle: hanya boleh swap bila ada cadangan (roster > 3)
             all_ids = [raw["id"] for raw in self.state.party]
@@ -799,13 +811,14 @@ class GameSession:
         state = "aktif" if companion_id in active else "cadangan"
         return [f"{name} kini {state}."]
 
-    def _cmd_formation(self, args: list[str] = []) -> list[str]:
+    def _cmd_formation(self, args: list[str] | None = None) -> list[str]:
         """Pasang/bongkar formasi, hanya di lokasi aman (GDD §18.2).
 
         Tanpa argumen: bongkar formasi aktif. Dengan argumen: pasang
         formasi (id divalidasi ke data/formations). Lokasi aman sama
         dengan _cmd_swap — peta tanpa musuh (desa/kota).
         """
+        args = args or []
         if self.in_battle:
             return ["Tidak bisa mengatur formasi saat bertarung."]
         location_data = load_maps().get(self.state.location, {})
@@ -838,7 +851,7 @@ class GameSession:
             "Bonus berlaku untuk seluruh tim saat bertarung."
         ]
 
-    def _cmd_ritual(self, _args: list[str] = []) -> list[str]:
+    def _cmd_ritual(self, _args: list[str] | None = None) -> list[str]:
         """Selesaikan ritual persiapan melawan entitas kuno (GDD §21.3).
 
         Cek syarat via check_ritual_ready (artefak kunci + formasi +
@@ -865,13 +878,14 @@ class GameSession:
         lines.extend(self._run_events())
         return lines
 
-    def _cmd_recall(self, args: list[str] = []) -> list[str]:
+    def _cmd_recall(self, args: list[str] | None = None) -> list[str]:
         """Panggil/lepas binatang roh (GDD §18.2) — sama dengan swap."""
+        args = args or []
         if not args:
             return ["Recall siapa? Contoh: recall <id_rekan>"]
         return self._cmd_swap(args)
 
-    def _cmd_settings(self, _args: list[str] = []) -> list[str]:
+    def _cmd_settings(self, _args: list[str] | None = None) -> list[str]:
         return [
             "--- Pengaturan ---",
             "1. Kecepatan Teks: Normal",
@@ -1255,7 +1269,8 @@ class GameSession:
                     hints.append(f"Reputasi {faction} {sign}{delta}")
         return " → ".join(hints)
 
-    def _cmd_go(self, args: list[str] = []) -> list[str]:
+    def _cmd_go(self, args: list[str] | None = None) -> list[str]:
+        args = args or []
         if not args:
             return ["Tujuan? Contoh: go ashfall_forest"]
         location = args[0]
@@ -1276,7 +1291,7 @@ class GameSession:
             )
         return [f"Lokasi belum terbuka: {location}."]
 
-    def _cmd_look(self, _args: list[str] = []) -> list[str]:
+    def _cmd_look(self, _args: list[str] | None = None) -> list[str]:
         """Amati lokasi saat ini: deskripsi dari data/maps (GDD §9).
 
         Musuh per peta didefinisikan di data (enemies + requires_flag);
@@ -1302,7 +1317,7 @@ class GameSession:
             ]
         return [f"{data['name']}: {data['description']}"]
 
-    def _cmd_cultivate(self, _args: list[str] = []) -> list[str]:
+    def _cmd_cultivate(self, _args: list[str] | None = None) -> list[str]:
         player = self.state.player
         player.add_insight(CULTIVATE_INSIGHT)
         self._advance_hours(CULTIVATE_HOURS)
@@ -1315,7 +1330,7 @@ class GameSession:
             + self._run_events()
         )
 
-    def _cmd_rest(self, _args: list[str] = []) -> list[str]:
+    def _cmd_rest(self, _args: list[str] | None = None) -> list[str]:
         player = self.state.player
         self.state.time.day += 1
         self.state.time.hour = REST_HOUR
@@ -1345,7 +1360,7 @@ class GameSession:
             + event_lines
         )
 
-    def _cmd_breakthrough(self, _args: list[str] = []) -> list[str]:
+    def _cmd_breakthrough(self, _args: list[str] | None = None) -> list[str]:
         player = self.state.player
         tiers = load_tiers()
         target = next_tier(player, tiers)
@@ -1408,13 +1423,13 @@ class GameSession:
 
         return evolve_companions(self.state, tier_id)
 
-    def _cmd_save(self, args: list[str] = []) -> list[str]:
+    def _cmd_save(self, args: list[str] | None = None) -> list[str]:
         slot = self._slot_arg(args, default="save1")
         if slot is None:
             return ["Slot simpan harus 1-3. Contoh: save 2"]
         return self.save(slot)
 
-    def _cmd_load(self, args: list[str] = []) -> list[str]:
+    def _cmd_load(self, args: list[str] | None = None) -> list[str]:
         slot = self._slot_arg(args, default="save1")
         if slot is None:
             return ["Slot muat harus 1-3. Contoh: load 2"]
@@ -1422,17 +1437,18 @@ class GameSession:
             return [f"Tidak ada save di {slot}."]
         return self.load(slot)
 
-    def _cmd_quit(self, _args: list[str] = []) -> list[str]:
+    def _cmd_quit(self, _args: list[str] | None = None) -> list[str]:
         self.quit_requested = True
         return ["Sampai jumpa, kultivator."]
 
-    def _cmd_choose(self, args: list[str] = []) -> list[str]:
+    def _cmd_choose(self, args: list[str] | None = None) -> list[str]:
         """Pilih opsi dari prompt_choice event (Sprint 1 - Choice Engine).
 
         Hanya jalan saat TIDAK dalam battle. Menerapkan opsi yang dipilih:
         set_flag, change_reputation, log. Lalu clear pending_choice dan
         jalankan cascade quest+event.
         """
+        args = args or []
         if self.in_battle:
             return ["Kamu sedang bertarung! (attack/defend/observe/escape)"]
         if self.state is None:
@@ -1473,7 +1489,7 @@ class GameSession:
         lines.extend(self._run_events())
         return lines
 
-    def _choose_dialog(self, args: list[str] = []) -> list[str]:
+    def _choose_dialog(self, args: list[str] | None = None) -> list[str]:
         """Pilih nomor pilihan dalam dialog bercabang (GDD §12.5).
 
         Membaca ``state.flags["pending_dialog"]`` (diset `_start_dialog`),
@@ -1481,6 +1497,7 @@ class GameSession:
         berikutnya atau mengakhiri percakapan. `next: null` menandakan
         akhir; saat itulah flag `talked_<dialog_id>` diset (sekali jalan).
         """
+        args = args or []
         pending = self.state.flags.get("pending_dialog")
         if not pending:
             return [
@@ -1586,12 +1603,13 @@ class GameSession:
             lines.extend(build_epilogue(self.state))
         return lines
 
-    def _slot_arg(self, args: list[str], default: str) -> str | None:
+    def _slot_arg(self, args: list[str] | None, default: str) -> str | None:
         """Terjemahkan argumen slot; '2' -> 'save2', slot literal diterima.
 
         Baik angka (2 -> save2) maupun nama slot sah (save2, autosave)
         dipetakan langsung; default dipakai saat argumen kosong.
         """
+        args = args or []
         if not args:
             return default
         raw = args[0]
