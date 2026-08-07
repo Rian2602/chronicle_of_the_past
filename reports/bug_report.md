@@ -548,10 +548,19 @@ migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
   untuk Kabur terbukti berfungsi, tapi pemain tak bisa melihat opsi).
 - **Dampak:** di terminal pendek, pemain tidak tahu aksi apa yang
   tersedia saat battle; hanya bisa menebak urutan.
-- **Status:** DEFERRED (Minor UX, note `ponytail:` di `app.py`) —
-  perbaikan tata letak battle frame di terminal pendek butuh redesign
-  layout; kelas yang sama dengan BUG-16 (log tak terbaca) yang sudah
-  FIXED, jadi kandidat iterasi UI berikutnya.
+- **Status:** FIXED (putaran 4, TDD + verifikasi tmux 80×24) —
+  layout responsif kelas `short-screen`/`narrow-screen`
+  (`_apply_compact_layout` di `app.py`, dipanggil saat mount & resize):
+  area tetap dirampingkan (#actions height 8, #action-row height 3,
+  #content-tabs min-height 2, HUD 3 baris di terminal pendek) sehingga
+  6 aksi battle tampil utuh. Textual 8.2.8 tidak mendukung `@media`,
+  jadi kelas Screen dipasang dari Python.
+- **Test pengunci:** `test_menu_aksi_battle_terlihat_di_terminal_80x24`
+  (region aksi seluruhnya dalam layar + 6 opsi battle),
+  `test_kelas_layout_responsif_mengikuti_ukuran_layar`.
+- **Bukti tmux 80×24:** capture battle-start menampilkan Serang/Teknik/
+  Bertahan/Amati/Item/Kabur utuh di atas footer; Serang & Kabur jalan
+  normal tanpa traceback.
 
 ## BUG-20 · Minor — Header clock (jam) menimpa border panel kanan
 
@@ -562,8 +571,19 @@ migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
   `━╺━━ --` tanpa angka.
 - **Dampak:** kosmetik — teks terpotong/tumpang tindih di ukuran
   kecil, tidak ada kehilangan fungsi.
-- **Status:** DEFERRED (Minor UX, note `ponytail:` di `app.py`) —
-  dicatat untuk iterasi tata letak.
+- **Status:** FIXED (putaran 4, TDD + verifikasi tmux 80×24) — tiga
+  akar masalah dituntaskan: (1) jam header disembunyikan di terminal
+  pendek (`.short-screen HeaderClock { display: none }` — jam dinding
+  redundan dengan waktu game di HUD); (2) HUD tak me-wrap karena
+  sidebar kanan disembunyikan di layar sempit
+  (`.narrow-screen #side-col { display: none }`, kolom tengah melebar
+  ~66 kolom); (3) bar HP/Qi memakai `show_eta=False` sehingga
+  placeholder `--:--:--` hilang.
+- **Test pengunci:** `test_hud_tidak_me_wrap_di_terminal_80x24`,
+  `test_sidebar_kanan_disembunyikan_hanya_di_layar_sempit`,
+  `test_clock_header_disembunyikan_di_terminal_pendek`.
+- **Bukti tmux 80×24:** HUD "Lokasi: ashfall_forest | Hari 1, jam 08"
+  utuh satu baris; header tanpa jam; sidebar kanan tidak tampil.
 
 ## Verifikasi BERSIH Fase C–E (bukan bug)
 

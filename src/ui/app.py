@@ -234,9 +234,15 @@ class GameScreen(Screen):
                 yield Static("", id="hud")
                 with Horizontal(id="hud-bars"):
                     yield Static("HP", id="hp-label")
-                    yield ProgressBar(id="hp-bar", show_percentage=False)
+                    # BUG-20 (FIXED): show_eta=False agar bar tidak
+                    # menampilkan placeholder '--:--:--' di kolom sempit.
+                    yield ProgressBar(
+                        id="hp-bar", show_percentage=False, show_eta=False
+                    )
                     yield Static("Qi", id="qi-label")
-                    yield ProgressBar(id="qi-bar", show_percentage=False)
+                    yield ProgressBar(
+                        id="qi-bar", show_percentage=False, show_eta=False
+                    )
                 yield Static("", id="combat-header")
                 yield Static("", id="enemy")
                 with TabbedContent(id="content-tabs"):
@@ -273,11 +279,30 @@ class GameScreen(Screen):
         yield Footer()
 
     def on_mount(self) -> None:
-        """Isi log awal dan muat ulang seluruh panel."""
+        """Isi log awal, terapkan layout responsif, muat ulang panel."""
         log = self.query_one("#game-log", RichLog)
         for line in self._initial_log:
             log.write(line + "\n")
+        self._apply_compact_layout()
         self._refresh()
+
+    def on_resize(self, _event) -> None:
+        """Resize terminal: terapkan ulang layout responsif."""
+        self._apply_compact_layout()
+
+    def _apply_compact_layout(self) -> None:
+        """Layout responsif untuk terminal kecil (BUG-19/20, FIXED).
+
+        Terminal pendek (tinggi <= 32) merampingkan area tetap sehingga
+        menu aksi battle tidak terpotong footer; terminal sempit (lebar
+        <= 100) menyembunyikan sidebar kanan agar HUD tidak me-wrap.
+        Textual 8.2.8 tidak mendukung @media query, jadi pasang kelas
+        Screen dari Python. Dipanggil saat mount dan setiap resize.
+        """
+        # Batas short 33 (bukan 32): di tinggi 33 layout default terukur
+        # masih memotong action-row 1 baris (dead zone, putaran 4).
+        self.set_class(self.size.height <= 33, "short-screen")
+        self.set_class(self.size.width <= 100, "narrow-screen")
 
     # ------------------------------------------------------------------
     # Navigasi & aksi
@@ -332,10 +357,8 @@ class GameScreen(Screen):
         # navigasi satu ketukan, bukan dua (regresi TUI hunt).
         if options:
             actions.highlighted = 0
-        # ponytail: BUG-19/20 (UX 80x24) — menu aksi battle terpotong tak
-        # terlihat dan header clock menimpa border di terminal pendek;
-        # upgrade saat tata letak battle frame didesain ulang untuk
-        # ukuran kecil (dicatat putaran 3 bug hunt, DEFERRED).
+        # BUG-19/20 (FIXED): visibilitas menu aksi & HUD di 80x24
+        # ditangani kelas responsif _apply_compact_layout.
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Sidebar kiri & tombol aksi lokasi -> command terkait."""
@@ -445,7 +468,14 @@ class GameScreen(Screen):
     def _refresh_hud(self) -> None:
         """HUD: nama/lokasi/insight (status_lines) + bar HP/Qi."""
         session = self.app.session
-        self.query_one("#hud", Static).update("\n".join(session.status_lines()))
+        lines = session.status_lines()
+        # BUG-20 (FIXED): di terminal pendek & sempit HUD dipangkas satu
+        # baris (Insight/Gold/Meridian — tetap bisa dilihat via aksi
+        # Status) agar seluruh panel battle muat di 80x24; layar lebar
+        # (mis. 120x30) tetap 4 baris karena ada ruang.
+        if self.has_class("short-screen") and self.has_class("narrow-screen"):
+            lines = lines[:3]
+        self.query_one("#hud", Static).update("\n".join(lines))
         player = session.state.player
         hp = session._ally.hp if session._ally is not None else player.hp
         qi = session._ally.qi if session._ally is not None else player.qi
@@ -634,9 +664,10 @@ class ChronicleApp(App):
     }
 
     /* Konten tab. BUG-16: min-height menjaga log terbaca di terminal
-       pendek (terbukti tmux 120x30 s/d 15 baris); trade-off: di bawah
-       15 baris menu aksi yang terpotong, bukan log. ponytail: tata
-       letak responsif penuh (scrollbar/prioritas) menyusul Fase polish. */
+       pendek (terbukti tmux 120x30); trade-off lama: di bawah 15 baris
+       menu aksi yang terpotong, bukan log — kini tertangani kelas
+       responsif .short-screen (BUG-19/20, FIXED) yang merampingkan
+       area tetap agar menu aksi battle tetap terlihat di 80x24. */
     #content-tabs { height: 1fr; min-height: 8; }
     #game-log { height: 1fr; min-height: 5; background: #0F0F0F; }
     #memory-log { height: 1fr; min-height: 5; background: #0F0F0F; }
@@ -668,6 +699,22 @@ class ChronicleApp(App):
         color: #D4AF37;
         border: solid #D4AF37;
     }
+
+    /* Layout responsif terminal kecil (BUG-19/20 FIXED). Terminal pendek
+       (tinggi <= 33) merampingkan area tetap sehingga 6 aksi battle
+       muat utuh (height 8 = 6 opsi + border tall); terminal sempit
+       (lebar <= 100) menyembunyikan sidebar kanan agar kolom tengah
+       cukup lebar sehingga HUD tidak me-wrap, sekaligus menyembunyikan
+       jam header (redundan dengan waktu game di HUD 'Hari X, jam HH').
+       Dipasang via kelas Screen dari _apply_compact_layout (Textual
+       8.2.8 tidak mendukung @media query). */
+    .short-screen #content-tabs { min-height: 2; }
+    .short-screen #game-log, .short-screen #memory-log { min-height: 1; }
+    .short-screen #map-panel { min-height: 1; }
+    .short-screen #actions, .short-screen #dlg-choices { height: 8; }
+    .short-screen #action-row { height: 3; }
+    .narrow-screen #side-col { display: none; }
+    .narrow-screen HeaderClock { display: none; }
     Footer { background: #121212; color: #9e9e9e; }
     """
 
