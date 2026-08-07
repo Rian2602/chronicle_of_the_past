@@ -65,9 +65,9 @@ def test_artifact_bonus_applied_to_stats(tmp_path):
 def test_artifact_loads_growth_and_max_level():
     """Memastikan load_items memuat growth_stat dan max_level dari JSON."""
     items = load_items()
-    if "cermin_bayangan" in items:
-        assert "growth_stat" in items["cermin_bayangan"]
-        assert "max_level" in items["cermin_bayangan"]
+    assert "cermin_bayangan" in items
+    assert "growth_stat" in items["cermin_bayangan"]
+    assert "max_level" in items["cermin_bayangan"]
 
 
 def test_add_artifact_xp_respects_max_level():
