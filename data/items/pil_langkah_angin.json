@@ -6,5 +6,9 @@
   "price": 150,
   "effect": {
     "status_inflict": "haste"
-  }
+  },
+  "recipe": [
+    {"item": "esensi_air", "qty": 3},
+    {"item": "esensi_kayu", "qty": 1}
+  ]
 }

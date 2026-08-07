@@ -160,3 +160,34 @@ def test_item_baru_arc2_ada():
     assert items["pil_langkah_angin"]["type"] == "consumable"
     assert items["jubah_bayangan"]["type"] == "artifact"
     assert items["gelang_qi"]["type"] == "artifact"
+
+
+def test_resep_item_baru_arc2_ada():
+    """3 resep pil baru Arc 2 (3 resep) wajib ada di data (GDD §22)."""
+    data_dir = Path(__file__).resolve().parents[1] / "data" / "items"
+    items = load_items(data_dir)
+    expected_ids = {
+        "resep_pil_racun",
+        "resep_pil_baja",
+        "resep_pil_angin",
+    }
+    assert expected_ids <= set(items), (
+        f"kurang resep: {expected_ids - set(items)}"
+    )
+
+    # Verifikasi tipe & efek learn_recipe
+    assert items["resep_pil_racun"]["type"] == "recipe"
+    assert items["resep_pil_baja"]["type"] == "recipe"
+    assert items["resep_pil_angin"]["type"] == "recipe"
+    assert (
+        items["resep_pil_racun"].get("effect", {}).get("learn_recipe")
+        == "pil_racun_meridian"
+    )
+    assert (
+        items["resep_pil_baja"].get("effect", {}).get("learn_recipe")
+        == "pil_baja_tubuh"
+    )
+    assert (
+        items["resep_pil_angin"].get("effect", {}).get("learn_recipe")
+        == "pil_langkah_angin"
+    )

@@ -1,0 +1,14 @@
+{
+  "id": "resep_pil_angin",
+  "name": "Resep Pil Langkah Angin",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Langkah Angin.",
+  "price": 250,
+  "effect": {
+    "learn_recipe": "pil_langkah_angin"
+  },
+  "recipe": [
+    {"item": "esensi_air", "qty": 3},
+    {"item": "esensi_kayu", "qty": 1}
+  ]
+}
