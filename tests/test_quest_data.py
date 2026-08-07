@@ -179,3 +179,12 @@ def test_quest_arc3_bukan_placeholder():
             data["description"]
             != f"Deskripsi untuk {quest_id}. Bernada grimdark."
         ), quest_id
+
+
+def test_fquest_arc3_bukan_placeholder():
+    """Faksi quest Arc 3 judul asli, bukan 'Quest fquest_30X Title'."""
+    for quest_id in ["fquest_301", "fquest_302", "fquest_303"]:
+        data = json.loads(
+            (DATA_DIR / f"{quest_id}.json").read_text(encoding="utf-8")
+        )
+        assert data["title"] != f"Quest {quest_id} Title", quest_id

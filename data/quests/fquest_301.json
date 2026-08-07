@@ -1,26 +1,14 @@
 {
   "id": "fquest_301",
-  "title": "Quest fquest_301 Title",
+  "title": "Ritual yang Dilarang",
   "type": "faction",
   "category": "faction",
-  "description": "Deskripsi untuk fquest_301. Bernada grimdark.",
-  "requires_flag": "quest208_done",
+  "description": "Diakon Soren mendengar bisikan tentang ritual gelap di lorong bawah Katedral. Kultisi Merah — sekte kecil yang menyembah entitas di balik langit — bersiap mengorbankan sesuatu yang besar. Hentikan mereka.",
+  "requires_flag": "quest303_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "enemy", "target": "kultisi_merah", "count": 2}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {
-      "holy_order": 5
-    }
-  },
-  "flags_on_complete": [
-    "fquest_301_done"
-  ],
+  "rewards": {"insight": 100, "gold": 200, "reputation": {"holy_order": 8}},
+  "flags_on_complete": ["fquest_301_done"],
   "next": null
 }

@@ -1,26 +1,15 @@
 {
   "id": "fquest_303",
-  "title": "Quest fquest_303 Title",
+  "title": "Jejak Orde Kuno",
   "type": "faction",
   "category": "faction",
-  "description": "Deskripsi untuk fquest_303. Bernada grimdark.",
-  "requires_flag": "quest208_done",
+  "description": "Warden Kai memintamu menyusuri Gua Abyss — tempat persembunyian lama Orde Rahasia Kuno. 'Ada jejak yang harus dipastikan mati,' katanya. 'Entitas tidak bangkit sendirian. Sesuatu membukakan pintunya.'",
+  "requires_flag": "quest307_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "map", "target": "gua_abyss"},
+    {"kind": "enemy", "target": "penjaga_abyss"}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {
-      "holy_order": 5
-    }
-  },
-  "flags_on_complete": [
-    "fquest_303_done"
-  ],
+  "rewards": {"insight": 140, "gold": 300, "reputation": {"ancient_order": 8}},
+  "flags_on_complete": ["fquest_303_done"],
   "next": null
 }

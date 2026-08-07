@@ -1,15 +1,13 @@
 {
   "id": "fquest_302_intro",
   "trigger": [
-    {
-      "kind": "quest_done",
-      "quest": "quest208"
-    }
+    {"kind": "quest_done", "quest": "quest306"}
   ],
   "actions": [
+    {"kind": "start_quest", "id": "fquest_302"},
     {
-      "kind": "start_quest",
-      "id": "fquest_302"
+      "kind": "log",
+      "text": "Kestrel menyeringai di kegelapan kedai gilda. 'Dua pembelot membawa rahasia kontrakku ke pasar gelap. Bereskan mereka, dan gilda tidak akan melupakan jasa ini — begitu juga dompetmu.'"
     }
   ],
   "once": true

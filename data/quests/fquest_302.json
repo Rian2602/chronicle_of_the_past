@@ -1,26 +1,14 @@
 {
   "id": "fquest_302",
-  "title": "Quest fquest_302 Title",
+  "title": "Bekas Luka Gilda",
   "type": "faction",
   "category": "faction",
-  "description": "Deskripsi untuk fquest_302. Bernada grimdark.",
-  "requires_flag": "quest208_done",
+  "description": "Kestrel menawarkan emas — banyak emas — untuk 'membersihkan' dua pembunuh gilda yang membelot membawa rahasia kontrak. 'Mereka bukan lagi milik gilda,' katanya. 'Mereka milik siapa pun yang membayar.'",
+  "requires_flag": "quest306_done",
   "objectives": [
-    {
-      "kind": "enemy",
-      "target": "kultis_bayangan",
-      "count": 1
-    }
+    {"kind": "kill_count", "target": "pembunuh_gilda", "count": 2}
   ],
-  "rewards": {
-    "insight": 10,
-    "gold": 50,
-    "reputation": {
-      "holy_order": 5
-    }
-  },
-  "flags_on_complete": [
-    "fquest_302_done"
-  ],
+  "rewards": {"insight": 120, "gold": 500, "reputation": {"guilds": 8}},
+  "flags_on_complete": ["fquest_302_done"],
   "next": null
 }

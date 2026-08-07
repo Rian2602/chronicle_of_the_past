@@ -1,15 +1,13 @@
 {
   "id": "fquest_301_intro",
   "trigger": [
-    {
-      "kind": "quest_done",
-      "quest": "quest208"
-    }
+    {"kind": "quest_done", "quest": "quest303"}
   ],
   "actions": [
+    {"kind": "start_quest", "id": "fquest_301"},
     {
-      "kind": "start_quest",
-      "id": "fquest_301"
+      "kind": "log",
+      "text": "Diakon Soren menemuimu di lorong katedral, wajahnya gelisah. 'Kultisi Merah menyusup ke ruang bawah. Mereka mempersiapkan ritual — dan ritual ini, kau tidak ingin tahu korban apa yang mereka butuhkan.'"
     }
   ],
   "once": true
