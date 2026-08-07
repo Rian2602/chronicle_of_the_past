@@ -1,28 +1,29 @@
 {
   "id": "pembunuh_gilda",
-  "name": "Pembunuh Gilda",
-  "tier": "foundation_establishment",
+  "name": "Pembunuh Bayaran Gilda",
+  "tier": "golden_core",
   "element": "metal",
-  "behavior": "cunning",
+  "behavior": "aggressive",
   "stats": {
-    "attack": 18,
-    "defense": 6,
+    "attack": 32,
+    "defense": 18,
     "agility": 25,
-    "intelligence": 10,
-    "vitality": 8,
-    "spirit": 8,
-    "hp": 120,
-    "qi": 50
+    "intelligence": 12,
+    "vitality": 15,
+    "spirit": 10,
+    "hp": 220,
+    "qi": 45
   },
   "skills": [
     "qi_slash"
   ],
   "tags": [
-    "assassin",
-    "human"
+    "human",
+    "assassin"
   ],
+  "requires_flag": "map_guild_city_unlocked",
   "rewards": {
-    "insight": 25,
-    "gold": 15
+    "insight": 50,
+    "gold": 35
   }
 }

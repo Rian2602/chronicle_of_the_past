@@ -18,6 +18,7 @@ REQUIRED_KEYS = {
     "tags",
     "rewards",
 }
+OPTIONAL_KEYS = {"requires_flag"}
 REWARD_KEYS = {"insight", "gold"}
 STAT_KEYS = {
     "attack",
@@ -64,7 +65,9 @@ def test_semua_musuh_memenuhi_skema():
     tier_ids = {tier.id for tier in load_tiers()}
     for path in DATA_DIR.glob("*.json"):
         data = json.loads(path.read_text(encoding="utf-8"))
-        assert set(data) == REQUIRED_KEYS, f"{path.name}: kunci tidak sesuai"
+        assert REQUIRED_KEYS <= set(data) <= (REQUIRED_KEYS | OPTIONAL_KEYS), (
+            f"{path.name}: kunci tidak sesuai"
+        )
         assert isinstance(data["id"], str) and data["id"] == path.stem
         assert isinstance(data["name"], str) and data["name"]
         assert data["tier"] in tier_ids

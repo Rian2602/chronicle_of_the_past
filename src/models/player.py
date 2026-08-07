@@ -83,6 +83,7 @@ class Player:
         """Hitung stat dengan bonus dari artefak yang di-equip."""
         stats = self.effective_stats.copy()
         from src.engine.items import load_items
+
         catalog = load_items()
 
         for item_id, _ in state.inventory["equipped"].items():
@@ -98,7 +99,6 @@ class Player:
                 bonus = artifact_state["level"] * 2
                 stats[growth] = stats.get(growth, 0) + bonus
         return stats
-
 
     def add_insight(self, amount: int) -> None:
         """Tambahkan pemahaman (XP kultivasi, §4.3)."""

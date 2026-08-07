@@ -231,7 +231,9 @@ async def test_pilih_option_serang_melakukan_battle_step(tmp_path):
         await pilot.pause(0.5)
         log = app.screen.query_one("#game-log", RichLog).lines
         joined = "\n".join(str(line) for line in log)
-        assert "damage" in joined or "meleset" in joined or "menghindar" in joined
+        assert (
+            "damage" in joined or "meleset" in joined or "menghindar" in joined
+        )
 
 
 @pytest.mark.asyncio

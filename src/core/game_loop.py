@@ -290,6 +290,7 @@ class GameSession:
             return [f"Tidak ada {item_id} di tas."]
 
         from src.engine.items import load_items
+
         catalog = load_items()
         item_def = catalog.get(item_id)
         if not item_def or item_def.get("type") != "artifact":
@@ -323,6 +324,7 @@ class GameSession:
         inventory[item_id] = inventory.get(item_id, 0) + count
 
         from src.engine.items import load_items
+
         catalog = load_items()
         item_def = catalog.get(item_id)
         name = item_def["name"] if item_def else item_id
@@ -1594,6 +1596,7 @@ class GameSession:
             insight_gained = rewards.get("insight", 0)
             if insight_gained > 0:
                 from src.engine.items import add_artifact_xp
+
                 for item_id in list(self.state.inventory["equipped"].keys()):
                     if item_id in self.state.inventory["artifacts"]:
                         if add_artifact_xp(self.state, item_id, insight_gained):

@@ -1,4 +1,5 @@
 """Testing early content for Arc 2."""
+
 import tempfile
 from pathlib import Path
 
@@ -13,10 +14,12 @@ def _session():
     session.new_game("Dien")
     return session
 
+
 def _dispatch(session: GameSession, raw: str):
     parts = raw.split()
     cmd = Command(name=parts[0], args=tuple(parts[1:]), raw=raw)
     return session.dispatch(cmd)
+
 
 def test_sect_azure_map():
     """Test entering the sect azure map."""
@@ -29,6 +32,7 @@ def test_sect_azure_map():
     out = _dispatch(session, "look")
     log_text = "\n".join(out)
     assert "Sekte Awan Biru" in log_text
+
 
 def test_fang_yue_intro():
     """Test the introduction of Fang Yue and branching dialog."""
@@ -43,6 +47,7 @@ def test_fang_yue_intro():
 
     assert "quest201" in session.state.quests.done
     assert "quest202" in session.state.quests.started
+
 
 def test_alchemist_xiu_quest():
     """Test the alchemist Xiu quest."""
