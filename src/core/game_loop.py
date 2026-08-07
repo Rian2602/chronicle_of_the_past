@@ -110,10 +110,7 @@ AVAILABLE = {
     "equip",
     "unequip",
     "formation",
-    "meditate",
     "ritual",
-    "examine",
-    "loot",
     "recall",
     "settings",
 }
@@ -855,14 +852,13 @@ class GameSession:
 
         if self.in_battle:
             return ["Tidak bisa menggelar ritual saat bertarung."]
-        if self.state.ritual_ready:
+        if self.state.flags.get("ritual_ready"):
             return ["Ritual sudah selesai. Suara menunggumu."]
         ok, reasons = check_ritual_ready(self.state)
         if not ok:
             return ["Ritual belum bisa digelar:"] + [
                 f"  - {reason}" for reason in reasons
             ]
-        self.state.ritual_ready = True
         self.state.flags["ritual_ready"] = True
         lines = [
             "Artefak menyala, formasi terkunci, tim berdiri tegak. ",
@@ -871,17 +867,6 @@ class GameSession:
         lines.extend(self._run_quests())
         lines.extend(self._run_events())
         return lines
-
-    def _cmd_meditate(self, command: Command) -> list[str]:
-        # Pulihkan qi (versi sederhana dari rest)
-        self.state.player.qi = self.state.player.qi_max
-        return ["Kamu bermeditasi. Qi pulih sepenuhnya."]
-
-    def _cmd_examine(self, command: Command) -> list[str]:
-        return ["Tidak ada objek spesifik untuk diperiksa di sini saat ini."]
-
-    def _cmd_loot(self, command: Command) -> list[str]:
-        return ["Tidak ada jarahan di area ini."]
 
     def _cmd_recall(self, command: Command) -> list[str]:
         """Panggil/lepas binatang roh (GDD §18.2) — sama dengan swap."""

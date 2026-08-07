@@ -115,7 +115,7 @@ class GameState:
         default_factory=lambda: {"defy": 0, "seal": 0, "reconcile": 0}
     )
     # Ritual persiapan melawan entitas kuno selesai (GDD §21.3).
-    ritual_ready: bool = False
+    # ritual_ready kini hanya flag — field dihapus P0.1 (2026-08-07).
 
     def __post_init__(self) -> None:
         """Normalisasi reputasi 5 faksi (§8), ending_points, dan hp/qi konkret.
@@ -177,7 +177,7 @@ class GameState:
             "buffs": dict(self.buffs),
             "formation_active": self.formation_active,
             "ending_points": dict(self.ending_points),
-            "ritual_ready": bool(self.ritual_ready),
+            # ritual_ready hanya di flags (P0.1) — serialisasi lewat self.flags.
         }
 
     @classmethod
@@ -217,6 +217,10 @@ class GameState:
             ):
                 raise ValueError("shop_sold: stok terjual harus item -> int")
             normalized_sold[shop_id] = dict(sold)
+        # Backfill P0.1: save lama punya field ritual_ready (bool) → pindah ke flag.
+        flags = dict(data.get("flags", {}))
+        if data.get("ritual_ready"):
+            flags["ritual_ready"] = True
         return cls(
             player=player,
             party=[dict(member) for member in data.get("party", [])],
@@ -228,7 +232,7 @@ class GameState:
                 )
             ),
             quests=QuestProgress.from_dict(data.get("quests", {})),
-            flags=dict(data.get("flags", {})),
+            flags=flags,
             kills=dict(data.get("kills", {})),
             reputation=reputation,
             memories=list(data.get("memories", [])),
@@ -240,5 +244,4 @@ class GameState:
             buffs=dict(data.get("buffs", {})),
             formation_active=data.get("formation_active"),
             ending_points=dict(ending_points),
-            ritual_ready=bool(data.get("ritual_ready", False)),
         )
