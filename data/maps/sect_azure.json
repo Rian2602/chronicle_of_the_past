@@ -3,5 +3,7 @@
   "name": "Sekte Awan Biru",
   "description": "Puncak gunung tertutup awan, bangunan jade putih berjejer di tepi jurang. Angin berdengar seperti nyanyian pedang.",
   "tier": 2,
-  "enemies": []
+  "enemies": [
+    {"enemy": "golem_latihan"}
+  ]
 }
