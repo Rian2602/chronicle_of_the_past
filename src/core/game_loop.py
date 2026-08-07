@@ -24,6 +24,7 @@ from src.core.save import (
 )
 from src.core.state import GameState
 from src.engine.combat import (
+    DOT_STATUSES,
     Battle,
     apply_status,
     load_enemies,
@@ -370,18 +371,28 @@ class GameSession:
                 f"{item['name']} adalah bahan — tidak bisa dipakai "
                 "langsung. Racik dulu dengan refine."
             ]
+        if item.get("type") == "artifact":
+            # BUG-28: artefak adalah perlengkapan, bukan konsumabel —
+            # memakainya mengkonsumsi artefak permanen.
+            return [
+                f"{item['name']} adalah artefak — pasang dengan equip "
+                "untuk mendapat bonusnya."
+            ]
         learned = (item.get("effect") or {}).get("learn_recipe")
         if learned and self.state.flags.get(f"recipe_{learned}_known"):
             return [f"Kamu sudah mempelajari resep {item['name']}."]
         hatch = (item.get("effect") or {}).get("hatch_companion")
         if hatch and any(raw["id"] == hatch for raw in self.state.party):
             return ["Binatang roh ini sudah di timmu."]
-        if set((item.get("effect") or {}).keys()) == {"cure_poison"}:
-            # BUG-26: cure_poison hanya bermakna di battle (status racun
-            # tidak menetap di luar); tolak agar pil tidak terbuang.
+        # BUG-26/27: efek battle-only (cure_poison / status_inflict)
+        # tidak menetap di luar battle — tolak tanpa konsumsi agar pil
+        # tidak terbuang.
+        battle_only = {"cure_poison", "status_inflict"}
+        effect_keys = set((item.get("effect") or {}).keys())
+        if effect_keys and effect_keys <= battle_only:
             return [
                 f"{item['name']} hanya berguna di pertarungan — "
-                "tidak ada racun yang menetap di luar battle."
+                "efeknya tidak menetap di luar battle."
             ]
         items[item_id] -= 1
         if items[item_id] == 0:
@@ -426,6 +437,10 @@ class GameSession:
             for key, value in effect.items():
                 if key.startswith("buff_"):
                     stat = key[len("buff_") :]
+                    if stat == "hp":
+                        # BUG-28: buff_hp -> kapasitas HP (field hp_max),
+                        # bukan stat combat.
+                        stat = "hp_max"
                     self.state.buffs[stat] = (
                         self.state.buffs.get(stat, 0) + value
                     )
@@ -1090,6 +1105,9 @@ class GameSession:
                         "desc": items.get(item_id, {}).get("name", item_id),
                     }
                     for item_id in owned
+                    # BUG-28: artefak tidak bisa dipakai di battle —
+                    # jangan tampilkan di menu item.
+                    if items.get(item_id, {}).get("type") != "artifact"
                 ],
             },
         ]
@@ -1778,9 +1796,24 @@ class GameSession:
                     # Aksi pakai item di battle (GDD §18.2): use <item_id>
                     elif action.startswith("use:"):
                         item_id = action.split(":", 1)[1]
+                        before = self.state.inventory.get("items", {}).get(
+                            item_id, 0
+                        )
                         result = self._battle_use_item(item_id)
                         if result:
                             battle.log.extend(result)
+                        # BUG-31: item yang BERHASIL dipakai memakai
+                        # giliran (GDD §18.3 — item tidak gratis seperti
+                        # observe); yang ditolak (artefak/bahan/tak
+                        # dikenal) tidak — konsisten dengan aksi invalid
+                        # di battle.step yang tidak memajukan giliran.
+                        if (
+                            self.state.inventory.get("items", {}).get(
+                                item_id, 0
+                            )
+                            < before
+                        ):
+                            battle.pass_turn()
                         self._resolve_enemy_turns()
                         if battle.over:
                             self._finish_battle()
@@ -1822,6 +1855,12 @@ class GameSession:
                 f"{item['name']} adalah bahan — tidak bisa dipakai "
                 "langsung. Racik dulu dengan refine."
             ]
+        if item.get("type") == "artifact":
+            # BUG-28: artefak tidak boleh dikonsumsi di battle.
+            return [
+                f"{item['name']} adalah artefak — pasang dengan equip "
+                "untuk mendapat bonusnya."
+            ]
         # Hanya izinkan efek yang relevan dalam battle
         effect = item.get("effect")
         if not effect:
@@ -1839,6 +1878,7 @@ class GameSession:
             "resist_poison",
             "resist_dark",
             "cure_poison",
+            "status_inflict",
         }
         has_allowed = any(k in allowed_effects for k in effect)
         if not has_allowed:
@@ -1873,13 +1913,39 @@ class GameSession:
                     lines.append(f"Racun {caster.name} dinetralkan.")
                 else:
                     lines.append(f"{caster.name} tidak sedang keracunan.")
+            if effect.get("status_inflict"):
+                # BUG-27: pil status kini benar-benar berlaku — buff
+                # (strengthen/haste) ke unit aktif; dot (poison) dilempar
+                # ke musuh pertama yang hidup.
+                status_id = effect["status_inflict"]
+                if status_id in DOT_STATUSES:
+                    target = next(
+                        (e for e in self.battle.enemies if e.is_alive), None
+                    )
+                    if target is not None:
+                        apply_status(target, status_id)
+                        lines.append(
+                            f"Musuh {target.name} terkena efek {status_id}."
+                        )
+                else:
+                    apply_status(caster, status_id)
+                    lines.append(f"{caster.name} mendapat efek {status_id}.")
             # Combat-ready buffs: catat ke state.buffs, diterapkan ke
             # combatant di _start_battle (sudah dijalankan). Di sini kita
             # tambahkan ke buffs caster langsung untuk battle ini.
             for key, value in effect.items():
                 if key.startswith("buff_"):
                     stat = key[len("buff_") :]
-                    caster.stats[stat] = caster.stats.get(stat, 0) + value
+                    if stat == "hp":
+                        # BUG-28: kapasitas HP/Qi adalah field Combatant,
+                        # bukan stat — menulis ke stats tidak berefek.
+                        caster.hp_max += value
+                        lines.append(f"Kapasitas HP {caster.name} +{value}.")
+                    elif stat == "qi_max":
+                        caster.qi_max += value
+                        lines.append(f"Kapasitas Qi {caster.name} +{value}.")
+                    else:
+                        caster.stats[stat] = caster.stats.get(stat, 0) + value
                     lines.append(f"{caster.name} {stat} naik {value}.")
                 elif key.startswith("resist_"):
                     caster.stats[key] = caster.stats.get(key, 0) + value

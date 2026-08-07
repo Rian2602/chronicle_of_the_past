@@ -799,3 +799,158 @@ bertambah 554 → 563 passed).
   sengaja tidak ikut commit; refactor `_missed_result`/`_dodged_result`
   di `combat.py` (eksternal) ikut commit karena tercampur satu file
   dengan fix BUG-21.
+
+---
+
+# PUTARAN 5 — ANALISIS MEKANIK (combat / kultivasi / item / ekonomi /
+# formasi / companion / artefak) — 24 Jul 2026
+
+Analisis fokus lapisan mekanik: 20 modul (engine + systems + models) +
+scan data (teknik, musuh, companion, item, formasi) + reproduksi
+empiris. Temuan berupa kontrak data↔kode dan gap formula GDD. Tidak ada
+file kode yang diubah — laporan saja.
+
+## BUG-27 · Item — efek `status_inflict` (3 pil) adalah dead feature
+
+- **Area:** `data/items/pil_baja_tubuh|pil_langkah_angin|pil_racun_meridian`
+  vs `_cmd_use` / `_battle_use_item`
+- **Fakta:** efek `{"status_inflict": "strengthen|haste|poison"}`
+  direncanakan di plan Arc 2 (`docs/superpowers/plans/2026-08-07-
+  arc2-content-gap.md`), tapi TIDAK ditangani handler mana pun:
+  - **Dunia** (repro): `use pil_baja_tubuh` → pesan "Kamu memakai Pil
+    Baja Tubuh.", item HILANG (tersisa 0), `state.buffs` kosong —
+    dikonsumsi tanpa efek apa pun (100–150 gold hangus).
+  - **Battle**: `status_inflict` tak ada di allowed_effects → ditolak
+    "tidak bisa dipakai dalam pertarungan" (tidak terkonsumsi, tapi
+    juga tidak berguna).
+- **Status:** OPEN (terapkan ke caster di battle untuk strengthen/haste;
+  poison bisa ke target; atau sambungkan ke state.buffs di dunia).
+
+## BUG-28 · Item/Artefak — artefak bisa dikonsumsi via `use` + buff_qi_max no-op di battle
+
+- **Area:** `_cmd_use` + `_battle_use_item` (game_loop)
+- **Fakta (a):** keduanya TIDAK memblokir `type=artifact` — artefak yang
+  belum di-equip (ada di `inventory[items]`) bisa "dipakai" dan
+  **raib permanen**. Repro: `use gelang_qi` (harga 500, growth) →
+  tersisa 0. Seharusnya diarahkan ke `equip`, bukan dikonsumsi.
+- **Fakta (b):** `_battle_use_item` menerapkan buff_* ke
+  `caster.stats[stat] += value`. Untuk `buff_qi_max`/`buff_hp` →
+  `stats["qi_max"]/["hp"]` yang BUKAN key combat (hp_max/qi_max adalah
+  field Combatant) → **no-op diam-diam** (repro: qi_max 10→10,
+  stats["qi_max"]=20 terbuang). Kontrak di dunia (state.buffs →
+  `_start_battle` menambah field `qi_max`) sudah benar — hanya jalur
+  battle yang salah.
+- **Status:** OPEN.
+
+## BUG-29 · Combat — formula teknik mengabaikan `resist_lawan` (gap GDD §6.4)
+
+- **Area:** `Battle.technique()` → `technique_damage(..., resist=0, ...)`
+- **Fakta:** GDD §6.4: `damage teknik = max(1, power + stat×0.5 −
+  resist_lawan) × mult × rand`. Implementasi memanggil dengan `resist=0`
+  selalu; data teknik tak punya field resist; `physical_damage` memakai
+  defense target, teknik tidak. Semua teknik menembus defense 100%.
+  Perlu keputusan desain: resist_lawan = defense target atau field data.
+- **Status:** OPEN (balance, bukan crash).
+
+## BUG-30 · Combat — `_first_target` IndexError dengan RNG 1.0 (latent)
+
+- **Area:** `Battle._first_target` — `int(rng.random() * len(opponents))`
+- **Fakta:** bila `rng.random()` mengembalikan 1.0 → `int(1.0*len) = len`
+  → IndexError. `random.random()` produksi mengembalikan [0,1) sehingga
+  aman di runtime; berisiko hanya untuk RNG custom/test (_FixedRng(1.0)).
+  Guard `min(len-1, ...)` membuat fungsi kebal.
+- **Status:** OPEN (latent/minor).
+
+## Yang terverifikasi AMAN (bukan bug)
+
+- Poison 4% max HP = **by design** (GDD §16: "Damage per giliran 4% max
+  HP"); power poison memang diabaikan.
+- `state.py` backfill hp/qi jadi int (baris 132–137) — heal aman dari
+  None + int TypeError.
+- Scan data bersih: status teknik ⊆ STATUS_IDS; skill musuh valid;
+  companion & enemy punya stats hp/qi; evolution companion
+  (serigala_bayangan → _evolved) valid, tak ada duplikasi id.
+- `_start_battle` buff state.buffs (hp_max/qi_max field + stat) benar di
+  dunia; `_grant_bond_xp` memakai `_ally_map` sebelum reset (urutan
+  benar); Kuali Roh tidak terkonsumsi saat refine = tool by design;
+  breakthrough (rate/pill_bonus/restore_tier) konsisten GDD §4.1.
+
+---
+
+# PUTARAN 5 — STATUS PERBAIKAN (TDD RED→GREEN, commit terpisah)
+
+Semua bug diperbaiki dengan test RED→GREEN; 8 test baru + 5 ekspektasi
+diperbarui (perubahan desain yang disetujui user). Suite penuh
+564 → 572 passed.
+
+## BUG-27 · Item status_inflict — FIXED
+
+- **Fix:** `_battle_use_item` menerima `status_inflict` — status dot
+  (poison/burn/bleed) dilempar ke musuh pertama yang hidup; status buff
+  (strengthen/haste) diterapkan ke unit aktif (apply_status, durasi
+  default GDD §16). `_cmd_use` (dunia) MENOLAK pil ber-efek
+  status_inflict tanpa konsumsi (status tak menetap di luar battle,
+  pola BUG-26).
+- **Test:** `test_pil_status_inflict_ditolak_di_dunia`,
+  `test_pil_status_inflict_buff_di_battle` (strengthen),
+  `test_pil_status_dot_ke_musuh_di_battle` (poison ke musuh).
+
+## BUG-28 · Artifact dikonsumsi via use + buff_qi_max no-op — FIXED
+
+- **Fix (a):** `_cmd_use` & `_battle_use_item` memblokir `type=artifact`
+  → "pasang dengan equip" (artefak tidak lagi raib permanen).
+- **Fix (b):** `_battle_use_item` buff_hp → `caster.hp_max`, buff_qi_max
+  → `caster.qi_max` (field Combatant, bukan stats); `_cmd_use`
+  normalisasi buff_hp → `hp_max` agar `_start_battle` menerapkannya ke
+  field.
+- **Test:** `test_artefak_tidak_bisa_dipakai_langsung`,
+  `test_artefak_tidak_bisa_dipakai_di_battle`,
+  `test_battle_buff_qi_max_menambah_kapasitas` (qi_max 10→30).
+
+## BUG-29 · Formula teknik mengabaikan resist_lawan — FIXED (keputusan user)
+
+- **Fix:** `Battle.technique()` kini memakai `target_stats["defense"]`
+  sebagai resist_lawan (GDD §6.4: `power + stat×0.5 − resist_lawan`),
+  sesuai pilihan user "defense target penuh". Teknik kini dikurangi
+  defense lawan.
+- **Test:** `test_teknik_dikurangi_defense_target` (baru) + 5 ekspektasi
+  test battle lama diperbarui (flame 13→9, frost 14→8, defend 5→3,
+  musuh 11→7, hp 75→77) — perubahan desain, bukan melemahkan test.
+
+## BUG-30 · `_first_target` IndexError RNG 1.0 — FIXED
+
+- **Fix:** index dibatasi `min(len-1, int(rng.random()*len))` — fungsi
+  kebal walau RNG custom mengembalikan 1.0.
+- **Test:** `test_target_acak_aman_dengan_rng_batas` (2 musuh, rng 1.0).
+
+## BUG-31 · Combat — item use tidak menghabiskan giliran — FIXED
+
+- **Temuan:** dari review independen — branch `use:` di `battle_step`
+  melewati `battle.step()`, jadi pakai item TIDAK memajukan giliran
+  (GDD §18.3: hanya `observe` yang gratis; `item` tidak berlabel
+  gratis). Eksploit nyata sejak BUG-27 mengaktifkan pil battle
+  (strengthen/haste/poison bisa di-stack tanpa menghabiskan giliran).
+- **Fix:** `Battle.pass_turn()` (public wrapper `_advance`) — dipanggil
+  hanya bila item BENAR-BENAR terkonsumsi (yang ditolak — artefak/
+  bahan/tak dikenal — tidak memakai giliran, konsisten dgn aksi
+  invalid di battle.step).
+- **Test:** `test_pass_turn_memindah_giliran` (combat) +
+  `test_item_di_battle_menghabiskan_giliran` (game_loop, RNG tetap 0.5
+  agar musuh selalu hit — deterministik). Test lama `test_battle_step_
+  use_item_heal_hp` diperbarui: HP netto kini `hp_before < hp <
+  hp_before + 40` (heal lalu musuh menyerang).
+
+## BUG-32 · Catatan (TIDAK diperbaiki sekarang) — swap battle juga gratis
+
+- `swap:` branch punya pola sama (melewati battle.step, tanpa advance)
+  walau docstring/GDD §18.3 menyebut "memakai giliran". Dampak rendah
+  (swap tak memberi stack buff), pre-existing, di luar scope commit ini
+  — dicatat untuk fix menyusul.
+
+## Catatan verifikasi
+
+- Gate penuh hijau: **574 passed** · ruff check bersih · format bersih ·
+  `tools/validate.py` OK · `tools/smoke_playthrough.py` OK.
+- DRY dari review: blok tolak battle-only (`cure_poison`/`status_inflict`)
+  digabung jadi satu guard; pesan dot netral ("Musuh X terkena efek Y");
+  artefak tidak lagi tampil di sub-menu item battle.

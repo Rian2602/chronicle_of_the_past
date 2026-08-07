@@ -474,7 +474,11 @@ class Battle:
             stat_inti = stats["intelligence"]
         multiplier = element_multiplier(technique.element, target.element)
         damage = technique_damage(
-            technique.power, stat_inti, 0, multiplier, self._rng
+            technique.power,
+            stat_inti,
+            target_stats["defense"],
+            multiplier,
+            self._rng,
         )
         if crit:
             damage = int(damage * 1.8)
@@ -578,7 +582,10 @@ class Battle:
             raise RuntimeError("tidak ada lawan yang hidup")
         if len(opponents) == 1:
             return opponents[0]
-        index = int(self._rng.random() * len(opponents))
+        index = min(
+            len(opponents) - 1,
+            int(self._rng.random() * len(opponents)),
+        )
         return opponents[index]
 
     def _alive(self, units: list[Combatant]) -> list[Combatant]:
@@ -594,6 +601,15 @@ class Battle:
                 self.turn_index = index
                 return
         self._check_victory()
+
+    def pass_turn(self) -> None:
+        """Akhiri giliran unit aktif tanpa aksi engine (BUG-31).
+
+        Dipanggil GameSession setelah aksi non-engine (pakai item di
+        battle) diterapkan, agar aksi tersebut memakai giliran pemain
+        (GDD §18.3 — hanya observe yang gratis).
+        """
+        self._advance()
 
     def _check_victory(self) -> None:
         """Akhiri pertarungan bila satu pihak tidak punya unit hidup."""
