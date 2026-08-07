@@ -21,7 +21,7 @@ FACTION_LABELS: dict[str, str] = {
     "court": "Istana Kerajaan",
     "holy_order": "Orde Suci",
     "rebels": "Pemberontak",
-    "guilds": "Gilda",
+    "guilds": "Gilda-gilda",
     "ancient_order": "Orde Rahasia Kuno",
 }
 

@@ -82,4 +82,5 @@ def test_build_epilogue_menyebut_status_faksi():
     assert "Orde Rahasia Kuno" in joined and "berkuasa" in joined
     assert "Orde Suci" in joined and "hancur" in joined
     assert "Istana Kerajaan" in joined
+    assert "Gilda-gilda" in joined
     assert len(lines) == 5
