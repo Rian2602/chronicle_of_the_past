@@ -235,6 +235,10 @@ class GameScreen(Screen):
                 yield Static("", id="enemy")
                 with TabbedContent(id="content-tabs"):
                     with TabPane("📖 Story", id="tab-story"):
+                        # ponytail: BUG-9 — RichLog tanpa max_lines; log
+                        # sesi panjang bisa menurunkan performa render.
+                        # Upgrade: set max_lines (mis. 500) bila terukur
+                        # melambat di battle massal/sesi sangat panjang.
                         yield RichLog(id="game-log", markup=True)
                     with TabPane("🧠 Memory", id="tab-memory"):
                         yield RichLog(id="memory-log", markup=True)

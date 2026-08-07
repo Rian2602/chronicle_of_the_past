@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from src.engine.cultivation import load_tiers, restore_tier
+from src.models.party import load_companion
 from src.models.player import Player
 from src.systems.faction import FACTIONS, add_reputation
 
@@ -218,16 +219,45 @@ class GameState:
         flags = dict(data.get("flags", {}))
         if data.get("ritual_ready"):
             flags["ritual_ready"] = True
+        # Backfill inventory (BUG-1): save parsial tanpa equipped/artifacts
+        # tidak boleh memicu KeyError di handler equip/artifact.
+        inventory_raw = data.get("inventory", {})
+        if not isinstance(inventory_raw, dict):
+            raise ValueError("inventory harus berupa objek")
+        inventory = {"items": {}, "equipped": {}, "artifacts": {}}
+        for key, value in inventory_raw.items():
+            inventory[key] = dict(value) if isinstance(value, dict) else value
+        # Backfill party (BUG-13): member dengan stats kosong ATAU parsial
+        # (save korup/legacy) dilengkapi per-kunci dari data/companions agar
+        # battle tidak crash (KeyError agility saat musuh menyerang ally).
+        # Nilai stats yang sudah ada dipertahankan. Id tak dikenal
+        # dibiarkan apa adanya — divalidasi keras di lapisan save (BUG-5).
+        party: list[dict[str, Any]] = []
+        for member in data.get("party", []):
+            raw_member = dict(member)
+            stats = raw_member.get("stats")
+            if not isinstance(stats, dict):
+                stats = {}
+            if stats:
+                try:
+                    companion = load_companion(raw_member["id"])
+                    for key, value in companion.stats.items():
+                        stats.setdefault(key, value)
+                except (ValueError, KeyError):
+                    pass
+            else:
+                try:
+                    companion = load_companion(raw_member["id"])
+                    stats = dict(companion.stats)
+                except (ValueError, KeyError):
+                    pass
+            raw_member["stats"] = stats
+            party.append(raw_member)
         return cls(
             player=player,
-            party=[dict(member) for member in data.get("party", [])],
+            party=party,
             party_active=list(data.get("party_active", [])),
-            inventory=dict(
-                data.get(
-                    "inventory",
-                    {"items": {}, "equipped": {}, "artifacts": {}},
-                )
-            ),
+            inventory=inventory,
             quests=QuestProgress.from_dict(data.get("quests", {})),
             flags=flags,
             kills=dict(data.get("kills", {})),

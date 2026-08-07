@@ -78,7 +78,9 @@ def _match_trigger(condition: dict[str, Any], state: GameState) -> bool:
 
     Catatan: NOT_EQUALS dengan flag yang belum diset menganggap nilai
     aktual None — jadi NOT_EQUALS True cocok baik untuk flag False
-    maupun flag yang hilang (dikunci test).
+    maupun flag yang hilang (dikunci test). EQUALS tanpa field ``value``
+    berarti "flag diset" (hanya cocok saat flag bernilai True) — bukan
+    cocok dengan flag yang hilang (BUG-6).
     """
     kind = condition["kind"]
     if kind not in TRIGGER_KINDS:
@@ -92,6 +94,10 @@ def _match_trigger(condition: dict[str, Any], state: GameState) -> bool:
             return flag not in state.flags
         actual = state.flags.get(flag)
         value = condition.get("value")
+        if operator == "EQUALS" and "value" not in condition:
+            # BUG-6: EQUALS tanpa value = "flag diset" (True), bukan
+            # cocok dengan flag yang hilang (None == None dulu memicu).
+            return actual is True
         if operator == "EQUALS":
             return actual == value
         return actual != value
@@ -152,10 +158,15 @@ def apply_action(
         items = state.inventory.setdefault("items", {})
         items[item_id] = items.get(item_id, 0) + action.get("count", 1)
     elif kind == "grant_gold":
-        state.player.gold += action.get("amount", 0)
+        # BUG-8: emas tidak boleh negatif (clamp 0) walau amount minus.
+        state.player.gold = max(0, state.player.gold + action.get("amount", 0))
     elif kind == "change_reputation":
         state.add_reputation(action["faction"], action["delta"])
     elif kind == "start_dialog":
+        # ponytail: BUG-3 — result.dialogs belum dikonsumsi pemanggil
+        # (game_loop tidak membaca daftar ini); data/events belum memakai
+        # aksi start_dialog. Upgrade saat event intro memerlukan dialog
+        # bercabang: proses result.dialogs di _run_events -> _start_dialog.
         result.dialogs.append(action["dialog_id"])
         result.logs.append(f"Sebuah dialog dimulai: {action['dialog_id']}.")
     elif kind == "add_companion":
@@ -199,6 +210,10 @@ def apply_action(
             result.logs.append(f"  [{opt['key']}] {opt['text']}")
     elif kind == "add_ending_points":
         ep_path = action["path"]
+        if ep_path not in {"defy", "seal", "reconcile"}:
+            # BUG-7: path di luar jalur ending ditolak — mencegah kunci
+            # liar di state.ending_points yang tak pernah dibaca ending.
+            raise ValueError(f"jalur ending tidak dikenal: {ep_path}")
         points = action.get("points", 0)
         curr = state.ending_points.get(ep_path, 0)
         state.ending_points[ep_path] = curr + points

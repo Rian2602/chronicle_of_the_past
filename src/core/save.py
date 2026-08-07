@@ -8,6 +8,10 @@ from pathlib import Path
 from typing import Any, Callable
 
 from src.core.state import SCHEMA_VERSION, GameState
+from src.engine.combat import load_techniques
+from src.engine.items import load_items
+from src.engine.quest import load_quests
+from src.models.party import load_companions
 from src.models.player import BASE_STATS
 from src.systems.formation import load_formations
 
@@ -145,11 +149,15 @@ def _backfill_quest_flags(state: GameState) -> None:
             state.flags[flag] = True
 
 
+# ponytail: _validate_references memuat 4 direktori data penuh per load;
+# cache id-set di modul bila frekuensi load naik atau jumlah data besar
+# (rujukan DataCache GDD §25).
 def _validate_references(state: GameState) -> None:
-    """Validasi referensi lintas data (GDD §19.3).
+    """Validasi referensi lintas data (GDD §19.3, BUG-5).
 
-    Perluasan: resolusi id item/quest/peta/teknik terhadap data/ akan
-    diisi di sini saat folder data terkait terisi (Fase 1).
+    Save yang memuat id tak dikenal (item, quest, party, skill) ditolak
+    keras saat load — mencegah error samar/crash di tengah permainan
+    (mis. item hantu di inventory, rekan tanpa stats, teknik hilang).
     """
     if not isinstance(state.location, str) or not state.location:
         raise ValueError("lokasi pemain tidak valid")
@@ -163,3 +171,23 @@ def _validate_references(state: GameState) -> None:
         raise ValueError(
             f"formasi aktif tidak dikenal: {state.formation_active}"
         )
+    item_ids = set(load_items())
+    for item_id in state.inventory.get("items", {}):
+        if item_id not in item_ids:
+            raise ValueError(f"item tak dikenal di inventory: {item_id}")
+    for item_id in state.inventory.get("equipped", {}):
+        if item_id not in item_ids:
+            raise ValueError(f"item tak dikenal di equipped: {item_id}")
+    quest_ids = {quest.id for quest in load_quests()}
+    for group in (state.quests.started, state.quests.done, state.quests.failed):
+        for quest_id in group:
+            if quest_id not in quest_ids:
+                raise ValueError(f"quest tak dikenal: {quest_id}")
+    companion_ids = {companion.id for companion in load_companions()}
+    technique_ids = {technique.id for technique in load_techniques()}
+    for member in state.party:
+        if member.get("id") not in companion_ids:
+            raise ValueError(f"rekan tak dikenal: {member.get('id')}")
+        for skill in member.get("skills", []):
+            if skill not in technique_ids:
+                raise ValueError(f"skill rekan tak dikenal: {skill}")

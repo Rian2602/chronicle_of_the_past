@@ -23,7 +23,12 @@ from src.core.save import (
     slot_exists,
 )
 from src.core.state import GameState
-from src.engine.combat import Battle, load_enemies, load_techniques
+from src.engine.combat import (
+    Battle,
+    apply_status,
+    load_enemies,
+    load_techniques,
+)
 from src.engine.cultivation import (
     attempt_breakthrough,
     load_tiers,
@@ -1145,7 +1150,11 @@ class GameSession:
         dialog = load_dialogs().get(pending["dialog_id"])
         if dialog is None:
             return []
-        node = get_node(dialog, pending["node"])
+        try:
+            node = get_node(dialog, pending["node"])
+        except KeyError:
+            # BUG-2: node hilang -> panel dialog kosong (UI tidak crash).
+            return []
         choices: list[dict[str, Any]] = []
         for index, choice in enumerate(visible_choices(node, self.state), 1):
             choices.append(
@@ -1422,7 +1431,13 @@ class GameSession:
             # state; validator §25.3 menjamin data->dialog ter-resolve.
             self.state.flags.pop("pending_dialog", None)
             return ["Dialog tidak ditemukan di data (save lama?)."]
-        node = get_node(dialog, pending["node"])
+        try:
+            node = get_node(dialog, pending["node"])
+        except KeyError:
+            # BUG-2: node hilang (save korup / data berubah) -> bersihkan
+            # state machine + pesan ramah, bukan crash UI.
+            self.state.flags.pop("pending_dialog", None)
+            return ["Node dialog tidak ditemukan di data (save lama?)."]
         choices = visible_choices(node, self.state)
         number = int(raw)
         if not 1 <= number <= len(choices):
@@ -1559,10 +1574,17 @@ class GameSession:
             player, skills=self.player_skills, state=self.state
         )
         # Terapkan buff item (GDD §7): buff_<stat> menambah stat langsung;
-        # resist_<x> tercatat di stats (dibaca engine combat Fase 2).
-        # Buff dikonsumsi setelah battle (sekali pakai).
+        # buff_hp_max/buff_qi_max menambah kapasitas (field terpisah
+        # Combatant, bukan stats — BUG-4); resist_<x> tercatat di stats
+        # (dibaca engine combat Fase 2). Buff dikonsumsi setelah battle
+        # (sekali pakai).
         for key, value in self.state.buffs.items():
-            ally.stats[key] = ally.stats.get(key, 0) + value
+            if key == "hp_max":
+                ally.hp_max += value
+            elif key == "qi_max":
+                ally.qi_max += value
+            else:
+                ally.stats[key] = ally.stats.get(key, 0) + value
         allies = [ally]
         self._ally_map = {}
         # Rekan aktif ikut bertarung (GDD §20.1: protagonis + max 3 slot).
@@ -1657,6 +1679,9 @@ class GameSession:
         battle = self.battle
         if battle is None:
             raise RuntimeError("tidak ada pertarungan")
+        # Buff status yang self-buff (diterapkan ke caster, bukan target).
+        SELF_BUFF_STATUSES = {"barrier", "strengthen", "haste", "qi_flow"}
+
         error: str | None = None
         if not battle.over:
             self._resolve_enemy_turns()
@@ -1670,7 +1695,46 @@ class GameSession:
                     ):
                         skill = formation_skill(self.state.formation_active)
                         if skill:
+                            # Cek skill formasi self-buff (power 0, semua
+                            # effect berupa buff).
+                            tech = battle.techniques.get(skill)
+                            if (
+                                tech
+                                and tech.power == 0
+                                and all(
+                                    eff.get("status") in SELF_BUFF_STATUSES
+                                    for eff in tech.effects
+                                )
+                            ):
+                                # Self-buff: terapkan ke caster (unit saat ini).
+                                caster = battle.current
+                                caster.qi -= tech.qi_cost
+                                for eff in tech.effects:
+                                    apply_status(
+                                        caster,
+                                        eff["status"],
+                                        eff.get("duration"),
+                                        eff.get("power", 0),
+                                    )
+                                battle.log.append(
+                                    f"{caster.name} memakai {tech.name}."
+                                )
+                                # Resolve enemy turns tanpa battle.step.
+                                self._resolve_enemy_turns()
+                                if battle.over:
+                                    self._finish_battle()
+                                return self.battle_frame(error=error)
                             action = f"technique:{skill}"
+                    # Aksi pakai item di battle (GDD §18.2): use <item_id>
+                    elif action.startswith("use:"):
+                        item_id = action.split(":", 1)[1]
+                        result = self._battle_use_item(item_id)
+                        if result:
+                            battle.log.extend(result)
+                        self._resolve_enemy_turns()
+                        if battle.over:
+                            self._finish_battle()
+                        return self.battle_frame(error=error)
                     battle.step(action)
                 except ValueError as exc:
                     error = str(exc)
