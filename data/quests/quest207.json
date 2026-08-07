@@ -1,0 +1,22 @@
+{
+  "id": "quest207",
+  "title": "Puncak Kristal Emas",
+  "type": "main",
+  "description": "Menghadapi Kepala Sekte Bayangan membutuhkan kekuatan besar. Capai tingkatan Kristal Emas.",
+  "objectives": [
+    {
+      "kind": "breakthrough",
+      "target": "golden_core"
+    }
+  ],
+  "rewards": {
+    "insight": 150,
+    "gold": 100
+  },
+  "flags_on_complete": [
+    "quest207_done"
+  ],
+  "next": "quest208",
+  "category": "main",
+  "requires_flag": "quest206_done"
+}

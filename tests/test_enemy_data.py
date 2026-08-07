@@ -45,6 +45,10 @@ EXPECTED_ENEMIES = {
     "hantu_laut",
     "serigala_ember",
     "kultisi_merah",
+    "golem_latihan",
+    "pembunuh_gilda",
+    "kultis_bayangan",
+    "bos_sekte_bayangan",
 }
 
 

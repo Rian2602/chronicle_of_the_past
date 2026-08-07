@@ -1,0 +1,23 @@
+{
+  "id": "quest206",
+  "title": "Pembersihan",
+  "type": "main",
+  "description": "Sekte ini telah disusupi oleh sekte hitam. Bersihkan sekte dari Kultis Bayangan.",
+  "objectives": [
+    {
+      "kind": "kill_count",
+      "target": "kultis_bayangan",
+      "count": 4
+    }
+  ],
+  "rewards": {
+    "insight": 100,
+    "gold": 50
+  },
+  "flags_on_complete": [
+    "quest206_done"
+  ],
+  "next": "quest207",
+  "category": "main",
+  "requires_flag": "quest205_done"
+}

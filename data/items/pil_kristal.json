@@ -1,0 +1,20 @@
+{
+  "id": "pil_kristal",
+  "name": "Pil Kristal Emas",
+  "type": "consumable",
+  "description": "Membantu menstabilkan qi saat breakthrough ke Kristal Emas.",
+  "effect": {
+    "restore_qi": 200
+  },
+  "price": 500,
+  "recipe": [
+    {
+      "item": "esensi_air",
+      "qty": 3
+    },
+    {
+      "item": "batu_qi",
+      "qty": 2
+    }
+  ]
+}

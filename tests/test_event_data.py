@@ -40,6 +40,12 @@ EXPECTED_EVENTS = {
     "fquest_abyssal_intro",
     "fquest_fondasi_intro",
     "lin_wei_recruit",
+    "quest203_done",
+    "quest204_done",
+    "quest205_done",
+    "quest206_done",
+    "quest207_done",
+    "quest208_done",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

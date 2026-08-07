@@ -1,0 +1,23 @@
+{
+  "id": "quest205",
+  "title": "Jejak Pengkhianatan",
+  "type": "main",
+  "description": "Seseorang menyabotase sumber daya sekte. Lacak dan basmi agen Gilda Pembunuh.",
+  "objectives": [
+    {
+      "kind": "kill_count",
+      "target": "pembunuh_gilda",
+      "count": 2
+    }
+  ],
+  "rewards": {
+    "insight": 70,
+    "gold": 40
+  },
+  "flags_on_complete": [
+    "quest205_done"
+  ],
+  "next": "quest206",
+  "category": "main",
+  "requires_flag": "quest204_done"
+}

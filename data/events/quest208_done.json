@@ -1,0 +1,24 @@
+{
+  "id": "quest208_done",
+  "trigger": [
+    {
+      "kind": "quest_done",
+      "quest": "quest208"
+    }
+  ],
+  "actions": [
+    {
+      "kind": "grant_memory",
+      "memory_id": "memory_arc2_climax"
+    },
+    {
+      "kind": "add_companion",
+      "id": "serigala_bayangan"
+    },
+    {
+      "kind": "log",
+      "text": "Kepala Sekte telah dikalahkan. Sekte ini aman... untuk sementara. Seekor serigala bersembunyi di balik altar kini mengikutimu."
+    }
+  ],
+  "once": true
+}

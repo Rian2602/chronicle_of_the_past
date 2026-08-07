@@ -1,0 +1,16 @@
+{
+  "id": "quest205_done",
+  "trigger": [
+    {
+      "kind": "quest_done",
+      "quest": "quest205"
+    }
+  ],
+  "actions": [
+    {
+      "kind": "start_quest",
+      "id": "quest206"
+    }
+  ],
+  "once": true
+}

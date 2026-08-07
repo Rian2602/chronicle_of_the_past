@@ -28,6 +28,11 @@ EXPECTED_QUESTS = {
     "fquest_kultisi",
     "fquest_pelipur",
     "fquest_fondasi",
+    "quest204",
+    "quest205",
+    "quest206",
+    "quest207",
+    "quest208",
 }
 REQUIRED_KEYS = {
     "id",

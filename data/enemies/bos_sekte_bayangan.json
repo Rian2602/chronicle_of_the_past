@@ -1,0 +1,30 @@
+{
+  "id": "bos_sekte_bayangan",
+  "name": "Kepala Sekte Bayangan",
+  "tier": "golden_core",
+  "element": "water",
+  "behavior": "boss",
+  "stats": {
+    "attack": 50,
+    "defense": 30,
+    "agility": 40,
+    "intelligence": 45,
+    "vitality": 40,
+    "spirit": 50,
+    "hp": 500,
+    "qi": 300
+  },
+  "skills": [
+    "frost_bind",
+    "tebasan_bayangan"
+  ],
+  "tags": [
+    "boss",
+    "human",
+    "cultist"
+  ],
+  "rewards": {
+    "insight": 200,
+    "gold": 500
+  }
+}

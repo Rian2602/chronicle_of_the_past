@@ -1,0 +1,26 @@
+{
+  "id": "quest208",
+  "title": "Bayangan Masa Lalu",
+  "type": "main",
+  "description": "Hancurkan Kepala Sekte Bayangan. Waktunya mengakhiri semua ini.",
+  "objectives": [
+    {
+      "kind": "enemy",
+      "target": "bos_sekte_bayangan"
+    }
+  ],
+  "rewards": {
+    "insight": 300,
+    "gold": 500,
+    "grant_item": {
+      "id": "pedang_awan_hitam",
+      "count": 1
+    }
+  },
+  "flags_on_complete": [
+    "quest208_done"
+  ],
+  "next": null,
+  "category": "main",
+  "requires_flag": "quest207_done"
+}

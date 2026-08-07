@@ -32,6 +32,7 @@ EXPECTED_TECHNIQUES = {
     "iblis_pedang",
     "benteng_meridian",
     "senjata_roh",
+    "tebasan_bayangan",
 }
 
 
