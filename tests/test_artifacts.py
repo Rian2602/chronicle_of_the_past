@@ -5,7 +5,7 @@ import random
 from src.core.game_loop import GameSession
 from src.core.input import Command
 from src.core.state import GameState
-from src.engine.items import add_artifact_xp
+from src.engine.items import add_artifact_xp, load_items
 from src.models.player import Player
 
 
@@ -60,3 +60,26 @@ def test_artifact_bonus_applied_to_stats(tmp_path):
 
     # Misalnya level 3 memberikan bonus stat attack.
     assert stats["attack"] > player.stats["attack"]
+
+
+def test_artifact_loads_growth_and_max_level():
+    """Memastikan load_items memuat growth_stat dan max_level dari JSON."""
+    items = load_items()
+    if "cermin_bayangan" in items:
+        assert "growth_stat" in items["cermin_bayangan"]
+        assert "max_level" in items["cermin_bayangan"]
+
+
+def test_add_artifact_xp_respects_max_level():
+    """Memastikan add_artifact_xp mematuhi max_level dari katalog item."""
+
+    class DummyState:
+        inventory = {"artifacts": {"test_art": {"xp": 0, "level": 1}}}
+
+    catalog = {"test_art": {"max_level": 2}}
+    state = DummyState()
+
+    add_artifact_xp(state, "test_art", 100, catalog)
+    assert state.inventory["artifacts"]["test_art"]["level"] == 2
+    add_artifact_xp(state, "test_art", 100, catalog)
+    assert state.inventory["artifacts"]["test_art"]["level"] == 2
