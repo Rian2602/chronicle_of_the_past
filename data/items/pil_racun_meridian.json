@@ -6,9 +6,6 @@
   "price": 100,
   "effect": {
     "status_inflict": "poison"
-  },
-  "recipe": [
-    {"item": "esensi_kayu", "qty": 3},
-    {"item": "esensi_tanah", "qty": 1}
-  ]
+  }
 }
+

@@ -6,9 +6,6 @@
   "price": 150,
   "effect": {
     "status_inflict": "strengthen"
-  },
-  "recipe": [
-    {"item": "batu_qi", "qty": 2},
-    {"item": "esensi_kayu", "qty": 2}
-  ]
+  }
 }
+

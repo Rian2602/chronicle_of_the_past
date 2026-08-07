@@ -565,6 +565,15 @@ class GameSession:
             return [f"Resep '{target_id}' tidak dikenal."]
         recipe = item.get("recipe")
         if not recipe:
+            for cat_item in catalog.values():
+                eff = cat_item.get("effect") or {}
+                if (
+                    cat_item.get("type") == "recipe"
+                    and eff.get("learn_recipe") == target_id
+                ):
+                    recipe = cat_item.get("recipe")
+                    break
+        if not recipe:
             return [f"{item['name']} tidak memiliki resep."]
         if not self.state.flags.get(f"recipe_{target_id}_known"):
             msg = (

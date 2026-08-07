@@ -991,6 +991,21 @@ def test_refine_sukses_mengubah_bahan_menjadi_pil(tmp_path):
     assert session.state.inventory["items"]["kuali_roh"] == 1
 
 
+def test_refine_sukses_dari_resep_item(tmp_path):
+    """Refine sukses untuk pil_baja_tubuh (resep di resep_pil_baja)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["recipe_pil_baja_tubuh_known"] = True
+    session.state.inventory.setdefault("items", {})["kuali_roh"] = 1
+    session.state.inventory.setdefault("items", {})["batu_qi"] = 2
+    session.state.inventory.setdefault("items", {})["esensi_kayu"] = 2
+    lines = _dispatch(session, "refine pil_baja_tubuh")
+    assert any("meracik" in line.lower() for line in lines)
+    assert session.state.inventory["items"].get("batu_qi", 0) == 0
+    assert session.state.inventory["items"].get("esensi_kayu", 0) == 0
+    assert session.state.inventory["items"]["pil_baja_tubuh"] == 1
+
+
 def test_refine_item_tanpa_resep_ditolak(tmp_path):
     """Refine item tanpa recipe / tak dikenal: pesan jelas."""
     session = _session(tmp_path)
