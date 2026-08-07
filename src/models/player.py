@@ -94,7 +94,8 @@ class Player:
                 and item_def
                 and item_def.get("type") == "artifact"
             ):
-                # ponytail: flat bonus dikalikan level
+                # ponytail: flat bonus dikalikan level — upgrade ke proper
+                # scaling formula saat artifact growth system direvisi (Fase 5)
                 growth = item_def.get("effect", {}).get("growth_stat", "attack")
                 bonus = artifact_state["level"] * 2
                 stats[growth] = stats.get(growth, 0) + bonus

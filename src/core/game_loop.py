@@ -1867,11 +1867,14 @@ class GameSession:
         return lines
 
     def _battle_swap(self, companion_id: str) -> list[str] | None:
-        """Tukar rekan aktif dengan cadangan selama pertarungan.
+        """Tukar rekan aktif dengan cadangan selama pertarungan (GDD §20.1).
 
-        Hanya boleh dilakukan bila ada rekan di cadangan (roster > 3).
-        Rekan yang diganti keluar mempertahankan HP/Qi di state.party.
-        Rekan yang masuk diambil dari state.party (HP/Qi tersimpan).
+        Swap memakai giliran anggota aktif: rekan yang sedang mengambil
+        giliran diganti (atau rekan pertama bila giliran protagonis).
+        Objek Combatant diganti langsung di battle.allies/turn_order —
+        engine combat membandingkan objek via identitas (GDD §6) — supaya
+        rekan pengganti benar-benar ikut bertarung dan luka rekan yang
+        keluar tidak hilang (BUG-18 lanjutan).
         """
         all_ids = [raw["id"] for raw in self.state.party]
         if len(all_ids) <= 3:
@@ -1884,34 +1887,95 @@ class GameSession:
         active = list(self.state.party_active)
         if companion_id in active:
             return [f"{companion_id} sudah aktif."]
+        # Tulis balik HP/qi live ke state.party SEBELUM komposisi berubah
+        # (BUG-18 lanjutan): tanpa ini, luka yang sudah diterima rekan
+        # hilang saat combatant baru dibangun dari raw yang masih memegang
+        # HP lama.
+        self._sync_ally_state()
+        battle = self.battle
+        # Bangun combatant untuk rekan yang masuk (HP/qi tersimpan di
+        # state.party setelah _sync_ally_state).
+        incoming_raw = next(
+            raw for raw in self.state.party if raw["id"] == companion_id
+        )
+        incoming = combatant_from_companion(Companion.from_dict(incoming_raw))
+        # Formasi aktif berlaku juga untuk rekan yang baru masuk (GDD §7).
+        if self.state.formation_active:
+            for stat, value in formation_buff(
+                self.state.formation_active
+            ).items():
+                incoming.stats[stat] = incoming.stats.get(stat, 0) + value
         if len(active) < 3:
-            # Masih ada slot kosong, cukup tambahkan
+            # Masih ada slot kosong: cukup tambahkan tanpa mengeluarkan.
             active.append(companion_id)
-        else:
-            # Tim penuh, tukar dengan rekan yang giliran (atau pertama)
-            current = self.battle.current
-            current_id = None
-            for raw in self.state.party:
-                if raw["id"] == current.name and raw["id"] in active:
-                    current_id = raw["id"]
+            self.state.party_active = active
+            battle.allies.append(incoming)
+            battle.turn_order.append(incoming)
+            self._ally_map[companion_id] = incoming
+            # ponytail: rekan baru di append ke akhir turn_order → selalu
+            # dapat giliran terakhir (urutan agility GDD §6.1 tidak
+            # dihitung ulang); upgrade saat battle mendukung insert
+            # agility di tengah pertarungan.
+            return [f"{companion_id} bergabung ke pertarungan!"]
+        # Tim penuh: tukar dengan rekan yang sedang giliran (atau yang
+        # pertama). Cocokkan via IDENTITAS objek: nilai _ally_map selalu
+        # objek yang sama dengan battle.allies (GDD §6). Mencocokkan
+        # current.name vs raw.id tak pernah cocok (dua domain), dan
+        # identity via _ally_map bekerja untuk semua swap (bukan hanya
+        # yang pertama) karena objek diganti di tempat, bukan di-rebuild.
+        current = battle.current
+        current_id = next(
+            (
+                cid
+                for cid, combatant in self._ally_map.items()
+                if combatant is current and cid in active
+            ),
+            None,
+        )
+        if current_id is None:
+            current_id = active[0]
+        outgoing = self._ally_map.get(current_id)
+        if outgoing is not None:
+            # Ganti objek di battle.allies & turn_order (identitas) —
+            # tanpa ini rekan pengganti tidak ikut bertarung dan musuh
+            # tetap menyerang rekan yang sudah keluar.
+            for i, unit in enumerate(battle.allies):
+                if unit is outgoing:
+                    battle.allies[i] = incoming
                     break
-            if current_id is None:
-                current_id = active[0]
-            active.remove(current_id)
-            active.append(companion_id)
+            for i, unit in enumerate(battle.turn_order):
+                if unit is outgoing:
+                    battle.turn_order[i] = incoming
+                    break
+        active.remove(current_id)
+        active.append(companion_id)
         self.state.party_active = active
-        # Update _ally_map untuk rekan baru
-        self._rebuild_ally_map()
+        self._ally_map.pop(current_id, None)
+        self._ally_map[companion_id] = incoming
         return [f"{companion_id} bergabung ke pertarungan!"]
 
-    def _rebuild_ally_map(self) -> None:
-        """Bangun ulang _ally_map dari party_active saat ini."""
-        self._ally_map = {}
+    def _sync_ally_state(self) -> None:
+        """Tulis balik HP/qi combatant live ke state.party (pre-swap).
+
+        `_battle_swap` memanggil ini sebelum komposisi berubah agar luka
+        yang sudah diterima rekan tidak hilang saat combatant baru
+        dibangun dari state.party (BUG-18 lanjutan). Hanya rekan aktif
+        yang tersinkron; cadangan tidak punya combatant. Rekan yang KO
+        dipulihkan penuh (GDD §20.4) — sama seperti `_write_back_allies`
+        — supaya anggota yang di-swap keluar tidak mulai battle berikutnya
+        dalam keadaan KO.
+        """
         for raw in self.state.party:
-            if raw["id"] in self.state.party_active:
-                companion = Companion.from_dict(raw)
-                combatant = combatant_from_companion(companion)
-                self._ally_map[companion.id] = combatant
+            companion = Companion.from_dict(raw)
+            combatant = self._ally_map.get(companion.id)
+            if combatant is None:
+                continue
+            if combatant.hp <= 0:
+                raw["hp"] = companion.hp_max
+                raw["qi"] = companion.qi_max
+            else:
+                raw["hp"] = min(combatant.hp, companion.hp_max)
+                raw["qi"] = min(combatant.qi, companion.qi_max)
 
     def _is_player_turn(self) -> bool:
         """Kembalikan True bila giliran aktif milik sekutu pemain."""
