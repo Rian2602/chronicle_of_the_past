@@ -4,6 +4,6 @@
   "description": "Puncak gunung tertutup awan, bangunan jade putih berjejer di tepi jurang. Angin berdengar seperti nyanyian pedang.",
   "tier": 2,
   "enemies": [
-    {"enemy": "golem_latihan"}
+    {"enemy": "golem_latihan", "requires_flag": "quest203_done"}
   ]
 }
