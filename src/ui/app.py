@@ -332,6 +332,10 @@ class GameScreen(Screen):
         # navigasi satu ketukan, bukan dua (regresi TUI hunt).
         if options:
             actions.highlighted = 0
+        # ponytail: BUG-19/20 (UX 80x24) — menu aksi battle terpotong tak
+        # terlihat dan header clock menimpa border di terminal pendek;
+        # upgrade saat tata letak battle frame didesain ulang untuk
+        # ukuran kecil (dicatat putaran 3 bug hunt, DEFERRED).
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Sidebar kiri & tombol aksi lokasi -> command terkait."""

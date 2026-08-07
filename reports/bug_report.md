@@ -548,9 +548,10 @@ migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
   untuk Kabur terbukti berfungsi, tapi pemain tak bisa melihat opsi).
 - **Dampak:** di terminal pendek, pemain tidak tahu aksi apa yang
   tersedia saat battle; hanya bisa menebak urutan.
-- **Status:** OPEN (Minor UX) — perbaikan tata letak battle frame di
-  terminal pendek, terpisah dari bug hunt ini (dicatat `ponytail:` bila
-  dipilih lanjut).
+- **Status:** DEFERRED (Minor UX, note `ponytail:` di `app.py`) —
+  perbaikan tata letak battle frame di terminal pendek butuh redesign
+  layout; kelas yang sama dengan BUG-16 (log tak terbaca) yang sudah
+  FIXED, jadi kandidat iterasi UI berikutnya.
 
 ## BUG-20 · Minor — Header clock (jam) menimpa border panel kanan
 
@@ -561,7 +562,8 @@ migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
   `━╺━━ --` tanpa angka.
 - **Dampak:** kosmetik — teks terpotong/tumpang tindih di ukuran
   kecil, tidak ada kehilangan fungsi.
-- **Status:** OPEN (Minor UX) — dicatat untuk iterasi tata letak.
+- **Status:** DEFERRED (Minor UX, note `ponytail:` di `app.py`) —
+  dicatat untuk iterasi tata letak.
 
 ## Verifikasi BERSIH Fase C–E (bukan bug)
 
@@ -581,3 +583,14 @@ migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
 - **E1 TUI battle 80×24:** battle penuh (menang/kalah/kabur), swap
   absen benar untuk tim tanpa rekan, resume mempertahankan state & log,
   HP KO pulih — 0 crash, 0 traceback, 0 markup Rich bocor.
+
+## Catatan Jujur (proses, 2026-08-08)
+
+- Lint repo saat ini **tidak hijau penuh** karena perubahan eksternal
+  paralel yang belum selesai di `src/engine/combat.py` (2× E501),
+  `src/systems/formation.py`, `src/core/game_loop.py` (termasuk
+  `session.log_history` yang di-tambah ulang — dead code, tidak ada
+  yang membaca; sudah pernah dihapus saat fix BUG-18). File stabil
+  `combat.py` tidak disentuh (AGENTS §6). Commit fix putaran 3 hanya
+  memuat file task sendiri (quest JSON + laporan); perubahan eksternal
+  dibiarkan di working tree untuk proses paralel.
