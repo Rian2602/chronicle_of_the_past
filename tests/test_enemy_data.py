@@ -58,6 +58,8 @@ EXPECTED_ENEMIES = {
     "pengikut_bisikan",
     "agen_kuno",
     "manifestasi_langit",
+    "rasul_langit",
+    "suara",
 }
 
 

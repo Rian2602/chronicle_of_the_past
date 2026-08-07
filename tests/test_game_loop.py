@@ -1793,3 +1793,20 @@ def test_bos_kalah_memantik_ending_dan_epilog_satu_pass(tmp_path):
     assert "— EPILOG —" in joined
     second = session._run_events()
     assert "— EPILOG —" not in "\n".join(second)
+
+
+def test_quest408_selesai_memantik_ending_in_game(tmp_path):
+    """quest408 selesai (bos suara kalah) -> arc4_boss_defeated -> ending."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.ending_points = {"defy": 50, "seal": 10, "reconcile": 10}
+    session.state.quests.done.append("quest408")
+    session.state.flags["quest408_done"] = True
+    # Pass 1: suara_defeated (s) men-set arc4_boss_defeated; pass 2:
+    # calculate_ending_trigger (c) men-set ending_defy_win -> ending_defy.
+    session._run_events()
+    joined = "\n".join(session._run_events())
+    assert session.state.flags.get("arc4_boss_defeated") is True
+    assert session.state.flags.get("ending_defy_win") is True
+    assert "MENENTANG LANGIT" in joined
+    assert "— EPILOG —" in joined

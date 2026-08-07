@@ -1,0 +1,21 @@
+{
+  "id": "suara",
+  "name": "Suara",
+  "tier": "heaven_challenger",
+  "element": "metal",
+  "behavior": "boss",
+  "stats": {
+    "attack": 130,
+    "defense": 110,
+    "agility": 90,
+    "intelligence": 120,
+    "vitality": 110,
+    "spirit": 130,
+    "hp": 3000,
+    "qi": 1500
+  },
+  "skills": ["seruan_jiwa_tinggi", "tangan_langit", "penebasan_kehampaan"],
+  "tags": ["boss", "celestial"],
+  "requires_flag": "quest407_done",
+  "rewards": {"insight": 1500, "gold": 2000}
+}

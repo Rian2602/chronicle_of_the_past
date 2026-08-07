@@ -1,0 +1,14 @@
+{
+  "id": "suara_defeated",
+  "trigger": [
+    {"kind": "quest_done", "quest": "quest408"}
+  ],
+  "actions": [
+    {"kind": "set_flag", "flag": "arc4_boss_defeated", "value": true},
+    {
+      "kind": "log",
+      "text": "Suara itu pecah — bukan seperti kaca, tapi seperti keputusan yang akhirnya diambil. Langit di atas Ashenfeld terbelah sejenak… lalu diam."
+    }
+  ],
+  "once": true
+}
