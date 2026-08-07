@@ -1,0 +1,15 @@
+{
+  "id": "fquest_pemberontak_obat",
+  "title": "Obat untuk yang Terluka",
+  "type": "faction",
+  "description": "Sekte berhasil dibersihkan, tapi perang meninggalkan korban yang tak terhitung. Jati membutuhkan batu qi untuk menyeduh obat bagi para pelarian — dan kau tahu di mana batu-batu itu bersembunyi.",
+  "objectives": [
+    {"kind": "talk", "target": "jati"},
+    {"kind": "collect", "target": "batu_qi", "count": 3}
+  ],
+  "rewards": {"insight": 40, "gold": 30, "reputation": {"rebels": 10}},
+  "flags_on_complete": ["fquest_pemberontak_obat_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest206_done"
+}

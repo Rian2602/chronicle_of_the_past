@@ -1,0 +1,15 @@
+{
+  "id": "seruan_jiwa",
+  "name": "Seruan Jiwa",
+  "path": "soul",
+  "element": "water",
+  "type": "technique",
+  "qi_cost": 14,
+  "power": 0,
+  "effects": [
+    {"status": "charm", "duration": 2}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

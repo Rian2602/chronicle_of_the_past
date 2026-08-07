@@ -1,0 +1,15 @@
+{
+  "id": "resep_pil_peneguh_fondasi",
+  "name": "Resep Pil Peneguh Fondasi",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Peneguh Fondasi.",
+  "price": 400,
+  "effect": {
+    "learn_recipe": "pil_peneguh_fondasi"
+  },
+  "recipe": [
+    {"item": "batu_qi", "qty": 2},
+    {"item": "esensi_tanah", "qty": 1},
+    {"item": "esensi_air", "qty": 1}
+  ]
+}

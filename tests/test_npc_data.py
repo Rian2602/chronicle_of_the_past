@@ -20,6 +20,8 @@ EXPECTED_NPCS = {
     "penjaga_abyss",
     "pedagang_kelana",
     "penjaga_makam",
+    "blacksmith_tie",
+    "kestrel",
 }
 REQUIRED_KEYS = {"id", "name", "location", "greeting", "dialog"}
 

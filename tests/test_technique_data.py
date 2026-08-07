@@ -36,6 +36,13 @@ EXPECTED_TECHNIQUES = {
     "jaring_jiwa",
     "jarum_racun",
     "perisai_cahaya",
+    "racun_meridian_lanjut",
+    "tangan_emas",
+    "pil_pembakar",
+    "seruan_jiwa",
+    "ikatan_roh",
+    "pandangan_jiwa",
+    "penyerapan_jiwa",
 }
 
 

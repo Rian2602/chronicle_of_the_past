@@ -1,0 +1,11 @@
+{
+  "id": "blacksmith_tie",
+  "name": "Tie Pandai Senjata",
+  "description": "Lengan besi penuh bekas luka bakar; mata tenang seperti logam dingin. Tempa kecil di ujung jalan kota berbau asap dan darah.",
+  "location": "guild_city",
+  "greeting": "Baja yang bagus menunggu tangan yang tepat. Lihat daganganku.",
+  "dialog": [
+    "Senjata roh tumbuh bersama pemiliknya. Pilih yang mau menemanimu mati."
+  ],
+  "shop": "toko_tie"
+}

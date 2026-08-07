@@ -1,0 +1,15 @@
+{
+  "id": "fquest_pemberontak_obat_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest206_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_pemberontak_obat"},
+    {"kind": "set_flag", "flag": "fquest_pemberontak_obat_active", "value": true},
+    {
+      "kind": "log",
+      "text": "Jati menahan lengannya yang berlumur getah: 'Para pemberontak di hutan kau hancurkan tanpa tahu mengapa mereka bertahan. Orang-orang mereka mati karena kekurangan pil, sementara kota menimbun batu qi. Kumpulkan apa yang kau bisa — bukan untuk gilda, bukan untuk orde, tapi agar ada satu alasan tersisa bagi orang yang tidak punya apa-apa untuk tidak menyerah.'"
+    }
+  ],
+  "once": true
+}

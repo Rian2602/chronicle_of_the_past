@@ -1,0 +1,32 @@
+{
+  "id": "dialog_alchemist_xiu_1",
+  "npc": "alchemist_xiu",
+  "nodes": {
+    "start": {
+      "text": "Racun meridian adalah guru yang kejam: ia mengajarimu rasa sakit dulu, baru jawabannya. Kebanyakan murid berhenti sebelum pelajaran kedua.",
+      "choices": [
+        {
+          "text": "Apa yang bisa kupelajari dari racun?",
+          "next": "racun",
+          "requires_flag": null,
+          "actions": []
+        },
+        {
+          "text": "[Meninggalkan kuali]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    },
+    "racun": {
+      "text": "Setiap pil adalah harga yang kau bayar dengan bagian tubuhmu. Racun yang terukur membuka meridian yang tak bisa disentuh tangan. Yang tak terukur... kau tak akan sempat mengeluh.",
+      "choices": [
+        {
+          "text": "[Meninggalkan kuali]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    }
+  }
+}

@@ -36,3 +36,37 @@ def test_data_rekan_semua_valid():
         assert REQUIRED_STATS <= set(data["stats"]), (
             f"{path.name}: stat tidak lengkap"
         )
+
+
+def test_data_evolusi_sekali_dan_referensi_valid():
+    """Evolusi (GDD §20.3) sekali dan referensinya ter-resolve.
+
+    evolved_id wajib ada, trigger tier valid, dan rekan hasil evolusi
+    tak punya field evolution (sekali).
+    """
+    from src.engine.cultivation import load_tiers
+
+    tiers = {tier.id for tier in load_tiers()}
+    data_dir = Path(__file__).resolve().parents[1] / "data" / "companions"
+    records = {}
+    for path in data_dir.glob("*.json"):
+        records[path.stem] = json.loads(path.read_text(encoding="utf-8"))
+    for path, data in records.items():
+        evolution = data.get("evolution")
+        if not evolution:
+            continue
+        assert evolution["trigger_tier"] in tiers, (
+            f"{path}: evolution trigger_tier tidak valid"
+        )
+        assert evolution["evolved_id"] in records, (
+            f"{path}: evolved_id tidak ada di data"
+        )
+    evolved_ids = {
+        data["evolution"]["evolved_id"]
+        for data in records.values()
+        if data.get("evolution")
+    }
+    for evolved_id in evolved_ids:
+        assert "evolution" not in records[evolved_id], (
+            f"{evolved_id}: rekan hasil evolusi tak boleh punya evolution"
+        )

@@ -60,8 +60,13 @@ from src.models.combatant import (
     combatant_from_player,
 )
 from src.models.enemy import Enemy
-from src.models.party import Companion
+from src.models.party import Companion, load_companion
 from src.models.player import Player
+from src.systems.formation import (
+    formation_buff,
+    formation_skill,
+    load_formations,
+)
 
 CULTIVATE_INSIGHT = 10
 CULTIVATE_HOURS = 3
@@ -104,6 +109,7 @@ AVAILABLE = {
     "swap",
     "equip",
     "unequip",
+    "formation",
     "meditate",
     "examine",
     "loot",
@@ -213,6 +219,7 @@ class GameSession:
             "  go <lokasi> look talk <nama> cultivate breakthrough rest",
             "  shop buy <item> [jumlah] sell <item> [jumlah]",
             "  use <item> refine <item>",
+            "  formation <id> (bongkar: formation)",
             "  save [1-3] load [1-3] quit",
             "  load autosave (kembali ke simpan otomatis terakhir)",
             "Saat bertarung: attack, defend, technique <nama>,",
@@ -362,6 +369,9 @@ class GameSession:
         learned = (item.get("effect") or {}).get("learn_recipe")
         if learned and self.state.flags.get(f"recipe_{learned}_known"):
             return [f"Kamu sudah mempelajari resep {item['name']}."]
+        hatch = (item.get("effect") or {}).get("hatch_companion")
+        if hatch and any(raw["id"] == hatch for raw in self.state.party):
+            return ["Binatang roh ini sudah di timmu."]
         items[item_id] -= 1
         if items[item_id] == 0:
             del items[item_id]
@@ -389,6 +399,17 @@ class GameSession:
                     8, player.meridian_buka + effect["add_meridian"]
                 )
                 lines.append(f"Meridian terbuka ({player.meridian_buka}/8).")
+            if effect.get("hatch_companion"):
+                companion_id = effect["hatch_companion"]
+                ids = [raw["id"] for raw in self.state.party]
+                if companion_id not in ids:
+                    companion = load_companion(companion_id)
+                    self.state.party.append(companion.to_dict())
+                    if len(self.state.party_active) < 3:
+                        self.state.party_active.append(companion_id)
+                    lines.append(f"Telur menetas: {companion.name} bergabung!")
+                else:
+                    lines.append("Binatang roh ini sudah di timmu.")
             # Efek combat-ready (buff_*/resist_*): catat ke state.buffs
             # (GDD §7); diterapkan ke combatant di _start_battle, lalu
             # dikonsumsi sekali pakai. buff_<stat> dinormalisasi jadi
@@ -782,6 +803,45 @@ class GameSession:
         state = "aktif" if companion_id in active else "cadangan"
         return [f"{name} kini {state}."]
 
+    def _cmd_formation(self, command: Command) -> list[str]:
+        """Pasang/bongkar formasi, hanya di lokasi aman (GDD §18.2).
+
+        Tanpa argumen: bongkar formasi aktif. Dengan argumen: pasang
+        formasi (id divalidasi ke data/formations). Lokasi aman sama
+        dengan _cmd_swap — peta tanpa musuh (desa/kota).
+        """
+        if self.in_battle:
+            return ["Tidak bisa mengatur formasi saat bertarung."]
+        location_data = load_maps().get(self.state.location, {})
+        if location_data.get("enemies"):
+            return [
+                "Area ini tidak aman untuk memasang formasi. "
+                "Kembali ke desa atau kota dulu."
+            ]
+        if not command.args:
+            if self.state.formation_active is None:
+                return [
+                    "Formasi apa? Contoh: formation jaring_naga. "
+                    "Formasi aktif: tidak ada."
+                ]
+            formations = load_formations()
+            active = self.state.formation_active
+            # ponytail: id tak dikenal di data (save editan tangan) ->
+            # tampil id mentah; validator §25.3 menjamin data->formasi
+            # ter-resolve. Upgrade ke error keras bila save divalidasi.
+            name = formations.get(active, {}).get("name", active)
+            self.state.formation_active = None
+            return [f"Formasi {name} dibongkar."]
+        formation_id = command.args[0]
+        formations = load_formations()
+        if formation_id not in formations:
+            return [f"Formasi '{formation_id}' tidak dikenal."]
+        self.state.formation_active = formation_id
+        return [
+            f"Formasi {formations[formation_id]['name']} terpasang. "
+            "Bonus berlaku untuk seluruh tim saat bertarung."
+        ]
+
     def _cmd_meditate(self, command: Command) -> list[str]:
         # Pulihkan qi (versi sederhana dari rest)
         self.state.player.qi = self.state.player.qi_max
@@ -794,7 +854,10 @@ class GameSession:
         return ["Tidak ada jarahan di area ini."]
 
     def _cmd_recall(self, command: Command) -> list[str]:
-        return ["Fitur recall binatang roh akan segera hadir."]
+        """Panggil/lepas binatang roh (GDD §18.2) — sama dengan swap."""
+        if not command.args:
+            return ["Recall siapa? Contoh: recall <id_rekan>"]
+        return self._cmd_swap(command)
 
     def _cmd_settings(self, command: Command) -> list[str]:
         return [
@@ -1231,6 +1294,9 @@ class GameSession:
         # tersimpan dan cascade quest->event menyala satu pass (§15.4).
         quest_lines = self._run_quests()
         event_lines = self._run_events()
+        evolution_lines: list[str] = []
+        if result.success:
+            evolution_lines = self._evolve_companions(self.state.player.tier_id)
         autosave_save(self.state, self.save_dir)
         if result.success:
             return (
@@ -1239,6 +1305,7 @@ class GameSession:
                     f"({result.rate}%).",
                     "Permainan tersimpan otomatis.",
                 ]
+                + evolution_lines
                 + quest_lines
                 + event_lines
             )
@@ -1255,6 +1322,47 @@ class GameSession:
             + quest_lines
             + event_lines
         )
+
+    def _evolve_companions(self, tier_id: str) -> list[str]:
+        """Evolusi binatang roh saat tier terpicu (GDD §20.3, sekali).
+
+        Rekan dengan evolution.trigger_tier == tier_id diganti datanya
+        dari companion evolved_id, mempertahankan bond_xp/rank. Rekan
+        hasil evolusi tak punya field evolution -> tidak berevolusi lagi.
+
+        Args:
+            tier_id: Tier pemain setelah breakthrough.
+
+        Returns:
+            Daftar pesan evolusi untuk ditampilkan.
+        """
+        messages: list[str] = []
+        replaced: dict[str, str] = {}
+        for raw in self.state.party:
+            evolution = raw.get("evolution")
+            if not evolution or evolution.get("trigger_tier") != tier_id:
+                continue
+            evolved_id = evolution["evolved_id"]
+            evolved = load_companion(evolved_id)
+            evolved.bond_xp = int(raw.get("bond_xp", 0))
+            evolved.rank = int(raw.get("rank", 1))
+            evolved.hp = raw.get("hp")
+            evolved.qi = raw.get("qi")
+            replaced[raw["id"]] = evolved_id
+            raw.clear()
+            raw.update(evolved.to_dict())
+            messages.append(
+                f"{evolved.name} berevolusi! Bentuk barunya "
+                "berdenyut dengan kekuatan baru."
+            )
+        if replaced:
+            party_ids = {raw["id"] for raw in self.state.party}
+            self.state.party_active = [
+                replaced.get(cid, cid)
+                for cid in self.state.party_active
+                if replaced.get(cid, cid) in party_ids
+            ]
+        return messages
 
     def _cmd_save(self, command: Command) -> list[str]:
         slot = self._slot_arg(command, default="save1")
@@ -1448,11 +1556,17 @@ class GameSession:
         """
         if self.state is None:
             return []
-        return [
+        skills = [
             technique.id
             for technique in load_techniques()
             if technique.requires.get("tier") == self.state.player.tier_id
         ]
+        # Skill formasi aktif ikut tersedia (GDD §18.3 formation_skill).
+        if self.state.formation_active:
+            skill = formation_skill(self.state.formation_active)
+            if skill and skill not in skills:
+                skills.append(skill)
+        return skills
 
     def _start_battle(self, enemy_id: str) -> list[str]:
         player = self.state.player
@@ -1483,6 +1597,14 @@ class GameSession:
             ally_combatant = combatant_from_companion(companion)
             allies.append(ally_combatant)
             self._ally_map[companion.id] = ally_combatant
+        # Formasi aktif (GDD §7): buff area diterapkan ke seluruh tim
+        # (protagonis + rekan aktif) setelah semua ally terbentuk.
+        formation_bonus = {}
+        if self.state.formation_active:
+            formation_bonus = formation_buff(self.state.formation_active)
+        for ally_unit in allies:
+            for stat, value in formation_bonus.items():
+                ally_unit.stats[stat] = ally_unit.stats.get(stat, 0) + value
         self._ally = ally
         self._enemy = enemy
         self.battle = Battle(
@@ -1559,6 +1681,15 @@ class GameSession:
             self._resolve_enemy_turns()
             if not battle.over and self._is_player_turn():
                 try:
+                    # Aksi formasi (GDD §18.3): terjemahkan ke teknik
+                    # aktif formasi sebelum dicek engine combat.
+                    if (
+                        action == "formation_skill"
+                        and self.state.formation_active
+                    ):
+                        skill = formation_skill(self.state.formation_active)
+                        if skill:
+                            action = f"technique:{skill}"
                     battle.step(action)
                 except ValueError as exc:
                     error = str(exc)

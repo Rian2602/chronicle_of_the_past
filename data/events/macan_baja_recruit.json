@@ -1,0 +1,20 @@
+{
+  "id": "macan_baja_recruit",
+  "trigger": [
+    {
+      "kind": "quest_done",
+      "quest": "quest207"
+    }
+  ],
+  "actions": [
+    {
+      "kind": "add_companion",
+      "id": "macan_baja"
+    },
+    {
+      "kind": "log",
+      "text": "Macan Baja, penjaga arena sekte yang kau kalahkan, kini mengikutimu — bukan karena takluk, melainkan karena tak ada lagi yang tersisa baginya untuk dijaga."
+    }
+  ],
+  "once": true
+}

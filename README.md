@@ -8,4 +8,8 @@ RPG teks berbasis cerita dengan sistem kultivasi — fantasi gelap (CLI, Python
 
 ## Status
 
-Fase 0 (MVP) — dalam pengembangan (lihat GDD §23).
+- Fase 0–1 selesai: MVP playable, sistem formasi & binatang roh (evolusi,
+  menetas, recall) aktif.
+- Fase 2 playable: Arc 2 quest (quest201–208) dengan NPC, dialog, teknik,
+  resep, artefak, dan faksi quest lengkap (lihat GDD §23).
+- Lanjutan: Arc 3–4 + ending dinamis menuju rilis v1.0.

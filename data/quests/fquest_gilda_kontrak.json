@@ -1,0 +1,15 @@
+{
+  "id": "fquest_gilda_kontrak",
+  "title": "Kontrak Kestrel",
+  "type": "faction",
+  "description": "Setelah urusan agen Gilda Pembunuh di sekte, Kestrel menawari kontrak: seorang pembunuh lepas berkhianat dan menjual rahasia klien. Basmi dia — atau harga namamu sendiri yang akan dijual berikutnya.",
+  "objectives": [
+    {"kind": "talk", "target": "kestrel"},
+    {"kind": "kill_count", "target": "pembunuh_gilda", "count": 1}
+  ],
+  "rewards": {"insight": 50, "gold": 40, "reputation": {"guilds": 10}},
+  "flags_on_complete": ["fquest_gilda_kontrak_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest205_done"
+}

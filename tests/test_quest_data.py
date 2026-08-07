@@ -33,6 +33,9 @@ EXPECTED_QUESTS = {
     "quest206",
     "quest207",
     "quest208",
+    "fquest_gilda_kontrak",
+    "fquest_orde_arsip",
+    "fquest_pemberontak_obat",
 }
 REQUIRED_KEYS = {
     "id",
@@ -125,3 +128,20 @@ def test_referensi_talk_ter_resolve_ke_npc():
                 assert npc_file.is_file(), (
                     f"{path.name}: NPC {objective['target']} tidak ditemukan"
                 )
+
+
+def test_setiap_fquest_memiliki_event_intro():
+    """Tiap faksi quest punya event intro yang men-start quest (GDD §12.4)."""
+    events_dir = Path(__file__).resolve().parents[1] / "data" / "events"
+    events = {
+        path.stem: json.loads(path.read_text(encoding="utf-8"))
+        for path in events_dir.glob("*.json")
+    }
+    for path in DATA_DIR.glob("fquest_*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        intro_id = f"{data['id']}_intro"
+        assert intro_id in events, f"{data['id']}: event intro tidak ada"
+        assert any(
+            action["kind"] == "start_quest" and action["id"] == data["id"]
+            for action in events[intro_id]["actions"]
+        ), f"{data['id']}: intro tidak men-start quest"

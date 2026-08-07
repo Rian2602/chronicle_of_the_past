@@ -524,6 +524,92 @@ def test_validator_menangkap_ref_skill_rekan(tmp_path):
     assert any("hantu_kuno" in e for e in collect_errors(data))
 
 
+def test_validator_menangkap_ref_hatch_companion(tmp_path):
+    """Item hatch_companion ke rekan tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    items_dir = data / "items"
+    items_dir.mkdir(exist_ok=True)
+    (items_dir / "telur_hantu.json").write_text(
+        json.dumps(
+            {
+                "id": "telur_hantu",
+                "name": "Telur Hantu",
+                "effect": {"hatch_companion": "phoenix_hantu"},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("phoenix_hantu" in e for e in errors)
+
+
+def test_validator_menangkap_ref_evolution_evolved_id(tmp_path):
+    """Evolution evolved_id ke rekan tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "cultivation" / "qi_condensation.json").write_text(
+        json.dumps(
+            {
+                "id": "qi_condensation",
+                "name": "Qi Condensation",
+                "order": 1,
+                "insight_required": 50,
+                "stat_bonus": {},
+                "unlocks": [],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (data / "companions").mkdir()
+    (data / "companions" / "rekan_evolve.json").write_text(
+        json.dumps(
+            {
+                "id": "rekan_evolve",
+                "name": "Rekan Evolve",
+                "tier": "qi_condensation",
+                "element": "water",
+                "stats": {"hp": 20, "qi": 5},
+                "skills": [],
+                "evolution": {
+                    "trigger_tier": "qi_condensation",
+                    "evolved_id": "hantu_tidak_ada",
+                },
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("hantu_tidak_ada" in e for e in errors)
+
+
+def test_validator_menangkap_evolution_trigger_tier_tak_ada(tmp_path):
+    """Evolution trigger_tier ke tier tak dikenal wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    (data / "companions").mkdir()
+    (data / "companions" / "rekan_evolve.json").write_text(
+        json.dumps(
+            {
+                "id": "rekan_evolve",
+                "name": "Rekan Evolve",
+                "tier": "qi_condensation",
+                "element": "water",
+                "stats": {"hp": 20, "qi": 5},
+                "skills": [],
+                "evolution": {
+                    "trigger_tier": "tier_hantu",
+                    "evolved_id": "rekan_evolve",
+                },
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("tier_hantu" in e for e in errors)
+
+
 def test_validator_menangkap_ref_dialog_npc_tak_ada(tmp_path):
     """Dialog merujuk NPC tak dikenal wajib dilaporkan."""
     data = _pohon_data(tmp_path)
@@ -591,6 +677,29 @@ def test_validator_menangkap_ref_dialog_action_item(tmp_path):
         encoding="utf-8",
     )
     assert any("pil_hantu" in e for e in collect_errors(data))
+
+
+def test_validator_menangkap_buff_formasi_bukan_dict(tmp_path):
+    """Formasi dengan buff non-dict/bukan stat wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    formations_dir = data / "formations"
+    formations_dir.mkdir(exist_ok=True)
+    (formations_dir / "f_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "f_uji",
+                "name": "Formasi Uji",
+                "element": "earth",
+                "description": "Uji.",
+                "buff": "bukan_stat",
+                "skill": None,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("f_uji" in e and "buff" in e for e in errors)
 
 
 def test_validator_data_lulus(tmp_path):

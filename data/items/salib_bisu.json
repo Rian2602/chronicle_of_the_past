@@ -1,0 +1,13 @@
+{
+  "id": "salib_bisu",
+  "name": "Salib Bisu",
+  "type": "artifact",
+  "description": "Salib kayu tanpa ukiran, dibawa pulang dari makam yang tak bertanda. Ia tidak pernah berbicara — hanya menekan dadamu di tiap malam, mengingatkan bahwa satu suara telah dipungut.",
+  "price": 600,
+  "growth_stat": "vitality",
+  "max_level": 5,
+  "effect": {
+    "growth_stat": "vitality",
+    "max_level": 5
+  }
+}

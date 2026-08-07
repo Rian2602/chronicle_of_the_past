@@ -1,0 +1,9 @@
+{
+  "id": "toko_tie",
+  "name": "Tempa Tie",
+  "stock": [
+    {"item": "pedang_awan_hitam", "count": 1},
+    {"item": "pedang_taring_naga", "count": 1},
+    {"item": "pil_pemulih_besar", "count": 3}
+  ]
+}

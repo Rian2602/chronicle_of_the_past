@@ -1,0 +1,15 @@
+{
+  "id": "penyerapan_jiwa",
+  "name": "Penyerapan Jiwa",
+  "path": "soul",
+  "element": "fire",
+  "type": "technique",
+  "qi_cost": 16,
+  "power": 10,
+  "effects": [
+    {"status": "weaken", "duration": 3}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

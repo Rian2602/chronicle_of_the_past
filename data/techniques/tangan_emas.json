@@ -1,0 +1,15 @@
+{
+  "id": "tangan_emas",
+  "name": "Tangan Emas",
+  "path": "alchemy",
+  "element": "metal",
+  "type": "technique",
+  "qi_cost": 10,
+  "power": 0,
+  "effects": [
+    {"status": "strengthen", "duration": 3}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

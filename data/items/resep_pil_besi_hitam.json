@@ -1,0 +1,14 @@
+{
+  "id": "resep_pil_besi_hitam",
+  "name": "Resep Pil Besi Hitam",
+  "type": "recipe",
+  "description": "Mengajarkan cara meracik Pil Besi Hitam.",
+  "price": 350,
+  "effect": {
+    "learn_recipe": "pil_besi_hitam"
+  },
+  "recipe": [
+    {"item": "batu_qi", "qty": 2},
+    {"item": "esensi_tanah", "qty": 2}
+  ]
+}

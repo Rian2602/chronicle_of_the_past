@@ -1,0 +1,15 @@
+{
+  "id": "fquest_orde_arsip_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest204_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_orde_arsip"},
+    {"kind": "set_flag", "flag": "fquest_orde_arsip_active", "value": true},
+    {
+      "kind": "log",
+      "text": "Diakon Soren menatapmu dari balik arsip yang tinggi menjulang: 'Orde menyimpan catatan yang tidak boleh menyala. Diakon yang mengurus arsip itu hilang tiga hari lalu — tanpa jejak. Penjaga arsip masih berkeliaran, dan ia menjaga rahasia yang bahkan aku tidak berani baca. Jika kau mau mengerti siapa yang kau layani, ambil salah satu gulungan itu. Tapi jangan katakan aku yang menyuruhmu.'"
+    }
+  ],
+  "once": true
+}

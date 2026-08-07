@@ -30,6 +30,7 @@ from src.engine.quest import load_quests  # noqa: E402
 from src.engine.shop import load_shops  # noqa: E402
 from src.engine.story import load_memories  # noqa: E402
 from src.models.party import load_companions  # noqa: E402
+from src.systems.formation import load_formations  # noqa: E402
 
 DATA_DIR = ROOT / "data"
 
@@ -56,7 +57,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
     Args:
         data_dir: Direktori root ``data`` berisi subfolder quests/,
             events/, story/, maps/, npc/, cultivation/, techniques/,
-            enemies/ (default data/ proyek).
+            enemies/, formations/ (default data/ proyek).
 
     Returns:
         Daftar temuan terurut abjad; kosong bila semua referensi valid.
@@ -95,6 +96,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         "status_inflict",
         "growth_stat",
         "max_level",
+        "hatch_companion",
     }
     npcs = _npc_records(data_dir / "npc")
     dialogs = load_dialogs(data_dir / "dialogues")
@@ -103,6 +105,7 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         technique.id for technique in load_techniques(data_dir / "techniques")
     }
     companions = load_companions(data_dir / "companions")
+    formations = load_formations(data_dir / "formations")
 
     errors: list[str] = []
     for quest in quests.values():
@@ -309,8 +312,9 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
             if skill not in techniques:
                 errors.append(f"{enemy.id}: skill {skill} tidak ada")
 
-    # Rekan (GDD §20.3): tier, elemen, dan teknik wajib ter-resolve.
+    # Rekan (GDD §20.3): tier, elemen, teknik, dan evolusi wajib resolve.
     valid_elements = {"metal", "wood", "earth", "water", "fire", "netral"}
+    companion_ids = {companion.id for companion in companions}
     for companion in companions:
         if companion.tier not in tiers:
             errors.append(f"{companion.id}: tier {companion.tier} tidak ada")
@@ -321,6 +325,33 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
         for skill in companion.skills:
             if skill not in techniques:
                 errors.append(f"{companion.id}: skill {skill} tidak ada")
+        evolution = companion.evolution
+        if evolution:
+            trigger_tier = evolution.get("trigger_tier")
+            if trigger_tier not in tiers:
+                errors.append(
+                    f"{companion.id}: evolution trigger_tier "
+                    f"{trigger_tier} tidak ada"
+                )
+            if evolution.get("evolved_id") not in companion_ids:
+                errors.append(
+                    f"{companion.id}: evolution evolved_id "
+                    f"{evolution.get('evolved_id')} tidak ada"
+                )
+
+    # Formasi (GDD §7): buff wajib dict stat, skill aktif wajib ada.
+    for formation_id, formation in formations.items():
+        buff = formation.get("buff")
+        if not isinstance(buff, dict) or not buff:
+            errors.append(
+                f"formations: {formation_id} -> buff wajib dict non-kosong"
+            )
+            continue
+        skill = formation.get("skill")
+        if skill is not None and skill not in techniques:
+            errors.append(
+                f"formations: {formation_id} -> skill {skill} tidak ada"
+            )
 
     for map_id, raw in maps.items():
         for entry in raw.get("enemies", []):
@@ -342,6 +373,12 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
                 errors.append(
                     f"items: {item_id} -> learn_recipe target "
                     f"'{target}' tidak ada"
+                )
+            hatched = effect.get("hatch_companion")
+            if hatched is not None and hatched not in companion_ids:
+                errors.append(
+                    f"items: {item_id} -> hatch_companion target "
+                    f"'{hatched}' tidak ada"
                 )
         recipe = item.get("recipe")
         if isinstance(recipe, list):

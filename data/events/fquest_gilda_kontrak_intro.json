@@ -1,0 +1,15 @@
+{
+  "id": "fquest_gilda_kontrak_intro",
+  "trigger": [
+    {"kind": "flag", "flag": "quest205_done", "operator": "EQUALS", "value": true}
+  ],
+  "actions": [
+    {"kind": "start_quest", "id": "fquest_gilda_kontrak"},
+    {"kind": "set_flag", "flag": "fquest_gilda_kontrak_active", "value": true},
+    {
+      "kind": "log",
+      "text": "Kestrel menyeringai di bawah cahaya lilin kota: 'Ada kontrak tanpa nama di papan gilda — pembunuh gilda yang tidak patuh pada siapa pun. Bayarannya besar, dan targetnya adalah sesamamu: yang merebut takhta dari tangan Orde Suci. Aku tidak ikut campur. Tapi kaulah yang akan menagihnya, atau ia yang menagihmu.'"
+    }
+  ],
+  "once": true
+}

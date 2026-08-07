@@ -15,5 +15,9 @@
   },
   "skills": [
     "qi_slash"
-  ]
+  ],
+  "evolution": {
+    "trigger_tier": "golden_core",
+    "evolved_id": "serigala_bayangan_evolved"
+  }
 }

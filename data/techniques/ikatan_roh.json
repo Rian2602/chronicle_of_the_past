@@ -1,0 +1,15 @@
+{
+  "id": "ikatan_roh",
+  "name": "Ikatan Roh",
+  "path": "soul",
+  "element": "wood",
+  "type": "technique",
+  "qi_cost": 12,
+  "power": 0,
+  "effects": [
+    {"status": "seal", "duration": 2}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

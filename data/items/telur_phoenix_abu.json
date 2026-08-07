@@ -1,0 +1,9 @@
+{
+  "id": "telur_phoenix_abu",
+  "name": "Telur Phoenix Abu",
+  "type": "consumable",
+  "description": "Telur tua yang berdenyut hangat, ditemukan di sarang yang penghuninya lama membara jadi abu. Makhluk yang menetas nanti akan membawa sisa-sisa hangus itu bersamanya.",
+  "effect": {
+    "hatch_companion": "phoenix_abu"
+  }
+}

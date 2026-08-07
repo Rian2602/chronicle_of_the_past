@@ -236,6 +236,17 @@ def test_skills_pemain_berasal_dari_data(tmp_path):
     }
 
 
+def test_player_skills_tidak_duplikat_skill_formasi(tmp_path):
+    """Skill formasi tidak menggandakan teknik yang sudah dipelajari."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    session.state.formation_active = "benteng_bumi"
+    skills = session.player_skills
+    assert skills.count("perisai_tanah") == 1
+
+
 def test_pertarungan_menang_memberi_reward(tmp_path):
     """Menang melawan bandit memberi reward insight/gold dari data."""
     session = _session(tmp_path)
@@ -1615,3 +1626,144 @@ def test_missing_exploration_commands(tmp_path):
     # recall
     res = _dispatch(session, "recall")
     assert "recall" in res[0].lower()
+
+
+# ----------------------------------------------------------------------
+# Sistem Formasi (GDD §7, §18.2): command formation + buff battle
+# ----------------------------------------------------------------------
+
+
+def test_cmd_formation_set_dan_clear(tmp_path):
+    """Formation <id> memasang formasi; tanpa argumen membongkarnya."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    res = _dispatch(session, "formation jaring_naga")
+    assert "Jaring Naga" in " ".join(res)
+    assert session.state.formation_active == "jaring_naga"
+    res = _dispatch(session, "formation")
+    assert session.state.formation_active is None
+
+
+def test_cmd_formation_menolak_id_tak_dikenal(tmp_path):
+    """Formation dengan id tak dikenal ditolak, tidak mengubah state."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    res = _dispatch(session, "formation tidak_ada")
+    assert any("tidak dikenal" in line for line in res)
+    assert session.state.formation_active is None
+
+
+def test_cmd_formation_ditolak_saat_battle(tmp_path):
+    """Mengatur formasi saat bertarung ditolak (sama dengan swap)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    _dispatch(session, "look")
+    res = _dispatch(session, "formation jaring_naga")
+    assert any("bertarung" in line for line in res)
+    assert session.state.formation_active is None
+
+
+def test_cmd_formation_hanya_di_lokasi_aman(tmp_path):
+    """Formation di area berbahaya (peta dengan musuh) ditolak."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.flags["map_ashfall_forest_unlocked"] = True
+    _dispatch(session, "go ashfall_forest")
+    res = _dispatch(session, "formation jaring_naga")
+    assert any("aman" in line.lower() for line in res)
+    assert session.state.formation_active is None
+
+
+def test_start_battle_menerapkan_buff_formasi_ke_semua_ally(tmp_path):
+    """Buff formasi diterapkan ke seluruh ally (protagonis + rekan)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    base_defense = session.state.player.stats["defense"]
+    session.state.formation_active = "jaring_naga"
+    session._start_battle("babi_hutan_qi")
+    ally = session.battle.allies[0]
+    assert ally.stats["defense"] == base_defense + 20
+
+
+def test_start_battle_buff_formasi_ke_rekan_aktif(tmp_path):
+    """Rekan aktif ikut menerima buff formasi (GDD §7, buff area)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    _rekrut_lin_wei(session)
+    base_defense = session.state.party[0]["stats"]["defense"]
+    session.state.formation_active = "jaring_naga"
+    session._start_battle("babi_hutan_qi")
+    ally = session.battle.allies[1]
+    assert ally.stats["defense"] == base_defense + 20
+
+
+def test_battle_step_formation_skill_menggunakan_teknik_formasi(tmp_path):
+    """Aksi formation_skill diterjemahkan ke teknik formasi aktif.
+
+    Perilaku: aksi diterjemahkan tanpa ValueError "aksi tidak dikenal"
+    dari Battle; bila qi kurang, error yang muncul soal qi (bukan aksi).
+    """
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.formation_active = "benteng_bumi"
+    session._start_battle("babi_hutan_qi")
+    frame = session.battle_step("formation_skill")
+    assert frame.error is None or "qi" in frame.error.lower()
+
+
+def test_player_skills_memuat_skill_formasi_aktif(tmp_path):
+    """Skill formasi aktif ikut tersedia di player_skills (GDD §18.3)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    assert "perisai_tanah" not in session.player_skills
+    session.state.formation_active = "benteng_bumi"
+    assert "perisai_tanah" in session.player_skills
+
+
+# ----------------------------------------------------------------------
+# Binatang Roh (GDD §20.3): recall via swap, telur menetas jadi rekan
+# ----------------------------------------------------------------------
+
+
+def test_cmd_recall_mendelegasikan_ke_swap(tmp_path):
+    """Recall panggil/lepas rekan — semantik sama dengan swap."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.party = [{"id": "lin_wei", "name": "Lin Wei"}]
+    session.state.party_active = []
+    res = session._cmd_recall(
+        Command(name="recall", args=("lin_wei",), raw="recall lin_wei")
+    )
+    assert "Lin Wei" in " ".join(res)
+    assert "lin_wei" in session.state.party_active
+    res = session._cmd_recall(
+        Command(name="recall", args=("lin_wei",), raw="recall lin_wei")
+    )
+    assert "lin_wei" not in session.state.party_active
+
+
+def test_cmd_recall_tanpa_argumen_memberi_hint(tmp_path):
+    """Recall tanpa argumen memunculkan hint penggunaan (GDD §18.2)."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    res = session._cmd_recall(Command(name="recall", args=(), raw="recall"))
+    assert "recall" in res[0].lower()
+
+
+def test_cmd_use_menetaskan_telur_menambah_rekan(tmp_path):
+    """Item effect hatch_companion menambah rekan dan menghapus telur."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.inventory["items"]["telur_phoenix_abu"] = 1
+    session._cmd_use(
+        Command(
+            name="use",
+            args=("telur_phoenix_abu",),
+            raw="use telur_phoenix_abu",
+        )
+    )
+    ids = [raw["id"] for raw in session.state.party]
+    assert "phoenix_abu" in ids
+    assert session.state.inventory["items"].get("telur_phoenix_abu", 0) == 0

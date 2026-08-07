@@ -4,8 +4,12 @@
   "type": "artifact",
   "description": "Jubah tenunan benang roh gelap yang sulit dideteksi mata.",
   "price": 400,
+  "growth_stat": "agility",
+  "max_level": 5,
   "effect": {
     "resist_dark": 10,
-    "buff_agility": 5
+    "buff_agility": 5,
+    "growth_stat": "agility",
+    "max_level": 5
   }
 }
