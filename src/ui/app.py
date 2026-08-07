@@ -559,15 +559,12 @@ class GameScreen(Screen):
 
     def _enemy_lines(self, frame: BattleFrame) -> list[str]:
         """Baris info musuh dengan bar HP visual (GDD §6.1)."""
-        lines: list[str] = []
-        for enemy in frame.enemies:
-            bar = make_bar(enemy["hp"], enemy["hp_max"], 12)
-            lines.append(
-                f"[bold red]{enemy['name']}[/] HP [red]{bar}[/] "
-                f"{enemy['hp']}/{enemy['hp_max']} | Qi {enemy['qi']} "
-                f"| Elemen {enemy['element']}"
-            )
-        return lines
+        return [
+            f"[bold red]{e['name']}[/] HP "
+            f"[red]{make_bar(e['hp'], e['hp_max'], 12)}[/] "
+            f"{e['hp']}/{e['hp_max']} | Qi {e['qi']} | Elemen {e['element']}"
+            for e in frame.enemies
+        ]
 
     def action_back_to_menu(self) -> None:
         """Escape: keluar sub-menu dulu, lalu kembali ke menu utama."""
