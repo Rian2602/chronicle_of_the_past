@@ -5,18 +5,19 @@ Acuan desain: GDD §6 (combat), §16 (status), §17.2 (formula stat).
 
 from __future__ import annotations
 
-import json
 import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from src.core.utils import load_json_dir
 from src.models.combatant import Combatant
 from src.models.enemy import Enemy
 from src.models.technique import Technique
 
 TECHNIQUE_DIR = Path(__file__).resolve().parents[2] / "data" / "techniques"
 ENEMY_DIR = Path(__file__).resolve().parents[2] / "data" / "enemies"
+
 
 ELEMENT_CYCLE = ("metal", "wood", "earth", "water", "fire")
 ELEMENT_ADVANTAGE = {
@@ -65,20 +66,12 @@ ATTACK_QI_GAIN = 1
 
 def load_techniques(data_dir: Path = TECHNIQUE_DIR) -> list[Technique]:
     """Muat semua teknik dari data/techniques/, urut berdasarkan id."""
-    techniques: list[Technique] = []
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        techniques.append(Technique(**raw))
-    return techniques
+    return load_json_dir(data_dir, model_cls=Technique)
 
 
 def load_enemies(data_dir: Path = ENEMY_DIR) -> list[Enemy]:
     """Muat semua musuh dari data/enemies/, urut berdasarkan id."""
-    enemies: list[Enemy] = []
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        enemies.append(Enemy(**raw))
-    return enemies
+    return load_json_dir(data_dir, model_cls=Enemy)
 
 
 def element_multiplier(attacker: str, defender: str) -> float:

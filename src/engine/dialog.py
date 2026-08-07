@@ -8,11 +8,11 @@ kebenaran aksi, tanpa duplikasi logika.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 from src.core.state import GameState
+from src.core.utils import load_json_dir
 from src.engine.event import EventResult, apply_action
 
 DIALOGUE_DIR = Path(__file__).resolve().parents[2] / "data" / "dialogues"
@@ -26,15 +26,8 @@ def load_dialogs(data_dir: Path = DIALOGUE_DIR) -> dict[str, dict[str, Any]]:
 
     Returns:
         Mapping dialog_id -> dict dialog mentah (id, npc, nodes).
-
-    Raises:
-        KeyError: Jika sebuah file JSON tidak punya kunci ``id``.
     """
-    dialogs: dict[str, dict[str, Any]] = {}
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        dialogs[raw["id"]] = raw
-    return dialogs
+    return load_json_dir(data_dir)
 
 
 def find_dialog(

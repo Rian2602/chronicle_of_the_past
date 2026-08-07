@@ -8,14 +8,15 @@ complete_quest.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from src.core.state import GameState
+from src.core.utils import load_json_dir
 
 QUEST_DIR = Path(__file__).resolve().parents[2] / "data" / "quests"
+
 
 # 8 kind requirement (GDD §12.2); dipakai guard engine + validator data.
 QUEST_KINDS = {
@@ -65,17 +66,19 @@ class Quest:
     category: str
     requires_flag: str | None = None
 
+    def __post_init__(self) -> None:
+        """Convert raw dict objectives into QuestObjective objects."""
+        if self.objectives and isinstance(self.objectives[0], dict):
+            objectives = [
+                QuestObjective(**o) if isinstance(o, dict) else o
+                for o in self.objectives
+            ]
+            object.__setattr__(self, "objectives", objectives)
+
 
 def load_quests(data_dir: Path = QUEST_DIR) -> list[Quest]:
     """Muat semua quest dari data/quests/, urut berdasarkan id."""
-    quests: list[Quest] = []
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        objectives = [
-            QuestObjective(**objective) for objective in raw["objectives"]
-        ]
-        quests.append(Quest(**{**raw, "objectives": objectives}))
-    return quests
+    return load_json_dir(data_dir, model_cls=Quest)
 
 
 def active_quests(state: GameState, quests: list[Quest]) -> list[Quest]:

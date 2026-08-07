@@ -6,12 +6,12 @@ Acuan desain: GDD §4.1 (tingkatan & breakthrough), §4.3 (insight),
 
 from __future__ import annotations
 
-import json
 import random
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from src.core.utils import load_json_dir
 from src.models.player import Player
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "cultivation"
@@ -50,10 +50,7 @@ class BreakthroughResult:
 
 def load_tiers(data_dir: Path = DATA_DIR) -> list[CultivationTier]:
     """Muat semua tingkatan dari data/cultivation/, urut berdasarkan order."""
-    tiers: list[CultivationTier] = []
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        tiers.append(CultivationTier(**raw))
+    tiers = load_json_dir(data_dir, model_cls=CultivationTier)
     return sorted(tiers, key=lambda tier: tier.order)
 
 

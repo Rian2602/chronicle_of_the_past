@@ -6,9 +6,10 @@ Isi memori (judul + teks) dipisah dari engine: event cukup menyimpan
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
+
+from src.core.utils import load_json_dir
 
 if TYPE_CHECKING:
     from src.core.state import GameState
@@ -33,16 +34,9 @@ def load_memories(data_dir: Path = STORY_DIR) -> dict[str, dict[str, str]]:
         data_dir: Direktori berisi JSON memori (default data/story/).
 
     Returns:
-        Mapping memory_id -> dict dengan kunci ``id``, ``title``, ``text``.
-
-    Raises:
-        KeyError: Jika sebuah file JSON tidak punya kunci ``id``.
+        Mapping memory_id -> dict memori mentah.
     """
-    memories: dict[str, dict[str, str]] = {}
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        memories[raw["id"]] = {"title": raw["title"], "text": raw["text"]}
-    return memories
+    return load_json_dir(data_dir)
 
 
 def calculate_ending(state: GameState) -> str:

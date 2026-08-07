@@ -7,9 +7,10 @@ stok terbatas + restock saat rest).
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
+
+from src.core.utils import load_json_dir
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 SHOP_DIR = DATA_DIR / "shops"
@@ -28,15 +29,8 @@ def load_shops(data_dir: Path = SHOP_DIR) -> dict[str, dict[str, Any]]:
     Returns:
         Mapping shop_id -> dict mentah dengan kunci ``id``, ``name``,
         dan ``stock`` (daftar {"item", "count"}).
-
-    Raises:
-        KeyError: Jika sebuah file JSON tidak punya kunci ``id``.
     """
-    shops: dict[str, dict[str, Any]] = {}
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        shops[raw["id"]] = raw
-    return shops
+    return load_json_dir(data_dir)
 
 
 def sell_price(price: int) -> int:

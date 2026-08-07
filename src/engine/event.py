@@ -7,16 +7,17 @@ hardcode di kode (§24.1 #16). Event diproses setelah momen mutasi state
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from src.core.state import GameState
+from src.core.utils import load_json_dir
 from src.engine.story import calculate_ending
 from src.models.party import load_companion
 
 EVENT_DIR = Path(__file__).resolve().parents[2] / "data" / "events"
+
 
 TRIGGER_KINDS = {
     "flag",
@@ -66,11 +67,7 @@ class EventResult:
 
 def load_events(data_dir: Path = EVENT_DIR) -> list[GameEvent]:
     """Muat semua event dari data/events/ urut abjad nama file (§15.4)."""
-    events: list[GameEvent] = []
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        events.append(GameEvent(**raw))
-    return events
+    return load_json_dir(data_dir, model_cls=GameEvent)
 
 
 def _match_trigger(condition: dict[str, Any], state: GameState) -> bool:
