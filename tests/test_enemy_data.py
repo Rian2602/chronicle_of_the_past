@@ -52,6 +52,12 @@ EXPECTED_ENEMIES = {
     "bos_sekte_bayangan",
     "bos_inquisitor_agung",
     "inquisitor_elit",
+    "tentara_salib",
+    "uskup_muda",
+    "pemberontak_fanatik",
+    "pengikut_bisikan",
+    "agen_kuno",
+    "manifestasi_langit",
 }
 
 

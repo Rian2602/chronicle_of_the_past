@@ -1,0 +1,20 @@
+{
+  "id": "manifestasi_langit",
+  "name": "Manifestasi Langit",
+  "tier": "soul_separation",
+  "element": "water",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 34,
+    "defense": 24,
+    "agility": 22,
+    "intelligence": 20,
+    "vitality": 18,
+    "spirit": 22,
+    "hp": 260,
+    "qi": 90
+  },
+  "skills": ["frost_bind", "segel_jiwa_pecah"],
+  "tags": ["celestial"],
+  "rewards": {"insight": 120, "gold": 110}
+}

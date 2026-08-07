@@ -1,0 +1,20 @@
+{
+  "id": "pemberontak_fanatik",
+  "name": "Pemberontak Fanatik",
+  "tier": "qi_condensation",
+  "element": "wood",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 20,
+    "defense": 8,
+    "agility": 12,
+    "intelligence": 3,
+    "vitality": 7,
+    "spirit": 4,
+    "hp": 80,
+    "qi": 18
+  },
+  "skills": ["serbuan_akar"],
+  "tags": ["human", "rebels"],
+  "rewards": {"insight": 40, "gold": 35}
+}

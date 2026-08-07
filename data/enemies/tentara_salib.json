@@ -1,0 +1,20 @@
+{
+  "id": "tentara_salib",
+  "name": "Tentara Salib Orde Suci",
+  "tier": "qi_condensation",
+  "element": "metal",
+  "behavior": "aggressive",
+  "stats": {
+    "attack": 18,
+    "defense": 14,
+    "agility": 8,
+    "intelligence": 4,
+    "vitality": 8,
+    "spirit": 5,
+    "hp": 90,
+    "qi": 20
+  },
+  "skills": ["tebasan_bayangan"],
+  "tags": ["human", "holy_order"],
+  "rewards": {"insight": 45, "gold": 40}
+}
