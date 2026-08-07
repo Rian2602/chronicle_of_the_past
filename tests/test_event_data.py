@@ -48,6 +48,9 @@ EXPECTED_EVENTS = {
     "quest208_done",
     "macan_baja_recruit",
     "memory_sekte_intrik",
+    "fquest_gilda_kontrak_intro",
+    "fquest_orde_arsip_intro",
+    "fquest_pemberontak_obat_intro",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 
