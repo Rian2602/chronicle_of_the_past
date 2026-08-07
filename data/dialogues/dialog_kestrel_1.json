@@ -1,0 +1,32 @@
+{
+  "id": "dialog_kestrel_1",
+  "npc": "kestrel",
+  "nodes": {
+    "start": {
+      "text": "Kota ini penuh mata yang meminta bayaran. Telingaku mendengar nama yang seharusnya sudah mati — dan namamu ada di antaranya.",
+      "choices": [
+        {
+          "text": "Siapa yang memburuku?",
+          "next": "jawaban",
+          "requires_flag": null,
+          "actions": []
+        },
+        {
+          "text": "[Pergi]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    },
+    "jawaban": {
+      "text": "Orde Suci memberi imbalan besar untuk informasi tentang bakat semacam dirimu. Pilih sisimu baik-baik — harga itu tak akan menunggumu lama.",
+      "choices": [
+        {
+          "text": "[Pergi]",
+          "next": null,
+          "actions": []
+        }
+      ]
+    }
+  }
+}

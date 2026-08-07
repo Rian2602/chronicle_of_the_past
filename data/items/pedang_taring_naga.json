@@ -1,0 +1,13 @@
+{
+  "id": "pedang_taring_naga",
+  "name": "Pedang Taring Naga",
+  "type": "artifact",
+  "description": "Bilah dari taring iblis yang membeku. Ia lapar — dan yang memberinya makan akan tumbuh.",
+  "price": 800,
+  "growth_stat": "attack",
+  "max_level": 5,
+  "effect": {
+    "growth_stat": "attack",
+    "max_level": 5
+  }
+}

@@ -33,6 +33,9 @@ EXPECTED_QUESTS = {
     "quest206",
     "quest207",
     "quest208",
+    "fquest_gilda_kontrak",
+    "fquest_orde_arsip",
+    "fquest_pemberontak_obat",
 }
 REQUIRED_KEYS = {
     "id",

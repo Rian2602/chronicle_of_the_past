@@ -1,0 +1,15 @@
+{
+  "id": "racun_meridian_lanjut",
+  "name": "Racun Meridian Lanjut",
+  "path": "alchemy",
+  "element": "wood",
+  "type": "technique",
+  "qi_cost": 16,
+  "power": 20,
+  "effects": [
+    {"type": "status", "status": "poison", "chance": 85}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

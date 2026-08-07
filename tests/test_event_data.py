@@ -47,6 +47,7 @@ EXPECTED_EVENTS = {
     "quest207_done",
     "quest208_done",
     "macan_baja_recruit",
+    "memory_sekte_intrik",
 }
 REQUIRED_KEYS = {"id", "trigger", "actions", "once"}
 

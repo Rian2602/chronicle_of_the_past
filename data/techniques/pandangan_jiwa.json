@@ -1,0 +1,15 @@
+{
+  "id": "pandangan_jiwa",
+  "name": "Pandangan Jiwa",
+  "path": "soul",
+  "element": "earth",
+  "type": "technique",
+  "qi_cost": 10,
+  "power": 0,
+  "effects": [
+    {"status": "slow", "duration": 3}
+  ],
+  "requires": {
+    "tier": "golden_core"
+  }
+}

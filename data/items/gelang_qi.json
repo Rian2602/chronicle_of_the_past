@@ -4,7 +4,11 @@
   "type": "artifact",
   "description": "Membantu menstabilkan kapasitas qi penggunanya.",
   "price": 500,
+  "growth_stat": "spirit",
+  "max_level": 5,
   "effect": {
-    "buff_qi_max": 20
+    "buff_qi_max": 20,
+    "growth_stat": "spirit",
+    "max_level": 5
   }
 }

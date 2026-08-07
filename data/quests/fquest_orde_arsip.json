@@ -1,0 +1,15 @@
+{
+  "id": "fquest_orde_arsip",
+  "title": "Arsip yang Terkunci",
+  "type": "faction",
+  "description": "Diakon Soren memintamu mengambil gulungan terlarang dari arsip reruntuhan — catatan Orde tentang 'yang ditunggu'. Ia memperingatkan: isi gulungan itu mungkin sebaiknya tidak pernah dibaca siapa pun.",
+  "objectives": [
+    {"kind": "talk", "target": "diakon_soren"},
+    {"kind": "enemy", "target": "penjaga_arsip"}
+  ],
+  "rewards": {"insight": 60, "gold": 50, "reputation": {"ancient_order": 10}},
+  "flags_on_complete": ["fquest_orde_arsip_done"],
+  "next": null,
+  "category": "faction",
+  "requires_flag": "quest204_done"
+}
