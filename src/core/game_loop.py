@@ -60,7 +60,7 @@ from src.models.combatant import (
     combatant_from_player,
 )
 from src.models.enemy import Enemy
-from src.models.party import Companion, load_companion
+from src.models.party import Companion
 from src.models.player import Player
 from src.systems.formation import (
     formation_buff,
@@ -399,14 +399,11 @@ class GameSession:
                 )
                 lines.append(f"Meridian terbuka ({player.meridian_buka}/8).")
             if effect.get("hatch_companion"):
-                companion_id = effect["hatch_companion"]
-                ids = [raw["id"] for raw in self.state.party]
-                if companion_id not in ids:
-                    companion = load_companion(companion_id)
-                    self.state.party.append(companion.to_dict())
-                    if len(self.state.party_active) < 3:
-                        self.state.party_active.append(companion_id)
-                    lines.append(f"Telur menetas: {companion.name} bergabung!")
+                from src.systems.companion import hatch_companion
+
+                message = hatch_companion(self.state, effect["hatch_companion"])
+                if message is not None:
+                    lines.append(message)
                 else:
                     lines.append("Binatang roh ini sudah di timmu.")
             # Efek combat-ready (buff_*/resist_*): catat ke state.buffs
@@ -576,49 +573,16 @@ class GameSession:
     def _cmd_refine(self, command: Command) -> list[str]:
         """Racik pil dari bahan sesuai resep (GDD §18.2).
 
-        Syarat: resep sudah dipelajari (flag ``recipe_<item>_known``),
-        Kuali Roh ada di tas, dan semua bahan tersedia. Mengonsumsi
-        bahan sesuai resep lalu menambah pil hasil; cascade quest+event
-        (pola buy/sell).
+        Delegasi ke sistem alkimia (src/systems/alchemy.py); setelah
+        berhasil, cascade quest+event (pola buy/sell).
         """
         if not command.args:
             return ["Racik apa? Contoh: refine <nama_pil>."]
-        target_id = command.args[0]
-        catalog = load_items()
-        item = catalog.get(target_id)
-        if item is None:
-            return [f"Resep '{target_id}' tidak dikenal."]
-        recipe = item.get("recipe")
-        if not recipe:
-            for cat_item in catalog.values():
-                eff = cat_item.get("effect") or {}
-                if (
-                    cat_item.get("type") == "recipe"
-                    and eff.get("learn_recipe") == target_id
-                ):
-                    recipe = cat_item.get("recipe")
-                    break
-        if not recipe:
-            return [f"{item['name']} tidak memiliki resep."]
-        if not self.state.flags.get(f"recipe_{target_id}_known"):
-            msg = (
-                f"Kamu belum mempelajari resep {item['name']}. "
-                "Beli dan pakai item resepnya dulu."
-            )
-            return [msg]
-        items = self.state.inventory.setdefault("items", {})
-        if items.get("kuali_roh", 0) <= 0:
-            return ["Kamu butuh Kuali Roh untuk meracik."]
-        for req in recipe:
-            if items.get(req["item"], 0) < req["qty"]:
-                need = catalog.get(req["item"], {}).get("name", req["item"])
-                return [f"Bahan tidak cukup: butuh {req['qty']}x {need}."]
-        for req in recipe:
-            items[req["item"]] -= req["qty"]
-            if items[req["item"]] == 0:
-                del items[req["item"]]
-        items[target_id] = items.get(target_id, 0) + 1
-        lines = [f"Kamu meracik {item['name']} x1."]
+        from src.systems.alchemy import refine_item
+
+        ok, lines = refine_item(self.state, command.args[0])
+        if not ok:
+            return lines
         lines += self._run_quests()
         lines += self._run_events()
         return lines
@@ -699,7 +663,7 @@ class GameSession:
         lines = [f"{npc['name']}: {node['text']}"]
         for index, choice in enumerate(visible_choices(node, self.state), 1):
             lines.append(f"  [{index}] {choice['text']}")
-        lines.append("Pilih: choose <nomor>")
+        lines.append("Pilih jawaban di menu percakapan di bawah.")
         lines.extend(self._run_quests())
         lines.extend(self._run_events())
         return lines
@@ -1150,18 +1114,31 @@ class GameSession:
         ]
 
     def dialog_choices(self) -> list[dict[str, Any]]:
-        """Pilihan dialog aktif untuk UI (GDD §12.5).
+        """Pilihan aktif untuk UI: dialog bercabang atau prompt_choice event.
 
-        Membaca ``state.flags["pending_dialog"]`` (diset `_start_dialog`);
-        tanpa dialog aktif mengembalikan daftar kosong. Setiap pilihan
-        memuat hint efek dari aksinya (mis. "→ Reputasi rebels +5").
+        Dua sumber keputusan pemain dirender di panel yang sama dan
+        dijawab lewat perintah `choose <key>`: (1) ``pending_dialog``
+        (GDD §12.5, diset `_start_dialog`) dan (2) ``pending_choice``
+        (GDD §15.3, diset event prompt_choice). Prompt_choice didahulukan
+        — konsisten dengan prioritas `_cmd_choose`. Tanpa keduanya,
+        daftar kosong dikembalikan.
 
         Returns:
-            List dict: ``id`` (nomor 1-based), ``text``, ``effect_hint``
+            List dict: ``id`` (key pilihan), ``text``, ``effect_hint``
             (opsional).
         """
         if self.state is None:
             return []
+        pending_choice = self.state.flags.get("pending_choice")
+        if pending_choice:
+            return [
+                {
+                    "id": option["key"],
+                    "text": option["text"],
+                    "effect_hint": "",
+                }
+                for option in pending_choice.get("options", [])
+            ]
         pending = self.state.flags.get("pending_dialog")
         if not pending:
             return []
@@ -1341,9 +1318,9 @@ class GameSession:
     def _evolve_companions(self, tier_id: str) -> list[str]:
         """Evolusi binatang roh saat tier terpicu (GDD §20.3, sekali).
 
-        Rekan dengan evolution.trigger_tier == tier_id diganti datanya
-        dari companion evolved_id, mempertahankan bond_xp/rank. Rekan
-        hasil evolusi tak punya field evolution -> tidak berevolusi lagi.
+        Delegasi ke sistem companion (src/systems/companion.py) — satu
+        jalur mutasi party; nama method dipertahankan agar pemanggil
+        dan test eksisting tetap valid.
 
         Args:
             tier_id: Tier pemain setelah breakthrough.
@@ -1351,33 +1328,9 @@ class GameSession:
         Returns:
             Daftar pesan evolusi untuk ditampilkan.
         """
-        messages: list[str] = []
-        replaced: dict[str, str] = {}
-        for raw in self.state.party:
-            evolution = raw.get("evolution")
-            if not evolution or evolution.get("trigger_tier") != tier_id:
-                continue
-            evolved_id = evolution["evolved_id"]
-            evolved = load_companion(evolved_id)
-            evolved.bond_xp = int(raw.get("bond_xp", 0))
-            evolved.rank = int(raw.get("rank", 1))
-            evolved.hp = raw.get("hp")
-            evolved.qi = raw.get("qi")
-            replaced[raw["id"]] = evolved_id
-            raw.clear()
-            raw.update(evolved.to_dict())
-            messages.append(
-                f"{evolved.name} berevolusi! Bentuk barunya "
-                "berdenyut dengan kekuatan baru."
-            )
-        if replaced:
-            party_ids = {raw["id"] for raw in self.state.party}
-            self.state.party_active = [
-                replaced.get(cid, cid)
-                for cid in self.state.party_active
-                if replaced.get(cid, cid) in party_ids
-            ]
-        return messages
+        from src.systems.companion import evolve_companions
+
+        return evolve_companions(self.state, tier_id)
 
     def _cmd_save(self, command: Command) -> list[str]:
         slot = self._slot_arg(command, default="save1")
@@ -1413,7 +1366,7 @@ class GameSession:
             return self._choose_dialog(command)
         options = pending.get("options", [])
         if not command.args:
-            return ["Pilih opsi: choose <key> (contoh: choose a)"]
+            return ["Pilih jawaban dari menu di bawah."]
         key = command.args[0]
         chosen = next((opt for opt in options if opt["key"] == key), None)
         if chosen is None:
@@ -1458,7 +1411,7 @@ class GameSession:
                 "Tidak ada pilihan aktif. Tunggu event yang meminta keputusan."
             ]
         if not command.args:
-            return ["Pilih opsi: choose <nomor> (contoh: choose 1)"]
+            return ["Pilih jawaban dari menu di bawah."]
         raw = command.args[0]
         if not raw.isdigit():
             return [f"'{raw}' bukan nomor pilihan yang valid."]
@@ -1504,7 +1457,7 @@ class GameSession:
             visible_choices(next_node, self.state), 1
         ):
             lines.append(f"  [{index}] {option['text']}")
-        lines.append("Pilih: choose <nomor>")
+        lines.append("Pilih jawaban di menu percakapan di bawah.")
         return lines
 
     def _advance_hours(self, hours: int) -> None:
@@ -1789,7 +1742,7 @@ class GameSession:
             player.add_insight(rewards.get("insight", 0))
             insight_gained = rewards.get("insight", 0)
             if insight_gained > 0:
-                from src.engine.items import add_artifact_xp
+                from src.systems.artifact import add_artifact_xp
 
                 for item_id in list(self.state.inventory["equipped"].keys()):
                     if item_id in self.state.inventory["artifacts"]:

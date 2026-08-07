@@ -7,12 +7,10 @@ from typing import Any
 
 from src.engine.cultivation import load_tiers, restore_tier
 from src.models.player import Player
+from src.systems.faction import FACTIONS, add_reputation
 
 SCHEMA_VERSION = 2
 DEFAULT_LOCATION = "village_emberfall"
-FACTIONS = ("court", "holy_order", "rebels", "guilds", "ancient_order")
-# Reputasi faksi dibatasi -100 s/d +100 (GDD §8).
-REPUTATION_CLAMP = 100
 
 
 @dataclass
@@ -138,18 +136,17 @@ class GameState:
         self.player.qi = min(self.player.qi, self.player.qi_max)
 
     def add_reputation(self, faction: str, delta: int) -> None:
-        """Ubah reputasi faksi dengan batas -100 s/d +100 (GDD §8).
+        """Ubah reputasi faksi — delegasi ke sistem faksi (GDD §8).
 
-        Satu-satunya jalur mutasi reputasi (dipakai event & quest).
-        Faksi di luar daftar kanonik ditolak keras, bukan ditambahkan
-        diam-diam (kunci ekstra akan dibuang saat round-trip save).
+        Args:
+            faction: ID faksi kanonik (court/holy_order/rebels/guilds/
+                ancient_order).
+            delta: Perubahan nilai (bisa negatif).
+
+        Raises:
+            ValueError: Jika faksi tidak dikenal.
         """
-        if faction not in FACTIONS:
-            raise ValueError(f"faksi tidak dikenal: {faction}")
-        current = self.reputation.get(faction, 0)
-        self.reputation[faction] = max(
-            -REPUTATION_CLAMP, min(REPUTATION_CLAMP, current + delta)
-        )
+        add_reputation(self, faction, delta)
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize state ke dict save lengkap (§19.2)."""

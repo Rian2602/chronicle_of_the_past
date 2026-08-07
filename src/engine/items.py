@@ -59,33 +59,3 @@ def load_items(data_dir: Path = ITEM_DIR) -> dict[str, dict[str, Any]]:
             "max_level": max_level,
         }
     return items
-
-
-def add_artifact_xp(
-    state: Any,
-    artifact_id: str,
-    amount: int,
-    catalog: dict[str, Any] | None = None,
-) -> bool:
-    """Tambahkan XP ke artefak; kembalikan True jika naik level."""
-    if artifact_id not in state.inventory["artifacts"]:
-        return False
-    artifact = state.inventory["artifacts"][artifact_id]
-    artifact["xp"] += amount
-    leveled_up = False
-
-    if catalog is None:
-        catalog = load_items()
-
-    max_level = catalog.get(artifact_id, {}).get("max_level")
-    if max_level is None:
-        max_level = 5
-
-    while (
-        artifact["level"] < max_level
-        and artifact["xp"] >= artifact["level"] * 100
-    ):
-        artifact["xp"] -= artifact["level"] * 100
-        artifact["level"] += 1
-        leveled_up = True
-    return leveled_up
