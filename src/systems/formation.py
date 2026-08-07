@@ -6,9 +6,10 @@ ke seluruh anggota tim saat pertarungan dimulai (lihat game_loop).
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
+
+from src.core.utils import load_json_dir
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 FORMATION_DIR = DATA_DIR / "formations"
@@ -30,11 +31,7 @@ def load_formations(
     Raises:
         KeyError: Jika sebuah file JSON tidak punya kunci ``id``.
     """
-    formations: dict[str, dict[str, Any]] = {}
-    for path in sorted((data_dir or FORMATION_DIR).glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        formations[raw["id"]] = raw
-    return formations
+    return load_json_dir(data_dir or FORMATION_DIR)
 
 
 def _get_formation(

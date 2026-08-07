@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+from src.core.utils import load_json_dir
 
 COMPANION_DIR = Path(__file__).resolve().parents[2] / "data" / "companions"
 
@@ -104,11 +105,7 @@ def load_companions(data_dir: Path = COMPANION_DIR) -> list[Companion]:
     Raises:
         KeyError: Jika sebuah file JSON tidak punya kunci ``id``.
     """
-    companions: list[Companion] = []
-    for path in sorted(data_dir.glob("*.json")):
-        raw: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
-        companions.append(Companion.from_dict(raw))
-    return companions
+    return load_json_dir(data_dir, model_cls=Companion)
 
 
 def load_companion(
