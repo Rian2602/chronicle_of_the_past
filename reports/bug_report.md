@@ -614,3 +614,188 @@ migrasi & korupsi parsial, TUI hunt battle di tmux 80×24.
   `combat.py` tidak disentuh (AGENTS §6). Commit fix putaran 3 hanya
   memuat file task sendiri (quest JSON + laporan); perubahan eksternal
   dibiarkan di working tree untuk proses paralel.
+
+---
+
+# PUTARAN 4 — Audit Arsitektur (engine / systems / models / core / UI)
+
+Metode: baca penuh 20 modul + reproduksi empiris kandidat (script
+edge-case). Temuan di bawah diverifikasi lewat eksekusi nyata, bukan
+sekadar bacaan.
+
+## BUG-21 · Combat — unit KO oleh DoT di awal giliran tetap menyerang
+
+- **Area:** `src/engine/combat.py` (`_begin_turn` / `_step`)
+- **Reproduksi (terbukti script):** 2 sekutu A & B; A hp=1 dengan
+  poison (turns=1). Saat giliran A: tick poison → A mati (hp 0), tapi
+  karena B masih hidup, `_check_victory` tidak menghentikan — `_may_act`
+  tetap True → `_step("attack")` dieksekusi oleh A yang sudah KO.
+  Output: `A.hp=0 | DEAD A MENYERANG? True`.
+- **Akar:** `_begin_turn` men-tick status tanpa memeriksa `is_alive`
+  setelahnya; guard kematian hanya lewat `_check_victory` (seluruh
+  pihak mati), bukan per-unit.
+- **Dampak:** unit "berhantu" menyerang sekali setelah mati — bisa
+  membunuh musuh dari kubur; melanggar semantik GDD §16 (DoT di awal
+  giliran) dan §6.
+- **Status:** OPEN (fix: di `_begin_turn`, bila `not unit.is_alive`
+  setelah tick → set `_may_act = False`).
+
+## BUG-22 · KRITIS — Ritual tidak bisa dipicu di UI no-typing → quest405 deadlock → Arc 4 tak bisa diselesaikan
+
+- **Area:** `src/core/input.py` (ALIASES) + `src/core/game_loop.py`
+  (`_cmd_ritual`, `_world_menu`) + `data/quests/quest405.json` +
+  `data/events/ritual_prepare.json`
+- **Fakta:** `ritual_ready` hanya bisa diset oleh `_cmd_ritual`
+  (game_loop:838). Namun: (1) `"ritual"` TIDAK ada di `ALIASES` →
+  `parse_command("ritual")` melempar CommandError; (2) `_world_menu`
+  TIDAK punya aksi ritual → tidak bisa diklik. UI adalah no-typing
+  (GDD §14.1), jadi tidak ada jalur pemanggil sama sekali.
+- **Rantai:** quest405 (main, requires quest404_done, next=quest406)
+  berobjektif `flag ritual_ready` → quest406 (rasul_langit) → quest407
+  (sky_seal) → quest408 (suara, bos final) → ending. quest405 memang
+  di-start event `quest405_intro` — tapi objektifnya tidak pernah bisa
+  dipenuhi → **quest406–408 & ending engine tidak pernah tercapai lewat
+  alur normal: game tidak bisa ditamatkan.**
+- **Kenapa lolos dari audit putaran 3?** BFS flag reachability
+  menghitung `_cmd_ritual` sebagai penulis `ritual_ready` tanpa
+  memodelkan jangkauan UI (menu + alias); smoke_playthrough juga
+  memanggil `dispatch` langsung (melewati parse_command). Keduanya
+  tidak merepresentasikan jalur pemain nyata.
+- **Status:** OPEN — KRITIS. Fix minimal: tambah `"ritual"` ke ALIASES
+  + item menu dunia (mis. di bawah "Terobosan") + pastikan syarat
+  `check_ritual_ready` bisa dipenuhi di alur normal (artefak
+  pedang_taring_naga + formasi + tim ≥ 2).
+
+## BUG-23 · Validator gap — aksi dalam opsi `prompt_choice` event tidak divalidasi (latent)
+
+- **Area:** `tools/validate.py` vs `src/engine/event.py`
+- **Fakta:** aksi pilihan dialog (`dialog nodes → choices → actions`)
+  DIVALIDASI id-nya (validate.py:199+); aksi dalam opsi `prompt_choice`
+  event TIDAK. Data saat ini bersih (scan: 0 masalah), tapi typo id di
+  masa depan (mis. `grant_item` id hantu) akan: item ditambahkan ke
+  inventory tanpa validasi → save jadi memuat id tak dikenal →
+  `_validate_references` (BUG-5) MENOLAK save saat load → progress
+  pemain hangus permanen.
+- **Status:** OPEN (latent — tutup gap validator, tambah test
+  prompt_choice nested).
+
+## BUG-24 · Validasi save gap — artifacts / party_active / tipe bond_xp tidak divalidasi (latent)
+
+- **Area:** `src/core/save.py` `_validate_references`
+- **Fakta:** yang divalidasi: lokasi, stats player, formation_active,
+  item (items+equipped), quest ids, party ids + skills. Yang TIDAK:
+  (a) `inventory["artifacts"]` — id & sub-struktur (`level`/`xp`):
+  save editan/rusak dengan artefak tanpa `level` → `KeyError` di
+  `Player.effective_stats_with_gear` saat battle dimulai (crash, tidak
+  tertangkap SaveError); (b) `party_active ⊆ party ids` — id
+  menggantung diam-diam tidak ikut bertarung; (c) tipe `bond_xp`/
+  `rank` string → `int()` ValueError di `Companion.from_dict` saat
+  battle; (d) kunci `kills`/`buffs`.
+- **Status:** OPEN (latent — perluas `_validate_references` + test).
+
+## BUG-25 · Dead code & teks legacy — ritual unreachable + help menyesatkan
+
+- **Area:** `src/core/game_loop.py` (`_cmd_ritual`, `_cmd_help`)
+- **Fakta:** `_cmd_ritual` + `src/systems/ritual.py` (check_ritual_ready)
+  + event `ritual_prepare` adalah fitur mati di UI (lihat BUG-22).
+  `_cmd_help` menampilkan "ritual (persiapan…)" dan "Ketik 'escape'"
+  — teks era mengetik; di UI no-typing membingungkan.
+- **Status:** OPEN (ikut fix BUG-22; rapikan help).
+
+## BUG-26 · Item — `pil_antidot` (cure_poison) dikonsumsi tanpa efek di dunia & battle
+
+- **Area:** `src/core/game_loop.py` `_cmd_use` + `_battle_use_item`
+- **Fakta:** `pil_antidot` berefek `{"cure_poison": true}` dan
+  `_battle_use_item` MEMASUKKAN `cure_poison` ke allowed_effects — tapi
+  TIDAK ADA kode yang menerapkannya (tidak di `_cmd_use`, tidak di
+  `_battle_use_item`). Item terkonsumsi sia-sia: pemain berharap
+  sembuh dari racun, nyatanya tidak terjadi apa-apa.
+- **Status:** OPEN (fix: terapkan remove status poison/bleed/burn pada
+  caster di battle; di dunia, cek + beri pesan jujur bila tidak ada
+  racun aktif).
+
+## Catatan arsitektur lain (bukan bug)
+
+- `_cmd_recall` = alias swap (ada di ALIASES, tidak di menu) — harmless.
+- `buff_hp` (jika dipakai data) → `stats["hp"] += value` — hp bukan
+  stat combat; efek no-op diam-diam. Data saat ini tidak memakainya.
+- `menu_actions` vs `dispatch`: battle command (attack/defend/…) hanya
+  lewat `battle_step`, tidak bisa bocor ke dispatch (guard AVAILABLE +
+  in_battle) — kontrak aman.
+- Desain berlapis bersih: systems/ = satu-satunya jalur mutasi
+  (faction/companion/alchemy/artifact), engine/ murni, core/ orkestrasi.
+  Temuan di atas adalah gap kontrak data↔kode, bukan cacat struktur.
+
+---
+
+# PUTARAN 4 — STATUS PERBAIKAN (TDD RED→GREEN, commit terpisah)
+
+Semua bug dibawah diperbaiki dengan test RED→GREEN; 9 test baru
+terverifikasi gagal sebelum fix dan lulus sesudahnya (suite penuh
+bertambah 554 → 563 passed).
+
+## BUG-21 · Combat — FIXED
+
+- **Fix:** `src/engine/combat.py` `_begin_turn` — setelah `tick_statuses`,
+  cek `not unit.is_alive` → `_may_act = False` + return. Unit yang KO
+  oleh DoT di awal giliran kini melewati gilirannya (tanpa menyerang).
+- **Test:** `test_unit_mati_oleh_dot_tidak_menyerang` (2 sekutu, A mati
+  oleh poison; hasil: A.hp==0, `result is None`, HP musuh tidak berubah).
+
+## BUG-22 · Quest Arc 4 — FIXED (blocker game tidak bisa ditamatkan)
+
+- **Fix:** `src/core/input.py` ALIASES + `"ritual": "ritual"`;
+  `src/core/game_loop.py` `_world_menu` + aksi "Ritual" (id `ritual`,
+  command `ritual`, ikon 🕯). Kini ritual bisa dipicu via parse maupun
+  menu tanpa ketik → quest405 (requires_flag `ritual_ready`) bisa
+  diselesaikan → rantai quest406–408 + ending tercapai.
+- **Test:** `test_alias_ritual` (parse) + `test_ritual_ada_di_menu_dunia_
+  dan_dapat_digunakan` (menu + dispatch). Verifikasi empiris end-to-end:
+  artefak+formasi+tim → `ritual` → `ritual_ready=True`.
+
+## BUG-23 · Validator prompt_choice — FALSE POSITIVE (tidak diperbaiki)
+
+- **Koreksi:** validator SUDAH merekursi aksi dalam opsi `prompt_choice`
+  (blok di `tools/validate.py` + test `test_validator_menangkap_
+  prompt_choice_action_ref_tak_ada`). Tidak ada celah; klaim awal laporan
+  di atas ditarik.
+
+## BUG-24 · Save validation — FIXED
+
+- **Fix:** `src/core/save.py` `_validate_references` kini juga menolak:
+  (1) `inventory["artifacts"]` id tak dikenal / bukan dict / tanpa
+  `level` int ≥ 1 / tanpa `xp` int ≥ 0 (mencegah KeyError di
+  `effective_stats_with_gear` saat battle dimulai); (2) `party_active`
+  bukan list / berisi id di luar `party` (guard tipe dari review
+  independen — mencegah TypeError/iterasi karakter saat None/string);
+  (3) `bond_xp` non-int (mencegah crash `int()` di `Companion.from_dict`
+  saat panel tim dibuka).
+- **Test:** 4 RED + 1 positif (`test_save_artefak_dan_party_valid_
+  termuat`); `test_save_roundtrip_party_active` diperketat agar state
+  konsisten (party memuat lin_wei sebelum party_active menyebutnya).
+
+## BUG-26 · Item pil_antidot — FIXED
+
+- **Fix:** `_battle_use_item` kini menerapkan `cure_poison` (hapus
+  status `poison` dari unit aktif + pesan). `_cmd_use` (dunia) MENOLAK
+  pemakaian pil yang hanya berefek `cure_poison` — item tidak
+  terkonsumsi (pola penolakan material, saran review independen),
+  karena status racun tidak menetap di luar battle.
+- **Test:** `test_pil_antidot_menetralkan_racun_di_battle` (poison
+  hilang + item terkonsumsi).
+
+## BUG-25 · Help/teks era mengetik — sebagian diperbaiki via BUG-22
+
+- Baris help "ritual (persiapan…)" kini benar (fitur hidup). Sisa
+  perapian teks (jika masih ada frasa era mengetik di UI) dicatat
+  sebagai polish lanjutan — tidak memblokir.
+
+## Catatan verifikasi
+
+- Gate penuh hijau: **564 passed** · ruff check bersih · format bersih ·
+  `tools/validate.py` OK · `tools/smoke_playthrough.py` OK (alur inti +
+  ending engine).
+- Catatan: `src/systems/formation.py` (perubahan proses eksternal)
+  sengaja tidak ikut commit; refactor `_missed_result`/`_dodged_result`
+  di `combat.py` (eksternal) ikut commit karena tercampur satu file
+  dengan fix BUG-21.

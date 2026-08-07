@@ -178,6 +178,19 @@ def _validate_references(state: GameState) -> None:
     for item_id in state.inventory.get("equipped", {}):
         if item_id not in item_ids:
             raise ValueError(f"item tak dikenal di equipped: {item_id}")
+    for item_id, artifact in state.inventory.get("artifacts", {}).items():
+        # BUG-24: artefak tanpa level/xp (atau id tak dikenal) memicu
+        # KeyError saat battle dimulai (effective_stats_with_gear).
+        if item_id not in item_ids:
+            raise ValueError(f"artefak tak dikenal: {item_id}")
+        if not isinstance(artifact, dict):
+            raise ValueError(f"data artefak rusak: {item_id}")
+        level = artifact.get("level")
+        xp = artifact.get("xp")
+        if not isinstance(level, int) or level < 1:
+            raise ValueError(f"level artefak tidak valid: {item_id}")
+        if not isinstance(xp, int) or xp < 0:
+            raise ValueError(f"xp artefak tidak valid: {item_id}")
     quest_ids = {quest.id for quest in load_quests()}
     for group in (state.quests.started, state.quests.done, state.quests.failed):
         for quest_id in group:
@@ -191,3 +204,15 @@ def _validate_references(state: GameState) -> None:
         for skill in member.get("skills", []):
             if skill not in technique_ids:
                 raise ValueError(f"skill rekan tak dikenal: {skill}")
+        bond_xp = member.get("bond_xp", 0)
+        if not isinstance(bond_xp, int):
+            # BUG-24: bond_xp non-int crash int() di Companion.from_dict
+            # saat panel tim/tampilan dibuka.
+            raise ValueError(f"bond_xp rekan tidak valid: {member.get('id')}")
+    member_ids = [member.get("id") for member in state.party]
+    if not isinstance(state.party_active, list):
+        raise ValueError("party_active tidak valid")
+    for member_id in state.party_active:
+        # BUG-24: anggota aktif harus bagian dari party yang direkrut.
+        if member_id not in member_ids:
+            raise ValueError(f"anggota aktif tak dikenal: {member_id}")

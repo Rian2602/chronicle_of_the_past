@@ -46,6 +46,7 @@ ALIASES: dict[str, str] = {
     "racik": "refine",
     "formation": "formation",
     "formasi": "formation",
+    "ritual": "ritual",
     "equip": "equip",
     "unequip": "unequip",
     "use": "use",

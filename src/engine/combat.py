@@ -259,6 +259,38 @@ class Battle:
             for enemy in self._alive(self.enemies)
         ]
 
+    def _missed_result(
+        self,
+        unit: Combatant,
+        target: Combatant,
+        technique: Technique,
+        action: str,
+    ) -> ActionResult:
+        """ActionResult untuk aksi yang meleset."""
+        return ActionResult(
+            action,
+            unit.name,
+            target.name,
+            qi_cost=technique.qi_cost,
+            missed=True,
+        )
+
+    def _dodged_result(
+        self,
+        unit: Combatant,
+        target: Combatant,
+        technique: Technique,
+        action: str,
+    ) -> ActionResult:
+        """ActionResult untuk aksi yang dihindari target."""
+        return ActionResult(
+            action,
+            unit.name,
+            target.name,
+            qi_cost=technique.qi_cost,
+            dodged=True,
+        )
+
     def step(self, action: str) -> ActionResult | None:
         """Jalankan aksi pemain untuk unit sekutu saat ini (GDD §18.3).
 
@@ -319,6 +351,11 @@ class Battle:
             regen = int(regen * 1.5)
         unit.qi = min(unit.qi_max, unit.qi + regen)
         self.log.extend(tick_statuses(unit))
+        if not unit.is_alive:
+            # BUG-21: unit yang KO oleh DoT di awal giliran tidak boleh
+            # menyerang — giliran dilewati, _advance mencari unit hidup.
+            self._may_act = False
+            return
         if controlled == "charm":
             allies = [
                 member
@@ -427,21 +464,9 @@ class Battle:
         stats = effective_stats(unit)
         target_stats = effective_stats(target)
         if self._rng.random() < miss_rate(stats["agility"]):
-            return ActionResult(
-                "technique",
-                unit.name,
-                target.name,
-                qi_cost=technique.qi_cost,
-                missed=True,
-            )
+            return self._missed_result(unit, target, technique, "technique")
         if self._rng.random() < dodge_chance(target_stats["agility"]):
-            return ActionResult(
-                "technique",
-                unit.name,
-                target.name,
-                qi_cost=technique.qi_cost,
-                dodged=True,
-            )
+            return self._dodged_result(unit, target, technique, "technique")
         crit = self._rng.random() < crit_chance(stats["agility"])
         if technique.is_physical:
             stat_inti = stats["attack"]

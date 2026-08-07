@@ -376,6 +376,13 @@ class GameSession:
         hatch = (item.get("effect") or {}).get("hatch_companion")
         if hatch and any(raw["id"] == hatch for raw in self.state.party):
             return ["Binatang roh ini sudah di timmu."]
+        if set((item.get("effect") or {}).keys()) == {"cure_poison"}:
+            # BUG-26: cure_poison hanya bermakna di battle (status racun
+            # tidak menetap di luar); tolak agar pil tidak terbuang.
+            return [
+                f"{item['name']} hanya berguna di pertarungan — "
+                "tidak ada racun yang menetap di luar battle."
+            ]
         items[item_id] -= 1
         if items[item_id] == 0:
             del items[item_id]
@@ -977,6 +984,13 @@ class GameSession:
                 "label": "Terobosan",
                 "command": "breakthrough",
                 "icon": "💥",
+                "battle": False,
+            },
+            {
+                "id": "ritual",
+                "label": "Ritual",
+                "command": "ritual",
+                "icon": "🕯",
                 "battle": False,
             },
             {
@@ -1851,6 +1865,14 @@ class GameSession:
                     lines.append(f"Qi {caster.name} pulih {restore}.")
                 else:
                     lines.append(f"{caster.name} sudah Qi penuh.")
+            if effect.get("cure_poison"):
+                # BUG-26: pil antidot dulu habis tanpa efek; kini racun
+                # pada unit aktif benar-benar dinetralkan.
+                if "poison" in caster.statuses:
+                    del caster.statuses["poison"]
+                    lines.append(f"Racun {caster.name} dinetralkan.")
+                else:
+                    lines.append(f"{caster.name} tidak sedang keracunan.")
             # Combat-ready buffs: catat ke state.buffs, diterapkan ke
             # combatant di _start_battle (sudah dijalankan). Di sini kita
             # tambahkan ke buffs caster langsung untuk battle ini.
