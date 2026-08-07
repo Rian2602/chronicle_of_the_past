@@ -1,0 +1,10 @@
+{
+  "id": "penasihat_istana",
+  "name": "Penasihat Istana",
+  "location": "capital",
+  "greeting": "Akhirnya kau datang. Aku sudah menunggumu.",
+  "dialog": [
+    "Penasihat tua itu menatapmu dengan mata yang telah melihat terlalu banyak hal. 'Aku tahu apa yang kau cari — dan aku tahu apa yang kau takutkan. Suara itu bukan entitas asing. Ia adalah bagian dari dunia ini, sama seperti kau dan aku.'",
+    "'Tapi tidak semua orang siap mendengar kebenaran. Kau yakin?'"
+  ]
+}

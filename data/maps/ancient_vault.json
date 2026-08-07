@@ -6,6 +6,7 @@
   "enemies": [
     {"enemy": "agen_kuno"},
     {"enemy": "pengikut_bisikan"},
-    {"enemy": "abyssal_worm", "requires_flag": "quest401_done"}
+    {"enemy": "abyssal_worm", "requires_flag": "quest401_done"},
+    {"enemy": "golem_kuno", "requires_flag": "quest403_done"}
   ]
 }

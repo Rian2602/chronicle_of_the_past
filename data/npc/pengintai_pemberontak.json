@@ -1,0 +1,10 @@
+{
+  "id": "pengintai_pemberontak",
+  "name": "Pengintai Pemberontak",
+  "location": "rebel_hideout",
+  "greeting": "Kau... kau murid baru Sera?",
+  "dialog": [
+    "Pengintai itu mengamati mu dari ujung kaki sampai ujung rambut. 'Kelihatannya bukan mata-mata Orde Suci. Tapi di sini, semua orang bisa jadi mata-mata. Sera bilang kau boleh masuk. Tapi aku akan mengawasi mu.'",
+    "Ia meludah ke samping, lalu kembali ke pos jaganya."
+  ]
+}

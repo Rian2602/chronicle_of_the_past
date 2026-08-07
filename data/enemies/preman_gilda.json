@@ -1,0 +1,1 @@
+{"id": "preman_gilda", "name": "Preman Gilda", "tier": "foundation_establishment", "element": "fire", "behavior": "aggressive", "stats": {"attack": 12, "defense": 6, "agility": 7, "intelligence": 2, "vitality": 6, "spirit": 3, "hp": 45, "qi": 12}, "skills": ["flame_strike", "pukulan_beruntun"], "tags": ["human"], "rewards": {"insight": 35, "gold": 40}}

@@ -12,6 +12,9 @@
     },
     {
       "enemy": "pemberontak_fanatik"
+    },
+    {
+      "enemy": "pengintai_pemberontak_enemy"
     }
   ]
 }

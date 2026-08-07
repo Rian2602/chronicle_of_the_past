@@ -1,0 +1,1 @@
+{"id": "golem_kuno", "name": "Golem Kuno", "tier": "soul_separation", "element": "earth", "behavior": "defensive", "stats": {"attack": 16, "defense": 24, "agility": 3, "intelligence": 1, "vitality": 20, "spirit": 10, "hp": 180, "qi": 15}, "skills": ["earth_charge", "perisai_tanah", "dinding_tanah"], "tags": ["ancient", "construct"], "rewards": {"insight": 90, "gold": 40}}

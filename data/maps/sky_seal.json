@@ -6,6 +6,7 @@
   "enemies": [
     {"enemy": "manifestasi_langit"},
     {"enemy": "rasul_langit", "requires_flag": "quest405_done"},
-    {"enemy": "suara", "requires_flag": "quest407_done"}
+    {"enemy": "suara", "requires_flag": "quest407_done"},
+    {"enemy": "pelindung_langit", "requires_flag": "quest407_done"}
   ]
 }

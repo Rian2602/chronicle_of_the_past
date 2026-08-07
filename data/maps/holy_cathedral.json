@@ -20,10 +20,7 @@
     },
     {
       "enemy": "uskup_muda"
-    },
-    {
-      "enemy": "penebus_orde_suci",
-      "requires_flag": "quest301_done"
-    }
+    },    {"enemy": "penebus_orde_suci", "requires_flag": "quest301_done"},
+    {"enemy": "algojo_katedral_enemy", "requires_flag": "quest301_done"}
   ]
 }

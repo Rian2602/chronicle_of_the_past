@@ -1,0 +1,1 @@
+{"id": "tentara_istana", "name": "Tentara Istana", "tier": "soul_separation", "element": "metal", "behavior": "defensive", "stats": {"attack": 20, "defense": 18, "agility": 10, "intelligence": 6, "vitality": 14, "spirit": 8, "hp": 120, "qi": 30}, "skills": ["tebasan_bayangan", "tangan_emas", "seruan_jiwa"], "tags": ["human", "court"], "rewards": {"insight": 80, "gold": 60}}
