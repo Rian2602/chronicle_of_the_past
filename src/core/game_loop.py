@@ -35,9 +35,7 @@ from src.engine.cultivation import (
     next_tier,
 )
 from src.engine.dialog import (
-    apply_actions,
     find_dialog,
-    get_node,
     load_dialogs,
     visible_choices,
 )
@@ -692,7 +690,7 @@ class GameSession:
         (dialog_id + node saat ini) — pola sama dengan `pending_choice`.
         Pilihan dijawab lewat perintah `choose <nomor>` (GDD §18.2).
         """
-        node = get_node(dialog, "start")
+        node = dialog["nodes"]["start"]
         self.state.flags["pending_dialog"] = {
             "dialog_id": dialog["id"],
             "node": "start",
@@ -1232,7 +1230,7 @@ class GameSession:
         if dialog is None:
             return []
         try:
-            node = get_node(dialog, pending["node"])
+            node = dialog["nodes"][pending["node"]]
         except KeyError:
             # BUG-2: node hilang -> panel dialog kosong (UI tidak crash).
             return []
@@ -1516,7 +1514,7 @@ class GameSession:
             self.state.flags.pop("pending_dialog", None)
             return ["Dialog tidak ditemukan di data (save lama?)."]
         try:
-            node = get_node(dialog, pending["node"])
+            node = dialog["nodes"][pending["node"]]
         except KeyError:
             # BUG-2: node hilang (save korup / data berubah) -> bersihkan
             # state machine + pesan ramah, bukan crash UI.
@@ -1530,12 +1528,8 @@ class GameSession:
         choice = choices[number - 1]
         lines: list[str] = []
         result = EventResult()
-        apply_actions(
-            choice.get("actions", []),
-            self.state,
-            result,
-            dialog["id"],
-        )
+        for action in choice.get("actions", []):
+            apply_action(action, self.state, result, dialog["id"])
         lines.extend(result.logs)
         next_id = choice.get("next")
         if next_id is None:
@@ -1550,7 +1544,7 @@ class GameSession:
             "dialog_id": dialog["id"],
             "node": next_id,
         }
-        next_node = get_node(dialog, next_id)
+        next_node = dialog["nodes"][next_id]
         lines.append(next_node["text"])
         for index, option in enumerate(
             visible_choices(next_node, self.state), 1

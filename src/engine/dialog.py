@@ -13,7 +13,6 @@ from typing import Any
 
 from src.core.state import GameState
 from src.core.utils import load_json_dir
-from src.engine.event import EventResult, apply_action
 
 DIALOGUE_DIR = Path(__file__).resolve().parents[2] / "data" / "dialogues"
 
@@ -58,22 +57,6 @@ def find_dialog(
     return None
 
 
-def get_node(dialog: dict[str, Any], node_id: str) -> dict[str, Any]:
-    """Ambil node dialog berdasarkan id (§12.5).
-
-    Args:
-        dialog: Dict dialog mentah.
-        node_id: Id node yang dicari.
-
-    Returns:
-        Dict node (text + choices).
-
-    Raises:
-        KeyError: Jika node_id tidak ada di ``dialog["nodes"]``.
-    """
-    return dialog["nodes"][node_id]
-
-
 def visible_choices(
     node: dict[str, Any], state: GameState
 ) -> list[dict[str, Any]]:
@@ -96,24 +79,3 @@ def visible_choices(
             continue
         visible.append(choice)
     return visible
-
-
-def apply_actions(
-    actions: list[dict[str, Any]],
-    state: GameState,
-    result: EventResult,
-    dialog_id: str,
-) -> None:
-    """Eksekusi daftar aksi pilihan dialog via parser event (§15.3).
-
-    Args:
-        actions: Daftar dict aksi (format §15.3).
-        state: State pemain yang dimutasi.
-        result: Penampung log/efek (dipakai UI).
-        dialog_id: Id dialog sebagai sumber (untuk pesan/validasi).
-
-    Raises:
-        ValueError: Jika ada aksi dengan kind tidak dikenal.
-    """
-    for action in actions:
-        apply_action(action, state, result, dialog_id)
