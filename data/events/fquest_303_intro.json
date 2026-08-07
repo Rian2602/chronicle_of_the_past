@@ -1,0 +1,15 @@
+{
+  "id": "fquest_303_intro",
+  "trigger": [
+    {
+      "kind": "quest_done",
+      "quest": "quest208"
+    }
+  ],
+  "actions": [
+    {
+      "kind": "start_quest",
+      "id": "fquest_303"
+    }
+  ]
+}

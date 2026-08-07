@@ -1,0 +1,24 @@
+{
+  "id": "quest303",
+  "title": "Quest quest303 Title",
+  "type": "main",
+  "category": "main",
+  "description": "Deskripsi untuk quest303. Bernada grimdark.",
+  "requires_flag": "quest302_done",
+  "objectives": [
+    {
+      "kind": "enemy",
+      "target": "kultis_bayangan",
+      "count": 1
+    }
+  ],
+  "rewards": {
+    "insight": 10,
+    "gold": 50,
+    "reputation": {}
+  },
+  "flags_on_complete": [
+    "quest303_done"
+  ],
+  "next": "quest304"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "fquest_303",
+  "title": "Quest fquest_303 Title",
+  "type": "faction",
+  "category": "faction",
+  "description": "Deskripsi untuk fquest_303. Bernada grimdark.",
+  "requires_flag": "quest208_done",
+  "objectives": [
+    {
+      "kind": "enemy",
+      "target": "kultis_bayangan",
+      "count": 1
+    }
+  ],
+  "rewards": {
+    "insight": 10,
+    "gold": 50,
+    "reputation": {
+      "holy_order": 5
+    }
+  },
+  "flags_on_complete": [
+    "fquest_303_done"
+  ],
+  "next": null
+}
