@@ -34,18 +34,6 @@ def load_formations(
     return load_json_dir(data_dir or FORMATION_DIR)
 
 
-def _get_formation(
-    formation_id: str,
-    formations: dict[str, dict[str, Any]] | None,
-) -> dict[str, Any]:
-    """Validasi formasi ada; kembalikan dict raw formasi."""
-    catalog = formations if formations is not None else load_formations()
-    formation = catalog.get(formation_id)
-    if formation is None:
-        raise ValueError(f"formasi tidak dikenal: {formation_id}")
-    return formation
-
-
 def formation_buff(
     formation_id: str,
     formations: dict[str, dict[str, Any]] | None = None,
@@ -62,7 +50,10 @@ def formation_buff(
     Raises:
         ValueError: Jika formasi dengan id tersebut tidak ada.
     """
-    formation = _get_formation(formation_id, formations)
+    catalog = formations if formations is not None else load_formations()
+    formation = catalog.get(formation_id)
+    if formation is None:
+        raise ValueError(f"formasi tidak dikenal: {formation_id}")
     return dict(formation.get("buff", {}))
 
 
@@ -82,5 +73,8 @@ def formation_skill(
     Raises:
         ValueError: Jika formasi dengan id tersebut tidak ada.
     """
-    formation = _get_formation(formation_id, formations)
+    catalog = formations if formations is not None else load_formations()
+    formation = catalog.get(formation_id)
+    if formation is None:
+        raise ValueError(f"formasi tidak dikenal: {formation_id}")
     return formation.get("skill")
