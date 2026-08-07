@@ -656,11 +656,7 @@ def test_action_add_companion_mengaktifkan_rekan_roster_yang_belum_aktif():
 
 def test_ending_events_terpicu_setelah_bos_kalah():
     """Set arc4_boss_defeated -> calculate_ending -> ending event (cascade)."""
-    from src.core.state import GameState
-    from src.engine.event import load_events, process_events
-    from src.models.player import Player
-
-    state = GameState(player=Player(name="Akar"))
+    state = _state()
     state.ending_points = {"defy": 2, "seal": 7, "reconcile": 3}
     state.flags["arc4_boss_defeated"] = True
     result = process_events(state, load_events())

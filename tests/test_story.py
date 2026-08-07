@@ -68,7 +68,7 @@ def test_apply_action_calculate_ending():
 
 
 def test_build_epilogue_menyebut_status_faksi():
-    """Epilog menyebut tiap faksi dengan status dari reputasi (GDD §21.2)."""
+    """Epilog menyebut tiap faksi (label Indonesia) dengan status reputasi."""
     state = _state()
     state.reputation = {
         "court": 40,
@@ -79,6 +79,7 @@ def test_build_epilogue_menyebut_status_faksi():
     }
     lines = build_epilogue(state)
     joined = "\n".join(lines)
-    assert "ancient_order" in joined and "berkuasa" in joined
-    assert "holy_order" in joined and "hancur" in joined
+    assert "Orde Rahasia Kuno" in joined and "berkuasa" in joined
+    assert "Orde Suci" in joined and "hancur" in joined
+    assert "Istana Kerajaan" in joined
     assert len(lines) == 5

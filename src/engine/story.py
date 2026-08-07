@@ -16,6 +16,15 @@ if TYPE_CHECKING:
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 STORY_DIR = DATA_DIR / "story"
 
+# Label Indonesia per faksi (GDD §8) untuk epilog player-facing.
+FACTION_LABELS: dict[str, str] = {
+    "court": "Istana Kerajaan",
+    "holy_order": "Orde Suci",
+    "rebels": "Pemberontak",
+    "guilds": "Gilda",
+    "ancient_order": "Orde Rahasia Kuno",
+}
+
 
 def load_memories(data_dir: Path = STORY_DIR) -> dict[str, dict[str, str]]:
     """Muat semua echo memori dari data/story/ keyed by id.
@@ -84,5 +93,6 @@ def build_epilogue(state: GameState) -> list[str]:
             status = "lemah"
         else:
             status = "hancur"
-        lines.append(f"{faction}: {status} ({score})")
+        label = FACTION_LABELS.get(faction, faction)
+        lines.append(f"{label}: {status} ({score})")
     return lines

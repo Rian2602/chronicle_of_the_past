@@ -1778,3 +1778,18 @@ def test_run_events_menampilkan_epilog_sekali(tmp_path):
     assert any("EPILOG" in line for line in first)
     second = session._run_events()
     assert not any("EPILOG" in line for line in second)
+
+
+def test_bos_kalah_memantik_ending_dan_epilog_satu_pass(tmp_path):
+    """Rantai penuh: bos kalah -> ending event + epilog satu pass."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.ending_points = {"defy": 1, "seal": 8, "reconcile": 2}
+    session.state.flags["arc4_boss_defeated"] = True
+    first = session._run_events()
+    joined = "\n".join(first)
+    assert session.state.flags.get("ending_seal_win") is True
+    assert "MENYEGEL DIRI" in joined
+    assert "— EPILOG —" in joined
+    second = session._run_events()
+    assert "— EPILOG —" not in "\n".join(second)
