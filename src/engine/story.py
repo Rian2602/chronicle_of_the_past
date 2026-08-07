@@ -53,16 +53,10 @@ def calculate_ending(state: GameState) -> str:
     Returns:
         Nama jalur ending yang menang: 'defy', 'seal', atau 'reconcile'.
     """
-    points = state.ending_points
-    defy_pts = points.get("defy", 0)
-    seal_pts = points.get("seal", 0)
-    reconcile_pts = points.get("reconcile", 0)
-
-    if defy_pts >= seal_pts and defy_pts >= reconcile_pts:
-        return "defy"
-    if seal_pts >= reconcile_pts:
-        return "seal"
-    return "reconcile"
+    return max(
+        ["defy", "seal", "reconcile"],
+        key=lambda k: state.ending_points.get(k, 0),
+    )
 
 
 def build_epilogue(state: GameState) -> list[str]:
