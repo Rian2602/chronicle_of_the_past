@@ -16,6 +16,7 @@ EXPECTED_EVENTS = {
     "quest101_done",
     "quest102_intro",
     "shrine_trial_start",
+    "quest202_done",
     "shrine_reveal",
     "quest103_done",
     "quest104_intro",

@@ -10,6 +10,7 @@ EXPECTED_NPCS = {
     "elder_mao",
     "lin_wei",
     "fang_yue",
+    "alchemist_xiu",
     "diakon_soren",
     "guntur",
     "jati",

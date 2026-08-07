@@ -19,6 +19,8 @@ EXPECTED_QUESTS = {
     "quest107",
     "quest108",
     "quest201",
+    "quest202",
+    "quest203",
     "fquest_rebels_kiriman",
     "fquest_holyorder_mata",
     "fquest_hutan_ember",

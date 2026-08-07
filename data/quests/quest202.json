@@ -1,0 +1,14 @@
+{
+  "id": "quest202",
+  "title": "Tugas Murid Baru",
+  "type": "main",
+  "description": "Temui Xiu Sang Alkemi di pelataran sekte.",
+  "objectives": [
+    {"kind": "talk", "target": "alchemist_xiu"}
+  ],
+  "rewards": {"insight": 100},
+  "flags_on_complete": ["quest202_done"],
+  "next": "quest203",
+  "category": "main",
+  "requires_flag": "quest201_done"
+}

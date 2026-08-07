@@ -1,0 +1,28 @@
+{
+  "id": "dialog_fang_yue_1",
+  "npc": "fang_yue",
+  "nodes": {
+    "start": {
+      "text": "Jadi kau yang selamat dari Hutan Perbatasan? Aku Fang Yue. Apa tujuanmu di sini?",
+      "choices": [
+        {
+          "text": "Aku datang untuk berlatih.",
+          "next": "accept",
+          "requires_flag": null
+        }
+      ]
+    },
+    "accept": {
+      "text": "Bagus. Jika kau ingin bertahan di sini, temui Xiu Sang Alkemi. Dia ada tugas untuk murid baru.",
+      "choices": [
+        {
+          "text": "[Mengangguk]",
+          "next": null,
+          "actions": [
+            {"kind": "start_quest", "id": "quest202"}
+          ]
+        }
+      ]
+    }
+  }
+}
