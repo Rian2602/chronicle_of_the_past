@@ -320,3 +320,126 @@ Fase 3 (fuzz dinamis). Batch A (BUG-1/2/13), Batch C (BUG-5/6/7/8),
 Batch D (BUG-3/4/9/10) dan Batch B (BUG-11/12) selesai dengan TDD
 2026-08-08. Semua 13 temuan tertutup (FIXED/CLOSED/DEFERRED dengan
 `ponytail:` note).*
+---
+
+## Putaran 2 — TUI Hunt & Regresi (8 Agustus 2026)
+
+Metode: fuzz deterministik ulang (5 seed, 0 crash), TUI hunt via tmux
+(terminal 120×30/120×45, alur interaksi penuh), playthrough Arc 4 +
+fitur eksternal `_battle_use_item`, audit balance & cross-check flag.
+
+## BUG-14 · Important — HUD menampilkan HP 0/80 setelah kalah battle
+
+- **Area:** `src/core/game_loop.py` (`status_lines`, `_finish_battle`)
+- **Reproduksi (terbukti tmux):** kalah battle (KO) → pesan "sadar
+  kembali dengan luka menganga" → HUD & perintah `status` menampilkan
+  `HP 0/80` padahal `state.player.hp` sudah dipulihkan ke 80.
+- **Akar:** `_finish_battle` meng-set `player.hp = player.hp_max` pada
+  jalur kalah, tapi `self._ally` (combatant lama dengan hp 0) tidak
+  di-reset ke None. `status_lines` memilih `self._ally.hp` selama
+  `_ally is not None` → menampilkan nilai stale 0.
+- **Dampak:** pemain berpikir HP-nya 0 (harus rest) padahal sebenarnya
+  pulih; `status` menipu. Reproduksi headless membuktikan
+  `player.hp == 80` — bug murni di lapisan tampilan.
+- **Fix yang mungkin:** reset `self._ally = None` (dan `_ally_map = {}`)
+  di akhir `_finish_battle`; atau `status_lines` hanya memakai
+  `_ally.hp` saat `self.in_battle`.
+- **Fix (Putaran 2, 2026-08-08):** `_finish_battle` kini reset
+  `self._ally = None` + `self._ally_map = {}` di akhir (berlaku untuk
+  semua jalur: menang/kalah/kabur — `_write_back_allies` sudah dipanggil
+  sebelumnya, `battle_frame` tidak membaca `_ally`, `_cmd_party` di-guard
+  `in_battle`). Test RED→GREEN:
+  `test_status_lines_pasca_kalah_tidak_stale`.
+- **Status:** FIXED
+
+## BUG-15 · Minor — OptionList aksi tidak auto-highlight opsi pertama
+
+- **Area:** `src/ui/app.py` (`_populate_actions`)
+- **Reproduksi (terbukti tmux):** setelah setiap aksi, menu aksi
+  di-rebuild via `set_options` → `highlighted` reset ke None → tekan
+  Enter pada opsi pertama tidak merespons; pemain harus menekan panah
+  bawah dulu setiap kali (tidak ada indikator seleksi visual).
+- **Akar:** Textual 8.2.8 tidak auto-highlight opsi pertama setelah
+  `set_options` saat widget difokus; test suite menyetel `highlighted`
+  secara programatik sehingga lolos test.
+- **Dampak:** UX tersendat — satu ketukan ekstra (Down) per aksi;
+  pemain bisa salah pilih (Enter tanpa Down = tidak ada aksi).
+- **Fix yang mungkin:** di `_populate_actions`, set `highlighted = 0`
+  setelah mengisi opsi (bila daftar non-kosong).
+- **Fix (Putaran 2, 2026-08-08):** `_populate_actions` set
+  `actions.highlighted = 0` setelah `set_options` bila daftar
+  non-kosong. Terbukti tmux: Enter langsung mengeksekusi opsi pertama
+  (Lihat → deskripsi lokasi muncul) tanpa panah dulu. Test RED→GREEN:
+  `test_aksi_auto_highlight_opsi_pertama`.
+- **Status:** FIXED
+
+## BUG-16 · Minor — Log game tak terbaca di terminal pendek
+
+- **Area:** `src/ui/app.py` (`compose`, `#content-tabs` / `#game-log`)
+- **Reproduksi (terbukti tmux):** di terminal 120×30, panel log
+  terdesak jadi 1 baris (teks tidak terlihat, hanya artefak scrollbar);
+  di 120×45 log tampil penuh.
+- **Akar:** tata letak tanpa height minimum untuk area konten.
+- **Dampak:** pemain di terminal kecil tidak bisa membaca narasi/battle
+  log sama sekali.
+- **Fix yang mungkin:** beri `min_height` pada area konten / `#game-log`
+  atau `overflow-y` yang memaksa scroll yang benar.
+- **Fix (Putaran 2, 2026-08-08):** `min-height: 5` pada `#content-tabs`,
+  `#game-log`, `#memory-log`, `#map-panel`. Terbukti tmux (matriks
+  ukuran): log terbaca di 120×30, 24, 18, 16, 15 baris; di bawah 15
+  baris menu aksi yang terpotong (trade-off dicatat `ponytail:` di
+  CSS), bukan log. Test RED→GREEN:
+  `test_log_terbaca_di_terminal_pendek` (size=(120,30)).
+- **Status:** FIXED
+
+## BUG-17 · Minor — Riwayat log hilang saat resume (Lanjutkan)
+
+- **Area:** `src/ui/app.py` (tombol Lanjutkan → `GameScreen(initial_log=[])`)
+- **Reproduksi (terbukti tmux):** escape ke menu → Lanjutkan (c) →
+  sesi state dipertahankan (nama, lokasi, HP, insight) tapi log/story
+  history kosong.
+- **Dampak:** pemain kehilangan konteks narasi sesi berjalan.
+- **Fix yang mungkin:** simpan log terakhir di `GameSession`/app dan
+  teruskan ke `GameScreen` saat resume.
+- **Fix (Putaran 2, 2026-08-08):** `ChronicleApp.log_history` (cap 200
+  baris) diisi `_remember_log` di `_run_command`/`_battle_raw`
+  (termasuk cabang observe); resume (`action_resume_game`) meneruskan
+  `initial_log=list(log_history)`; mulai baru & muat save me-reset
+  riwayat (muat = pesan hasil load). Terbukti tmux: setelah escape →
+  Lanjutkan (c), log masih berisi baris sesi sebelumnya. Test
+  RED→GREEN: `test_resume_mempertahankan_riwayat_log`.
+- **Status:** FIXED
+
+## Ringkasan Putaran 2
+
+| Severitas | Jumlah | ID |
+|---|---|---|
+| Critical | 0 | — |
+| Important | 1 | BUG-14 ✅ |
+| Minor | 3 | BUG-15 ✅, BUG-16 ✅, BUG-17 ✅ |
+
+*Semua 4 temuan putaran 2 FIXED dengan TDD RED→GREEN + verifikasi tmux
+(BUG-15/16/17 di terminal asli; BUG-14 via test headless + unit).
+Rencana perbaikan: `docs/superpowers/plans/2026-08-08-bughunt-round2-fix-plan.md`.*
+
+## Catatan Balance (bukan bug) — item reward vs gold quest
+
+- Banyak item grant jauh lebih bernilai dari gold reward quest
+  (mis. talisman_penyegel harga 2500 vs quest401 gold 300;
+  mahkota_ashfall 2000 vs quest304 gold 150; cincin_roh_kenabian 1200
+  vs quest303 gold 200). Item reward = bonus naratif, bukan masalah
+  fatal — dicatat untuk peninjauan kurva ekonomi.
+- Keseimbangan battle awal: Serang 2–3 damage/giliran vs Bandit
+  Perbatasan 10–11 damage → spam Serang selalu kalah (dikalahkan saat
+  musuh 10/28). Catatan desain untuk iterasi balance Arc 1.
+
+## False positive (sudah diverifikasi bukan bug)
+
+- `quest405` objective `ritual_ready`: di-set oleh perintah `ritual`
+  (`_cmd_ritual` → `check_ritual_ready` + `state.flags`), bukan event —
+  jalur pemicu ada, bukan deadlock.
+- Perintah kosong `''`/spasi: ditangani "Belum tersedia" (tidak crash).
+- Fitur eksternal `_battle_use_item` (use:<id> di battle): heal
+  bekerja, material ditolak — berfungsi benar.
+- Fuzz regresi: 5 seed (42/1337/7/99/555) × 400 langkah = 0 crash,
+  save round-trip identik, battle selalu berakhir.
