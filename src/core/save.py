@@ -9,6 +9,7 @@ from typing import Any, Callable
 
 from src.core.state import SCHEMA_VERSION, GameState
 from src.models.player import BASE_STATS
+from src.systems.formation import load_formations
 
 SAVE_DIR = Path(__file__).resolve().parents[2] / "saves"
 SLOTS = ("save1", "save2", "save3")
@@ -155,3 +156,10 @@ def _validate_references(state: GameState) -> None:
     missing = set(BASE_STATS) - set(state.player.stats)
     if missing:
         raise ValueError(f"stats pemain tidak lengkap: {sorted(missing)}")
+    if (
+        state.formation_active is not None
+        and state.formation_active not in load_formations()
+    ):
+        raise ValueError(
+            f"formasi aktif tidak dikenal: {state.formation_active}"
+        )

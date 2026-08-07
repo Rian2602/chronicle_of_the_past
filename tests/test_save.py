@@ -175,6 +175,18 @@ def test_field_quest_reputasi_waktu_bukan_objek_ditolak(tmp_path):
         load_game("save1", tmp_path)
 
 
+def test_formation_active_tidak_valid_ditolak(tmp_path):
+    """formation_active tak dikenal di save -> SaveError (GDD §19.3)."""
+    raw = {
+        "schema_version": 2,
+        "player": {"name": "Akar"},
+        "formation_active": "formasi_hantu",
+    }
+    (tmp_path / "save1.json").write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(SaveError):
+        load_game("save1", tmp_path)
+
+
 def test_slot_tidak_dikenal_ditolak(tmp_path):
     """Nama slot di luar daftar valid ditolak."""
     with pytest.raises(ValueError):

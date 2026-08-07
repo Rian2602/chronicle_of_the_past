@@ -593,6 +593,29 @@ def test_validator_menangkap_ref_dialog_action_item(tmp_path):
     assert any("pil_hantu" in e for e in collect_errors(data))
 
 
+def test_validator_menangkap_buff_formasi_bukan_dict(tmp_path):
+    """Formasi dengan buff non-dict/bukan stat wajib dilaporkan."""
+    data = _pohon_data(tmp_path)
+    formations_dir = data / "formations"
+    formations_dir.mkdir(exist_ok=True)
+    (formations_dir / "f_uji.json").write_text(
+        json.dumps(
+            {
+                "id": "f_uji",
+                "name": "Formasi Uji",
+                "element": "earth",
+                "description": "Uji.",
+                "buff": "bukan_stat",
+                "skill": None,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    errors = collect_errors(data)
+    assert any("f_uji" in e and "buff" in e for e in errors)
+
+
 def test_validator_data_lulus(tmp_path):
     """Validator berjalan tanpa temuan dan keluar kode 0 (AGENTS.md §1)."""
     result = subprocess.run(

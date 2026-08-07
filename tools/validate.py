@@ -324,8 +324,14 @@ def collect_errors(data_dir: Path = DATA_DIR) -> list[str]:
             if skill not in techniques:
                 errors.append(f"{companion.id}: skill {skill} tidak ada")
 
-    # Formasi (GDD §7): skill aktif wajib merujuk teknik yang ada.
+    # Formasi (GDD §7): buff wajib dict stat, skill aktif wajib ada.
     for formation_id, formation in formations.items():
+        buff = formation.get("buff")
+        if not isinstance(buff, dict) or not buff:
+            errors.append(
+                f"formations: {formation_id} -> buff wajib dict non-kosong"
+            )
+            continue
         skill = formation.get("skill")
         if skill is not None and skill not in techniques:
             errors.append(

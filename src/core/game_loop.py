@@ -1502,7 +1502,7 @@ class GameSession:
         # Skill formasi aktif ikut tersedia (GDD §18.3 formation_skill).
         if self.state.formation_active:
             skill = formation_skill(self.state.formation_active)
-            if skill:
+            if skill and skill not in skills:
                 skills.append(skill)
         return skills
 

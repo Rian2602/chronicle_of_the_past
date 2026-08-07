@@ -236,6 +236,17 @@ def test_skills_pemain_berasal_dari_data(tmp_path):
     }
 
 
+def test_player_skills_tidak_duplikat_skill_formasi(tmp_path):
+    """Skill formasi tidak menggandakan teknik yang sudah dipelajari."""
+    session = _session(tmp_path)
+    session.new_game("Akar")
+    session.state.player.add_insight(100)
+    _dispatch(session, "breakthrough")
+    session.state.formation_active = "benteng_bumi"
+    skills = session.player_skills
+    assert skills.count("perisai_tanah") == 1
+
+
 def test_pertarungan_menang_memberi_reward(tmp_path):
     """Menang melawan bandit memberi reward insight/gold dari data."""
     session = _session(tmp_path)
